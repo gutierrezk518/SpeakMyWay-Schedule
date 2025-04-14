@@ -83,14 +83,14 @@ export default function ActivityCard({
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute top-0 right-0 p-1.5 bg-red-500 text-white hover:bg-red-600 rounded-tr-md rounded-bl-full text-xs shadow-md z-30"
+              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
               }}
               aria-label="Remove activity"
             >
-              <i className="ri-close-line"></i>
+              <i className="ri-close-line text-[10px]"></i>
             </button>
           )}
         </div>
