@@ -24,7 +24,11 @@ interface AppContextType {
     highContrast: boolean;
     reduceAnimations: boolean;
   };
-  setDisplaySettings: (settings: { textSize: number; highContrast: boolean; reduceAnimations: boolean }) => void;
+  setDisplaySettings: React.Dispatch<React.SetStateAction<{
+    textSize: number;
+    highContrast: boolean;
+    reduceAnimations: boolean;
+  }>>;
   messageWords: { id: string; word: string }[];
   addMessageWord: (word: string) => void;
   removeMessageWord: (id: string) => void;
