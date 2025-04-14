@@ -1,5 +1,6 @@
 import { ScheduleActivity } from "@/data/scheduleData";
 import { Draggable } from "react-beautiful-dnd";
+import { speak } from "@/lib/tts";
 
 interface ActivityCardProps {
   activity: ScheduleActivity;
@@ -16,6 +17,11 @@ export default function ActivityCard({
   showRemoveButton = false,
   onRemove
 }: ActivityCardProps) {
+  // Handle card click to speak the activity title
+  const handleCardClick = () => {
+    speak(activity.title);
+  };
+  
   // Neurodivergent-friendly design - high contrast, clear visual distinction
   return (
     <Draggable draggableId={activity.id} index={index} isDragDisabled={!isDraggable}>
@@ -24,8 +30,9 @@ export default function ActivityCard({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`rounded-lg aspect-square p-1.5 mb-2 flex flex-col items-center justify-between
-            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm'}
+          onClick={handleCardClick}
+          className={`rounded-lg aspect-square p-1.5 mb-2 flex flex-col items-center justify-between cursor-pointer
+            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             bg-${activity.bgColor} text-gray-800 border border-${activity.bgColor === 'white' ? 'gray-300' : activity.bgColor}`}
           style={{
             ...provided.draggableProps.style,
@@ -39,8 +46,11 @@ export default function ActivityCard({
           </div>
           
           {/* Text container */}
-          <div className="w-full bg-white bg-opacity-80 rounded-md py-1 px-0.5 text-center">
+          <div className="w-full bg-white bg-opacity-80 rounded-md py-1 px-0.5 text-center relative">
             <span className="font-medium text-xs leading-tight">{activity.title}</span>
+            <span className="absolute right-0.5 bottom-0.5 text-[8px] text-gray-400">
+              <i className="ri-volume-up-line"></i>
+            </span>
           </div>
           
           {/* Remove button positioned absolutely in the corner */}
