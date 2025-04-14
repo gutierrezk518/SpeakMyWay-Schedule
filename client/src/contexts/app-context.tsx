@@ -1,6 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, SetStateAction } from "react";
 import { speak } from "@/lib/tts";
 import { ScheduleActivity } from "@/data/scheduleData";
+
+// Define the voice settings type
+type VoiceSettingsType = {
+  voiceType: string;
+  rate: number;
+  volume: number;
+  language: string;
+};
 
 interface AppContextType {
   currentPage: string;
@@ -9,18 +17,8 @@ interface AppContextType {
   setLanguage: (lang: string) => void;
   userName: string;
   setUserName: (name: string) => void;
-  voiceSettings: {
-    voiceType: string;
-    rate: number;
-    volume: number;
-    language: string;
-  };
-  setVoiceSettings: (settings: SetStateAction<{
-    voiceType: string;
-    rate: number;
-    volume: number;
-    language: string;
-  }>) => void;
+  voiceSettings: VoiceSettingsType;
+  setVoiceSettings: React.Dispatch<React.SetStateAction<VoiceSettingsType>>;
   displaySettings: {
     textSize: number;
     highContrast: boolean;

@@ -36,39 +36,39 @@ export default function Customize() {
     
     // Also update the language in voice settings
     if (newLanguage === 'en') {
-      setVoiceSettings({
-        ...voiceSettings,
+      setVoiceSettings(prev => ({
+        ...prev,
         language: "en-US"
-      });
+      }));
       setTestPhrase("Hello, this is a test of the voice settings.");
     } else if (newLanguage === 'es') {
-      setVoiceSettings({
-        ...voiceSettings,
+      setVoiceSettings(prev => ({
+        ...prev,
         language: "es-ES"
-      });
+      }));
       setTestPhrase("Hola, esta es una prueba de la configuración de voz.");
     }
   };
 
   const handleVoiceTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setVoiceSettings({
-      ...voiceSettings,
+    setVoiceSettings(prev => ({
+      ...prev,
       voiceType: e.target.value
-    });
+    }));
   };
 
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVoiceSettings({
-      ...voiceSettings,
+    setVoiceSettings(prev => ({
+      ...prev,
       rate: parseFloat(e.target.value)
-    });
+    }));
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVoiceSettings({
-      ...voiceSettings,
+    setVoiceSettings(prev => ({
+      ...prev,
       volume: parseFloat(e.target.value)
-    });
+    }));
   };
 
   const handleTestVoice = () => {
@@ -79,24 +79,24 @@ export default function Customize() {
   };
 
   const handleTextSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplaySettings({
-      ...displaySettings,
+    setDisplaySettings(prev => ({
+      ...prev,
       textSize: parseFloat(e.target.value)
-    });
+    }));
   };
 
   const handleHighContrastChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplaySettings({
-      ...displaySettings,
+    setDisplaySettings(prev => ({
+      ...prev,
       highContrast: e.target.checked
-    });
+    }));
   };
 
   const handleReduceAnimationsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplaySettings({
-      ...displaySettings,
+    setDisplaySettings(prev => ({
+      ...prev,
       reduceAnimations: e.target.checked
-    });
+    }));
   };
 
   return (
