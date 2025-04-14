@@ -48,73 +48,118 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   if (!isSpeechSupported) return null;
   
   const voices = window.speechSynthesis.getVoices();
+  console.log("Available voices:", voices.map(v => ({ name: v.name, lang: v.lang })));
+  
   if (voices.length === 0) return null;
   
-  // Get language from preferences
-  const language = voicePreferences.language.slice(0, 2);
-  
-  // Filter by language
-  const langVoices = voices.filter(voice => voice.lang.includes(language));
-  if (langVoices.length === 0) return voices[0];
+  // Get the full voice type and language preferences
+  const voiceType = voicePreferences.voiceType;
+  console.log("Selected voice type:", voiceType);
   
   // If voiceType is just "default", return the first voice for the language
-  if (voicePreferences.voiceType === "default") {
-    return langVoices[0];
+  if (voiceType === "default") {
+    // Get voices for the selected language
+    const langVoices = voices.filter(voice => voice.lang.includes(voicePreferences.language.slice(0, 2)));
+    return langVoices.length > 0 ? langVoices[0] : voices[0];
   }
   
-  // Try to match voice type by name or characteristics
-  const voiceType = voicePreferences.voiceType;
-  const voiceInfo = voiceTypes[voiceType as keyof typeof voiceTypes];
+  // Parse the detailed voice type (e.g., "en-US-female-warm" => language: en-US, gender: female, style: warm)
+  const voiceParts = voiceType.split("-");
   
-  // If we have specific info for this voice type
-  if (voiceInfo) {
-    // Try to find a voice that matches the preferred name
-    let matchedVoice = langVoices.find(v => 
-      v.name.includes(voiceInfo.name) || 
-      v.name.toLowerCase().includes(voiceInfo.name.toLowerCase())
-    );
+  // Handle fully specified voice types (like en-US-female-warm)
+  if (voiceParts.length >= 3) {
+    const language = `${voiceParts[0]}-${voiceParts[1]}`;
+    const gender = voiceParts.length > 2 ? voiceParts[2] : "";
     
-    // If we didn't find by name, try by gender/characteristics
-    if (!matchedVoice) {
-      matchedVoice = langVoices.find(v => {
-        const vName = v.name.toLowerCase();
-        if (voiceInfo.gender === "female") {
-          return vName.includes("female") || vName.includes("woman") || vName.includes("girl");
-        } else if (voiceInfo.gender === "male") {
-          return vName.includes("male") || vName.includes("man") || vName.includes("guy");
-        } else if (voiceInfo.gender === "child") {
-          return vName.includes("child") || vName.includes("kid") || vName.includes("junior");
+    // Filter by language first
+    let langMatches = voices.filter(v => v.lang.includes(language.slice(0, 2)));
+    
+    // Try for exact language match first
+    const exactLangMatches = langMatches.filter(v => v.lang === language);
+    if (exactLangMatches.length > 0) {
+      langMatches = exactLangMatches;
+    }
+    
+    // Then by gender
+    if (gender && langMatches.length > 0) {
+      const genderMatches = langMatches.filter(v => {
+        const name = v.name.toLowerCase();
+        if (gender === "female") {
+          return name.includes("female") || name.includes("woman") || 
+                 name.includes("girl") || name.includes("f ") || 
+                 name.includes("fiona") || name.includes("google uk english female");
+        } else if (gender === "male") {
+          return name.includes("male") || name.includes("man") || 
+                 name.includes("guy") || name.includes("m ") || 
+                 name.includes("david") || name.includes("google uk english male");
+        } else if (gender === "child") {
+          return name.includes("child") || name.includes("kid") || 
+                 name.includes("junior") || name.includes("young");
         }
         return false;
       });
+      
+      if (genderMatches.length > 0) {
+        console.log("Selected voice:", {
+          name: genderMatches[0].name,
+          lang: genderMatches[0].lang
+        });
+        return genderMatches[0];
+      }
     }
     
-    if (matchedVoice) return matchedVoice;
+    // If we have language matches but no gender match, return the first language match
+    if (langMatches.length > 0) {
+      console.log("Selected voice:", {
+        name: langMatches[0].name,
+        lang: langMatches[0].lang
+      });
+      return langMatches[0];
+    }
   }
   
-  // Fallback to simple matching if voice type doesn't match our known types
-  if (voiceType.includes("female")) {
-    const femaleVoice = langVoices.find(v => 
-      v.name.toLowerCase().includes("female") || 
-      v.name.toLowerCase().includes("woman")
-    );
-    return femaleVoice || langVoices[0];
-  } else if (voiceType.includes("male")) {
-    const maleVoice = langVoices.find(v => 
-      v.name.toLowerCase().includes("male") || 
-      v.name.toLowerCase().includes("man")
-    );
-    return maleVoice || langVoices[0];
-  } else if (voiceType.includes("child")) {
-    const childVoice = langVoices.find(v => 
-      v.name.toLowerCase().includes("child") || 
-      v.name.toLowerCase().includes("kid")
-    );
-    return childVoice || langVoices[0];
+  // Handle simplified options (like "female", "male", "child")
+  if (["female", "male", "child"].includes(voiceType)) {
+    // Get voices for the selected language
+    const langVoices = voices.filter(voice => voice.lang.includes(voicePreferences.language.slice(0, 2)));
+    
+    // Find a voice matching the gender
+    const genderMatches = langVoices.filter(v => {
+      const name = v.name.toLowerCase();
+      if (voiceType === "female") {
+        return name.includes("female") || name.includes("woman") || name.includes("girl");
+      } else if (voiceType === "male") {
+        return name.includes("male") || name.includes("man") || name.includes("guy");
+      } else if (voiceType === "child") {
+        return name.includes("child") || name.includes("kid") || name.includes("junior");
+      }
+      return false;
+    });
+    
+    if (genderMatches.length > 0) {
+      console.log("Selected voice:", {
+        name: genderMatches[0].name,
+        lang: genderMatches[0].lang
+      });
+      return genderMatches[0];
+    }
+    
+    // If no gender match but we have language matches, return the first language match
+    if (langVoices.length > 0) {
+      console.log("Selected voice:", {
+        name: langVoices[0].name,
+        lang: langVoices[0].lang
+      });
+      return langVoices[0];
+    }
   }
   
-  // Return first voice for the language as last resort
-  return langVoices[0];
+  // Fallback to the first voice
+  console.log("Selected voice (fallback):", {
+    name: voices[0].name,
+    lang: voices[0].lang
+  });
+  return voices[0];
 }
 
 // Set voice preferences

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
-import { voiceTypes, speak } from "@/lib/tts";
+import { voiceTypes, speak, setVoicePreferences } from "@/lib/tts";
 
 export default function Customize() {
   const { 
@@ -22,7 +22,10 @@ export default function Customize() {
 
   useEffect(() => {
     setCurrentPage("/customize");
-  }, [setCurrentPage]);
+    
+    // Apply current voice settings on component load
+    setVoicePreferences(voiceSettings);
+  }, [setCurrentPage, voiceSettings]);
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
@@ -35,45 +38,79 @@ export default function Customize() {
     setLanguage(newLanguage);
     
     // Also update the language in voice settings
+    let newVoiceLanguage = "en-US";
     if (newLanguage === 'en') {
-      setVoiceSettings(prev => ({
-        ...prev,
-        language: "en-US"
-      }));
+      newVoiceLanguage = "en-US";
       setTestPhrase("Hello, this is a test of the voice settings.");
     } else if (newLanguage === 'es') {
-      setVoiceSettings(prev => ({
-        ...prev,
-        language: "es-ES"
-      }));
+      newVoiceLanguage = "es-ES";
       setTestPhrase("Hola, esta es una prueba de la configuración de voz.");
     }
+
+    // Update app context
+    setVoiceSettings(prev => {
+      const newSettings = {
+        ...prev,
+        language: newVoiceLanguage
+      };
+      
+      // Apply settings to TTS system
+      setVoicePreferences(newSettings);
+      return newSettings;
+    });
   };
 
   const handleVoiceTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setVoiceSettings(prev => ({
-      ...prev,
-      voiceType: e.target.value
-    }));
+    const newVoiceType = e.target.value;
+    setVoiceSettings(prev => {
+      const newSettings = {
+        ...prev,
+        voiceType: newVoiceType
+      };
+      
+      // Apply settings to TTS system
+      setVoicePreferences(newSettings);
+      return newSettings;
+    });
   };
 
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVoiceSettings(prev => ({
-      ...prev,
-      rate: parseFloat(e.target.value)
-    }));
+    const newRate = parseFloat(e.target.value);
+    setVoiceSettings(prev => {
+      const newSettings = {
+        ...prev,
+        rate: newRate
+      };
+      
+      // Apply settings to TTS system
+      setVoicePreferences(newSettings);
+      return newSettings;
+    });
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVoiceSettings(prev => ({
-      ...prev,
-      volume: parseFloat(e.target.value)
-    }));
+    const newVolume = parseFloat(e.target.value);
+    setVoiceSettings(prev => {
+      const newSettings = {
+        ...prev,
+        volume: newVolume
+      };
+      
+      // Apply settings to TTS system
+      setVoicePreferences(newSettings);
+      return newSettings;
+    });
   };
 
   const handleTestVoice = () => {
     setIsTestingVoice(true);
+    
+    // Ensure the current voice settings are applied before testing
+    setVoicePreferences(voiceSettings);
+    
+    // Speak the test phrase
     speak(testPhrase);
+    
     // Reset testing state after a delay
     setTimeout(() => setIsTestingVoice(false), 3000);
   };
