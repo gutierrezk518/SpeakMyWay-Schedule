@@ -188,7 +188,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-1 auto-rows-min ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 gap-0.5 auto-rows-min ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -246,7 +246,7 @@ export default function Schedule() {
               </div>
               
               {/* Category tabs */}
-              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-10">
+              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-10 shadow-md">
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
