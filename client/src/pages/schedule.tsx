@@ -31,6 +31,7 @@ export default function Schedule() {
   const [selectedCategory, setSelectedCategory] = useState("meals");
   const [activitiesPage, setActivitiesPage] = useState(1);
   const itemsPerPage = 12;
+  const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   
   // Set the current page in the app context
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function Schedule() {
   // Handle drag end event
   const onDragEnd = useCallback((result: DropResult) => {
     const { source, destination } = result;
+    setDraggedItem(null);
     
     // If dropped outside a droppable area
     if (!destination) return;
@@ -80,21 +82,43 @@ export default function Schedule() {
     
     // If adding from activity cards to schedule
     if (source.droppableId === "activity-cards" && destination.droppableId === "schedule") {
-      const activityToAdd = categoryActivities[source.index];
-      const newSchedule = [...scheduleData];
-      const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
-      if (!section) return;
-      
-      // Create a new copy of the activity with a unique ID
-      const newActivity = {
-        ...activityToAdd,
-        id: `${activityToAdd.id}-${uuidv4().slice(0, 8)}`
-      };
-      
-      section.activities.splice(destination.index, 0, newActivity);
-      setScheduleData(newSchedule);
+      try {
+        const activityToAdd = visibleActivities[source.index];
+        if (!activityToAdd) return;
+        
+        const newSchedule = [...scheduleData];
+        const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
+        if (!section) return;
+        
+        // Create a new copy of the activity with a unique ID to ensure it stays on both sides
+        const newActivity: ScheduleActivity = {
+          ...activityToAdd,
+          id: `${activityToAdd.id}-${uuidv4().slice(0, 8)}`
+        };
+        
+        // Add the activity to the schedule
+        section.activities = [...section.activities];
+        section.activities.splice(destination.index, 0, newActivity);
+        setScheduleData(newSchedule);
+        
+        console.log("Added activity to schedule:", newActivity.title);
+      } catch (error) {
+        console.error("Error adding activity to schedule:", error);
+      }
     }
-  }, [scheduleData, selectedTimeSection, categoryActivities]);
+  }, [scheduleData, selectedTimeSection, visibleActivities]);
+  
+  // Handle drag start to track the item being dragged
+  const onDragStart = useCallback((start: any) => {
+    const { source } = start;
+    if (source.droppableId === "activity-cards") {
+      const draggedActivity = visibleActivities[source.index];
+      setDraggedItem(draggedActivity);
+    } else if (source.droppableId === "schedule") {
+      const draggedActivity = currentSchedule[source.index];
+      setDraggedItem(draggedActivity);
+    }
+  }, [visibleActivities, currentSchedule]);
   
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
@@ -125,7 +149,7 @@ export default function Schedule() {
   
   return (
     <section className="h-full flex flex-col">
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
           {/* Schedule section - left side */}
           <div className="w-1/2 border-r border-gray-200 flex flex-col h-full">
