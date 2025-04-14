@@ -203,13 +203,20 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <ActivityCard 
-                          key={activity.id} 
-                          activity={activity} 
-                          index={index}
-                          showRemoveButton={true}
-                          onRemove={() => removeActivity(index)}
-                        />
+                        <div key={activity.id} className="relative">
+                          <ActivityCard 
+                            activity={activity} 
+                            index={index}
+                            showRemoveButton={false}
+                          />
+                          <button 
+                            className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+                            onClick={() => removeActivity(index)}
+                            aria-label="Remove activity"
+                          >
+                            <i className="ri-close-line text-[10px]"></i>
+                          </button>
+                        </div>
                       ))
                     )}
                     {provided.placeholder}
