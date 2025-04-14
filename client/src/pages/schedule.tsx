@@ -30,7 +30,7 @@ export default function Schedule() {
   const [selectedTimeSection, setSelectedTimeSection] = useState("morning"); 
   const [selectedCategory, setSelectedCategory] = useState("meals");
   const [activitiesPage, setActivitiesPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 24;
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   
   // Set the current page in the app context
@@ -255,7 +255,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="grid grid-cols-3 gap-3 overflow-y-auto"
+                    className="grid grid-cols-4 gap-1 overflow-y-auto"
                     style={{ minHeight: "200px" }}
                   >
                     {visibleActivities.map((activity, index) => (

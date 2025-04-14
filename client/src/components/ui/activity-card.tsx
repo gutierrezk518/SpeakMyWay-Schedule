@@ -24,9 +24,9 @@ export default function ActivityCard({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`rounded-xl aspect-square p-2 mb-3 flex flex-col items-center justify-between
-            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md'}
-            bg-${activity.bgColor} text-gray-800 border-2 border-${activity.bgColor === 'white' ? 'gray-300' : activity.bgColor}`}
+          className={`rounded-lg aspect-square p-1.5 mb-2 flex flex-col items-center justify-between
+            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm'}
+            bg-${activity.bgColor} text-gray-800 border border-${activity.bgColor === 'white' ? 'gray-300' : activity.bgColor}`}
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.9 : 1,
@@ -34,13 +34,13 @@ export default function ActivityCard({
           }}
         >
           {/* Icon container */}
-          <div className="flex-grow flex items-center justify-center w-full py-2">
-            <i className={`${activity.icon} text-3xl`}></i>
+          <div className="flex-grow flex items-center justify-center w-full py-1">
+            <i className={`${activity.icon} text-2xl`}></i>
           </div>
           
           {/* Text container */}
-          <div className="w-full bg-white bg-opacity-80 rounded-lg py-2 px-1 text-center">
-            <span className="font-bold text-sm">{activity.title}</span>
+          <div className="w-full bg-white bg-opacity-80 rounded-md py-1 px-0.5 text-center">
+            <span className="font-medium text-xs leading-tight">{activity.title}</span>
           </div>
           
           {/* Remove button positioned absolutely in the corner */}

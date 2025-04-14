@@ -82,67 +82,69 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
   };
 
   return (
-    <div className="p-4 bg-white rounded-md shadow-sm">
-      <h3 className="font-semibold text-center mb-2">Timer</h3>
-      
-      <div className="text-center">
-        {isRunning ? (
-          <div className="text-3xl font-bold mb-4 text-primary">
-            {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
-          </div>
-        ) : (
-          <div className="flex justify-center space-x-1 mb-4">
-            <select 
-              className="p-2 border rounded-md bg-white"
-              value={timerMinutes}
-              onChange={handleMinutesChange}
-              disabled={isRunning}
-            >
-              {Array.from({ length: 60 }, (_, i) => i).map(num => (
-                <option key={`min-${num}`} value={num}>{formatTime(num)}</option>
-              ))}
-            </select>
-            <span className="text-xl font-bold self-center">:</span>
-            <select 
-              className="p-2 border rounded-md bg-white"
-              value={timerSeconds}
-              onChange={handleSecondsChange}
-              disabled={isRunning}
-            >
-              {Array.from({ length: 60 }, (_, i) => i).map(num => (
-                <option key={`sec-${num}`} value={num}>{formatTime(num)}</option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-      
-      <div className="flex justify-center space-x-2">
-        {!isRunning ? (
-          <button 
-            className="bg-primary text-white px-3 py-1 rounded-md hover:bg-blue-600"
-            onClick={startTimer}
-          >
-            <i className="ri-play-line mr-1"></i>
-            Start
-          </button>
-        ) : (
-          <button 
-            className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
-            onClick={stopTimer}
-          >
-            <i className="ri-pause-line mr-1"></i>
-            Pause
-          </button>
-        )}
+    <div className="py-1 px-2 bg-white rounded shadow-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium">Timer</span>
         
-        <button 
-          className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-400"
-          onClick={resetTimer}
-        >
-          <i className="ri-refresh-line mr-1"></i>
-          Reset
-        </button>
+        <div className="flex items-center space-x-1">
+          {isRunning ? (
+            <div className="text-base font-bold text-primary">
+              {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+            </div>
+          ) : (
+            <div className="flex items-center space-x-1">
+              <select 
+                className="py-0.5 px-1 text-xs border rounded bg-white"
+                value={timerMinutes}
+                onChange={handleMinutesChange}
+                disabled={isRunning}
+              >
+                {Array.from({ length: 60 }, (_, i) => i).map(num => (
+                  <option key={`min-${num}`} value={num}>{formatTime(num)}</option>
+                ))}
+              </select>
+              <span className="text-xs font-bold">:</span>
+              <select 
+                className="py-0.5 px-1 text-xs border rounded bg-white"
+                value={timerSeconds}
+                onChange={handleSecondsChange}
+                disabled={isRunning}
+              >
+                {Array.from({ length: 60 }, (_, i) => i).map(num => (
+                  <option key={`sec-${num}`} value={num}>{formatTime(num)}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          
+          <div className="flex space-x-1">
+            {!isRunning ? (
+              <button 
+                className="bg-primary text-white p-1 text-xs rounded hover:bg-blue-600"
+                onClick={startTimer}
+                aria-label="Start timer"
+              >
+                <i className="ri-play-line"></i>
+              </button>
+            ) : (
+              <button 
+                className="bg-yellow-500 text-white p-1 text-xs rounded hover:bg-yellow-600"
+                onClick={stopTimer}
+                aria-label="Pause timer"
+              >
+                <i className="ri-pause-line"></i>
+              </button>
+            )}
+            
+            <button 
+              className="bg-gray-300 text-gray-700 p-1 text-xs rounded hover:bg-gray-400"
+              onClick={resetTimer}
+              aria-label="Reset timer"
+            >
+              <i className="ri-refresh-line"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
