@@ -31,7 +31,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md aspect-square p-1 mb-1 flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-sm aspect-square p-0.5 mb-0.5 flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             bg-${activity.bgColor} text-gray-800 border border-${activity.bgColor === 'white' ? 'gray-300' : activity.bgColor}`}
           style={{

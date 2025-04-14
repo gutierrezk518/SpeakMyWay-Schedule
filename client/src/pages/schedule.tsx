@@ -158,16 +158,16 @@ export default function Schedule() {
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
           {/* Schedule section - left side */}
-          <div className="w-1/2 border-r border-gray-200 flex flex-col h-full">
+          <div className={`${isFullscreen ? 'w-full' : 'w-1/2 border-r border-gray-200'} flex flex-col h-full`}>
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="text-center font-bold w-full">My Schedule</div>
               <div className="flex space-x-1">
                 <button 
                   className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
-                  onClick={() => {}}
+                  onClick={toggleFullscreen}
                   aria-label="Fullscreen"
                 >
-                  <i className="ri-fullscreen-line"></i>
+                  <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
                 <button 
                   className="p-1.5 rounded-full bg-red-100 hover:bg-red-200 text-red-500"
@@ -236,94 +236,96 @@ export default function Schedule() {
           </div>
           
           {/* Activity cards section - right side */}
-          <div className="w-1/2 flex flex-col h-full">
-            {/* Timer */}
-            <div className="p-2 border-b border-gray-200">
-              <ActivityTimer />
-            </div>
-            
-            {/* Category tabs */}
-            <div className="p-3 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-2 flex-wrap">
-              {activityCategories.map((category) => (
-                <button 
-                  key={category.id}
-                  className={`px-4 py-2 mb-1 whitespace-nowrap rounded-lg text-sm font-medium ${
-                    selectedCategory === category.id 
-                      ? `bg-${category.color} text-gray-800 shadow-sm` 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                  onClick={() => {
-                    setSelectedCategory(category.id);
-                    setActivitiesPage(1);
-                  }}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
-            
-            {/* Activity cards grid */}
-            <div className="flex-grow p-3 bg-gray-100 flex flex-col">
-              <div className="text-center mb-2 font-medium text-gray-700">Activity Cards</div>
-              <Droppable droppableId="activity-cards">
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="grid grid-cols-4 gap-1 overflow-y-auto"
-                    style={{ minHeight: "200px" }}
+          {!isFullscreen && (
+            <div className="w-1/2 flex flex-col h-full">
+              {/* Timer */}
+              <div className="p-2 border-b border-gray-200">
+                <ActivityTimer />
+              </div>
+              
+              {/* Category tabs */}
+              <div className="p-1.5 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1 flex-wrap">
+                {activityCategories.map((category) => (
+                  <button 
+                    key={category.id}
+                    className={`px-2 py-1 mb-0.5 whitespace-nowrap rounded-md text-xs font-medium ${
+                      selectedCategory === category.id 
+                        ? `bg-${category.color} text-gray-800 shadow-sm` 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    onClick={() => {
+                      setSelectedCategory(category.id);
+                      setActivitiesPage(1);
+                    }}
                   >
-                    {visibleActivities.map((activity, index) => (
-                      <ActivityCard 
-                        key={activity.id} 
-                        activity={activity} 
-                        index={index}
-                      />
-                    ))}
-                    {provided.placeholder}
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Activity cards grid */}
+              <div className="flex-grow p-3 bg-gray-100 flex flex-col">
+                <div className="text-center mb-2 font-medium text-gray-700">Activity Cards</div>
+                <Droppable droppableId="activity-cards">
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="grid grid-cols-4 gap-1 overflow-y-auto"
+                      style={{ minHeight: "200px" }}
+                    >
+                      {visibleActivities.map((activity, index) => (
+                        <ActivityCard 
+                          key={activity.id} 
+                          activity={activity} 
+                          index={index}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-4 flex justify-center">
+                    <div className="flex space-x-1">
+                      <button
+                        className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                        onClick={() => setActivitiesPage(Math.max(1, activitiesPage - 1))}
+                        disabled={activitiesPage === 1}
+                      >
+                        <i className="ri-arrow-left-s-line"></i>
+                      </button>
+                      
+                      <span className="px-3 py-2 bg-white rounded-md font-medium">
+                        {activitiesPage} / {totalPages}
+                      </span>
+                      
+                      <button
+                        className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                        onClick={() => setActivitiesPage(Math.min(totalPages, activitiesPage + 1))}
+                        disabled={activitiesPage === totalPages}
+                      >
+                        <i className="ri-arrow-right-s-line"></i>
+                      </button>
+                    </div>
                   </div>
                 )}
-              </Droppable>
+              </div>
               
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-4 flex justify-center">
-                  <div className="flex space-x-1">
-                    <button
-                      className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-                      onClick={() => setActivitiesPage(Math.max(1, activitiesPage - 1))}
-                      disabled={activitiesPage === 1}
-                    >
-                      <i className="ri-arrow-left-s-line"></i>
-                    </button>
-                    
-                    <span className="px-3 py-2 bg-white rounded-md font-medium">
-                      {activitiesPage} / {totalPages}
-                    </span>
-                    
-                    <button
-                      className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-                      onClick={() => setActivitiesPage(Math.min(totalPages, activitiesPage + 1))}
-                      disabled={activitiesPage === totalPages}
-                    >
-                      <i className="ri-arrow-right-s-line"></i>
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Action button */}
+              <div className="p-3 bg-gray-50 border-t border-gray-200">
+                <button 
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 font-medium"
+                  onClick={saveRoutine}
+                >
+                  <i className="ri-save-line mr-2 text-lg"></i>
+                  Save My Routine
+                </button>
+              </div>
             </div>
-            
-            {/* Action button */}
-            <div className="p-3 bg-gray-50 border-t border-gray-200">
-              <button 
-                className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 font-medium"
-                onClick={saveRoutine}
-              >
-                <i className="ri-save-line mr-2 text-lg"></i>
-                Save My Routine
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </DragDropContext>
     </section>
