@@ -80,7 +80,7 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Remove button positioned absolutely in the corner */}
+          {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
             <button 
               className="absolute top-0 right-0 p-1.5 bg-red-500 text-white hover:bg-red-600 rounded-tr-md rounded-bl-full text-xs shadow-md z-30"
