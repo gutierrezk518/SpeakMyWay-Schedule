@@ -1,4 +1,12 @@
-import { users, cards, settings, routines } from "@shared/schema";
+import { 
+  users, 
+  cards, 
+  settings, 
+  routines, 
+  categories, 
+  subcategories, 
+  coreWords 
+} from "@shared/schema";
 import { 
   User, 
   InsertUser, 
@@ -7,7 +15,13 @@ import {
   Settings, 
   InsertSettings, 
   Routine, 
-  InsertRoutine 
+  InsertRoutine,
+  Category,
+  InsertCategory,
+  Subcategory,
+  InsertSubcategory,
+  CoreWord,
+  InsertCoreWord
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, isNull, or } from "drizzle-orm";
@@ -194,6 +208,202 @@ export class DatabaseStorage implements IStorage {
   async deleteRoutine(id: number): Promise<boolean> {
     const result = await db.delete(routines).where(eq(routines.id, id));
     // For Postgres, result will have a count property that tells us how many rows were affected
+    return !!result;
+  }
+
+  // Category operations
+  async getCategories(type?: string): Promise<Category[]> {
+    if (type) {
+      return db.select().from(categories).where(eq(categories.type, type)).orderBy(categories.sortOrder);
+    }
+    return db.select().from(categories).orderBy(categories.sortOrder);
+  }
+
+  async getCategory(id: number): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    return category;
+  }
+
+  async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    // Add default values if needed
+    const categoryToInsert = {
+      ...insertCategory,
+      nameEs: insertCategory.nameEs ?? null,
+      sortOrder: insertCategory.sortOrder ?? 0
+    };
+    
+    const [category] = await db
+      .insert(categories)
+      .values(categoryToInsert)
+      .returning();
+    return category;
+  }
+
+  async updateCategory(id: number, updatedCategory: Partial<InsertCategory>): Promise<Category> {
+    const [existingCategory] = await db.select().from(categories).where(eq(categories.id, id));
+    
+    if (!existingCategory) {
+      throw new Error(`Category with id ${id} not found`);
+    }
+    
+    const [category] = await db
+      .update(categories)
+      .set(updatedCategory)
+      .where(eq(categories.id, id))
+      .returning();
+    
+    return category;
+  }
+
+  async deleteCategory(id: number): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id));
+    return !!result;
+  }
+
+  // Subcategory operations
+  async getSubcategories(categoryId: number): Promise<Subcategory[]> {
+    return db.select()
+      .from(subcategories)
+      .where(eq(subcategories.categoryId, categoryId))
+      .orderBy(subcategories.sortOrder);
+  }
+
+  async getAllSubcategories(): Promise<Subcategory[]> {
+    return db.select().from(subcategories).orderBy(subcategories.sortOrder);
+  }
+
+  async getSubcategory(id: number): Promise<Subcategory | undefined> {
+    const [subcategory] = await db.select().from(subcategories).where(eq(subcategories.id, id));
+    return subcategory;
+  }
+
+  async createSubcategory(insertSubcategory: InsertSubcategory): Promise<Subcategory> {
+    // Add default values if needed
+    const subcategoryToInsert = {
+      ...insertSubcategory,
+      nameEs: insertSubcategory.nameEs ?? null,
+      icon: insertSubcategory.icon ?? null,
+      color: insertSubcategory.color ?? null,
+      sortOrder: insertSubcategory.sortOrder ?? 0
+    };
+    
+    const [subcategory] = await db
+      .insert(subcategories)
+      .values(subcategoryToInsert)
+      .returning();
+    return subcategory;
+  }
+
+  async updateSubcategory(id: number, updatedSubcategory: Partial<InsertSubcategory>): Promise<Subcategory> {
+    const [existingSubcategory] = await db.select().from(subcategories).where(eq(subcategories.id, id));
+    
+    if (!existingSubcategory) {
+      throw new Error(`Subcategory with id ${id} not found`);
+    }
+    
+    const [subcategory] = await db
+      .update(subcategories)
+      .set(updatedSubcategory)
+      .where(eq(subcategories.id, id))
+      .returning();
+    
+    return subcategory;
+  }
+
+  async deleteSubcategory(id: number): Promise<boolean> {
+    const result = await db.delete(subcategories).where(eq(subcategories.id, id));
+    return !!result;
+  }
+
+  // Core Word operations
+  async getCoreWords(): Promise<CoreWord[]> {
+    return db.select().from(coreWords).orderBy(coreWords.sortOrder);
+  }
+
+  async getCoreWord(id: number): Promise<CoreWord | undefined> {
+    const [coreWord] = await db.select().from(coreWords).where(eq(coreWords.id, id));
+    return coreWord;
+  }
+
+  async createCoreWord(insertCoreWord: InsertCoreWord): Promise<CoreWord> {
+    // Add default values if needed
+    const coreWordToInsert = {
+      ...insertCoreWord,
+      textEs: insertCoreWord.textEs ?? null,
+      color: insertCoreWord.color ?? null,
+      sortOrder: insertCoreWord.sortOrder ?? 0
+    };
+    
+    const [coreWord] = await db
+      .insert(coreWords)
+      .values(coreWordToInsert)
+      .returning();
+    return coreWord;
+  }
+
+  async updateCoreWord(id: number, updatedCoreWord: Partial<InsertCoreWord>): Promise<CoreWord> {
+    const [existingCoreWord] = await db.select().from(coreWords).where(eq(coreWords.id, id));
+    
+    if (!existingCoreWord) {
+      throw new Error(`Core word with id ${id} not found`);
+    }
+    
+    const [coreWord] = await db
+      .update(coreWords)
+      .set(updatedCoreWord)
+      .where(eq(coreWords.id, id))
+      .returning();
+    
+    return coreWord;
+  }
+
+  async deleteCoreWord(id: number): Promise<boolean> {
+    const result = await db.delete(coreWords).where(eq(coreWords.id, id));
+    return !!result;
+  }
+
+  // Enhanced Card operations for the updated schema
+  async getScheduleCards(userId: number, language: string): Promise<Card[]> {
+    return db.select().from(cards)
+      .where(and(
+        or(eq(cards.userId, userId), isNull(cards.userId)),
+        eq(cards.language, language),
+        eq(cards.isScheduleCard, true)
+      ));
+  }
+
+  async getCommunicationCards(userId: number, language: string): Promise<Card[]> {
+    return db.select().from(cards)
+      .where(and(
+        or(eq(cards.userId, userId), isNull(cards.userId)),
+        eq(cards.language, language),
+        eq(cards.isCommunicationCard, true)
+      ));
+  }
+
+  async getCard(id: number): Promise<Card | undefined> {
+    const [card] = await db.select().from(cards).where(eq(cards.id, id));
+    return card;
+  }
+
+  async updateCard(id: number, updatedCard: Partial<InsertCard>): Promise<Card> {
+    const [existingCard] = await db.select().from(cards).where(eq(cards.id, id));
+    
+    if (!existingCard) {
+      throw new Error(`Card with id ${id} not found`);
+    }
+    
+    const [card] = await db
+      .update(cards)
+      .set(updatedCard)
+      .where(eq(cards.id, id))
+      .returning();
+    
+    return card;
+  }
+
+  async deleteCard(id: number): Promise<boolean> {
+    const result = await db.delete(cards).where(eq(cards.id, id));
     return !!result;
   }
 }

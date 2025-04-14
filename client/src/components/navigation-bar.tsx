@@ -36,6 +36,11 @@ export default function NavigationBar() {
           <i className="ri-global-line text-xl"></i>
           <span className="hidden sm:inline ml-1">{language.toUpperCase()}</span>
         </button>
+        <Link href="/admin">
+          <button className="p-2 rounded hover:bg-blue-600 active:bg-blue-700 transition-colors">
+            <i className="ri-database-2-line text-xl"></i>
+          </button>
+        </Link>
         <Link href="/customize">
           <button className="p-2 rounded hover:bg-blue-600 active:bg-blue-700 transition-colors">
             <i className="ri-settings-3-line text-xl"></i>
