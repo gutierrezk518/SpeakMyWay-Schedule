@@ -276,52 +276,50 @@ export default function Schedule() {
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
-          {/* Side buttons panel */}
-          {!isFullscreen && (
-            <div className="w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
-              {/* Undo button */}
-              <button 
-                className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
-                  canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
-                onClick={handleUndo}
-                disabled={!canUndo}
-                title="Undo"
-              >
-                <i className="ri-arrow-go-back-line text-lg"></i>
-              </button>
-              
-              {/* Redo button */}
-              <button 
-                className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
-                  canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
-                onClick={handleRedo}
-                disabled={!canRedo}
-                title="Redo"
-              >
-                <i className="ri-arrow-go-forward-line text-lg"></i>
-              </button>
-              
-              {/* Play button */}
-              <button 
-                className="w-10 h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
-                onClick={playSchedule}
-                title="Play schedule"
-              >
-                <i className="ri-play-line text-lg"></i>
-              </button>
-              
-              {/* Save button */}
-              <button 
-                className="w-10 h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
-                onClick={() => setShowSaveModal(true)}
-                title="Save schedule"
-              >
-                <i className="ri-save-line text-lg"></i>
-              </button>
-            </div>
-          )}
+          {/* Side buttons panel - always visible */}
+          <div className="w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+            {/* Undo button */}
+            <button 
+              className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+                canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+              }`}
+              onClick={handleUndo}
+              disabled={!canUndo}
+              title="Undo"
+            >
+              <i className="ri-arrow-go-back-line text-lg"></i>
+            </button>
+            
+            {/* Redo button */}
+            <button 
+              className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+                canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+              }`}
+              onClick={handleRedo}
+              disabled={!canRedo}
+              title="Redo"
+            >
+              <i className="ri-arrow-go-forward-line text-lg"></i>
+            </button>
+            
+            {/* Play button */}
+            <button 
+              className="w-10 h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+              onClick={playSchedule}
+              title="Play schedule"
+            >
+              <i className="ri-play-line text-lg"></i>
+            </button>
+            
+            {/* Save button */}
+            <button 
+              className="w-10 h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+              onClick={() => setShowSaveModal(true)}
+              title="Save schedule"
+            >
+              <i className="ri-save-line text-lg"></i>
+            </button>
+          </div>
           
           {/* Schedule section */}
           <div className={`${isFullscreen ? 'w-full' : 'w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
@@ -355,7 +353,7 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ paddingTop: '4px', paddingBottom: '4px' }}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center space-y-2 ${
+                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-3 auto-rows-max place-items-center ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -466,8 +464,8 @@ export default function Schedule() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-5 gap-1 overflow-y-auto flex-grow"
-                      style={{ minHeight: "200px", height: "calc(100vh - 300px)" }}
+                      className="grid grid-cols-5 gap-2 overflow-y-auto flex-grow"
+                      style={{ minHeight: "200px", height: "calc(100vh - 300px)", gridTemplateRows: "repeat(5, minmax(60px, 1fr))" }}
                     >
                       {visibleActivities.map((activity, index) => (
                         <ActivityCard 
