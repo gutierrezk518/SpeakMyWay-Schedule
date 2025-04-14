@@ -193,9 +193,9 @@ export default function Schedule() {
                     }`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-2 text-gray-500">
-                        <div className="text-2xl mb-1">👋</div>
-                        <p className="text-xs font-medium">Drag activities here to build your schedule</p>
+                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center">
+                        <div className="text-lg mb-0.5">👋</div>
+                        <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
@@ -250,7 +250,13 @@ export default function Schedule() {
                     key={category.id}
                     className={`px-2 py-1 mb-0.5 whitespace-nowrap rounded-md text-xs font-medium ${
                       selectedCategory === category.id 
-                        ? `bg-${category.color} text-gray-800 shadow-sm` 
+                        ? (category.color === 'purple-300' ? 'bg-purple-300' :
+                           category.color === 'green-400' ? 'bg-green-400' :
+                           category.color === 'green-200' ? 'bg-green-200' :
+                           category.color === 'orange-200' ? 'bg-orange-200' :
+                           category.color === 'blue-400' ? 'bg-blue-400' :
+                           category.color === 'purple-200' ? 'bg-purple-200' :
+                           category.color === 'orange-100' ? 'bg-orange-100' : 'bg-gray-200') + ' text-gray-800 shadow-sm'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                     onClick={() => {
