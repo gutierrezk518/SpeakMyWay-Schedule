@@ -203,7 +203,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className="relative">
+                        <div key={activity.id} className="relative w-14 h-14 mx-auto my-1.5">
                           <ActivityCard 
                             activity={activity} 
                             index={index}
