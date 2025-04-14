@@ -11,7 +11,7 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import ActivityCard from "@/components/ui/activity-card";
 import ActivityTimer from "@/components/ui/activity-timer";
 import { v4 as uuidv4 } from 'uuid';
-import { speak } from "@/lib/tts";
+import { speak, speakWithPause } from "@/lib/tts";
 
 interface ScheduleSection extends ScheduleTimeSection {
   activities: ScheduleActivity[];
@@ -24,7 +24,8 @@ export default function Schedule() {
     undoScheduleChange, 
     redoScheduleChange,
     canUndo,
-    canRedo
+    canRedo,
+    userName
   } = useAppContext();
   
   // Schedule state
@@ -230,6 +231,54 @@ export default function Schedule() {
       alert(`Schedule saved to ${sectionName}!`);
     }
   };
+  
+  // Play through the schedule as a complete sentence with ordinal words
+  const playSchedule = () => {
+    if (currentSchedule.length === 0) {
+      speak("Your schedule is empty. Add some activities first.");
+      return;
+    }
+    
+    // Get app context user name if available
+    const { userName } = useAppContext();
+    const namePrefix = userName ? `Ok ${userName}. ` : "";
+    
+    // Create array of schedule items with ordinal words
+    const scheduleTexts: string[] = [];
+    
+    currentSchedule.forEach((activity, index) => {
+      let ordinalPrefix = "";
+      
+      // Assign ordinal word based on position
+      if (index === 0) {
+        ordinalPrefix = "First we will ";
+      } else if (index === 1) {
+        ordinalPrefix = "Second we will ";
+      } else if (index === 2) {
+        ordinalPrefix = "Third we will ";
+      } else if (index === currentSchedule.length - 1) {
+        ordinalPrefix = "And last we will ";
+      } else {
+        // For positions 4th and beyond
+        ordinalPrefix = `Next we will `;
+      }
+      
+      scheduleTexts.push(`${ordinalPrefix}${activity.title.toLowerCase()}`);
+    });
+    
+    // Speak the schedule
+    speakWithPause([scheduleTexts[0]], namePrefix, 400);
+    
+    // Speak the rest of the schedule with appropriate conjunctions
+    if (scheduleTexts.length > 1) {
+      // Join the middle items with commas, and add the last item with "and"
+      for (let i = 1; i < scheduleTexts.length; i++) {
+        setTimeout(() => {
+          speak(scheduleTexts[i]);
+        }, 1500 * i);
+      }
+    }
+  };
 
   return (
     <section className="h-full flex flex-col">
@@ -260,6 +309,15 @@ export default function Schedule() {
                 title="Redo"
               >
                 <i className="ri-arrow-go-forward-line text-lg"></i>
+              </button>
+              
+              {/* Play button */}
+              <button 
+                className="w-10 h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                onClick={playSchedule}
+                title="Play schedule"
+              >
+                <i className="ri-play-line text-lg"></i>
               </button>
               
               {/* Save button */}

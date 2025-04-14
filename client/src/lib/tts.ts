@@ -74,6 +74,45 @@ export function speak(text: string): void {
   window.speechSynthesis.speak(utterance);
 }
 
+// Speak sequence of texts with pause between each
+export function speakWithPause(texts: string[], prefix: string = "", pauseDuration: number = 400): void {
+  if (!isSpeechSupported || texts.length === 0) return;
+  
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+  
+  let currentIndex = 0;
+  
+  const speakNext = () => {
+    if (currentIndex >= texts.length) return;
+    
+    const text = currentIndex === 0 ? prefix + texts[currentIndex] : texts[currentIndex];
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set voice if available
+    const voice = getPreferredVoice();
+    if (voice) utterance.voice = voice;
+    
+    // Set preferences
+    utterance.rate = voicePreferences.rate;
+    utterance.volume = voicePreferences.volume;
+    utterance.lang = voicePreferences.language;
+    
+    // Continue to next item after this one finishes
+    utterance.onend = () => {
+      currentIndex++;
+      if (currentIndex < texts.length) {
+        setTimeout(speakNext, pauseDuration);
+      }
+    };
+    
+    // Speak
+    window.speechSynthesis.speak(utterance);
+  };
+  
+  speakNext();
+}
+
 // Word prediction functionality
 // Simple implementation for now, can be enhanced later
 export function predictNextWords(lastWord: string): string[] {
