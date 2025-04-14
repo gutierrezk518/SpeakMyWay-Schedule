@@ -353,7 +353,7 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ paddingTop: '4px', paddingBottom: '4px' }}
-                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-3 auto-rows-max place-items-center ${
+                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -366,14 +366,14 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className="relative w-14 h-14 mx-auto">
+                        <div key={activity.id} className="relative w-14 h-14 mx-auto pt-1.5 pb-1.5">
                           <ActivityCard 
                             activity={activity} 
                             index={index}
                             showRemoveButton={false}
                           />
                           <button 
-                            className="absolute -top-1.5 -right-1.5 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                            className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
                             onClick={() => removeActivity(index)}
                             aria-label="Remove activity"
                           >
@@ -464,8 +464,14 @@ export default function Schedule() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-5 gap-2 overflow-y-auto flex-grow"
-                      style={{ minHeight: "200px", height: "calc(100vh - 300px)", gridTemplateRows: "repeat(5, minmax(60px, 1fr))" }}
+                      className="grid grid-cols-5 gap-4 overflow-y-auto flex-grow"
+                      style={{ 
+                        minHeight: "200px", 
+                        height: "calc(100vh - 300px)", 
+                        gridTemplateRows: "repeat(5, 60px)", 
+                        alignItems: "center",
+                        justifyItems: "center"
+                      }}
                     >
                       {visibleActivities.map((activity, index) => (
                         <ActivityCard 
