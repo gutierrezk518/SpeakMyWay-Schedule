@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -251,6 +251,7 @@ export default function Admin() {
           <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
           <TabsTrigger value="corewords">Core Words</TabsTrigger>
           <TabsTrigger value="cards">Activity Cards</TabsTrigger>
+          <TabsTrigger value="import-export">Import/Export</TabsTrigger>
         </TabsList>
         
         {/* Categories Tab */}
@@ -807,6 +808,224 @@ export default function Admin() {
                 </div>
               )}
             </div>
+          </div>
+        </TabsContent>
+
+        {/* Import/Export Tab */}
+        <TabsContent value="import-export">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Download CSV Templates</CardTitle>
+                <CardDescription>
+                  Download template CSV files to fill with your data.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-medium">Available Templates:</h3>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      onClick={() => {
+                        const categoryTemplate = 'name,nameEs,icon,color,type,sortOrder\nFood,Comida,ri-restaurant-line,green-500,vocabulary,0\nTransportation,Transporte,ri-car-line,blue-500,vocabulary,1';
+                        
+                        const blob = new Blob([categoryTemplate], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'categories_template.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        toast({
+                          title: "Template Downloaded",
+                          description: "Categories template has been downloaded."
+                        });
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <i className="ri-file-download-line mr-2"></i>
+                      Categories Template
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        const subcategoryTemplate = 'categoryId,name,nameEs,icon,color,sortOrder\n1,Fruits,Frutas,ri-apple-line,red-500,0\n1,Vegetables,Verduras,ri-plant-line,green-500,1';
+                        
+                        const blob = new Blob([subcategoryTemplate], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'subcategories_template.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        toast({
+                          title: "Template Downloaded",
+                          description: "Subcategories template has been downloaded."
+                        });
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <i className="ri-file-download-line mr-2"></i>
+                      Subcategories Template
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        const coreWordTemplate = 'text,textEs,icon,canBePlural,color,sortOrder\nI,Yo,ri-user-line,false,blue-500,0\nWant,Quiero,ri-hand-line,false,pink-500,1';
+                        
+                        const blob = new Blob([coreWordTemplate], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'corewords_template.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        toast({
+                          title: "Template Downloaded",
+                          description: "Core words template has been downloaded."
+                        });
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <i className="ri-file-download-line mr-2"></i>
+                      Core Words Template
+                    </Button>
+
+                    <Button
+                      onClick={() => {
+                        const cardsTemplate = 'text,speechText,textEs,speechTextEs,category,subcategory,icon,bgColor,canBePlural,language,isScheduleCard,isCommunicationCard\nApple,Apple,Manzana,Manzana,Food,Fruits,ri-apple-line,red-100,false,en,false,true\nBreakfast,Eat Breakfast,Desayuno,Comer Desayuno,Routine,Morning,ri-restaurant-line,orange-100,false,en,true,false';
+                        
+                        const blob = new Blob([cardsTemplate], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'cards_template.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        toast({
+                          title: "Template Downloaded",
+                          description: "Activity cards template has been downloaded."
+                        });
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <i className="ri-file-download-line mr-2"></i>
+                      Activity Cards Template
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload CSV Files</CardTitle>
+                <CardDescription>
+                  Upload your filled CSV files to import the data.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="categoriesFile">Categories CSV File</Label>
+                    <Input 
+                      id="categoriesFile" 
+                      type="file" 
+                      accept=".csv" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // File handling would go here
+                          toast({
+                            title: "File Selected",
+                            description: `Categories file "${file.name}" selected. This feature is being implemented.`
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="subcategoriesFile">Subcategories CSV File</Label>
+                    <Input 
+                      id="subcategoriesFile" 
+                      type="file" 
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // File handling would go here
+                          toast({
+                            title: "File Selected",
+                            description: `Subcategories file "${file.name}" selected. This feature is being implemented.`
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="corewordsFile">Core Words CSV File</Label>
+                    <Input 
+                      id="corewordsFile" 
+                      type="file" 
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // File handling would go here
+                          toast({
+                            title: "File Selected",
+                            description: `Core words file "${file.name}" selected. This feature is being implemented.`
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cardsFile">Activity Cards CSV File</Label>
+                    <Input 
+                      id="cardsFile" 
+                      type="file" 
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // File handling would go here
+                          toast({
+                            title: "File Selected",
+                            description: `Activity cards file "${file.name}" selected. This feature is being implemented.`
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="secondary" className="w-full">
+                  <i className="ri-upload-line mr-2"></i>
+                  Upload Selected Files
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
