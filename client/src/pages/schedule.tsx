@@ -32,6 +32,12 @@ export default function Schedule() {
   const [activitiesPage, setActivitiesPage] = useState(1);
   const itemsPerPage = 24;
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
   
   // Set the current page in the app context
   useEffect(() => {
@@ -155,13 +161,22 @@ export default function Schedule() {
           <div className="w-1/2 border-r border-gray-200 flex flex-col h-full">
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="text-center font-bold w-full">My Schedule</div>
-              <button 
-                className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-500"
-                onClick={clearActivities}
-                aria-label="Clear all activities"
-              >
-                <i className="ri-delete-bin-line"></i>
-              </button>
+              <div className="flex space-x-1">
+                <button 
+                  className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
+                  onClick={() => {}}
+                  aria-label="Fullscreen"
+                >
+                  <i className="ri-fullscreen-line"></i>
+                </button>
+                <button 
+                  className="p-1.5 rounded-full bg-red-100 hover:bg-red-200 text-red-500"
+                  onClick={clearActivities}
+                  aria-label="Clear all activities"
+                >
+                  <i className="ri-delete-bin-line"></i>
+                </button>
+              </div>
             </div>
             
             {/* Droppable schedule area */}
