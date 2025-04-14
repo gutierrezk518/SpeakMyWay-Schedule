@@ -186,7 +186,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 ${
+                    className={`overflow-y-auto flex-grow rounded-md p-2 flex flex-col space-y-1 ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'

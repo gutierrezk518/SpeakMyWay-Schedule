@@ -31,17 +31,17 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-sm h-[calc(12.5%-0.5px)] p-0.5 mb-0 flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-md w-full h-auto aspect-square p-1 flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
-            ${activity.bgColor === 'purple-100' ? 'bg-purple-100' : 
-              activity.bgColor === 'green-100' ? 'bg-green-100' : 
-              activity.bgColor === 'blue-100' ? 'bg-blue-100' : 
-              activity.bgColor === 'orange-100' ? 'bg-orange-100' : 'bg-gray-100'} 
-            text-gray-800 border 
-            ${activity.bgColor === 'purple-100' ? 'border-purple-300' : 
-              activity.bgColor === 'green-100' ? 'border-green-300' : 
-              activity.bgColor === 'blue-100' ? 'border-blue-300' : 
-              activity.bgColor === 'orange-100' ? 'border-orange-300' : 'border-gray-300'}`}
+            ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
+              activity.bgColor === 'green-400' ? 'bg-green-400' : 
+              activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
+              activity.bgColor === 'blue-400' ? 'bg-blue-400' : 
+              activity.bgColor === 'orange-300' ? 'bg-orange-300' : 
+              activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
+              activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
+              activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
+            text-gray-800 border-none`}
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.9 : 1,
@@ -49,14 +49,14 @@ export default function ActivityCard({
           }}
         >
           {/* Icon container */}
-          <div className="flex-grow flex items-center justify-center w-full py-0.5">
-            <i className={`${activity.icon} text-sm`}></i>
+          <div className="flex-grow flex items-center justify-center w-full">
+            <i className={`${activity.icon} text-lg text-gray-800`}></i>
           </div>
           
           {/* Text container */}
-          <div className="w-full bg-white bg-opacity-80 rounded-sm py-0.5 px-0.5 text-center relative">
-            <span className="font-medium text-[8px] leading-tight">{activity.title}</span>
-            <span className="absolute right-0.5 bottom-0 text-[4px] text-gray-400">
+          <div className="w-full bg-white bg-opacity-70 rounded-sm py-1 px-1 text-center">
+            <span className="font-medium text-[10px] leading-tight">{activity.title}</span>
+            <span className="absolute right-1 bottom-1 text-[8px] text-gray-600">
               <i className="ri-volume-up-line"></i>
             </span>
           </div>
