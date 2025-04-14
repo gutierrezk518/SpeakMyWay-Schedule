@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { 
   initialScheduleData, 
@@ -11,13 +11,21 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import ActivityCard from "@/components/ui/activity-card";
 import ActivityTimer from "@/components/ui/activity-timer";
 import { v4 as uuidv4 } from 'uuid';
+import { speak } from "@/lib/tts";
 
 interface ScheduleSection extends ScheduleTimeSection {
   activities: ScheduleActivity[];
 }
 
 export default function Schedule() {
-  const { setCurrentPage } = useAppContext();
+  const { 
+    setCurrentPage, 
+    addToScheduleHistory, 
+    undoScheduleChange, 
+    redoScheduleChange,
+    canUndo,
+    canRedo
+  } = useAppContext();
   
   // Schedule state
   const [scheduleData, setScheduleData] = useState<ScheduleSection[]>(() => {
@@ -27,7 +35,8 @@ export default function Schedule() {
   });
   
   // UI state
-  const [selectedTimeSection, setSelectedTimeSection] = useState("morning"); 
+  const [selectedTimeSection, setSelectedTimeSection] = useState("morning");
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
   const itemsPerPage = 48; // Increased to show more activities at once
@@ -76,6 +85,12 @@ export default function Schedule() {
       destination.index === source.index
     ) return;
     
+    // Save current state for undo history before making changes
+    const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
+    if (currentSection) {
+      addToScheduleHistory([...currentSection.activities]);
+    }
+    
     // If moving within schedule
     if (source.droppableId === "schedule" && destination.droppableId === "schedule") {
       const newSchedule = [...scheduleData];
@@ -109,12 +124,14 @@ export default function Schedule() {
         section.activities.splice(destination.index, 0, newActivity);
         setScheduleData(newSchedule);
         
+        // Speak the activity title when it's added to the schedule
+        speak(newActivity.title);
         console.log("Added activity to schedule:", newActivity.title);
       } catch (error) {
         console.error("Error adding activity to schedule:", error);
       }
     }
-  }, [scheduleData, selectedTimeSection, visibleActivities]);
+  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory]);
   
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
@@ -130,6 +147,12 @@ export default function Schedule() {
   
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
+    // Add current state to history for undo
+    const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
+    if (currentSection) {
+      addToScheduleHistory([...currentSection.activities]);
+    }
+    
     const newSchedule = [...scheduleData];
     const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
     if (!section) return;
@@ -140,6 +163,12 @@ export default function Schedule() {
   
   // Clear all activities
   const clearActivities = () => {
+    // Add current state to history for undo
+    const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
+    if (currentSection && currentSection.activities.length > 0) {
+      addToScheduleHistory([...currentSection.activities]);
+    }
+    
     const newSchedule = scheduleData.map((section: ScheduleSection) => {
       if (section.id === selectedTimeSection) {
         return { ...section, activities: [] };
@@ -147,6 +176,34 @@ export default function Schedule() {
       return section;
     });
     setScheduleData(newSchedule);
+  };
+  
+  // Handle undo action
+  const handleUndo = () => {
+    const previousActivities = undoScheduleChange();
+    if (previousActivities) {
+      const newSchedule = scheduleData.map((section: ScheduleSection) => {
+        if (section.id === selectedTimeSection) {
+          return { ...section, activities: previousActivities };
+        }
+        return section;
+      });
+      setScheduleData(newSchedule);
+    }
+  };
+  
+  // Handle redo action
+  const handleRedo = () => {
+    const nextActivities = redoScheduleChange();
+    if (nextActivities) {
+      const newSchedule = scheduleData.map((section: ScheduleSection) => {
+        if (section.id === selectedTimeSection) {
+          return { ...section, activities: nextActivities };
+        }
+        return section;
+      });
+      setScheduleData(newSchedule);
+    }
   };
   
   // Save the current routine

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { speak } from "@/lib/tts";
+import { ScheduleActivity } from "@/data/scheduleData";
 
 interface AppContextType {
   currentPage: string;
@@ -25,6 +26,14 @@ interface AppContextType {
   removeMessageWord: (id: string) => void;
   clearMessageWords: () => void;
   speakMessage: () => void;
+  // Schedule history for undo/redo functionality
+  scheduleHistory: ScheduleActivity[][];
+  scheduleHistoryIndex: number;
+  addToScheduleHistory: (schedule: ScheduleActivity[]) => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  undoScheduleChange: () => ScheduleActivity[] | undefined;
+  redoScheduleChange: () => ScheduleActivity[] | undefined;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -44,6 +53,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     reduceAnimations: false,
   });
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
+  
+  // Undo/Redo state
+  const [scheduleHistory, setScheduleHistory] = useState<ScheduleActivity[][]>([[]]);
+  const [scheduleHistoryIndex, setScheduleHistoryIndex] = useState(0);
+  
+  // Derived properties
+  const canUndo = scheduleHistoryIndex > 0;
+  const canRedo = scheduleHistoryIndex < scheduleHistory.length - 1;
 
   const addMessageWord = (word: string) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -62,6 +79,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const speakMessage = () => {
     const message = messageWords.map((mw) => mw.word).join(" ");
     speak(message);
+  };
+  
+  // Add current schedule to history
+  const addToScheduleHistory = (schedule: ScheduleActivity[]) => {
+    // Create deep copy to prevent reference issues
+    const newSchedule = JSON.parse(JSON.stringify(schedule));
+    
+    // If we're in the middle of the history, truncate forward history
+    const newHistory = scheduleHistory.slice(0, scheduleHistoryIndex + 1);
+    
+    // Add new state to history
+    newHistory.push(newSchedule);
+    
+    // Update history and point to latest state
+    setScheduleHistory(newHistory);
+    setScheduleHistoryIndex(newHistory.length - 1);
+  };
+  
+  // Undo the last action
+  const undoScheduleChange = (): ScheduleActivity[] | undefined => {
+    if (!canUndo) return undefined;
+    
+    const newIndex = scheduleHistoryIndex - 1;
+    setScheduleHistoryIndex(newIndex);
+    
+    // Return the previous state
+    return JSON.parse(JSON.stringify(scheduleHistory[newIndex]));
+  };
+  
+  // Redo the last undone action
+  const redoScheduleChange = (): ScheduleActivity[] | undefined => {
+    if (!canRedo) return undefined;
+    
+    const newIndex = scheduleHistoryIndex + 1;
+    setScheduleHistoryIndex(newIndex);
+    
+    // Return the next state
+    return JSON.parse(JSON.stringify(scheduleHistory[newIndex]));
   };
 
   return (
@@ -82,6 +137,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         removeMessageWord,
         clearMessageWords,
         speakMessage,
+        scheduleHistory,
+        scheduleHistoryIndex,
+        addToScheduleHistory,
+        canUndo,
+        canRedo,
+        undoScheduleChange,
+        redoScheduleChange
       }}
     >
       {children}
