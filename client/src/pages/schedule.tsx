@@ -72,7 +72,7 @@ export default function Schedule() {
     // If moving within schedule
     if (source.droppableId === "schedule" && destination.droppableId === "schedule") {
       const newSchedule = [...scheduleData];
-      const section = newSchedule.find(s => s.id === selectedTimeSection);
+      const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
       if (!section) return;
       
       const [movedActivity] = section.activities.splice(source.index, 1);
@@ -85,7 +85,7 @@ export default function Schedule() {
     if (source.droppableId === "activity-cards" && destination.droppableId === "schedule") {
       const activityToAdd = categoryActivities[source.index];
       const newSchedule = [...scheduleData];
-      const section = newSchedule.find(s => s.id === selectedTimeSection);
+      const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
       if (!section) return;
       
       // Create a new copy of the activity with a unique ID
@@ -102,7 +102,7 @@ export default function Schedule() {
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
     const newSchedule = [...scheduleData];
-    const section = newSchedule.find(s => s.id === selectedTimeSection);
+    const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
     if (!section) return;
     
     section.activities.splice(index, 1);
@@ -167,8 +167,8 @@ export default function Schedule() {
             </button>
             
             <div className="text-center font-semibold">
-              <i className={`${scheduleData.find(s => s.id === selectedTimeSection)?.icon} mr-1`}></i>
-              {scheduleData.find(s => s.id === selectedTimeSection)?.name} Schedule
+              <i className={`${scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection)?.icon} mr-1`}></i>
+              {scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection)?.name} Schedule
             </div>
             
             <button 
