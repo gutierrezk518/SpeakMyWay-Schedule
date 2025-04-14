@@ -13,18 +13,62 @@ export const users = pgTable("users", {
   isEnterprise: boolean("is_enterprise").default(false),
 });
 
-// Vocabulary Cards
+// Categories
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  nameEs: text("name_es"), // Spanish name
+  icon: text("icon").notNull(),
+  color: text("color").notNull(),
+  type: text("type").notNull(), // 'vocabulary' or 'schedule'
+  sortOrder: integer("sort_order").default(0),
+});
+
+// Subcategories
+export const subcategories = pgTable("subcategories", {
+  id: serial("id").primaryKey(),
+  categoryId: integer("category_id").references(() => categories.id).notNull(),
+  name: text("name").notNull(),
+  nameEs: text("name_es"), // Spanish name
+  icon: text("icon"),
+  color: text("color"),
+  sortOrder: integer("sort_order").default(0),
+});
+
+// Core Words
+export const coreWords = pgTable("core_words", {
+  id: serial("id").primaryKey(),
+  text: text("text").notNull(),
+  textEs: text("text_es"), // Spanish text
+  icon: text("icon").notNull(),
+  canBePlural: boolean("can_be_plural").default(false),
+  color: text("color"),
+  sortOrder: integer("sort_order").default(0),
+});
+
+// Activity Cards - Enhanced with multilingual support and speech text
 export const cards = pgTable("cards", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
+  // English content
   text: text("text").notNull(),
+  speechText: text("speech_text"), // What should be spoken in English (e.g., "Eat Breakfast")
+  // Spanish content
+  textEs: text("text_es"), // Spanish text
+  speechTextEs: text("speech_text_es"), // What should be spoken in Spanish
+  // Organization
   category: text("category").notNull(),
   subcategory: text("subcategory").notNull(),
+  // Display
   icon: text("icon").notNull(),
+  bgColor: text("bg_color").default("gray-100"),
+  // Other properties
   canBePlural: boolean("can_be_plural").default(false),
   language: text("language").default("en"),
   usageCount: integer("usage_count").default(0),
   isCustom: boolean("is_custom").default(false),
+  isScheduleCard: boolean("is_schedule_card").default(true),
+  isCommunicationCard: boolean("is_communication_card").default(true),
 });
 
 // User settings
@@ -52,15 +96,48 @@ export const insertUserSchema = createInsertSchema(users).pick({
   language: true,
 });
 
+export const insertCategorySchema = createInsertSchema(categories).pick({
+  name: true,
+  nameEs: true, 
+  icon: true,
+  color: true,
+  type: true,
+  sortOrder: true,
+});
+
+export const insertSubcategorySchema = createInsertSchema(subcategories).pick({
+  categoryId: true,
+  name: true,
+  nameEs: true,
+  icon: true,
+  color: true,
+  sortOrder: true,
+});
+
+export const insertCoreWordSchema = createInsertSchema(coreWords).pick({
+  text: true,
+  textEs: true,
+  icon: true,
+  canBePlural: true,
+  color: true,
+  sortOrder: true,
+});
+
 export const insertCardSchema = createInsertSchema(cards).pick({
   userId: true,
   text: true,
+  speechText: true,
+  textEs: true,
+  speechTextEs: true,
   category: true,
   subcategory: true,
   icon: true,
+  bgColor: true,
   canBePlural: true,
   language: true,
   isCustom: true,
+  isScheduleCard: true,
+  isCommunicationCard: true,
 });
 
 export const insertSettingsSchema = createInsertSchema(settings).pick({
@@ -79,6 +156,15 @@ export const insertRoutineSchema = createInsertSchema(routines).pick({
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type Category = typeof categories.$inferSelect;
+
+export type InsertSubcategory = z.infer<typeof insertSubcategorySchema>;
+export type Subcategory = typeof subcategories.$inferSelect;
+
+export type InsertCoreWord = z.infer<typeof insertCoreWordSchema>;
+export type CoreWord = typeof coreWords.$inferSelect;
 
 export type InsertCard = z.infer<typeof insertCardSchema>;
 export type Card = typeof cards.$inferSelect;

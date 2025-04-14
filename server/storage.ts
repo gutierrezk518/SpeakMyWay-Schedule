@@ -6,7 +6,13 @@ import {
   Settings, 
   InsertSettings, 
   Routine, 
-  InsertRoutine 
+  InsertRoutine,
+  Category,
+  InsertCategory,
+  Subcategory,
+  InsertSubcategory,
+  CoreWord,
+  InsertCoreWord
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -16,13 +22,39 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
+  // Category operations
+  getCategories(type?: string): Promise<Category[]>;
+  getCategory(id: number): Promise<Category | undefined>;
+  createCategory(category: InsertCategory): Promise<Category>;
+  updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
+  deleteCategory(id: number): Promise<boolean>;
+  
+  // Subcategory operations
+  getSubcategories(categoryId: number): Promise<Subcategory[]>;
+  getSubcategory(id: number): Promise<Subcategory | undefined>;
+  createSubcategory(subcategory: InsertSubcategory): Promise<Subcategory>;
+  updateSubcategory(id: number, subcategory: Partial<InsertSubcategory>): Promise<Subcategory>;
+  deleteSubcategory(id: number): Promise<boolean>;
+  
+  // Core Word operations
+  getCoreWords(): Promise<CoreWord[]>;
+  getCoreWord(id: number): Promise<CoreWord | undefined>;
+  createCoreWord(coreWord: InsertCoreWord): Promise<CoreWord>;
+  updateCoreWord(id: number, coreWord: Partial<InsertCoreWord>): Promise<CoreWord>;
+  deleteCoreWord(id: number): Promise<boolean>;
+  
   // Card operations
   getCards(userId: number, language: string): Promise<Card[]>;
   getCardsByCategory(userId: number, category: string, language: string): Promise<Card[]>;
   getCardsBySubcategory(userId: number, category: string, subcategory: string, language: string): Promise<Card[]>;
+  getScheduleCards(userId: number, language: string): Promise<Card[]>;
+  getCommunicationCards(userId: number, language: string): Promise<Card[]>;
   getMostUsedCards(userId: number, limit: number, language: string): Promise<Card[]>;
+  getCard(id: number): Promise<Card | undefined>;
   createCard(card: InsertCard): Promise<Card>;
+  updateCard(id: number, card: Partial<InsertCard>): Promise<Card>;
   updateCardUsage(id: number): Promise<Card>;
+  deleteCard(id: number): Promise<boolean>;
   
   // Settings operations
   getSettings(userId: number): Promise<Settings | undefined>;
