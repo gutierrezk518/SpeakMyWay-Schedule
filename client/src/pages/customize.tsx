@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
+import { voiceTypes, speak } from "@/lib/tts";
 
 export default function Customize() {
   const { 
@@ -13,6 +14,11 @@ export default function Customize() {
     displaySettings,
     setDisplaySettings
   } = useAppContext();
+  
+  // State for the test phrase
+  const [testPhrase, setTestPhrase] = useState("Hello, this is a test of the voice settings.");
+  // State to track whether we're testing a voice or not
+  const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   useEffect(() => {
     setCurrentPage("/customize");
@@ -25,7 +31,23 @@ export default function Customize() {
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLanguage(e.target.value);
+    const newLanguage = e.target.value;
+    setLanguage(newLanguage);
+    
+    // Also update the language in voice settings
+    if (newLanguage === 'en') {
+      setVoiceSettings({
+        ...voiceSettings,
+        language: "en-US"
+      });
+      setTestPhrase("Hello, this is a test of the voice settings.");
+    } else if (newLanguage === 'es') {
+      setVoiceSettings({
+        ...voiceSettings,
+        language: "es-ES"
+      });
+      setTestPhrase("Hola, esta es una prueba de la configuración de voz.");
+    }
   };
 
   const handleVoiceTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -47,6 +69,13 @@ export default function Customize() {
       ...voiceSettings,
       volume: parseFloat(e.target.value)
     });
+  };
+
+  const handleTestVoice = () => {
+    setIsTestingVoice(true);
+    speak(testPhrase);
+    // Reset testing state after a delay
+    setTimeout(() => setIsTestingVoice(false), 3000);
   };
 
   const handleTextSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,11 +149,61 @@ export default function Customize() {
                   value={voiceSettings.voiceType}
                   onChange={handleVoiceTypeChange}
                 >
-                  <option value="default">Default</option>
-                  <option value="child">Child</option>
-                  <option value="female">Adult Female</option>
-                  <option value="male">Adult Male</option>
+                  <option value="default">System Default</option>
+                  
+                  {/* English Voices */}
+                  <optgroup label="English Voices">
+                    <option value="en-US-female-warm">Warm & Friendly Female</option>
+                    <option value="en-US-female-professional">Professional Female</option>
+                    <option value="en-US-male-warm">Warm & Friendly Male</option>
+                    <option value="en-US-male-deep">Deep & Clear Male</option>
+                    <option value="en-GB-female">British Female</option>
+                    <option value="en-GB-male">British Male</option>
+                    <option value="en-US-child">Child Voice</option>
+                  </optgroup>
+                  
+                  {/* Spanish Voices */}
+                  <optgroup label="Spanish Voices">
+                    <option value="es-ES-female">Spanish Female</option>
+                    <option value="es-ES-male">Spanish Male</option>
+                    <option value="es-MX-female">Mexican Female</option>
+                    <option value="es-MX-male">Mexican Male</option>
+                  </optgroup>
+                  
+                  {/* Simple Options (for backward compatibility) */}
+                  <optgroup label="Basic Options">
+                    <option value="female">Generic Female</option>
+                    <option value="male">Generic Male</option>
+                    <option value="child">Generic Child</option>
+                  </optgroup>
                 </select>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 mb-2">Test Voice</label>
+                <div className="flex flex-col space-y-2">
+                  <input 
+                    type="text" 
+                    value={testPhrase}
+                    onChange={(e) => setTestPhrase(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    placeholder="Enter text to test the voice"
+                  />
+                  <button 
+                    className={`w-full py-2 px-4 rounded-md ${
+                      isTestingVoice 
+                        ? 'bg-gray-400 text-white cursor-not-allowed' 
+                        : 'bg-primary text-white hover:bg-primary-dark'
+                    }`}
+                    onClick={handleTestVoice}
+                    disabled={isTestingVoice}
+                  >
+                    {isTestingVoice ? 'Playing...' : 'Test Voice'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Try different voices to find the one that works best for you
+                </p>
               </div>
               
               <div>
@@ -142,6 +221,9 @@ export default function Customize() {
                   />
                   <span className="ml-2">Fast</span>
                 </div>
+                <div className="text-center text-sm mt-1 text-gray-500">
+                  {voiceSettings.rate}x
+                </div>
               </div>
               
               <div>
@@ -158,6 +240,9 @@ export default function Customize() {
                     className="flex-grow"
                   />
                   <span className="ml-2">Loud</span>
+                </div>
+                <div className="text-center text-sm mt-1 text-gray-500">
+                  {Math.round(voiceSettings.volume * 100)}%
                 </div>
               </div>
             </div>

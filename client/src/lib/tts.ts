@@ -3,39 +3,117 @@
 // Check if browser supports speech synthesis
 const isSpeechSupported = 'speechSynthesis' in window;
 
+// Voice types with preferred voices for each type
+export const voiceTypes = {
+  // English voices
+  "en-US-female-warm": { name: "Samantha", lang: "en-US", gender: "female", description: "Warm & Friendly Female" },
+  "en-US-female-professional": { name: "Karen", lang: "en-US", gender: "female", description: "Professional Female" },
+  "en-US-male-warm": { name: "Alex", lang: "en-US", gender: "male", description: "Warm & Friendly Male" },
+  "en-US-male-deep": { name: "Daniel", lang: "en-US", gender: "male", description: "Deep & Clear Male" },
+  "en-GB-female": { name: "Fiona", lang: "en-GB", gender: "female", description: "British Female" },
+  "en-GB-male": { name: "Arthur", lang: "en-GB", gender: "male", description: "British Male" },
+  "en-US-child": { name: "Junior", lang: "en-US", gender: "child", description: "Child Voice" },
+  
+  // Spanish voices
+  "es-ES-female": { name: "Monica", lang: "es-ES", gender: "female", description: "Spanish Female" },
+  "es-ES-male": { name: "Jorge", lang: "es-ES", gender: "male", description: "Spanish Male" },
+  "es-MX-female": { name: "Paulina", lang: "es-MX", gender: "female", description: "Mexican Female" },
+  "es-MX-male": { name: "Juan", lang: "es-MX", gender: "male", description: "Mexican Male" },
+  
+  // Default options
+  "default": { name: "Default", lang: "en-US", gender: "neutral", description: "System Default" },
+};
+
 // Store voice preferences
 let voicePreferences = {
-  voiceType: "default", // "default", "child", "female", "male"
+  voiceType: "default", 
   rate: 1,
   volume: 0.8,
   language: "en-US" // or "es-ES" for Spanish
 };
 
-// Get the appropriate voice based on preferences
+// Get all available voices for the current language
+export function getAvailableVoices(language: string = "en"): SpeechSynthesisVoice[] {
+  if (!isSpeechSupported) return [];
+  
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length === 0) return [];
+  
+  // Filter by language
+  return voices.filter(voice => voice.lang.includes(language));
+}
+
+// Get the most realistic voice based on preferences
 function getPreferredVoice(): SpeechSynthesisVoice | null {
   if (!isSpeechSupported) return null;
   
   const voices = window.speechSynthesis.getVoices();
   if (voices.length === 0) return null;
   
+  // Get language from preferences
+  const language = voicePreferences.language.slice(0, 2);
+  
   // Filter by language
-  const langVoices = voices.filter(voice => voice.lang.includes(voicePreferences.language.slice(0, 2)));
+  const langVoices = voices.filter(voice => voice.lang.includes(language));
   if (langVoices.length === 0) return voices[0];
   
-  // Try to match voice type preference
+  // If voiceType is just "default", return the first voice for the language
   if (voicePreferences.voiceType === "default") {
     return langVoices[0];
-  } else if (voicePreferences.voiceType === "female") {
-    const femaleVoice = langVoices.find(v => v.name.includes("female") || v.name.includes("woman"));
+  }
+  
+  // Try to match voice type by name or characteristics
+  const voiceType = voicePreferences.voiceType;
+  const voiceInfo = voiceTypes[voiceType as keyof typeof voiceTypes];
+  
+  // If we have specific info for this voice type
+  if (voiceInfo) {
+    // Try to find a voice that matches the preferred name
+    let matchedVoice = langVoices.find(v => 
+      v.name.includes(voiceInfo.name) || 
+      v.name.toLowerCase().includes(voiceInfo.name.toLowerCase())
+    );
+    
+    // If we didn't find by name, try by gender/characteristics
+    if (!matchedVoice) {
+      matchedVoice = langVoices.find(v => {
+        const vName = v.name.toLowerCase();
+        if (voiceInfo.gender === "female") {
+          return vName.includes("female") || vName.includes("woman") || vName.includes("girl");
+        } else if (voiceInfo.gender === "male") {
+          return vName.includes("male") || vName.includes("man") || vName.includes("guy");
+        } else if (voiceInfo.gender === "child") {
+          return vName.includes("child") || vName.includes("kid") || vName.includes("junior");
+        }
+        return false;
+      });
+    }
+    
+    if (matchedVoice) return matchedVoice;
+  }
+  
+  // Fallback to simple matching if voice type doesn't match our known types
+  if (voiceType.includes("female")) {
+    const femaleVoice = langVoices.find(v => 
+      v.name.toLowerCase().includes("female") || 
+      v.name.toLowerCase().includes("woman")
+    );
     return femaleVoice || langVoices[0];
-  } else if (voicePreferences.voiceType === "male") {
-    const maleVoice = langVoices.find(v => v.name.includes("male") || v.name.includes("man"));
+  } else if (voiceType.includes("male")) {
+    const maleVoice = langVoices.find(v => 
+      v.name.toLowerCase().includes("male") || 
+      v.name.toLowerCase().includes("man")
+    );
     return maleVoice || langVoices[0];
-  } else if (voicePreferences.voiceType === "child") {
-    const childVoice = langVoices.find(v => v.name.includes("child") || v.name.includes("kid"));
+  } else if (voiceType.includes("child")) {
+    const childVoice = langVoices.find(v => 
+      v.name.toLowerCase().includes("child") || 
+      v.name.toLowerCase().includes("kid")
+    );
     return childVoice || langVoices[0];
   }
   
+  // Return first voice for the language as last resort
   return langVoices[0];
 }
 
@@ -47,6 +125,15 @@ export function setVoicePreferences(preferences: {
   language?: string;
 }) {
   voicePreferences = { ...voicePreferences, ...preferences };
+  
+  // For debugging - log available voices
+  if (isSpeechSupported && preferences.voiceType) {
+    const voices = window.speechSynthesis.getVoices();
+    console.log("Available voices:", voices.map(v => ({name: v.name, lang: v.lang})));
+    console.log("Selected voice type:", preferences.voiceType);
+    const voice = getPreferredVoice();
+    console.log("Selected voice:", voice ? {name: voice.name, lang: voice.lang} : null);
+  }
 }
 
 // Speak text

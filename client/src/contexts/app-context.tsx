@@ -13,8 +13,14 @@ interface AppContextType {
     voiceType: string;
     rate: number;
     volume: number;
+    language: string;
   };
-  setVoiceSettings: (settings: { voiceType: string; rate: number; volume: number }) => void;
+  setVoiceSettings: (settings: SetStateAction<{
+    voiceType: string;
+    rate: number;
+    volume: number;
+    language: string;
+  }>) => void;
   displaySettings: {
     textSize: number;
     highContrast: boolean;
@@ -46,6 +52,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     voiceType: "default",
     rate: 1,
     volume: 0.8,
+    language: "en-US",
   });
   const [displaySettings, setDisplaySettings] = useState({
     textSize: 1.5,
