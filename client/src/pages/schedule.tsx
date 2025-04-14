@@ -160,7 +160,7 @@ export default function Schedule() {
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
           {/* Schedule section - left side */}
-          <div className={`${isFullscreen ? 'w-full' : 'w-1/2 border-r border-gray-200'} flex flex-col h-full`}>
+          <div className={`${isFullscreen ? 'w-full' : 'w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="text-center font-bold w-full">My Schedule</div>
               <div className="flex space-x-1">
@@ -239,27 +239,29 @@ export default function Schedule() {
           
           {/* Activity cards section - right side */}
           {!isFullscreen && (
-            <div className="w-1/2 flex flex-col h-full">
+            <div className="w-2/3 flex flex-col h-full">
               {/* Timer */}
               <div className="p-1 border-b border-gray-200">
                 <ActivityTimer />
               </div>
               
               {/* Category tabs */}
-              <div className="p-1.5 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1 flex-wrap">
+              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-10">
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
-                    className={`px-2 py-1 mb-0.5 whitespace-nowrap rounded-md text-xs font-medium ${
-                      selectedCategory === category.id 
-                        ? (category.color === 'purple-300' ? 'bg-purple-300' :
-                           category.color === 'green-400' ? 'bg-green-400' :
-                           category.color === 'green-200' ? 'bg-green-200' :
-                           category.color === 'orange-200' ? 'bg-orange-200' :
-                           category.color === 'blue-400' ? 'bg-blue-400' :
-                           category.color === 'purple-200' ? 'bg-purple-200' :
-                           category.color === 'orange-100' ? 'bg-orange-100' : 'bg-gray-200') + ' text-gray-800 shadow-sm'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    className={`px-2 py-1 mb-0.5 whitespace-nowrap rounded-md text-xs font-medium border-2 ${
+                      (category.color === 'purple-300' ? 'bg-purple-300' :
+                       category.color === 'green-400' ? 'bg-green-400' :
+                       category.color === 'green-200' ? 'bg-green-200' :
+                       category.color === 'orange-200' ? 'bg-orange-200' :
+                       category.color === 'blue-400' ? 'bg-blue-400' :
+                       category.color === 'purple-200' ? 'bg-purple-200' :
+                       category.color === 'orange-100' ? 'bg-orange-100' : 'bg-gray-200')}
+                      ${selectedCategory === category.id 
+                        ? 'border-black shadow-lg ring-2 ring-offset-1 ring-black font-bold'
+                        : 'border-transparent shadow-sm hover:shadow-md'
+                      }
                     }`}
                     onClick={() => {
                       setSelectedCategory(category.id);
@@ -279,7 +281,7 @@ export default function Schedule() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-4 gap-0.5 overflow-y-auto"
+                      className="grid grid-cols-5 gap-1 overflow-y-auto"
                       style={{ minHeight: "200px", maxHeight: "calc(100vh - 200px)" }}
                     >
                       {visibleActivities.map((activity, index) => (

@@ -33,7 +33,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md ${isInSchedule ? 'w-full h-5 p-0.5 my-0' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-md ${isInSchedule ? 'w-full h-8 p-0.5 my-0.5' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -52,12 +52,16 @@ export default function ActivityCard({
         >
 {isInSchedule ? (
             // Compact horizontal layout for schedule cards
-            <div className="flex items-center justify-between w-full h-full px-0.5">
-              <i className={`${activity.icon} text-[10px] text-gray-800 mr-0.5`}></i>
-              <div className="flex-grow">
-                <span className="font-medium text-[8px] leading-none whitespace-nowrap overflow-hidden text-ellipsis">{activity.title}</span>
+            <div className="flex items-center justify-between w-full h-full px-1">
+              <div className="flex items-center">
+                <div className="bg-white bg-opacity-70 rounded-full h-5 w-5 flex items-center justify-center mr-1.5">
+                  <i className={`${activity.icon} text-[12px] text-gray-800`}></i>
+                </div>
+                <div className="flex-grow">
+                  <span className="font-medium text-[10px] leading-none whitespace-nowrap overflow-hidden text-ellipsis block max-w-[80px]">{activity.title}</span>
+                </div>
               </div>
-              <span className="text-[6px] text-gray-600 ml-0.5">
+              <span className="text-[8px] text-gray-800 ml-0.5 bg-white bg-opacity-50 p-0.5 rounded-full">
                 <i className="ri-volume-up-line"></i>
               </span>
             </div>
