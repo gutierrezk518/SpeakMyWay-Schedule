@@ -83,7 +83,7 @@ export default function ActivityCard({
           {/* Remove button positioned absolutely in the corner */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute top-1 right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-[9px] shadow-sm border border-red-300"
+              className="absolute top-0 right-0 p-1.5 bg-red-500 text-white hover:bg-red-600 rounded-tr-md rounded-bl-full text-xs shadow-md z-30"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();

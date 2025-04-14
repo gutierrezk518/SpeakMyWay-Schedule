@@ -172,11 +172,13 @@ export default function Schedule() {
                   <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
                 <button 
-                  className="p-1.5 rounded-full bg-red-100 hover:bg-red-200 text-red-500"
+                  className="p-1.5 rounded-md bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
                   onClick={clearActivities}
                   aria-label="Clear all activities"
+                  title="Clear All Activities"
                 >
-                  <i className="ri-delete-bin-line"></i>
+                  <i className="ri-delete-bin-line mr-1"></i>
+                  <span className="text-[9px] font-medium">Clear All</span>
                 </button>
               </div>
             </div>
