@@ -8,6 +8,7 @@ import CommunicationBoard from "@/pages/communication-board";
 import QuickMode from "@/pages/quick-mode";
 import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
+import Admin from "@/pages/admin";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/quick-mode" component={QuickMode} />
       <Route path="/schedule" component={Schedule} />
       <Route path="/customize" component={Customize} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

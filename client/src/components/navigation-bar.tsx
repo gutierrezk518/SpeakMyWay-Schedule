@@ -7,6 +7,7 @@ const pageTitles: Record<string, string> = {
   "/quick-mode": "Quick Mode",
   "/schedule": "Today's Schedule",
   "/customize": "Customize",
+  "/admin": "Admin Dashboard",
 };
 
 export default function NavigationBar() {

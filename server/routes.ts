@@ -5,7 +5,10 @@ import {
   insertUserSchema, 
   insertCardSchema, 
   insertSettingsSchema, 
-  insertRoutineSchema 
+  insertRoutineSchema,
+  insertCategorySchema,
+  insertSubcategorySchema,
+  insertCoreWordSchema
 } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -237,6 +240,277 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     if (!deleted) {
       return res.status(404).json({ message: "Routine not found" });
+    }
+    
+    return res.status(204).end();
+  });
+
+  // Category routes
+  app.get("/api/categories", async (req: Request, res: Response) => {
+    const type = req.query.type as string;
+    const categories = await storage.getCategories(type);
+    return res.json(categories);
+  });
+
+  app.get("/api/categories/:id", async (req: Request, res: Response) => {
+    const categoryId = parseInt(req.params.id);
+    
+    if (isNaN(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+    
+    const category = await storage.getCategory(categoryId);
+    
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    
+    return res.json(category);
+  });
+
+  app.post("/api/categories", async (req: Request, res: Response) => {
+    try {
+      const categoryData = insertCategorySchema.parse(req.body);
+      const category = await storage.createCategory(categoryData);
+      return res.status(201).json(category);
+    } catch (err) {
+      return handleZodError(err, res);
+    }
+  });
+
+  app.patch("/api/categories/:id", async (req: Request, res: Response) => {
+    const categoryId = parseInt(req.params.id);
+    
+    if (isNaN(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+    
+    try {
+      const updatedCategory = await storage.updateCategory(categoryId, req.body);
+      return res.json(updatedCategory);
+    } catch (error) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+  });
+
+  app.delete("/api/categories/:id", async (req: Request, res: Response) => {
+    const categoryId = parseInt(req.params.id);
+    
+    if (isNaN(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+    
+    const deleted = await storage.deleteCategory(categoryId);
+    
+    if (!deleted) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    
+    return res.status(204).end();
+  });
+
+  // Subcategory routes
+  app.get("/api/subcategories", async (req: Request, res: Response) => {
+    const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+    
+    if (categoryId !== undefined && isNaN(categoryId)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+    
+    const subcategories = categoryId !== undefined
+      ? await storage.getSubcategories(categoryId)
+      : await storage.getAllSubcategories();
+      
+    return res.json(subcategories);
+  });
+
+  app.get("/api/subcategories/:id", async (req: Request, res: Response) => {
+    const subcategoryId = parseInt(req.params.id);
+    
+    if (isNaN(subcategoryId)) {
+      return res.status(400).json({ message: "Invalid subcategory ID" });
+    }
+    
+    const subcategory = await storage.getSubcategory(subcategoryId);
+    
+    if (!subcategory) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+    
+    return res.json(subcategory);
+  });
+
+  app.post("/api/subcategories", async (req: Request, res: Response) => {
+    try {
+      const subcategoryData = insertSubcategorySchema.parse(req.body);
+      const subcategory = await storage.createSubcategory(subcategoryData);
+      return res.status(201).json(subcategory);
+    } catch (err) {
+      return handleZodError(err, res);
+    }
+  });
+
+  app.patch("/api/subcategories/:id", async (req: Request, res: Response) => {
+    const subcategoryId = parseInt(req.params.id);
+    
+    if (isNaN(subcategoryId)) {
+      return res.status(400).json({ message: "Invalid subcategory ID" });
+    }
+    
+    try {
+      const updatedSubcategory = await storage.updateSubcategory(subcategoryId, req.body);
+      return res.json(updatedSubcategory);
+    } catch (error) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+  });
+
+  app.delete("/api/subcategories/:id", async (req: Request, res: Response) => {
+    const subcategoryId = parseInt(req.params.id);
+    
+    if (isNaN(subcategoryId)) {
+      return res.status(400).json({ message: "Invalid subcategory ID" });
+    }
+    
+    const deleted = await storage.deleteSubcategory(subcategoryId);
+    
+    if (!deleted) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+    
+    return res.status(204).end();
+  });
+
+  // Core Words routes
+  app.get("/api/corewords", async (req: Request, res: Response) => {
+    const coreWords = await storage.getCoreWords();
+    return res.json(coreWords);
+  });
+
+  app.get("/api/corewords/:id", async (req: Request, res: Response) => {
+    const coreWordId = parseInt(req.params.id);
+    
+    if (isNaN(coreWordId)) {
+      return res.status(400).json({ message: "Invalid core word ID" });
+    }
+    
+    const coreWord = await storage.getCoreWord(coreWordId);
+    
+    if (!coreWord) {
+      return res.status(404).json({ message: "Core word not found" });
+    }
+    
+    return res.json(coreWord);
+  });
+
+  app.post("/api/corewords", async (req: Request, res: Response) => {
+    try {
+      const coreWordData = insertCoreWordSchema.parse(req.body);
+      const coreWord = await storage.createCoreWord(coreWordData);
+      return res.status(201).json(coreWord);
+    } catch (err) {
+      return handleZodError(err, res);
+    }
+  });
+
+  app.patch("/api/corewords/:id", async (req: Request, res: Response) => {
+    const coreWordId = parseInt(req.params.id);
+    
+    if (isNaN(coreWordId)) {
+      return res.status(400).json({ message: "Invalid core word ID" });
+    }
+    
+    try {
+      const updatedCoreWord = await storage.updateCoreWord(coreWordId, req.body);
+      return res.json(updatedCoreWord);
+    } catch (error) {
+      return res.status(404).json({ message: "Core word not found" });
+    }
+  });
+
+  app.delete("/api/corewords/:id", async (req: Request, res: Response) => {
+    const coreWordId = parseInt(req.params.id);
+    
+    if (isNaN(coreWordId)) {
+      return res.status(400).json({ message: "Invalid core word ID" });
+    }
+    
+    const deleted = await storage.deleteCoreWord(coreWordId);
+    
+    if (!deleted) {
+      return res.status(404).json({ message: "Core word not found" });
+    }
+    
+    return res.status(204).end();
+  });
+
+  // Enhanced Card routes for the updated schema
+  app.get("/api/cards/schedule", async (req: Request, res: Response) => {
+    const userId = parseInt(req.query.userId as string);
+    const language = (req.query.language as string) || "en";
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const cards = await storage.getScheduleCards(userId, language);
+    return res.json(cards);
+  });
+
+  app.get("/api/cards/communication", async (req: Request, res: Response) => {
+    const userId = parseInt(req.query.userId as string);
+    const language = (req.query.language as string) || "en";
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const cards = await storage.getCommunicationCards(userId, language);
+    return res.json(cards);
+  });
+
+  app.get("/api/cards/:id", async (req: Request, res: Response) => {
+    const cardId = parseInt(req.params.id);
+    
+    if (isNaN(cardId)) {
+      return res.status(400).json({ message: "Invalid card ID" });
+    }
+    
+    const card = await storage.getCard(cardId);
+    
+    if (!card) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+    
+    return res.json(card);
+  });
+
+  app.patch("/api/cards/:id", async (req: Request, res: Response) => {
+    const cardId = parseInt(req.params.id);
+    
+    if (isNaN(cardId)) {
+      return res.status(400).json({ message: "Invalid card ID" });
+    }
+    
+    try {
+      const updatedCard = await storage.updateCard(cardId, req.body);
+      return res.json(updatedCard);
+    } catch (error) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+  });
+
+  app.delete("/api/cards/:id", async (req: Request, res: Response) => {
+    const cardId = parseInt(req.params.id);
+    
+    if (isNaN(cardId)) {
+      return res.status(400).json({ message: "Invalid card ID" });
+    }
+    
+    const deleted = await storage.deleteCard(cardId);
+    
+    if (!deleted) {
+      return res.status(404).json({ message: "Card not found" });
     }
     
     return res.status(204).end();
