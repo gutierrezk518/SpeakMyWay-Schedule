@@ -33,7 +33,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md ${isInSchedule ? 'w-full h-8 p-0.5' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-md ${isInSchedule ? 'w-full h-5 p-0.5 my-0' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -52,12 +52,12 @@ export default function ActivityCard({
         >
 {isInSchedule ? (
             // Compact horizontal layout for schedule cards
-            <div className="flex items-center justify-between w-full h-full px-1">
-              <i className={`${activity.icon} text-xs text-gray-800 mr-1`}></i>
+            <div className="flex items-center justify-between w-full h-full px-0.5">
+              <i className={`${activity.icon} text-[10px] text-gray-800 mr-0.5`}></i>
               <div className="flex-grow">
-                <span className="font-medium text-[8px] leading-none">{activity.title}</span>
+                <span className="font-medium text-[8px] leading-none whitespace-nowrap overflow-hidden text-ellipsis">{activity.title}</span>
               </div>
-              <span className="text-[6px] text-gray-600 ml-1">
+              <span className="text-[6px] text-gray-600 ml-0.5">
                 <i className="ri-volume-up-line"></i>
               </span>
             </div>

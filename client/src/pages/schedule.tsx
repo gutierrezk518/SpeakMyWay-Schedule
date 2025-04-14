@@ -30,7 +30,7 @@ export default function Schedule() {
   const [selectedTimeSection, setSelectedTimeSection] = useState("morning"); 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
-  const itemsPerPage = 24;
+  const itemsPerPage = 48; // Increased to show more activities at once
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
@@ -53,7 +53,9 @@ export default function Schedule() {
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
   // Get the available activities for the selected category
-  const categoryActivities = availableActivities[selectedCategory] || [];
+  const categoryActivities = selectedCategory === 'all'
+    ? Object.values(availableActivities).flat()
+    : availableActivities[selectedCategory] || [];
   
   // Calculate pagination
   const totalPages = Math.ceil(categoryActivities.length / itemsPerPage);
@@ -278,7 +280,7 @@ export default function Schedule() {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       className="grid grid-cols-4 gap-0.5 overflow-y-auto"
-                      style={{ minHeight: "200px" }}
+                      style={{ minHeight: "200px", maxHeight: "calc(100vh - 200px)" }}
                     >
                       {visibleActivities.map((activity, index) => (
                         <ActivityCard 
