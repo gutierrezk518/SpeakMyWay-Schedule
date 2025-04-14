@@ -304,7 +304,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 gap-0.5 ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -317,7 +317,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className="relative w-14 h-14 mx-auto my-1.5">
+                        <div key={activity.id} className="relative w-14 h-14 mx-auto mb-1">
                           <ActivityCard 
                             activity={activity} 
                             index={index}
@@ -369,7 +369,7 @@ export default function Schedule() {
               </div>
               
               {/* Category tabs - always visible */}
-              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md max-h-24 overflow-y-auto">
+              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md max-h-24 overflow-y-auto justify-center">
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
@@ -447,15 +447,9 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Action button */}
+              {/* Bottom spacing */}
               <div className="p-1.5 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md">
-                <button 
-                  className="w-full flex items-center justify-center px-3 py-1.5 rounded-md bg-green-500 text-white hover:bg-green-600 font-medium text-xs"
-                  onClick={saveRoutine}
-                >
-                  <i className="ri-save-line mr-1 text-sm"></i>
-                  Save My Routine
-                </button>
+                <div className="h-2"></div>
               </div>
             </div>
           )}
@@ -466,7 +460,7 @@ export default function Schedule() {
       {showSaveModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-4 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-3 text-center">Save to Time Section</h3>
+            <h3 className="text-lg font-semibold mb-3 text-center">Save Schedule</h3>
             <p className="text-sm text-gray-600 mb-4 text-center">
               Select where you'd like to save this schedule:
             </p>
