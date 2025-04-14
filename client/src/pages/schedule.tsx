@@ -28,7 +28,7 @@ export default function Schedule() {
   
   // UI state
   const [selectedTimeSection, setSelectedTimeSection] = useState("morning"); 
-  const [selectedCategory, setSelectedCategory] = useState("meals");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
   const itemsPerPage = 24;
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
@@ -186,7 +186,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-2 flex flex-col space-y-1 ${
+                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-1 auto-rows-min ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'

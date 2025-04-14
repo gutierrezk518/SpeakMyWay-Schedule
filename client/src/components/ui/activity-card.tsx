@@ -17,6 +17,8 @@ export default function ActivityCard({
   showRemoveButton = false,
   onRemove
 }: ActivityCardProps) {
+  // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
+  const isInSchedule = showRemoveButton;
   // Handle card click to speak the activity title
   const handleCardClick = () => {
     speak(activity.title);
@@ -31,7 +33,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md w-full h-auto aspect-square p-1 flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-md ${isInSchedule ? 'w-full h-8 p-0.5' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -48,18 +50,34 @@ export default function ActivityCard({
             transition: 'all 0.2s ease'
           }}
         >
-          {/* Icon container */}
-          <div className="flex-grow flex items-center justify-center w-full">
-            <i className={`${activity.icon} text-lg text-gray-800`}></i>
-          </div>
-          
-          {/* Text container */}
-          <div className="w-full bg-white bg-opacity-70 rounded-sm py-1 px-1 text-center">
-            <span className="font-medium text-[10px] leading-tight">{activity.title}</span>
-            <span className="absolute right-1 bottom-1 text-[8px] text-gray-600">
-              <i className="ri-volume-up-line"></i>
-            </span>
-          </div>
+{isInSchedule ? (
+            // Compact horizontal layout for schedule cards
+            <div className="flex items-center justify-between w-full h-full px-1">
+              <i className={`${activity.icon} text-xs text-gray-800 mr-1`}></i>
+              <div className="flex-grow">
+                <span className="font-medium text-[8px] leading-none">{activity.title}</span>
+              </div>
+              <span className="text-[6px] text-gray-600 ml-1">
+                <i className="ri-volume-up-line"></i>
+              </span>
+            </div>
+          ) : (
+            // Original layout for activity selection cards
+            <>
+              {/* Icon container */}
+              <div className="flex-grow flex items-center justify-center w-full">
+                <i className={`${activity.icon} text-lg text-gray-800`}></i>
+              </div>
+              
+              {/* Text container */}
+              <div className="w-full bg-white bg-opacity-70 rounded-sm py-1 px-1 text-center">
+                <span className="font-medium text-[10px] leading-tight">{activity.title}</span>
+                <span className="absolute right-1 bottom-1 text-[8px] text-gray-600">
+                  <i className="ri-volume-up-line"></i>
+                </span>
+              </div>
+            </>
+          )}
           
           {/* Remove button positioned absolutely in the corner */}
           {showRemoveButton && onRemove && (

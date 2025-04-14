@@ -37,6 +37,7 @@ export const timeSections: ScheduleTimeSection[] = [
 
 // Categories for the activity cards - using colors from the wireframe
 export const activityCategories = [
+  { id: "all", name: "All", color: "gray-300" },
   { id: "meals", name: "Meals", color: "purple-300" },
   { id: "hygiene", name: "Hygiene", color: "green-400" },
   { id: "arts", name: "Arts", color: "blue-300" },
