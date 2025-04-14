@@ -182,13 +182,13 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className="flex-grow p-1 bg-blue-50 flex flex-col">
+            <div className="flex-grow p-1 bg-blue-50 flex flex-col overflow-hidden">
               <Droppable droppableId="schedule">
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 auto-rows-min ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 gap-0.5 ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -217,7 +217,7 @@ export default function Schedule() {
             </div>
             
             {/* Time section tabs */}
-            <div className="p-1 bg-gray-50 border-t border-gray-200">
+            <div className="p-1 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md">
               <div className="flex justify-center space-x-1">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
@@ -246,7 +246,7 @@ export default function Schedule() {
               </div>
               
               {/* Category tabs - always visible */}
-              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md">
+              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md max-h-24 overflow-y-auto">
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
@@ -274,15 +274,15 @@ export default function Schedule() {
               </div>
               
               {/* Activity cards grid */}
-              <div className="flex-grow p-1 bg-gray-100 flex flex-col relative">
+              <div className="flex-grow p-1 bg-gray-100 flex flex-col relative overflow-hidden">
                 <div className="text-center mb-1 text-xs font-medium text-gray-700 mt-1">Activity Cards</div>
                 <Droppable droppableId="activity-cards">
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-5 gap-1 overflow-y-auto"
-                      style={{ minHeight: "200px", maxHeight: "calc(100vh - 200px)" }}
+                      className="grid grid-cols-5 gap-1 overflow-y-auto flex-grow"
+                      style={{ minHeight: "200px", height: "calc(100vh - 300px)" }}
                     >
                       {visibleActivities.map((activity, index) => (
                         <ActivityCard 
@@ -325,7 +325,7 @@ export default function Schedule() {
               </div>
               
               {/* Action button */}
-              <div className="p-1.5 bg-gray-50 border-t border-gray-200">
+              <div className="p-1.5 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md">
                 <button 
                   className="w-full flex items-center justify-center px-3 py-1.5 rounded-md bg-green-500 text-white hover:bg-green-600 font-medium text-xs"
                   onClick={saveRoutine}
