@@ -239,10 +239,6 @@ export default function Schedule() {
       return;
     }
     
-    // Get app context user name if available
-    const { userName } = useAppContext();
-    const namePrefix = userName ? `Ok ${userName}. ` : "";
-    
     // Create array of schedule items with ordinal words
     const scheduleTexts: string[] = [];
     
@@ -266,18 +262,14 @@ export default function Schedule() {
       scheduleTexts.push(`${ordinalPrefix}${activity.title.toLowerCase()}`);
     });
     
-    // Speak the schedule
-    speakWithPause([scheduleTexts[0]], namePrefix, 400);
+    // Create a single complete sentence from all schedule items
+    let fullText = scheduleTexts.join(", ");
     
-    // Speak the rest of the schedule with appropriate conjunctions
-    if (scheduleTexts.length > 1) {
-      // Join the middle items with commas, and add the last item with "and"
-      for (let i = 1; i < scheduleTexts.length; i++) {
-        setTimeout(() => {
-          speak(scheduleTexts[i]);
-        }, 1500 * i);
-      }
-    }
+    // Use userName from the context that we already extracted at the top of the component
+    const namePrefix = userName ? `Ok ${userName}. ` : "";
+    
+    // Speak the complete schedule
+    speak(namePrefix + fullText);
   };
 
   return (
