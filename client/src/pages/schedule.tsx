@@ -212,11 +212,68 @@ export default function Schedule() {
     localStorage.setItem('userSchedule', JSON.stringify(scheduleData));
   };
   
+  // Save to a specific time section
+  const saveToTimeSection = (sectionId: string) => {
+    // Update the schedule data with the current activities saved to the selected section
+    const newSchedule = [...scheduleData];
+    const targetSection = newSchedule.find(s => s.id === sectionId);
+    const currentSection = newSchedule.find(s => s.id === selectedTimeSection);
+    
+    if (targetSection && currentSection) {
+      // Copy activities from current section to target section
+      targetSection.activities = [...currentSection.activities];
+      localStorage.setItem('userSchedule', JSON.stringify(newSchedule));
+      setShowSaveModal(false);
+      
+      // Show confirmation message
+      const sectionName = targetSection.name.toLowerCase();
+      alert(`Schedule saved to ${sectionName}!`);
+    }
+  };
+
   return (
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
-          {/* Schedule section - left side */}
+          {/* Side buttons panel */}
+          {!isFullscreen && (
+            <div className="w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+              {/* Undo button */}
+              <button 
+                className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+                  canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                }`}
+                onClick={handleUndo}
+                disabled={!canUndo}
+                title="Undo"
+              >
+                <i className="ri-arrow-go-back-line text-lg"></i>
+              </button>
+              
+              {/* Redo button */}
+              <button 
+                className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+                  canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                }`}
+                onClick={handleRedo}
+                disabled={!canRedo}
+                title="Redo"
+              >
+                <i className="ri-arrow-go-forward-line text-lg"></i>
+              </button>
+              
+              {/* Save button */}
+              <button 
+                className="w-10 h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                onClick={() => setShowSaveModal(true)}
+                title="Save schedule"
+              >
+                <i className="ri-save-line text-lg"></i>
+              </button>
+            </div>
+          )}
+          
+          {/* Schedule section */}
           <div className={`${isFullscreen ? 'w-full' : 'w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="text-center font-bold w-full">My Schedule</div>
@@ -404,6 +461,48 @@ export default function Schedule() {
           )}
         </div>
       </DragDropContext>
+      
+      {/* Save modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-3 text-center">Save to Time Section</h3>
+            <p className="text-sm text-gray-600 mb-4 text-center">
+              Select where you'd like to save this schedule:
+            </p>
+            
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {scheduleData.map((section) => (
+                <button
+                  key={section.id}
+                  className={`p-3 rounded-md flex flex-col items-center justify-center hover:bg-blue-50 border-2 ${
+                    section.id === 'morning' ? 'border-yellow-400 bg-yellow-50' :
+                    section.id === 'afternoon' ? 'border-blue-400 bg-blue-50' :
+                    'border-purple-400 bg-purple-50'
+                  }`}
+                  onClick={() => saveToTimeSection(section.id)}
+                >
+                  <i className={`${section.icon} text-xl mb-1 ${
+                    section.id === 'morning' ? 'text-yellow-500' :
+                    section.id === 'afternoon' ? 'text-blue-500' :
+                    'text-purple-500'
+                  }`}></i>
+                  <span className="text-xs font-medium">{section.name}</span>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                onClick={() => setShowSaveModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
