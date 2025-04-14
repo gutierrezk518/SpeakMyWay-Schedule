@@ -188,7 +188,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 gap-0.5 auto-rows-min ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 grid grid-cols-1 auto-rows-min ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -205,7 +205,7 @@ export default function Schedule() {
                           key={activity.id} 
                           activity={activity} 
                           index={index}
-                          showRemoveButton
+                          showRemoveButton={true}
                           onRemove={() => removeActivity(index)}
                         />
                       ))
@@ -245,8 +245,8 @@ export default function Schedule() {
                 <ActivityTimer />
               </div>
               
-              {/* Category tabs */}
-              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-10 shadow-md">
+              {/* Category tabs - always visible */}
+              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md">
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
@@ -274,8 +274,8 @@ export default function Schedule() {
               </div>
               
               {/* Activity cards grid */}
-              <div className="flex-grow p-1 bg-gray-100 flex flex-col">
-                <div className="text-center mb-1 text-xs font-medium text-gray-700">Activity Cards</div>
+              <div className="flex-grow p-1 bg-gray-100 flex flex-col relative">
+                <div className="text-center mb-1 text-xs font-medium text-gray-700 mt-1">Activity Cards</div>
                 <Droppable droppableId="activity-cards">
                   {(provided) => (
                     <div

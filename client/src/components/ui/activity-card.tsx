@@ -33,7 +33,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md ${isInSchedule ? 'w-10 h-10 mx-auto my-1' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-md ${isInSchedule ? 'w-14 h-14 mx-auto my-1.5' : 'w-full h-auto aspect-square p-1'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -54,10 +54,10 @@ export default function ActivityCard({
             // Compact horizontal layout for schedule cards
             <div className="flex flex-col items-center justify-between w-full h-full">
               <div className="flex-grow flex items-center justify-center w-full">
-                <i className={`${activity.icon} text-base text-gray-800`}></i>
+                <i className={`${activity.icon} text-xl text-gray-800`}></i>
               </div>
               <div className="w-full flex justify-center items-center">
-                <span className="text-[7px] text-gray-800 bg-white bg-opacity-60 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="text-[9px] text-gray-800 bg-white bg-opacity-60 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                   {activity.title}
                 </span>
               </div>
@@ -83,7 +83,7 @@ export default function ActivityCard({
           {/* Remove button positioned absolutely in the corner */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute top-0.5 right-0.5 p-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-[8px]"
+              className="absolute top-1 right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-[9px] shadow-sm border border-red-300"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
