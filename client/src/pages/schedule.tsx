@@ -464,11 +464,11 @@ export default function Schedule() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-5 gap-4 overflow-y-auto flex-grow"
+                      className="grid grid-cols-5 gap-2 overflow-y-auto flex-grow"
                       style={{ 
                         minHeight: "200px", 
                         height: "calc(100vh - 300px)", 
-                        gridTemplateRows: "repeat(5, 60px)", 
+                        gridTemplateRows: "repeat(5, 70px)", 
                         alignItems: "center",
                         justifyItems: "center"
                       }}
