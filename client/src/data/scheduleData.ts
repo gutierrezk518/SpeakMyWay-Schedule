@@ -35,120 +35,139 @@ export const timeSections: ScheduleTimeSection[] = [
   },
 ];
 
-// Categories for the activity cards
+// Categories for the activity cards - using brighter, more distinct colors for better neurodivergent accessibility
 export const activityCategories = [
-  { id: "meals", name: "Meals", color: "purple-300" },
-  { id: "arts", name: "Arts", color: "orange-300" },
-  { id: "outdoors", name: "Outdoors", color: "yellow-300" },
-  { id: "indoors", name: "Indoors", color: "blue-300" },
-  { id: "social", name: "Social", color: "purple-300" },
-  { id: "holiday", name: "Holiday", color: "orange-300" },
-  { id: "vacation", name: "Vacation", color: "yellow-300" },
-  { id: "hygiene", name: "Hygiene", color: "blue-300" },
+  { id: "meals", name: "Food & Drink", color: "yellow-400" },
+  { id: "hygiene", name: "Hygiene", color: "blue-400" },
+  { id: "arts", name: "Arts & Crafts", color: "pink-400" },
+  { id: "outdoors", name: "Outdoors", color: "green-400" },
+  { id: "indoors", name: "Indoors", color: "purple-400" },
+  { id: "social", name: "Social", color: "red-400" },
+  { id: "routine", name: "My Routine", color: "teal-400" },
+  { id: "other", name: "Other", color: "gray-400" },
 ];
 
-// All available activities grouped by category
+// All available activities grouped by category - using clear, high-contrast colors
+// and simplified icons for neurodivergent accessibility
 export const availableActivities: Record<string, ScheduleActivity[]> = {
   "meals": [
-    { id: "breakfast", title: "Breakfast", icon: "ri-restaurant-line", bgColor: "purple-300" },
-    { id: "lunch", title: "Lunch", icon: "ri-restaurant-2-line", bgColor: "purple-300" },
-    { id: "dinner", title: "Dinner", icon: "ri-restaurant-fill", bgColor: "purple-300" },
-    { id: "snack", title: "Snack", icon: "ri-cake-line", bgColor: "purple-300" },
-    { id: "water", title: "Water", icon: "ri-cup-line", bgColor: "green-300" },
-    { id: "juice", title: "Juice", icon: "ri-cup-fill", bgColor: "green-300" },
-  ],
-  "arts": [
-    { id: "paint", title: "Paint", icon: "ri-paint-brush-line", bgColor: "orange-300" },
-    { id: "draw", title: "Draw", icon: "ri-pencil-line", bgColor: "orange-300" },
-    { id: "color", title: "Color", icon: "ri-palette-line", bgColor: "orange-300" },
-    { id: "craft", title: "Crafts", icon: "ri-scissors-cut-line", bgColor: "orange-300" },
-    { id: "stickers", title: "Stickers", icon: "ri-emotion-line", bgColor: "orange-300" },
-  ],
-  "outdoors": [
-    { id: "play-friends", title: "Play with Friends", icon: "ri-team-line", bgColor: "yellow-300" },
-    { id: "playground", title: "Playground", icon: "ri-basketball-line", bgColor: "yellow-300" },
-    { id: "walk", title: "Walk", icon: "ri-walk-line", bgColor: "yellow-300" },
-    { id: "bike", title: "Bike", icon: "ri-bike-line", bgColor: "yellow-300" },
-    { id: "swing", title: "Swing", icon: "ri-community-line", bgColor: "yellow-300" },
-  ],
-  "indoors": [
-    { id: "watch-tv", title: "Watch TV", icon: "ri-tv-line", bgColor: "blue-300" },
-    { id: "tablet", title: "Tablet", icon: "ri-tablet-line", bgColor: "blue-300" },
-    { id: "puzzle", title: "Puzzle", icon: "ri-puzzle-line", bgColor: "blue-300" },
-    { id: "trains", title: "Trains", icon: "ri-train-line", bgColor: "blue-300" },
-    { id: "homework", title: "Homework", icon: "ri-book-line", bgColor: "blue-300" },
-  ],
-  "social": [
-    { id: "morning-meeting", title: "Morning Meeting", icon: "ri-calendar-event-line", bgColor: "purple-300" },
-    { id: "group-activity", title: "Group Activity", icon: "ri-team-line", bgColor: "purple-300" },
-    { id: "circle-time", title: "Circle Time", icon: "ri-group-line", bgColor: "purple-300" },
-    { id: "sing", title: "Sing", icon: "ri-music-line", bgColor: "purple-300" },
-    { id: "listen-music", title: "Listen to Music", icon: "ri-headphone-line", bgColor: "purple-300" },
+    { id: "breakfast", title: "Breakfast", icon: "ri-cup-fill", bgColor: "yellow-400" },
+    { id: "lunch", title: "Lunch", icon: "ri-sandwich-line", bgColor: "yellow-400" },
+    { id: "dinner", title: "Dinner", icon: "ri-restaurant-fill", bgColor: "yellow-400" },
+    { id: "snack", title: "Snack", icon: "ri-cake-3-fill", bgColor: "yellow-400" },
+    { id: "water", title: "Water", icon: "ri-water-flash-fill", bgColor: "yellow-400" },
+    { id: "juice", title: "Juice", icon: "ri-drink-2-fill", bgColor: "yellow-400" },
+    { id: "milk", title: "Milk", icon: "ri-glass-line", bgColor: "yellow-400" },
+    { id: "fruits", title: "Fruits", icon: "ri-apple-fill", bgColor: "yellow-400" },
   ],
   "hygiene": [
-    { id: "toilet", title: "Toilet", icon: "ri-restroom-line", bgColor: "blue-300" },
-    { id: "brush-teeth", title: "Brush Teeth", icon: "ri-brush-line", bgColor: "blue-300" },
-    { id: "wash-hands", title: "Wash Hands", icon: "ri-hand-sanitizer-line", bgColor: "blue-300" },
-    { id: "wash-face", title: "Wash Face", icon: "ri-drop-line", bgColor: "blue-300" },
-    { id: "brush-hair", title: "Brush Hair", icon: "ri-brush-3-line", bgColor: "blue-300" },
-    { id: "get-dressed", title: "Get Dressed", icon: "ri-t-shirt-line", bgColor: "blue-300" },
-    { id: "bath", title: "Bath", icon: "ri-drop-fill", bgColor: "blue-300" },
-    { id: "pjs-on", title: "PJs On", icon: "ri-moon-line", bgColor: "blue-300" },
+    { id: "toilet", title: "Toilet", icon: "ri-door-lock-fill", bgColor: "blue-400" },
+    { id: "brush-teeth", title: "Brush Teeth", icon: "ri-brush-2-fill", bgColor: "blue-400" },
+    { id: "wash-hands", title: "Wash Hands", icon: "ri-hand-heart-fill", bgColor: "blue-400" },
+    { id: "wash-face", title: "Wash Face", icon: "ri-emotion-happy-fill", bgColor: "blue-400" },
+    { id: "brush-hair", title: "Brush Hair", icon: "ri-brush-fill", bgColor: "blue-400" },
+    { id: "get-dressed", title: "Get Dressed", icon: "ri-shirt-fill", bgColor: "blue-400" },
+    { id: "bath", title: "Bath", icon: "ri-bubble-chart-fill", bgColor: "blue-400" },
+    { id: "pjs-on", title: "PJs On", icon: "ri-moon-clear-fill", bgColor: "blue-400" },
+  ],
+  "arts": [
+    { id: "paint", title: "Paint", icon: "ri-paint-brush-fill", bgColor: "pink-400" },
+    { id: "draw", title: "Draw", icon: "ri-pencil-fill", bgColor: "pink-400" },
+    { id: "color", title: "Color", icon: "ri-palette-fill", bgColor: "pink-400" },
+    { id: "craft", title: "Crafts", icon: "ri-scissors-fill", bgColor: "pink-400" },
+    { id: "stickers", title: "Stickers", icon: "ri-star-smile-fill", bgColor: "pink-400" },
+    { id: "glue", title: "Glue", icon: "ri-drop-fill", bgColor: "pink-400" },
+    { id: "playdough", title: "Playdough", icon: "ri-shape-fill", bgColor: "pink-400" },
+  ],
+  "outdoors": [
+    { id: "play-friends", title: "Play Friends", icon: "ri-group-fill", bgColor: "green-400" },
+    { id: "playground", title: "Playground", icon: "ri-run-fill", bgColor: "green-400" },
+    { id: "walk", title: "Walk", icon: "ri-footprint-fill", bgColor: "green-400" },
+    { id: "bike", title: "Bike", icon: "ri-bike-fill", bgColor: "green-400" },
+    { id: "swing", title: "Swing", icon: "ri-anchor-fill", bgColor: "green-400" },
+    { id: "garden", title: "Garden", icon: "ri-plant-fill", bgColor: "green-400" },
+    { id: "park", title: "Park", icon: "ri-tree-fill", bgColor: "green-400" },
+  ],
+  "indoors": [
+    { id: "watch-tv", title: "Watch TV", icon: "ri-tv-fill", bgColor: "purple-400" },
+    { id: "tablet", title: "Tablet", icon: "ri-tablet-fill", bgColor: "purple-400" },
+    { id: "puzzle", title: "Puzzle", icon: "ri-puzzle-fill", bgColor: "purple-400" },
+    { id: "trains", title: "Trains", icon: "ri-train-fill", bgColor: "purple-400" },
+    { id: "blocks", title: "Blocks", icon: "ri-building-fill", bgColor: "purple-400" },
+    { id: "read", title: "Read", icon: "ri-book-open-fill", bgColor: "purple-400" },
+    { id: "lego", title: "Lego", icon: "ri-building-3-fill", bgColor: "purple-400" },
+  ],
+  "social": [
+    { id: "morning-meeting", title: "Meeting", icon: "ri-user-voice-fill", bgColor: "red-400" },
+    { id: "group-activity", title: "Group Time", icon: "ri-team-fill", bgColor: "red-400" },
+    { id: "circle-time", title: "Circle Time", icon: "ri-group-fill", bgColor: "red-400" },
+    { id: "sing", title: "Sing", icon: "ri-music-fill", bgColor: "red-400" },
+    { id: "listen-music", title: "Music", icon: "ri-headphone-fill", bgColor: "red-400" },
+    { id: "share", title: "Share", icon: "ri-share-forward-fill", bgColor: "red-400" },
+    { id: "take-turns", title: "Take Turns", icon: "ri-exchange-fill", bgColor: "red-400" },
+  ],
+  "routine": [
+    { id: "wake-up", title: "Wake Up", icon: "ri-alarm-fill", bgColor: "teal-400" },
+    { id: "homework", title: "Homework", icon: "ri-book-fill", bgColor: "teal-400" },
+    { id: "therapy", title: "Therapy", icon: "ri-mental-health-fill", bgColor: "teal-400" },
+    { id: "medicine", title: "Medicine", icon: "ri-medicine-bottle-fill", bgColor: "teal-400" },
+    { id: "bedtime", title: "Bedtime", icon: "ri-zzz-fill", bgColor: "teal-400" },
+    { id: "quiet-time", title: "Quiet Time", icon: "ri-rest-time-fill", bgColor: "teal-400" },
+    { id: "doctor", title: "Doctor", icon: "ri-stethoscope-fill", bgColor: "teal-400" },
   ],
   "other": [
-    { id: "wake-up", title: "Wake Up", icon: "ri-alarm-line", bgColor: "blue-500" },
-    { id: "play", title: "Play", icon: "ri-gamepad-line", bgColor: "green-300" },
-    { id: "play-toys", title: "Play with Toys", icon: "ri-shopping-basket-line", bgColor: "green-300" },
-    { id: "play-dog", title: "Play with Dog", icon: "ri-bear-smile-line", bgColor: "green-300" },
-    { id: "play-cat", title: "Play with Cat", icon: "ri-bear-smile-fill", bgColor: "green-300" },
-    { id: "do", title: "Do", icon: "ri-check-line", bgColor: "blue-300" },
-    { id: "glue", title: "Glue", icon: "ri-ruler-line", bgColor: "yellow-300" },
-    { id: "scissors", title: "Scissors", icon: "ri-scissors-line", bgColor: "yellow-300" },
-    { id: "playdough", title: "Playdough", icon: "ri-shape-line", bgColor: "yellow-300" },
+    { id: "play", title: "Play", icon: "ri-gamepad-fill", bgColor: "gray-400" },
+    { id: "toys", title: "Toys", icon: "ri-box-3-fill", bgColor: "gray-400" },
+    { id: "pet-dog", title: "Pet Dog", icon: "ri-bear-smile-fill", bgColor: "gray-400" },
+    { id: "pet-cat", title: "Pet Cat", icon: "ri-lion-fill", bgColor: "gray-400" },
+    { id: "wait", title: "Wait", icon: "ri-time-fill", bgColor: "gray-400" },
+    { id: "help", title: "Help", icon: "ri-hand-heart-fill", bgColor: "gray-400" },
+    { id: "listen", title: "Listen", icon: "ri-ear-fill", bgColor: "gray-400" },
+    { id: "look", title: "Look", icon: "ri-eye-fill", bgColor: "gray-400" },
   ],
 };
 
-// Initial schedule data
+// Initial schedule data with kid-friendly icons and colors
 export const initialScheduleData = [
   {
     id: "morning",
     name: "Morning",
-    icon: "ri-sun-line",
+    icon: "ri-sun-fill",
     iconColor: "yellow-500",
     activities: [
       {
         id: "morning-1",
         title: "Wake Up",
-        icon: "ri-alarm-line",
-        bgColor: "purple-300",
+        icon: "ri-alarm-fill",
+        bgColor: "teal-400",
       },
     ]
   },
   {
     id: "afternoon",
     name: "Afternoon",
-    icon: "ri-sun-foggy-line",
+    icon: "ri-sun-foggy-fill",
     iconColor: "orange-500",
     activities: [
       {
         id: "afternoon-1",
         title: "Play",
-        icon: "ri-gamepad-line",
-        bgColor: "green-300",
+        icon: "ri-gamepad-fill",
+        bgColor: "gray-400",
       },
     ]
   },
   {
     id: "evening",
     name: "Evening",
-    icon: "ri-moon-line",
+    icon: "ri-moon-fill",
     iconColor: "indigo-500",
     activities: [
       {
         id: "evening-1",
         title: "Dinner",
         icon: "ri-restaurant-fill",
-        bgColor: "purple-300",
+        bgColor: "yellow-400",
       },
     ]
   }
