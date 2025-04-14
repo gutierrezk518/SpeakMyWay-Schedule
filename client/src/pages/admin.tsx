@@ -951,14 +951,70 @@ export default function Admin() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // File handling would go here
+                          setSelectedFiles(prev => ({...prev, categories: file}));
                           toast({
                             title: "File Selected",
-                            description: `Categories file "${file.name}" selected. This feature is being implemented.`
+                            description: `Categories file "${file.name}" selected.`
                           });
                         }
                       }}
                     />
+                    {selectedFiles.categories && (
+                      <p className="text-xs text-muted-foreground">
+                        Selected: {selectedFiles.categories.name}
+                      </p>
+                    )}
+                    <Button 
+                      onClick={async () => {
+                        if (!selectedFiles.categories) {
+                          toast({
+                            title: "No File Selected",
+                            description: "Please select a CSV file first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append("file", selectedFiles.categories);
+                        
+                        setUploading(true);
+                        try {
+                          const response = await fetch("/api/import/categories", {
+                            method: "POST",
+                            body: formData,
+                          });
+                          
+                          const data = await response.json();
+                          
+                          if (response.ok) {
+                            toast({
+                              title: "Import Successful",
+                              description: `Successfully imported ${data.totalImported} categories. ${data.totalErrors} failed.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Import Failed",
+                              description: data.message || "An error occurred during import.",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Import Failed",
+                            description: "An error occurred during the upload process.",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={!selectedFiles.categories || uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload Categories"}
+                    </Button>
                   </div>
 
                   <div className="space-y-2">
@@ -970,14 +1026,70 @@ export default function Admin() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // File handling would go here
+                          setSelectedFiles(prev => ({...prev, subcategories: file}));
                           toast({
                             title: "File Selected",
-                            description: `Subcategories file "${file.name}" selected. This feature is being implemented.`
+                            description: `Subcategories file "${file.name}" selected.`
                           });
                         }
                       }}
                     />
+                    {selectedFiles.subcategories && (
+                      <p className="text-xs text-muted-foreground">
+                        Selected: {selectedFiles.subcategories.name}
+                      </p>
+                    )}
+                    <Button 
+                      onClick={async () => {
+                        if (!selectedFiles.subcategories) {
+                          toast({
+                            title: "No File Selected",
+                            description: "Please select a CSV file first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append("file", selectedFiles.subcategories);
+                        
+                        setUploading(true);
+                        try {
+                          const response = await fetch("/api/import/subcategories", {
+                            method: "POST",
+                            body: formData,
+                          });
+                          
+                          const data = await response.json();
+                          
+                          if (response.ok) {
+                            toast({
+                              title: "Import Successful",
+                              description: `Successfully imported ${data.totalImported} subcategories. ${data.totalErrors} failed.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Import Failed",
+                              description: data.message || "An error occurred during import.",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Import Failed",
+                            description: "An error occurred during the upload process.",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={!selectedFiles.subcategories || uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload Subcategories"}
+                    </Button>
                   </div>
 
                   <div className="space-y-2">
@@ -989,14 +1101,70 @@ export default function Admin() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // File handling would go here
+                          setSelectedFiles(prev => ({...prev, corewords: file}));
                           toast({
                             title: "File Selected",
-                            description: `Core words file "${file.name}" selected. This feature is being implemented.`
+                            description: `Core words file "${file.name}" selected.`
                           });
                         }
                       }}
                     />
+                    {selectedFiles.corewords && (
+                      <p className="text-xs text-muted-foreground">
+                        Selected: {selectedFiles.corewords.name}
+                      </p>
+                    )}
+                    <Button 
+                      onClick={async () => {
+                        if (!selectedFiles.corewords) {
+                          toast({
+                            title: "No File Selected",
+                            description: "Please select a CSV file first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append("file", selectedFiles.corewords);
+                        
+                        setUploading(true);
+                        try {
+                          const response = await fetch("/api/import/corewords", {
+                            method: "POST",
+                            body: formData,
+                          });
+                          
+                          const data = await response.json();
+                          
+                          if (response.ok) {
+                            toast({
+                              title: "Import Successful",
+                              description: `Successfully imported ${data.totalImported} core words. ${data.totalErrors} failed.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Import Failed",
+                              description: data.message || "An error occurred during import.",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Import Failed",
+                            description: "An error occurred during the upload process.",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={!selectedFiles.corewords || uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload Core Words"}
+                    </Button>
                   </div>
 
                   <div className="space-y-2">
@@ -1008,21 +1176,96 @@ export default function Admin() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // File handling would go here
+                          setSelectedFiles(prev => ({...prev, cards: file}));
                           toast({
                             title: "File Selected",
-                            description: `Activity cards file "${file.name}" selected. This feature is being implemented.`
+                            description: `Activity cards file "${file.name}" selected.`
                           });
                         }
                       }}
                     />
+                    {selectedFiles.cards && (
+                      <p className="text-xs text-muted-foreground">
+                        Selected: {selectedFiles.cards.name}
+                      </p>
+                    )}
+                    <Button 
+                      onClick={async () => {
+                        if (!selectedFiles.cards) {
+                          toast({
+                            title: "No File Selected",
+                            description: "Please select a CSV file first.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append("file", selectedFiles.cards);
+                        // If we have a userId, add it to the query
+                        const userId = 1; // For testing purposes; in production, get from user context
+                        
+                        setUploading(true);
+                        try {
+                          const response = await fetch(`/api/import/cards?userId=${userId}`, {
+                            method: "POST",
+                            body: formData,
+                          });
+                          
+                          const data = await response.json();
+                          
+                          if (response.ok) {
+                            toast({
+                              title: "Import Successful",
+                              description: `Successfully imported ${data.totalImported} activity cards. ${data.totalErrors} failed.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Import Failed",
+                              description: data.message || "An error occurred during import.",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Import Failed",
+                            description: "An error occurred during the upload process.",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={!selectedFiles.cards || uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload Activity Cards"}
+                    </Button>
                   </div>
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="secondary" className="w-full">
-                  <i className="ri-upload-line mr-2"></i>
-                  Upload Selected Files
+                <Button 
+                  variant="secondary" 
+                  className="w-full"
+                  onClick={() => {
+                    // Reset all selected files
+                    setSelectedFiles({
+                      categories: null,
+                      subcategories: null,
+                      corewords: null,
+                      cards: null
+                    });
+                    toast({
+                      title: "Selection Cleared",
+                      description: "All selected files have been cleared."
+                    });
+                  }}
+                  disabled={!Object.values(selectedFiles).some(file => file !== null)}
+                >
+                  <i className="ri-refresh-line mr-2"></i>
+                  Clear Selected Files
                 </Button>
               </CardFooter>
             </Card>

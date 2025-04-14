@@ -12,6 +12,8 @@ import {
 } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import multer from "multer";
+import * as csvParser from "csv-parse/sync";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Error handling middleware for Zod validation errors
@@ -514,6 +516,229 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     return res.status(204).end();
+  });
+
+  // CSV Import/Export endpoints
+  const upload = multer({ storage: multer.memoryStorage() });
+  
+  app.post("/api/import/categories", upload.single("file"), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      const fileContent = req.file.buffer.toString();
+      const records = csvParser.parse(fileContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+      
+      const results = [];
+      
+      for (const record of records) {
+        try {
+          // Transform CSV values to appropriate types
+          const categoryData = {
+            name: record.name,
+            nameEs: record.nameEs || null,
+            icon: record.icon,
+            color: record.color || "blue-500",
+            type: record.type || "vocabulary",
+            sortOrder: parseInt(record.sortOrder) || 0
+          };
+          
+          const category = await storage.createCategory(categoryData);
+          results.push({
+            success: true,
+            data: category
+          });
+        } catch (error) {
+          results.push({
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+            record
+          });
+        }
+      }
+      
+      return res.status(200).json({
+        totalImported: results.filter(r => r.success).length,
+        totalErrors: results.filter(r => !r.success).length,
+        details: results
+      });
+    } catch (error) {
+      return res.status(500).json({ 
+        message: "Error processing CSV file",
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+  
+  app.post("/api/import/subcategories", upload.single("file"), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      const fileContent = req.file.buffer.toString();
+      const records = csvParser.parse(fileContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+      
+      const results = [];
+      
+      for (const record of records) {
+        try {
+          // Transform CSV values to appropriate types
+          const subcategoryData = {
+            categoryId: parseInt(record.categoryId),
+            name: record.name,
+            nameEs: record.nameEs || null,
+            icon: record.icon || null,
+            color: record.color || null,
+            sortOrder: parseInt(record.sortOrder) || 0
+          };
+          
+          const subcategory = await storage.createSubcategory(subcategoryData);
+          results.push({
+            success: true,
+            data: subcategory
+          });
+        } catch (error) {
+          results.push({
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+            record
+          });
+        }
+      }
+      
+      return res.status(200).json({
+        totalImported: results.filter(r => r.success).length,
+        totalErrors: results.filter(r => !r.success).length,
+        details: results
+      });
+    } catch (error) {
+      return res.status(500).json({ 
+        message: "Error processing CSV file",
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+  
+  app.post("/api/import/corewords", upload.single("file"), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      const fileContent = req.file.buffer.toString();
+      const records = csvParser.parse(fileContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+      
+      const results = [];
+      
+      for (const record of records) {
+        try {
+          // Transform CSV values to appropriate types
+          const coreWordData = {
+            text: record.text,
+            textEs: record.textEs || null,
+            icon: record.icon,
+            canBePlural: record.canBePlural === "true",
+            color: record.color || null,
+            sortOrder: parseInt(record.sortOrder) || 0
+          };
+          
+          const coreWord = await storage.createCoreWord(coreWordData);
+          results.push({
+            success: true,
+            data: coreWord
+          });
+        } catch (error) {
+          results.push({
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+            record
+          });
+        }
+      }
+      
+      return res.status(200).json({
+        totalImported: results.filter(r => r.success).length,
+        totalErrors: results.filter(r => !r.success).length,
+        details: results
+      });
+    } catch (error) {
+      return res.status(500).json({ 
+        message: "Error processing CSV file",
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+  
+  app.post("/api/import/cards", upload.single("file"), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+      
+      const fileContent = req.file.buffer.toString();
+      const records = csvParser.parse(fileContent, {
+        columns: true,
+        skip_empty_lines: true
+      });
+      
+      const results = [];
+      
+      for (const record of records) {
+        try {
+          // Transform CSV values to appropriate types
+          const cardData = {
+            text: record.text,
+            speechText: record.speechText || record.text,
+            textEs: record.textEs || null,
+            speechTextEs: record.speechTextEs || record.textEs,
+            category: record.category,
+            subcategory: record.subcategory,
+            icon: record.icon,
+            bgColor: record.bgColor || "gray-100",
+            canBePlural: record.canBePlural === "true",
+            language: record.language || "en",
+            isScheduleCard: record.isScheduleCard === "true",
+            isCommunicationCard: record.isCommunicationCard === "true",
+            userId: req.query.userId ? parseInt(req.query.userId as string) : null,
+            usageCount: 0
+          };
+          
+          const card = await storage.createCard(cardData);
+          results.push({
+            success: true,
+            data: card
+          });
+        } catch (error) {
+          results.push({
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+            record
+          });
+        }
+      }
+      
+      return res.status(200).json({
+        totalImported: results.filter(r => r.success).length,
+        totalErrors: results.filter(r => !r.success).length,
+        details: results
+      });
+    } catch (error) {
+      return res.status(500).json({ 
+        message: "Error processing CSV file",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
   });
 
   const httpServer = createServer(app);
