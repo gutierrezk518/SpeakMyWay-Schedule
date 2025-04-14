@@ -17,6 +17,20 @@ export default function Admin() {
   const { language } = useAppContext();
   const [selectedTab, setSelectedTab] = useState("categories");
   
+  // File upload state
+  const [uploading, setUploading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<{
+    categories: File | null;
+    subcategories: File | null;
+    corewords: File | null;
+    cards: File | null;
+  }>({
+    categories: null,
+    subcategories: null,
+    corewords: null,
+    cards: null
+  });
+  
   // ==== Categories Tab ====
   const [categoryForm, setCategoryForm] = useState({
     name: "",
