@@ -40,7 +40,7 @@ export default function Schedule() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
-  const itemsPerPage = 48; // Increased to show more activities at once
+  const itemsPerPage = 25; // Show a 5x5 grid of activities at once
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
@@ -355,7 +355,7 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ paddingTop: '4px', paddingBottom: '4px' }}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center space-y-0.5 ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center space-y-2 ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
