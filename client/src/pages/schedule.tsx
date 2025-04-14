@@ -304,7 +304,7 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center ${
+                    className={`overflow-y-auto flex-grow rounded-md p-1 flex flex-col items-center gap-1 ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -317,7 +317,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className="relative w-14 h-14 mx-auto mb-1">
+                        <div key={activity.id} className="relative w-14 h-14 mx-auto">
                           <ActivityCard 
                             activity={activity} 
                             index={index}
