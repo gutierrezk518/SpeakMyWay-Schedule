@@ -375,11 +375,11 @@ export default function Schedule() {
                             showRemoveButton={false}
                           />
                           <button 
-                            className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+                            className="absolute -top-1.5 -right-1.5 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
                             onClick={() => removeActivity(index)}
                             aria-label="Remove activity"
                           >
-                            <i className="ri-close-line text-[10px]"></i>
+                            <i className="ri-close-line text-[8px]"></i>
                           </button>
                         </div>
                       ))
@@ -415,7 +415,7 @@ export default function Schedule() {
           {!isFullscreen && (
             <div className="w-2/3 flex flex-col h-full">
               {/* Timer */}
-              <div className="p-1 border-b border-gray-200">
+              <div className="p-2 border-b border-gray-200">
                 <ActivityTimer />
               </div>
               
@@ -442,6 +442,17 @@ export default function Schedule() {
                       setActivitiesPage(1);
                     }}
                   >
+                    <i className={`${
+                      category.id === 'meals' ? 'ri-restaurant-fill' : 
+                      category.id === 'hygiene' ? 'ri-hand-heart-fill' : 
+                      category.id === 'arts' ? 'ri-palette-fill' : 
+                      category.id === 'outdoors' ? 'ri-plant-fill' : 
+                      category.id === 'indoors' ? 'ri-home-fill' : 
+                      category.id === 'social' ? 'ri-team-fill' : 
+                      category.id === 'holiday' ? 'ri-gift-fill' : 
+                      category.id === 'vacation' ? 'ri-plane-fill' : 
+                      'ri-apps-fill'
+                    } mr-1`}></i>
                     {category.name}
                   </button>
                 ))}

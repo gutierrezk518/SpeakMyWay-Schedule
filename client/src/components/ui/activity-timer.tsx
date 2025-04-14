@@ -82,19 +82,19 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
   };
 
   return (
-    <div className="py-0.5 px-1 bg-white rounded shadow-sm">
+    <div className="py-2 px-3 bg-white rounded shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-medium">Timer</span>
+        <span className="text-sm font-medium">Timer</span>
         
-        <div className="flex items-center space-x-0.5">
+        <div className="flex items-center space-x-2">
           {isRunning ? (
-            <div className="text-sm font-bold text-primary">
+            <div className="text-lg font-bold text-primary">
               {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
             </div>
           ) : (
-            <div className="flex items-center space-x-0.5">
+            <div className="flex items-center space-x-1">
               <select 
-                className="py-0 px-1 text-[10px] border rounded bg-white"
+                className="py-1 px-2 text-sm border rounded bg-white"
                 value={timerMinutes}
                 onChange={handleMinutesChange}
                 disabled={isRunning}
@@ -103,9 +103,9 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
                   <option key={`min-${num}`} value={num}>{formatTime(num)}</option>
                 ))}
               </select>
-              <span className="text-[10px] font-bold">:</span>
+              <span className="text-sm font-bold">:</span>
               <select 
-                className="py-0 px-1 text-[10px] border rounded bg-white"
+                className="py-1 px-2 text-sm border rounded bg-white"
                 value={timerSeconds}
                 onChange={handleSecondsChange}
                 disabled={isRunning}
@@ -117,10 +117,10 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
             </div>
           )}
           
-          <div className="flex space-x-0.5">
+          <div className="flex space-x-1">
             {!isRunning ? (
               <button 
-                className="bg-primary text-white p-0.5 text-[10px] rounded hover:bg-blue-600"
+                className="bg-primary text-white p-1.5 text-sm rounded hover:bg-blue-600"
                 onClick={startTimer}
                 aria-label="Start timer"
               >
@@ -128,7 +128,7 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
               </button>
             ) : (
               <button 
-                className="bg-yellow-500 text-white p-0.5 text-[10px] rounded hover:bg-yellow-600"
+                className="bg-yellow-500 text-white p-1.5 text-sm rounded hover:bg-yellow-600"
                 onClick={stopTimer}
                 aria-label="Pause timer"
               >
@@ -137,7 +137,7 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
             )}
             
             <button 
-              className="bg-gray-300 text-gray-700 p-0.5 text-[10px] rounded hover:bg-gray-400"
+              className="bg-gray-300 text-gray-700 p-1.5 text-sm rounded hover:bg-gray-400"
               onClick={resetTimer}
               aria-label="Reset timer"
             >
