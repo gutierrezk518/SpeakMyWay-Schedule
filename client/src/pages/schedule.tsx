@@ -295,56 +295,106 @@ export default function Schedule() {
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`}>
-          {/* Side buttons panel - always visible */}
-          <div className={`${isPortrait ? 'h-12 w-full flex-row justify-center space-x-4' : 'w-12 sm:w-14 flex-col space-y-2'} flex items-center py-2 bg-gray-100 border-b border-gray-200`}>
-            {/* Undo button */}
-            <button 
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
-                canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-              }`}
-              onClick={handleUndo}
-              disabled={!canUndo}
-              title="Undo"
-            >
-              <i className="ri-arrow-go-back-line text-sm sm:text-lg"></i>
-            </button>
-            
-            {/* Redo button */}
-            <button 
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
-                canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-              }`}
-              onClick={handleRedo}
-              disabled={!canRedo}
-              title="Redo"
-            >
-              <i className="ri-arrow-go-forward-line text-sm sm:text-lg"></i>
-            </button>
-            
-            {/* Play button */}
-            <button 
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
-              onClick={playSchedule}
-              title="Play schedule"
-            >
-              <i className="ri-play-line text-sm sm:text-lg"></i>
-            </button>
-            
-            {/* Save button */}
-            <button 
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
-              onClick={() => setShowSaveModal(true)}
-              title="Save schedule"
-            >
-              <i className="ri-save-line text-sm sm:text-lg"></i>
-            </button>
-          </div>
+          {/* Side buttons panel - non portrait mode */}
+          {!isPortrait && (
+            <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+              {/* Undo button */}
+              <button 
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
+                  canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                }`}
+                onClick={handleUndo}
+                disabled={!canUndo}
+                title="Undo"
+              >
+                <i className="ri-arrow-go-back-line text-sm sm:text-lg"></i>
+              </button>
+              
+              {/* Redo button */}
+              <button 
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
+                  canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                }`}
+                onClick={handleRedo}
+                disabled={!canRedo}
+                title="Redo"
+              >
+                <i className="ri-arrow-go-forward-line text-sm sm:text-lg"></i>
+              </button>
+              
+              {/* Play button */}
+              <button 
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                onClick={playSchedule}
+                title="Play schedule"
+              >
+                <i className="ri-play-line text-sm sm:text-lg"></i>
+              </button>
+              
+              {/* Save button */}
+              <button 
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                onClick={() => setShowSaveModal(true)}
+                title="Save schedule"
+              >
+                <i className="ri-save-line text-sm sm:text-lg"></i>
+              </button>
+            </div>
+          )}
           
           {/* Schedule section */}
           <div className={`${isFullscreen ? 'w-full' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
-              <div className="text-center font-bold w-full">My Schedule</div>
-              <div className="flex space-x-1">
+              <div className="font-bold mr-auto">My Schedule</div>
+              
+              {/* Action buttons in portrait mode */}
+              {isPortrait && (
+                <div className="flex space-x-1.5 mx-1">
+                  {/* Undo button */}
+                  <button 
+                    className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                      canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                    }`}
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    title="Undo"
+                  >
+                    <i className="ri-arrow-go-back-line text-xs"></i>
+                  </button>
+                  
+                  {/* Redo button */}
+                  <button 
+                    className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                      canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                    }`}
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    title="Redo"
+                  >
+                    <i className="ri-arrow-go-forward-line text-xs"></i>
+                  </button>
+                  
+                  {/* Play button */}
+                  <button 
+                    className="w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                    onClick={playSchedule}
+                    title="Play schedule"
+                  >
+                    <i className="ri-play-line text-xs"></i>
+                  </button>
+                  
+                  {/* Save button */}
+                  <button 
+                    className="w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                    onClick={() => setShowSaveModal(true)}
+                    title="Save schedule"
+                  >
+                    <i className="ri-save-line text-xs"></i>
+                  </button>
+                </div>
+              )}
+              
+              <div className="flex space-x-1 ml-auto">
                 <button 
                   className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
                   onClick={toggleFullscreen}
@@ -437,11 +487,11 @@ export default function Schedule() {
               </div>
               
               {/* Category tabs - always visible */}
-              <div className="p-2 bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1.5 flex-wrap sticky top-0 z-20 shadow-md max-h-24 overflow-y-auto justify-center">
+              <div className={`${isPortrait ? 'p-1' : 'p-2'} bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1 flex-wrap sticky top-0 z-20 shadow-md ${isPortrait ? 'max-h-16' : 'max-h-24'} overflow-y-auto justify-center`}>
                 {activityCategories.map((category) => (
                   <button 
                     key={category.id}
-                    className={`px-2 py-1 mb-0.5 whitespace-nowrap rounded-md text-xs font-medium border-2 ${
+                    className={`${isPortrait ? 'px-1.5 py-0.5 mb-0.5 text-[9px]' : 'px-2 py-1 mb-0.5 text-xs'} whitespace-nowrap rounded-md font-medium border-2 ${
                       (category.color === 'purple-300' ? 'bg-purple-300' :
                        category.color === 'green-400' ? 'bg-green-400' :
                        category.color === 'green-200' ? 'bg-green-200' :
@@ -450,7 +500,7 @@ export default function Schedule() {
                        category.color === 'purple-200' ? 'bg-purple-200' :
                        category.color === 'orange-100' ? 'bg-orange-100' : 'bg-gray-200')}
                       ${selectedCategory === category.id 
-                        ? 'border-black shadow-lg ring-2 ring-offset-1 ring-black font-bold'
+                        ? 'border-black shadow-lg ring-1 ring-offset-1 ring-black font-bold'
                         : 'border-transparent shadow-sm hover:shadow-md'
                       }
                     }`}
@@ -469,27 +519,28 @@ export default function Schedule() {
                       category.id === 'holiday' ? 'ri-gift-fill' : 
                       category.id === 'vacation' ? 'ri-plane-fill' : 
                       'ri-apps-fill'
-                    } mr-1`}></i>
+                    } ${isPortrait ? '' : 'mr-1'}`}></i>
                     {category.name}
                   </button>
                 ))}
               </div>
               
               {/* Activity cards grid */}
-              <div className="flex-grow p-1 bg-gray-100 flex flex-col relative overflow-hidden">
-                <div className="text-center mb-1 text-xs font-medium text-gray-700 mt-1">Activity Cards</div>
+              <div className={`flex-grow ${isPortrait ? 'p-0.5' : 'p-1'} bg-gray-100 flex flex-col relative overflow-hidden`}>
+                <div className={`text-center ${isPortrait ? 'text-[10px] mb-0.5 mt-0.5' : 'mb-1 text-xs mt-1'} font-medium text-gray-700`}>Activity Cards</div>
                 <Droppable droppableId="activity-cards">
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2 overflow-y-auto flex-grow"
+                      className={`grid ${isPortrait ? 'grid-cols-4 gap-0.5 px-1' : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2 px-2'} overflow-y-auto flex-grow`}
                       style={{ 
                         minHeight: "200px", 
-                        height: "calc(100vh - 300px)", 
-                        gridTemplateRows: "repeat(auto-fill, minmax(65px, 1fr))", 
+                        height: isPortrait ? "calc(100vh - 260px)" : "calc(100vh - 300px)", 
+                        gridTemplateRows: "repeat(auto-fill, minmax(60px, 1fr))", 
                         alignItems: "center",
-                        justifyItems: "center"
+                        justifyItems: "center",
+                        width: "100%"
                       }}
                     >
                       {visibleActivities.map((activity, index) => (
