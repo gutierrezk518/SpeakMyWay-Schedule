@@ -42,6 +42,10 @@ interface AppContextType {
   canRedo: boolean;
   undoScheduleChange: () => ScheduleActivity[] | undefined;
   redoScheduleChange: () => ScheduleActivity[] | undefined;
+  // Favorites functionality
+  favoriteActivities: ScheduleActivity[];
+  toggleFavorite: (activity: ScheduleActivity) => void;
+  isFavorite: (activityId: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -66,6 +70,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Undo/Redo state
   const [scheduleHistory, setScheduleHistory] = useState<ScheduleActivity[][]>([[]]);
   const [scheduleHistoryIndex, setScheduleHistoryIndex] = useState(0);
+  
+  // Favorites state - load from localStorage if available
+  const [favoriteActivities, setFavoriteActivities] = useState<ScheduleActivity[]>(() => {
+    const savedFavorites = localStorage.getItem('userFavorites');
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
   
   // Derived properties
   const canUndo = scheduleHistoryIndex > 0;
@@ -127,6 +137,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Return the next state
     return JSON.parse(JSON.stringify(scheduleHistory[newIndex]));
   };
+  
+  // Toggle an activity as favorite
+  const toggleFavorite = (activity: ScheduleActivity) => {
+    // Check if the activity is already a favorite
+    const isAlreadyFavorited = favoriteActivities.some(favActivity => 
+      favActivity.id.split('-')[0] === activity.id.split('-')[0]
+    );
+    
+    let updatedFavorites;
+    
+    if (isAlreadyFavorited) {
+      // Remove from favorites
+      updatedFavorites = favoriteActivities.filter(favActivity => 
+        favActivity.id.split('-')[0] !== activity.id.split('-')[0]
+      );
+    } else {
+      // Add to favorites - create a clean copy without any draggable item IDs
+      const cleanActivity = { ...activity };
+      // If ID contains a UUID suffix, remove it to keep the original activity ID
+      cleanActivity.id = cleanActivity.id.split('-')[0];
+      updatedFavorites = [...favoriteActivities, cleanActivity];
+    }
+    
+    // Update state and save to localStorage
+    setFavoriteActivities(updatedFavorites);
+    localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
+  };
+  
+  // Check if an activity is in favorites
+  const isFavorite = (activityId: string) => {
+    // Strip UUID if present
+    const baseId = activityId.split('-')[0];
+    return favoriteActivities.some(activity => activity.id.split('-')[0] === baseId);
+  };
 
   return (
     <AppContext.Provider
@@ -152,7 +196,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         canUndo,
         canRedo,
         undoScheduleChange,
-        redoScheduleChange
+        redoScheduleChange,
+        favoriteActivities,
+        toggleFavorite,
+        isFavorite
       }}
     >
       {children}
