@@ -3,8 +3,103 @@ import { ScheduleActivity } from "./scheduleData";
 // Custom activity card data with image paths and speech text
 // Based on the provided specification from the user
 
+// We have some images available in the assets folder that we can use directly
+// Instead of expecting exact image names for each activity, we'll map a few key activities
+// to the images we have, and use a default for the rest
+
+// Import image assets directly from their paths for better compatibility
+const artsncraftsImg = "/attached_assets/artsncrafts.png";
+const bathImg = "/attached_assets/bath.png";
+const bathroomImg = "/attached_assets/bathroom.png";
+const bikeImg = "/attached_assets/bike.png";
+const birthdaypartyImg = "/attached_assets/birthdayparty.png";
+const blocksImg = "/attached_assets/blocks.png";
+const bookImg = "/attached_assets/book.png";
+const breakfastImg = "/attached_assets/breakfast.png";
+const brushhairImg = "/attached_assets/brushhair.png";
+const brushteethImg = "/attached_assets/brushteeth.png";
+const campingImg = "/attached_assets/camping.png";
+const halloweenImg = "/attached_assets/halloween.png";
+const hanukkahImg = "/attached_assets/hanukkah.png";
+const hotelImg = "/attached_assets/hotel.png";
+const juiceImg = "/attached_assets/juice.png";
+const lunchImg = "/attached_assets/lunch.png";
+const movieImg = "/attached_assets/movie.png";
+const paintImg = "/attached_assets/paint.png";
+const paradeImg = "/attached_assets/parade.png";
+const parkImg = "/attached_assets/park.png";
+const phoneImg = "/attached_assets/phone.png";
+const playgroundImg = "/attached_assets/playground.png";
+const puzzleImg = "/attached_assets/puzzle.png";
+const tabletImg = "/attached_assets/tablet.png";
+const toysImg = "/attached_assets/toys.png";
+const tvImg = "/attached_assets/tv.png";
+const walkImg = "/attached_assets/walk.png";
+const walkdogImg = "/attached_assets/walkdog.png";
+const washhandsImg = "/attached_assets/wash hands.png";
+const washfaceImg = "/attached_assets/washface.png";
+const waterplayImg = "/attached_assets/waterplay.png";
+const youtubeImg = "/attached_assets/youtube.png";
+const swingImg = "/attached_assets/swing.png";
+const snackImg = "/attached_assets/snack.png";
+
 // Helper function to get image path
-const imagePath = (imageName: string) => `/src/assets/activity-cards/${imageName}.png`;
+const imagePath = (imageName: string) => {
+  // Map of available images - we'll use our uploaded custom images
+  const availableImages: Record<string, string> = {
+    // Media
+    "youtube": youtubeImg,
+    "tablet": tabletImg,
+    "tv": tvImg,
+    "movie": movieImg,
+    "phone": phoneImg,
+    
+    // Meals
+    "breakfast": breakfastImg,
+    "lunch": lunchImg,
+    "juice": juiceImg,
+    
+    // Arts
+    "paint": paintImg,
+    "artsncrafts": artsncraftsImg,
+    
+    // Holidays & Events
+    "halloween": halloweenImg,
+    "hanukah": hanukkahImg,
+    "birthday": birthdaypartyImg,
+    "parade": paradeImg,
+    
+    // Outdoors
+    "walk": walkImg,
+    "playground": playgroundImg,
+    "park": parkImg,
+    "waterplay": waterplayImg,
+    "walkdog": walkdogImg,
+    "bike": bikeImg,
+    
+    // Indoors
+    "book": bookImg,
+    "blocks": blocksImg,
+    "toys": toysImg,
+    "puzzle": puzzleImg,
+    
+    // Hygiene
+    "washhands": washhandsImg,
+    "brushteeth": brushteethImg,
+    "bathroom": bathroomImg,
+    "bath": bathImg,
+    "washface": washfaceImg,
+    
+    // Places
+    "hotel": hotelImg,
+    
+    // Fallback to a generic icon if specific icon isn't found
+    "default": toysImg, // Using toys as a default fallback icon
+  };
+  
+  // Return the specific image if available, otherwise use default
+  return availableImages[imageName] || availableImages["default"];
+};
 
 export const customActivityCards: Record<string, ScheduleActivity[]> = {
   "media": [
@@ -63,7 +158,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Snack", 
       icon: "ri-cake-3-fill", 
       bgColor: "purple-300",
-      imageSrc: imagePath("snack"),
+      imageSrc: imagePath("default"),
       speechText: "Eat Snack" 
     },
     { 
@@ -87,7 +182,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Water", 
       icon: "ri-water-flash-fill", 
       bgColor: "blue-300",
-      imageSrc: imagePath("water"),
+      imageSrc: imagePath("default"),
       speechText: "Drink Water" 
     },
   ],
