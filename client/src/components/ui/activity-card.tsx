@@ -2,7 +2,7 @@ import { ScheduleActivity } from "@/data/scheduleData";
 import { Draggable } from "react-beautiful-dnd";
 import { speak } from "@/lib/tts";
 // For importing custom image assets
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
 
 interface ActivityCardProps {
@@ -35,6 +35,36 @@ export default function ActivityCard({
   
   // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
   const isInSchedule = showRemoveButton;
+  
+  // State to track long press
+  const [longPressTimer, setLongPressTimer] = useState<number | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
+  
+  // Handle long press start
+  const handleMouseDown = () => {
+    if (!isInSchedule && !isFavoritesMode) {
+      const timer = window.setTimeout(() => {
+        setIsLongPress(true);
+        toggleFavoritesMode();
+      }, 800); // 800ms long press time
+      setLongPressTimer(timer);
+    }
+  };
+  
+  // Handle mouse up or leave - clear the timer if it hasn't triggered
+  const handleMouseUp = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+    
+    // Only count as a click if it wasn't a long press
+    if (!isLongPress) {
+      handleCardClick();
+    }
+    
+    setIsLongPress(false);
+  };
   
   // Handle card click to speak the activity title or speech text if available
   // or add to favorites when in selection mode

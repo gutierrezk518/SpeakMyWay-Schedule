@@ -313,27 +313,31 @@ export default function Schedule() {
     if (isFavoritesMode) {
       // If we're already in favorites mode, commit the changes and exit the mode
       commitTemporaryFavorites();
-      toast.success('Favorites updated!');
+      toast.success('Favorites updated!', { 
+        style: {
+          background: '#22c55e', // Green background
+          color: '#ffffff',      // White text
+        },
+        position: 'top-center',
+      });
     } else {
       // Enter favorites mode and show instructions
       setFavoritesMode(true);
-      const toastMessage = 'Select cards you\'d like to add to your favorites tab. Select the Star again when finished.';
-      toast.success(toastMessage, { duration: 4000 });
+      const toastMessage = 'Select Activity Cards you\'d like to add to your Favorites category. When finished, select the star again.';
+      toast.success(toastMessage, { 
+        duration: 5000,
+        style: {
+          background: '#22c55e', // Green background
+          color: '#ffffff',      // White text
+        },
+        position: 'top-center',
+      });
       speak(toastMessage);
     }
   };
 
   return (
-    <section className={`h-full flex flex-col ${isFavoritesMode ? 'relative' : ''}`}>
-      {isFavoritesMode && (
-        <div className="absolute inset-0 bg-black/30 z-40 pointer-events-none">
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg z-50 pointer-events-auto">
-            <p className="text-sm font-medium text-center">
-              Select cards to add to your favorites
-            </p>
-          </div>
-        </div>
-      )}
+    <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`}>
           {/* Side buttons panel - non portrait mode */}
@@ -381,28 +385,17 @@ export default function Schedule() {
                 <i className="ri-timer-line text-sm sm:text-lg"></i>
               </button>
               
-              {/* Add to Favorites button */}
+              {/* Favorites button */}
               <button 
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
                   isFavoritesMode 
                     ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
-                    : 'bg-yellow-400 text-white'
+                    : selectedCategory === 'favorites'
+                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
+                      : 'bg-yellow-400 text-white'
                 } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                onClick={toggleFavoritesMode}
-                title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
-              >
-                <i className="ri-star-line text-sm sm:text-lg"></i>
-              </button>
-              
-              {/* View Favorites button */}
-              <button 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
-                  selectedCategory === 'favorites'
-                    ? 'bg-yellow-500 text-white ring-1 ring-yellow-300' 
-                    : 'bg-amber-300 text-white'
-                } flex items-center justify-center shadow-sm hover:bg-amber-400`}
-                onClick={() => setSelectedCategory('favorites')}
-                title="View favorites"
+                onClick={isFavoritesMode ? toggleFavoritesMode : () => setSelectedCategory('favorites')}
+                title={isFavoritesMode ? "Finish selecting favorites" : "View favorites"}
               >
                 <i className="ri-star-fill text-sm sm:text-lg"></i>
               </button>
@@ -465,28 +458,17 @@ export default function Schedule() {
                   <i className="ri-timer-line text-xs"></i>
                 </button>
                 
-                {/* Add to Favorites button */}
+                {/* Favorites button */}
                 <button 
                   className={`w-7 h-7 rounded-md ${
                     isFavoritesMode 
                       ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
-                      : 'bg-yellow-400 text-white'
+                      : selectedCategory === 'favorites'
+                        ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
+                        : 'bg-yellow-400 text-white'
                   } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                  onClick={toggleFavoritesMode}
-                  title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
-                >
-                  <i className="ri-star-line text-xs"></i>
-                </button>
-                
-                {/* View Favorites button */}
-                <button 
-                  className={`w-7 h-7 rounded-md ${
-                    selectedCategory === 'favorites'
-                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300' 
-                      : 'bg-amber-300 text-white'
-                  } flex items-center justify-center shadow-sm hover:bg-amber-400`}
-                  onClick={() => setSelectedCategory('favorites')}
-                  title="View favorites"
+                  onClick={isFavoritesMode ? toggleFavoritesMode : () => setSelectedCategory('favorites')}
+                  title={isFavoritesMode ? "Finish selecting favorites" : "View favorites"}
                 >
                   <i className="ri-star-fill text-xs"></i>
                 </button>
@@ -652,7 +634,16 @@ export default function Schedule() {
               
               {/* Activity cards grid */}
               <div className={`flex-grow ${isPortrait ? 'p-0.5' : 'p-1'} bg-gray-100 flex flex-col relative overflow-hidden`}>
-                <div className={`text-center ${isPortrait ? 'text-[10px] mb-0.5 mt-0.5' : 'mb-1 text-xs mt-1'} font-medium text-gray-700`}>Activity Cards</div>
+                <div className={`text-center ${isPortrait ? 'text-[10px] mb-0.5 mt-0.5' : 'mb-1 text-xs mt-1'} font-medium flex items-center justify-center`}>
+                {isFavoritesMode ? (
+                  <span className="bg-green-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center">
+                    <i className="ri-star-line mr-1"></i>
+                    Selecting Favorites
+                  </span>
+                ) : (
+                  <span className="text-gray-700">Activity Cards</span>
+                )}
+              </div>
                 <Droppable droppableId="activity-cards">
                   {(provided) => (
                     <div

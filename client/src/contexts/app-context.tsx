@@ -49,6 +49,7 @@ interface AppContextType {
   // Favorites selection mode
   isFavoritesMode: boolean;
   setFavoritesMode: (mode: boolean) => void;
+  toggleFavoritesMode: () => void;
   temporaryFavorites: ScheduleActivity[];
   addToTemporaryFavorites: (activity: ScheduleActivity) => void;
   removeFromTemporaryFavorites: (activityId: string) => void;
