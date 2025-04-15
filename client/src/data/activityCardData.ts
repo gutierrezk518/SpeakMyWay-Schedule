@@ -7,41 +7,41 @@ import { ScheduleActivity } from "./scheduleData";
 // Instead of expecting exact image names for each activity, we'll map a few key activities
 // to the images we have, and use a default for the rest
 
-// Import image assets directly from their paths for better compatibility
-const artsncraftsImg = "/attached_assets/artsncrafts.png";
-const bathImg = "/attached_assets/bath.png";
-const bathroomImg = "/attached_assets/bathroom.png";
-const bikeImg = "/attached_assets/bike.png";
-const birthdaypartyImg = "/attached_assets/birthdayparty.png";
-const blocksImg = "/attached_assets/blocks.png";
-const bookImg = "/attached_assets/book.png";
-const breakfastImg = "/attached_assets/breakfast.png";
-const brushhairImg = "/attached_assets/brushhair.png";
-const brushteethImg = "/attached_assets/brushteeth.png";
-const campingImg = "/attached_assets/camping.png";
-const halloweenImg = "/attached_assets/halloween.png";
-const hanukkahImg = "/attached_assets/hanukkah.png";
-const hotelImg = "/attached_assets/hotel.png";
-const juiceImg = "/attached_assets/juice.png";
-const lunchImg = "/attached_assets/lunch.png";
-const movieImg = "/attached_assets/movie.png";
-const paintImg = "/attached_assets/paint.png";
-const paradeImg = "/attached_assets/parade.png";
-const parkImg = "/attached_assets/park.png";
-const phoneImg = "/attached_assets/phone.png";
-const playgroundImg = "/attached_assets/playground.png";
-const puzzleImg = "/attached_assets/puzzle.png";
-const tabletImg = "/attached_assets/tablet.png";
-const toysImg = "/attached_assets/toys.png";
-const tvImg = "/attached_assets/tv.png";
-const walkImg = "/attached_assets/walk.png";
-const walkdogImg = "/attached_assets/walkdog.png";
-const washhandsImg = "/attached_assets/wash hands.png";
-const washfaceImg = "/attached_assets/washface.png";
-const waterplayImg = "/attached_assets/waterplay.png";
-const youtubeImg = "/attached_assets/youtube.png";
-const swingImg = "/attached_assets/swing.png";
-const snackImg = "/attached_assets/snack.png";
+// Define image paths directly from public folder
+const artsncraftsImg = "/activity-cards/artsncrafts.png";
+const bathImg = "/activity-cards/bath.png";
+const bathroomImg = "/activity-cards/bathroom.png";
+const bikeImg = "/activity-cards/bike.png";
+const birthdaypartyImg = "/activity-cards/birthdayparty.png";
+const blocksImg = "/activity-cards/blocks.png";
+const bookImg = "/activity-cards/book.png";
+const breakfastImg = "/activity-cards/breakfast.png";
+const brushhairImg = "/activity-cards/brushhair.png";
+const brushteethImg = "/activity-cards/brushteeth.png";
+const campingImg = "/activity-cards/camping.png";
+const halloweenImg = "/activity-cards/halloween.png";
+const hanukkahImg = "/activity-cards/hanukkah.png";
+const hotelImg = "/activity-cards/hotel.png";
+const juiceImg = "/activity-cards/juice.png";
+const lunchImg = "/activity-cards/lunch.png";
+const movieImg = "/activity-cards/movie.png";
+const paintImg = "/activity-cards/paint.png";
+const paradeImg = "/activity-cards/parade.png";
+const parkImg = "/activity-cards/park.png";
+const phoneImg = "/activity-cards/phone.png";
+const playgroundImg = "/activity-cards/playground.png";
+const puzzleImg = "/activity-cards/puzzle.png";
+const tabletImg = "/activity-cards/tablet.png";
+const toysImg = "/activity-cards/toys.png";
+const tvImg = "/activity-cards/tv.png";
+const walkImg = "/activity-cards/walk.png";
+const walkdogImg = "/activity-cards/walkdog.png";
+const washhandsImg = "/activity-cards/wash hands.png";
+const washfaceImg = "/activity-cards/washface.png";
+const waterplayImg = "/activity-cards/waterplay.png";
+const youtubeImg = "/activity-cards/youtube.png";
+const swingImg = "/activity-cards/swing.png";
+const snackImg = "/activity-cards/snack.png";
 
 // Helper function to get image path
 const imagePath = (imageName: string) => {
