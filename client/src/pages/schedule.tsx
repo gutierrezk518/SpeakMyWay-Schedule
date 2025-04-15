@@ -324,7 +324,16 @@ export default function Schedule() {
   };
 
   return (
-    <section className="h-full flex flex-col">
+    <section className={`h-full flex flex-col ${isFavoritesMode ? 'relative' : ''}`}>
+      {isFavoritesMode && (
+        <div className="absolute inset-0 bg-black/30 z-40 pointer-events-none">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg z-50 pointer-events-auto">
+            <p className="text-sm font-medium text-center">
+              Select cards to add to your favorites
+            </p>
+          </div>
+        </div>
+      )}
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`}>
           {/* Side buttons panel - non portrait mode */}
@@ -372,7 +381,7 @@ export default function Schedule() {
                 <i className="ri-timer-line text-sm sm:text-lg"></i>
               </button>
               
-              {/* Favorites button */}
+              {/* Add to Favorites button */}
               <button 
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
                   isFavoritesMode 
@@ -381,6 +390,19 @@ export default function Schedule() {
                 } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
                 onClick={toggleFavoritesMode}
                 title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
+              >
+                <i className="ri-star-line text-sm sm:text-lg"></i>
+              </button>
+              
+              {/* View Favorites button */}
+              <button 
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
+                  selectedCategory === 'favorites'
+                    ? 'bg-yellow-500 text-white ring-1 ring-yellow-300' 
+                    : 'bg-amber-300 text-white'
+                } flex items-center justify-center shadow-sm hover:bg-amber-400`}
+                onClick={() => setSelectedCategory('favorites')}
+                title="View favorites"
               >
                 <i className="ri-star-fill text-sm sm:text-lg"></i>
               </button>
@@ -443,7 +465,7 @@ export default function Schedule() {
                   <i className="ri-timer-line text-xs"></i>
                 </button>
                 
-                {/* Favorites button */}
+                {/* Add to Favorites button */}
                 <button 
                   className={`w-7 h-7 rounded-md ${
                     isFavoritesMode 
@@ -452,6 +474,19 @@ export default function Schedule() {
                   } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
                   onClick={toggleFavoritesMode}
                   title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
+                >
+                  <i className="ri-star-line text-xs"></i>
+                </button>
+                
+                {/* View Favorites button */}
+                <button 
+                  className={`w-7 h-7 rounded-md ${
+                    selectedCategory === 'favorites'
+                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300' 
+                      : 'bg-amber-300 text-white'
+                  } flex items-center justify-center shadow-sm hover:bg-amber-400`}
+                  onClick={() => setSelectedCategory('favorites')}
+                  title="View favorites"
                 >
                   <i className="ri-star-fill text-xs"></i>
                 </button>
