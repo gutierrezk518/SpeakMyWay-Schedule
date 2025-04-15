@@ -340,6 +340,24 @@ export default function Schedule() {
                 <i className="ri-play-line text-sm sm:text-lg"></i>
               </button>
               
+              {/* Timer toggle button */}
+              <button 
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                onClick={() => setShowTimer(!showTimer)}
+                title={showTimer ? "Hide timer" : "Show timer"}
+              >
+                <i className="ri-timer-line text-sm sm:text-lg"></i>
+              </button>
+              
+              {/* Favorites button */}
+              <button 
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-yellow-400 text-white flex items-center justify-center shadow-sm hover:bg-yellow-500"
+                onClick={() => setSelectedCategory('favorites')}
+                title="View favorites"
+              >
+                <i className="ri-star-fill text-sm sm:text-lg"></i>
+              </button>
+              
               {/* Save button */}
               <button 
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
@@ -387,6 +405,24 @@ export default function Schedule() {
                   title="Play schedule"
                 >
                   <i className="ri-play-line text-xs"></i>
+                </button>
+                
+                {/* Timer toggle button */}
+                <button 
+                  className={`w-7 h-7 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                  onClick={() => setShowTimer(!showTimer)}
+                  title={showTimer ? "Hide timer" : "Show timer"}
+                >
+                  <i className="ri-timer-line text-xs"></i>
+                </button>
+                
+                {/* Favorites button */}
+                <button 
+                  className="w-7 h-7 rounded-md bg-yellow-400 text-white flex items-center justify-center shadow-sm hover:bg-yellow-500"
+                  onClick={() => setSelectedCategory('favorites')}
+                  title="View favorites"
+                >
+                  <i className="ri-star-fill text-xs"></i>
                 </button>
                 
                 {/* Save button */}
@@ -501,10 +537,12 @@ export default function Schedule() {
           {/* Activity cards section - right side */}
           {!isFullscreen && (
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
-              {/* Timer */}
-              <div className="p-2 border-b border-gray-200">
-                <ActivityTimer />
-              </div>
+              {/* Timer - conditionally displayed */}
+              {showTimer && (
+                <div className="p-2 border-b border-gray-200">
+                  <ActivityTimer />
+                </div>
+              )}
               
               {/* Category tabs - always visible */}
               <div className={`${isPortrait ? 'p-1' : 'p-2'} bg-gray-50 border-b border-gray-200 overflow-x-auto flex space-x-1 flex-wrap sticky top-0 z-20 shadow-md ${isPortrait ? 'max-h-16' : 'max-h-24'} overflow-y-auto justify-center`}>
@@ -530,6 +568,7 @@ export default function Schedule() {
                     }}
                   >
                     <i className={`${
+                      category.id === 'favorites' ? 'ri-star-fill' :
                       category.id === 'meals' ? 'ri-restaurant-fill' : 
                       category.id === 'hygiene' ? 'ri-hand-heart-fill' : 
                       category.id === 'arts' ? 'ri-palette-fill' : 

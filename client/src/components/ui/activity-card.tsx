@@ -3,6 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { speak } from "@/lib/tts";
 // For importing custom image assets
 import { lazy, Suspense } from "react";
+import { useAppContext } from "@/contexts/app-context";
 
 interface ActivityCardProps {
   activity: ScheduleActivity;
@@ -19,12 +20,25 @@ export default function ActivityCard({
   showRemoveButton = false,
   onRemove
 }: ActivityCardProps) {
+  // Get favorites functionality from context
+  const { toggleFavorite, isFavorite } = useAppContext();
+  
+  // Determine if this activity is a favorite
+  const isActivityFavorite = isFavorite(activity.id);
+  
   // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
   const isInSchedule = showRemoveButton;
+  
   // Handle card click to speak the activity title or speech text if available
   const handleCardClick = () => {
     // Use custom speech text if available, otherwise use the title
     speak(activity.speechText || activity.title);
+  };
+  
+  // Handle favorite toggling
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    toggleFavorite(activity);
   };
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction
@@ -103,6 +117,18 @@ export default function ActivityCard({
                 </span>
               </div>
             </>
+          )}
+          
+          {/* Favorite Star Button - only on non-schedule cards */}
+          {!isInSchedule && (
+            <button 
+              className={`absolute -top-1 -right-1 p-1 ${isActivityFavorite ? 'bg-yellow-400 text-yellow-800' : 'bg-gray-200 text-gray-500'} hover:bg-yellow-500 hover:text-yellow-800 rounded-full text-xs shadow-md z-40 border border-white w-4 h-4 flex items-center justify-center`}
+              onClick={handleFavoriteToggle}
+              aria-label={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
+              title={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <i className={`${isActivityFavorite ? 'ri-star-fill' : 'ri-star-line'} text-[8px]`}></i>
+            </button>
           )}
           
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
