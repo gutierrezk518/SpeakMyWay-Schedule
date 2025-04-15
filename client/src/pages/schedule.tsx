@@ -13,6 +13,7 @@ import ActivityCard from "@/components/ui/activity-card";
 import ActivityTimer from "@/components/ui/activity-timer";
 import { v4 as uuidv4 } from 'uuid';
 import { speak, speakWithPause } from "@/lib/tts";
+import toast from 'react-hot-toast';
 
 interface ScheduleSection extends ScheduleTimeSection {
   activities: ScheduleActivity[];
@@ -29,7 +30,14 @@ export default function Schedule() {
     userName,
     favoriteActivities,
     toggleFavorite,
-    isFavorite
+    isFavorite,
+    isFavoritesMode,
+    setFavoritesMode,
+    temporaryFavorites,
+    addToTemporaryFavorites,
+    removeFromTemporaryFavorites,
+    isTemporaryFavorite,
+    commitTemporaryFavorites
   } = useAppContext();
   
   // Schedule state
@@ -299,6 +307,21 @@ export default function Schedule() {
     // Clean up
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
+  
+  // Handle toggling favorites selection mode
+  const toggleFavoritesMode = () => {
+    if (isFavoritesMode) {
+      // If we're already in favorites mode, commit the changes and exit the mode
+      commitTemporaryFavorites();
+      toast.success('Favorites updated!');
+    } else {
+      // Enter favorites mode and show instructions
+      setFavoritesMode(true);
+      const toastMessage = 'Select cards you\'d like to add to your favorites tab. Select the Star again when finished.';
+      toast.success(toastMessage, { duration: 4000 });
+      speak(toastMessage);
+    }
+  };
 
   return (
     <section className="h-full flex flex-col">
@@ -351,9 +374,13 @@ export default function Schedule() {
               
               {/* Favorites button */}
               <button 
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-yellow-400 text-white flex items-center justify-center shadow-sm hover:bg-yellow-500"
-                onClick={() => setSelectedCategory('favorites')}
-                title="View favorites"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
+                  isFavoritesMode 
+                    ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
+                    : 'bg-yellow-400 text-white'
+                } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
+                onClick={toggleFavoritesMode}
+                title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
               >
                 <i className="ri-star-fill text-sm sm:text-lg"></i>
               </button>
@@ -418,9 +445,13 @@ export default function Schedule() {
                 
                 {/* Favorites button */}
                 <button 
-                  className="w-7 h-7 rounded-md bg-yellow-400 text-white flex items-center justify-center shadow-sm hover:bg-yellow-500"
-                  onClick={() => setSelectedCategory('favorites')}
-                  title="View favorites"
+                  className={`w-7 h-7 rounded-md ${
+                    isFavoritesMode 
+                      ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
+                      : 'bg-yellow-400 text-white'
+                  } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
+                  onClick={toggleFavoritesMode}
+                  title={isFavoritesMode ? "Finish selecting favorites" : "Add to favorites"}
                 >
                   <i className="ri-star-fill text-xs"></i>
                 </button>
