@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode, SetStateAction } from "react";
 import { speak } from "@/lib/tts";
 import { ScheduleActivity } from "@/data/scheduleData";
+import { toast } from "react-hot-toast";
 
 // Define the voice settings type
 type VoiceSettingsType = {
@@ -89,6 +90,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Favorites selection mode
   const [isFavoritesMode, setFavoritesMode] = useState(false);
   const [temporaryFavorites, setTemporaryFavorites] = useState<ScheduleActivity[]>([]);
+  
+  // Toggle favorites selection mode
+  const toggleFavoritesMode = () => {
+    if (isFavoritesMode) {
+      // If we're already in favorites mode, commit the changes and exit the mode
+      commitTemporaryFavorites();
+      speak('Favorites updated!');
+      toast.success('Favorites updated!', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#22c55e',
+          color: 'white',
+          fontWeight: 'bold',
+        },
+        icon: '⭐',
+      });
+    } else {
+      // Enter favorites mode and show instructions
+      setFavoritesMode(true);
+      const toastMessage = 'Select Activity Cards you\'d like to add to your Favorites category. When finished, select the star again.';
+      speak(toastMessage);
+      toast(toastMessage, {
+        duration: 5000,
+        position: 'top-center',
+        style: {
+          background: '#22c55e',
+          color: 'white',
+          maxWidth: '350px',
+          fontWeight: 'medium',
+        },
+        icon: '⭐',
+      });
+    }
+  };
   
   // Derived properties
   const canUndo = scheduleHistoryIndex > 0;
@@ -272,6 +308,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         isFavorite,
         isFavoritesMode,
         setFavoritesMode,
+        toggleFavoritesMode,
         temporaryFavorites,
         addToTemporaryFavorites,
         removeFromTemporaryFavorites,

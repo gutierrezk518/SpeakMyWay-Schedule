@@ -26,7 +26,8 @@ export default function ActivityCard({
     isFavoritesMode, 
     addToTemporaryFavorites, 
     removeFromTemporaryFavorites,
-    isTemporaryFavorite
+    isTemporaryFavorite,
+    toggleFavoritesMode
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -72,8 +73,12 @@ export default function ActivityCard({
     if (isFavoritesMode && !isInSchedule) {
       if (isActivityTempFavorite) {
         removeFromTemporaryFavorites(activity.id);
+        // Provide feedback - less intrusive than a toast
+        speak("Removed from favorites");
       } else {
         addToTemporaryFavorites(activity);
+        // Provide feedback - less intrusive than a toast
+        speak("Added to favorites");
       }
     } else {
       // Use custom speech text if available, otherwise use the title
@@ -90,6 +95,12 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleMouseDown}
+          onTouchEnd={handleMouseUp}
+          onTouchCancel={handleMouseUp}
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'ring-4 ring-yellow-400 ring-opacity-70' : ''}
@@ -161,7 +172,12 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* We removed the individual star buttons as per user request */}
+          {/* Favorite indicator - only shows if card is a permanent favorite and not in schedule */}
+          {isActivityFavorite && !isInSchedule && !isFavoritesMode && (
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center z-10 shadow-sm border border-yellow-500">
+              <i className="ri-star-fill text-[7px] text-white"></i>
+            </div>
+          )}
           
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
