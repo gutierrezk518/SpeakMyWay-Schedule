@@ -37,35 +37,7 @@ export default function ActivityCard({
   // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
   const isInSchedule = showRemoveButton;
   
-  // State to track long press
-  const [longPressTimer, setLongPressTimer] = useState<number | null>(null);
-  const [isLongPress, setIsLongPress] = useState(false);
-  
-  // Handle long press start
-  const handleMouseDown = () => {
-    if (!isInSchedule && !isFavoritesMode) {
-      const timer = window.setTimeout(() => {
-        setIsLongPress(true);
-        toggleFavoritesMode();
-      }, 800); // 800ms long press time
-      setLongPressTimer(timer);
-    }
-  };
-  
-  // Handle mouse up or leave - clear the timer if it hasn't triggered
-  const handleMouseUp = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-    
-    // Only count as a click if it wasn't a long press
-    if (!isLongPress) {
-      handleCardClick();
-    }
-    
-    setIsLongPress(false);
-  };
+  // Only click functionality, no long press as per user request
   
   // Handle card click to speak the activity title or speech text if available
   // or add to favorites when in selection mode
@@ -95,12 +67,6 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchEnd={handleMouseUp}
-          onTouchCancel={handleMouseUp}
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'ring-4 ring-yellow-400 ring-opacity-70' : ''}
@@ -172,12 +138,7 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Favorite indicator - only shows if card is a permanent favorite and not in schedule */}
-          {isActivityFavorite && !isInSchedule && !isFavoritesMode && (
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center z-10 shadow-sm border border-yellow-500">
-              <i className="ri-star-fill text-[7px] text-white"></i>
-            </div>
-          )}
+          {/* We removed star indicators on individual cards per user request */}
           
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (

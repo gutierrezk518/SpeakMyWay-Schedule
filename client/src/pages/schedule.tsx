@@ -339,7 +339,7 @@ export default function Schedule() {
   return (
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`}>
+        <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden ${isFavoritesMode ? 'favorites-mode' : ''}`}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
             <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
