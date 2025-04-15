@@ -272,12 +272,31 @@ export default function Schedule() {
     speak(namePrefix + fullText);
   };
 
+  // Determine if we're in portrait mode (based on window.innerWidth vs innerHeight)
+  const [isPortrait, setIsPortrait] = useState(false);
+  
+  // Update orientation on resize
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+    
+    // Check initially
+    checkOrientation();
+    
+    // Add listener for resize
+    window.addEventListener('resize', checkOrientation);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
+
   return (
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className="flex-grow flex overflow-hidden">
+        <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`}>
           {/* Side buttons panel - always visible */}
-          <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+          <div className={`${isPortrait ? 'h-12 w-full flex-row justify-center space-x-4' : 'w-12 sm:w-14 flex-col space-y-2'} flex items-center py-2 bg-gray-100 border-b border-gray-200`}>
             {/* Undo button */}
             <button 
               className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${

@@ -67,9 +67,7 @@ export default function ActivityCard({
             <>
               {/* Icon container with responsive sizing */}
               <div className="flex-grow flex items-center justify-center w-full">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                  <i className={`${activity.icon} text-sm sm:text-xl text-gray-800`}></i>
-                </div>
+                <i className={`${activity.icon} text-sm sm:text-xl text-gray-800`}></i>
               </div>
               
               {/* Text container - more mobile-friendly */}
