@@ -21,24 +21,34 @@ export default function ActivityCard({
   onRemove
 }: ActivityCardProps) {
   // Get favorites functionality from context
-  const { toggleFavorite, isFavorite } = useAppContext();
+  const { 
+    isFavorite, 
+    isFavoritesMode, 
+    addToTemporaryFavorites, 
+    removeFromTemporaryFavorites,
+    isTemporaryFavorite
+  } = useAppContext();
   
   // Determine if this activity is a favorite
   const isActivityFavorite = isFavorite(activity.id);
+  const isActivityTempFavorite = isTemporaryFavorite(activity.id);
   
   // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
   const isInSchedule = showRemoveButton;
   
   // Handle card click to speak the activity title or speech text if available
+  // or add to favorites when in selection mode
   const handleCardClick = () => {
-    // Use custom speech text if available, otherwise use the title
-    speak(activity.speechText || activity.title);
-  };
-  
-  // Handle favorite toggling
-  const handleFavoriteToggle = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    toggleFavorite(activity);
+    if (isFavoritesMode && !isInSchedule) {
+      if (isActivityTempFavorite) {
+        removeFromTemporaryFavorites(activity.id);
+      } else {
+        addToTemporaryFavorites(activity);
+      }
+    } else {
+      // Use custom speech text if available, otherwise use the title
+      speak(activity.speechText || activity.title);
+    }
   };
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction
@@ -52,6 +62,8 @@ export default function ActivityCard({
           onClick={handleCardClick}
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
+            ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'ring-4 ring-yellow-400 ring-opacity-70' : ''}
+            ${isFavoritesMode && !isInSchedule ? 'opacity-100' : ''}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
               activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
@@ -60,7 +72,7 @@ export default function ActivityCard({
               activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
               activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
               activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
-            text-gray-800 border-none`}
+            text-gray-800 ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'border-2 border-yellow-500' : 'border-none'}`}
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.9 : 1,
@@ -119,17 +131,7 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Favorite Star Button - only on non-schedule cards */}
-          {!isInSchedule && (
-            <button 
-              className={`absolute -top-1 -right-1 p-1 ${isActivityFavorite ? 'bg-yellow-400 text-yellow-800' : 'bg-gray-200 text-gray-500'} hover:bg-yellow-500 hover:text-yellow-800 rounded-full text-xs shadow-md z-40 border border-white w-4 h-4 flex items-center justify-center`}
-              onClick={handleFavoriteToggle}
-              aria-label={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
-              title={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
-            >
-              <i className={`${isActivityFavorite ? 'ri-star-fill' : 'ri-star-line'} text-[8px]`}></i>
-            </button>
-          )}
+          {/* We removed the individual star buttons as per user request */}
           
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (

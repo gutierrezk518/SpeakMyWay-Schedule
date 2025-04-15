@@ -46,6 +46,14 @@ interface AppContextType {
   favoriteActivities: ScheduleActivity[];
   toggleFavorite: (activity: ScheduleActivity) => void;
   isFavorite: (activityId: string) => boolean;
+  // Favorites selection mode
+  isFavoritesMode: boolean;
+  setFavoritesMode: (mode: boolean) => void;
+  temporaryFavorites: ScheduleActivity[];
+  addToTemporaryFavorites: (activity: ScheduleActivity) => void;
+  removeFromTemporaryFavorites: (activityId: string) => void;
+  isTemporaryFavorite: (activityId: string) => boolean;
+  commitTemporaryFavorites: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -76,6 +84,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const savedFavorites = localStorage.getItem('userFavorites');
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
+  
+  // Favorites selection mode
+  const [isFavoritesMode, setFavoritesMode] = useState(false);
+  const [temporaryFavorites, setTemporaryFavorites] = useState<ScheduleActivity[]>([]);
   
   // Derived properties
   const canUndo = scheduleHistoryIndex > 0;
@@ -171,6 +183,63 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const baseId = activityId.split('-')[0];
     return favoriteActivities.some(activity => activity.id.split('-')[0] === baseId);
   };
+  
+  // Add activity to temporary favorites during selection mode
+  const addToTemporaryFavorites = (activity: ScheduleActivity) => {
+    // Check if already in temporary favorites
+    const baseId = activity.id.split('-')[0];
+    const isAlreadyInTemp = temporaryFavorites.some(temp => temp.id.split('-')[0] === baseId);
+    
+    if (!isAlreadyInTemp) {
+      // Create a clean copy without any draggable item IDs
+      const cleanActivity = { ...activity };
+      // If ID contains a UUID suffix, remove it to keep the original ID
+      cleanActivity.id = cleanActivity.id.split('-')[0];
+      setTemporaryFavorites([...temporaryFavorites, cleanActivity]);
+    }
+  };
+  
+  // Remove activity from temporary favorites
+  const removeFromTemporaryFavorites = (activityId: string) => {
+    // Strip UUID if present
+    const baseId = activityId.split('-')[0];
+    setTemporaryFavorites(temporaryFavorites.filter(
+      activity => activity.id.split('-')[0] !== baseId
+    ));
+  };
+  
+  // Check if an activity is in temporary favorites
+  const isTemporaryFavorite = (activityId: string) => {
+    // Strip UUID if present
+    const baseId = activityId.split('-')[0];
+    return temporaryFavorites.some(activity => activity.id.split('-')[0] === baseId);
+  };
+  
+  // Save temporary favorites to permanent favorites
+  const commitTemporaryFavorites = () => {
+    // Combine existing favorites with temporary favorites
+    const combinedFavorites = [...favoriteActivities];
+    
+    // Add only new temporary favorites that aren't already in the permanent favorites
+    temporaryFavorites.forEach(tempActivity => {
+      const tempBaseId = tempActivity.id.split('-')[0];
+      const alreadyExists = combinedFavorites.some(
+        existingFav => existingFav.id.split('-')[0] === tempBaseId
+      );
+      
+      if (!alreadyExists) {
+        combinedFavorites.push(tempActivity);
+      }
+    });
+    
+    // Update favorites state
+    setFavoriteActivities(combinedFavorites);
+    localStorage.setItem('userFavorites', JSON.stringify(combinedFavorites));
+    
+    // Clear temporary favorites and exit selection mode
+    setTemporaryFavorites([]);
+    setFavoritesMode(false);
+  };
 
   return (
     <AppContext.Provider
@@ -199,7 +268,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         redoScheduleChange,
         favoriteActivities,
         toggleFavorite,
-        isFavorite
+        isFavorite,
+        isFavoritesMode,
+        setFavoritesMode,
+        temporaryFavorites,
+        addToTemporaryFavorites,
+        removeFromTemporaryFavorites,
+        isTemporaryFavorite,
+        commitTemporaryFavorites
       }}
     >
       {children}
