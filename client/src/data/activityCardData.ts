@@ -58,16 +58,23 @@ const imagePath = (imageName: string) => {
     "breakfast": breakfastImg,
     "lunch": lunchImg,
     "juice": juiceImg,
+    "dinner": "/activity-cards/dinner.png",
+    "snack": "/activity-cards/snack.png",
+    "water": "/activity-cards/glassofwater.png",
     
     // Arts
     "paint": paintImg,
     "artsncrafts": artsncraftsImg,
+    "color": "/activity-cards/color.png",
+    "draw": "/activity-cards/draw.png",
+    "scissors": "/activity-cards/scissor.png",
     
     // Holidays & Events
     "halloween": halloweenImg,
     "hanukah": hanukkahImg,
     "birthday": birthdaypartyImg,
     "parade": paradeImg,
+    "christmas": "/activity-cards/christmas.png",
     
     // Outdoors
     "walk": walkImg,
@@ -76,12 +83,24 @@ const imagePath = (imageName: string) => {
     "waterplay": waterplayImg,
     "walkdog": walkdogImg,
     "bike": bikeImg,
+    "run": "/activity-cards/run.png",
+    "swim": "/activity-cards/swimming.png",
+    "camp": "/activity-cards/camping.png", 
+    "hike": "/activity-cards/walk.png",
+    "swing": "/activity-cards/swing.png",
+    "sandbox": "/activity-cards/sandbox.png",
+    
+    // Social
+    "friends": "/activity-cards/friends.png",
+    "group": "/activity-cards/groupactivity.png",
+    "playtime": "/activity-cards/playground.png",
     
     // Indoors
     "book": bookImg,
     "blocks": blocksImg,
     "toys": toysImg,
     "puzzle": puzzleImg,
+    "quiettime": "/activity-cards/quiettime.png",
     
     // Hygiene
     "washhands": washhandsImg,
@@ -184,7 +203,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Water", 
       icon: "ri-water-flash-fill", 
       bgColor: "blue-300",
-      imageSrc: imagePath("default"),
+      imageSrc: imagePath("water"),
       speechText: "Drink Water" 
     },
   ],

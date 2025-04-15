@@ -126,9 +126,9 @@ export default function Schedule() {
         section.activities.splice(destination.index, 0, newActivity);
         setScheduleData(newSchedule);
         
-        // Speak the activity title when it's added to the schedule
-        speak(newActivity.title);
-        console.log("Added activity to schedule:", newActivity.title);
+        // Speak the activity's full speech text when it's added to the schedule
+        speak(newActivity.speechText || newActivity.title);
+        console.log("Added activity to schedule:", newActivity.title, "Speech:", newActivity.speechText);
       } catch (error) {
         console.error("Error adding activity to schedule:", error);
       }
