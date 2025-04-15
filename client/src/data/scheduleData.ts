@@ -4,6 +4,8 @@ export interface ScheduleActivity {
   icon: string;
   bgColor: string;
   time?: string;
+  imageSrc?: string;   // Path to custom image
+  speechText?: string; // Text to speak with TTS that may differ from display text
 }
 
 export interface ScheduleTimeSection {
