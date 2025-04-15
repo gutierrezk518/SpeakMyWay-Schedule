@@ -56,13 +56,14 @@ export default function ActivityCard({
 {isInSchedule ? (
             // Compact horizontal layout for schedule cards
             <div className="flex flex-col items-center justify-between w-full h-full">
-              <div className="flex-grow flex items-center justify-center w-full">
+              <div className="flex-grow flex items-center justify-center w-full h-3/4">
                 {activity.imageSrc ? (
                   <div className="w-full h-full p-0.5 flex items-center justify-center">
                     <img 
                       src={activity.imageSrc} 
                       alt={activity.title}
                       className="max-w-full max-h-full object-contain"
+                      style={{ maxHeight: "75%" }}
                     />
                   </div>
                 ) : (
@@ -78,14 +79,15 @@ export default function ActivityCard({
           ) : (
             // Original layout for activity selection cards
             <>
-              {/* Image/Icon container with responsive sizing */}
-              <div className="flex-grow flex items-center justify-center w-full">
+              {/* Image/Icon container with responsive sizing - reduced height for image area */}
+              <div className="flex-grow flex items-center justify-center w-full h-3/4">
                 {activity.imageSrc ? (
                   <div className="w-full h-full p-1 flex items-center justify-center">
                     <img 
                       src={activity.imageSrc} 
                       alt={activity.title}
                       className="max-w-full max-h-full object-contain"
+                      style={{ maxHeight: "80%" }}
                     />
                   </div>
                 ) : (

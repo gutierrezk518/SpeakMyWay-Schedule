@@ -87,7 +87,9 @@ const imagePath = (imageName: string) => {
     "washhands": washhandsImg,
     "brushteeth": brushteethImg,
     "bathroom": bathroomImg,
-    "bath": bathImg,
+    "bath": bathImg, 
+    "shower": "/activity-cards/shower.png",
+    "brushhair": "/activity-cards/brushhair.png",
     "washface": washfaceImg,
     
     // Places
@@ -158,7 +160,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Snack", 
       icon: "ri-cake-3-fill", 
       bgColor: "purple-300",
-      imageSrc: imagePath("default"),
+      imageSrc: imagePath("snack"),
       speechText: "Eat Snack" 
     },
     { 
@@ -452,7 +454,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Toilet", 
       icon: "ri-door-lock-fill", 
       bgColor: "green-400", 
-      imageSrc: imagePath("toilet"),
+      imageSrc: imagePath("bathroom"),
       speechText: "Go to the Bathroom" 
     },
     { 
@@ -468,7 +470,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Brush Hair", 
       icon: "ri-brush-fill", 
       bgColor: "green-400", 
-      imageSrc: imagePath("comb"),
+      imageSrc: imagePath("brushhair"),
       speechText: "Comb your Hair" 
     },
     { 
