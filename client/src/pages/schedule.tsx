@@ -294,7 +294,7 @@ export default function Schedule() {
   return (
     <section className="h-full flex flex-col">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`}>
+        <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
             <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
@@ -343,56 +343,56 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
+            {/* Action buttons in portrait mode - now above schedule header */}
+            {isPortrait && (
+              <div className="flex bg-gray-100 px-2 py-1 border-b border-gray-200 items-center justify-center space-x-3">
+                {/* Undo button */}
+                <button 
+                  className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                    canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                  }`}
+                  onClick={handleUndo}
+                  disabled={!canUndo}
+                  title="Undo"
+                >
+                  <i className="ri-arrow-go-back-line text-xs"></i>
+                </button>
+                
+                {/* Redo button */}
+                <button 
+                  className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                    canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                  }`}
+                  onClick={handleRedo}
+                  disabled={!canRedo}
+                  title="Redo"
+                >
+                  <i className="ri-arrow-go-forward-line text-xs"></i>
+                </button>
+                
+                {/* Play button */}
+                <button 
+                  className="w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                  onClick={playSchedule}
+                  title="Play schedule"
+                >
+                  <i className="ri-play-line text-xs"></i>
+                </button>
+                
+                {/* Save button */}
+                <button 
+                  className="w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                  onClick={() => setShowSaveModal(true)}
+                  title="Save schedule"
+                >
+                  <i className="ri-save-line text-xs"></i>
+                </button>
+              </div>
+            )}
+            
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="font-bold mr-auto">My Schedule</div>
-              
-              {/* Action buttons in portrait mode */}
-              {isPortrait && (
-                <div className="flex space-x-1.5 mx-1">
-                  {/* Undo button */}
-                  <button 
-                    className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
-                      canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                    }`}
-                    onClick={handleUndo}
-                    disabled={!canUndo}
-                    title="Undo"
-                  >
-                    <i className="ri-arrow-go-back-line text-xs"></i>
-                  </button>
-                  
-                  {/* Redo button */}
-                  <button 
-                    className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
-                      canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                    }`}
-                    onClick={handleRedo}
-                    disabled={!canRedo}
-                    title="Redo"
-                  >
-                    <i className="ri-arrow-go-forward-line text-xs"></i>
-                  </button>
-                  
-                  {/* Play button */}
-                  <button 
-                    className="w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
-                    onClick={playSchedule}
-                    title="Play schedule"
-                  >
-                    <i className="ri-play-line text-xs"></i>
-                  </button>
-                  
-                  {/* Save button */}
-                  <button 
-                    className="w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
-                    onClick={() => setShowSaveModal(true)}
-                    title="Save schedule"
-                  >
-                    <i className="ri-save-line text-xs"></i>
-                  </button>
-                </div>
-              )}
               
               <div className="flex space-x-1 ml-auto">
                 <button 
@@ -415,14 +415,25 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className="flex-grow p-1 bg-blue-50 flex flex-col overflow-hidden">
-              <Droppable droppableId="schedule">
+            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'flex flex-row' : 'flex flex-col'} overflow-hidden`}>
+              <Droppable 
+                droppableId="schedule"
+                direction={isPortrait ? "horizontal" : "vertical"}
+              >
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    style={{ paddingTop: '4px', paddingBottom: '4px' }}
-                    className={`overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center ${
+                    style={{ 
+                      padding: '4px',
+                      height: isPortrait ? '100px' : 'auto',
+                      minHeight: isPortrait ? '100px' : '200px',
+                      maxHeight: isPortrait ? '100px' : '100%'
+                    }}
+                    className={`${isPortrait 
+                      ? 'overflow-x-auto flex-grow rounded-md p-2 flex flex-row gap-3 items-center'
+                      : 'overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
+                    } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
@@ -435,7 +446,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className="relative w-14 h-14 mx-auto pt-1.5 pb-1.5">
+                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-block' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
@@ -480,7 +491,7 @@ export default function Schedule() {
           
           {/* Activity cards section - right side */}
           {!isFullscreen && (
-            <div className="w-2/3 flex flex-col h-full">
+            <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer */}
               <div className="p-2 border-b border-gray-200">
                 <ActivityTimer />
@@ -535,8 +546,8 @@ export default function Schedule() {
                       {...provided.droppableProps}
                       className={`grid ${isPortrait ? 'grid-cols-4 gap-0.5 px-1' : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2 px-2'} overflow-y-auto flex-grow`}
                       style={{ 
-                        minHeight: "200px", 
-                        height: isPortrait ? "calc(100vh - 260px)" : "calc(100vh - 300px)", 
+                        minHeight: isPortrait ? "150px" : "200px", 
+                        height: isPortrait ? "calc(70vh - 160px)" : "calc(100vh - 300px)", 
                         gridTemplateRows: "repeat(auto-fill, minmax(60px, 1fr))", 
                         alignItems: "center",
                         justifyItems: "center",
