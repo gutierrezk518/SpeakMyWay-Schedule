@@ -277,52 +277,52 @@ export default function Schedule() {
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="flex-grow flex overflow-hidden">
           {/* Side buttons panel - always visible */}
-          <div className="w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+          <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
             {/* Undo button */}
             <button 
-              className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
                 canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
               }`}
               onClick={handleUndo}
               disabled={!canUndo}
               title="Undo"
             >
-              <i className="ri-arrow-go-back-line text-lg"></i>
+              <i className="ri-arrow-go-back-line text-sm sm:text-lg"></i>
             </button>
             
             {/* Redo button */}
             <button 
-              className={`w-10 h-10 rounded-md flex items-center justify-center shadow-sm ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
                 canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
               }`}
               onClick={handleRedo}
               disabled={!canRedo}
               title="Redo"
             >
-              <i className="ri-arrow-go-forward-line text-lg"></i>
+              <i className="ri-arrow-go-forward-line text-sm sm:text-lg"></i>
             </button>
             
             {/* Play button */}
             <button 
-              className="w-10 h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
               onClick={playSchedule}
               title="Play schedule"
             >
-              <i className="ri-play-line text-lg"></i>
+              <i className="ri-play-line text-sm sm:text-lg"></i>
             </button>
             
             {/* Save button */}
             <button 
-              className="w-10 h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
               onClick={() => setShowSaveModal(true)}
               title="Save schedule"
             >
-              <i className="ri-save-line text-lg"></i>
+              <i className="ri-save-line text-sm sm:text-lg"></i>
             </button>
           </div>
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : 'w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
+          <div className={`${isFullscreen ? 'w-full' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
             <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
               <div className="text-center font-bold w-full">My Schedule</div>
               <div className="flex space-x-1">
@@ -464,11 +464,11 @@ export default function Schedule() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="grid grid-cols-5 gap-2 overflow-y-auto flex-grow"
+                      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-1 sm:gap-2 overflow-y-auto flex-grow"
                       style={{ 
                         minHeight: "200px", 
                         height: "calc(100vh - 300px)", 
-                        gridTemplateRows: "repeat(5, 70px)", 
+                        gridTemplateRows: "repeat(auto-fill, minmax(65px, 1fr))", 
                         alignItems: "center",
                         justifyItems: "center"
                       }}
