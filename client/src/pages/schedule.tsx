@@ -26,7 +26,10 @@ export default function Schedule() {
     redoScheduleChange,
     canUndo,
     canRedo,
-    userName
+    userName,
+    favoriteActivities,
+    toggleFavorite,
+    isFavorite
   } = useAppContext();
   
   // Schedule state
@@ -44,6 +47,7 @@ export default function Schedule() {
   const itemsPerPage = 25; // Show a 5x5 grid of activities at once
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
   
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
@@ -66,7 +70,9 @@ export default function Schedule() {
   // Get the available activities for the selected category - using custom activities with images
   const categoryActivities = selectedCategory === 'all'
     ? allCustomActivityCards // Use our custom activities with images
-    : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
+    : selectedCategory === 'favorites'
+      ? favoriteActivities // Show user's favorite activities
+      : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
   
   // Calculate pagination
   const totalPages = Math.ceil(categoryActivities.length / itemsPerPage);
