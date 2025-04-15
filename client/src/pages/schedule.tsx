@@ -7,6 +7,7 @@ import {
   ScheduleActivity,
   ScheduleTimeSection
 } from "@/data/scheduleData";
+import { customActivityCards, allCustomActivityCards } from "@/data/activityCardData";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import ActivityCard from "@/components/ui/activity-card";
 import ActivityTimer from "@/components/ui/activity-timer";
@@ -62,10 +63,10 @@ export default function Schedule() {
   // Get the current time section's activities
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
-  // Get the available activities for the selected category
+  // Get the available activities for the selected category - using custom activities with images
   const categoryActivities = selectedCategory === 'all'
-    ? Object.values(availableActivities).flat()
-    : availableActivities[selectedCategory] || [];
+    ? allCustomActivityCards // Use our custom activities with images
+    : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
   
   // Calculate pagination
   const totalPages = Math.ceil(categoryActivities.length / itemsPerPage);
@@ -259,7 +260,9 @@ export default function Schedule() {
         ordinalPrefix = `Next we will `;
       }
       
-      scheduleTexts.push(`${ordinalPrefix}${activity.title.toLowerCase()}`);
+      // Use speechText if available, otherwise use title
+      const textToSpeak = activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase();
+      scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
     });
     
     // Create a single complete sentence from all schedule items
