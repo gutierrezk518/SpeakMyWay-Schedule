@@ -308,39 +308,7 @@ export default function Schedule() {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
   
-  // Handle toggling favorites selection mode
-  const toggleFavoritesMode = () => {
-    if (isFavoritesMode) {
-      // If we're already in favorites mode, commit the changes and exit the mode
-      commitTemporaryFavorites();
-      speak('Favorites updated!');
-      toast.success('Favorites updated!', { 
-        style: {
-          background: '#22c55e', // Green background
-          color: '#ffffff',      // White text
-          fontWeight: 'bold',
-        },
-        position: 'top-center',
-        icon: '⭐',
-      });
-    } else {
-      // Enter favorites mode and show instructions
-      setFavoritesMode(true);
-      const toastMessage = 'Select cards to add to Favorites category. Select star again when finished.';
-      speak(toastMessage);
-      toast(toastMessage, { 
-        duration: 5000,
-        style: {
-          background: '#22c55e', // Green background
-          color: '#ffffff',      // White text
-          maxWidth: '350px',
-          fontWeight: 'medium',
-        },
-        position: 'top-center',
-        icon: '⭐',
-      });
-    }
-  };
+  // We're now using the toggleFavoritesMode from context
 
   return (
     <section className="h-full flex flex-col">

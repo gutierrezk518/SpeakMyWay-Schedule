@@ -34,8 +34,11 @@ export default function ActivityCard({
   const isActivityFavorite = isFavorite(activity.id);
   const isActivityTempFavorite = isTemporaryFavorite(activity.id);
   
-  // Determine if card is in the schedule section (showing removeButton indicates it's in schedule)
+  // Determine if card is in the schedule section (checking removeButton)
   const isInSchedule = showRemoveButton;
+  
+  // Determine if this card is in the Favorites category based on the base activity ID
+  const isInFavorites = isActivityFavorite;
   
   // Only click functionality, no long press as per user request
   
@@ -149,6 +152,21 @@ export default function ActivityCard({
                 onRemove();
               }}
               aria-label="Remove activity"
+            >
+              <i className="ri-close-line text-[10px]"></i>
+            </button>
+          )}
+          
+          {/* Remove button for favorites - only shown when in favorites mode and viewing the favorites category */}
+          {!isInSchedule && isInFavorites && isFavoritesMode && (
+            <button 
+              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(activity);
+                speak("Removed from favorites");
+              }}
+              aria-label="Remove from favorites"
             >
               <i className="ri-close-line text-[10px]"></i>
             </button>
