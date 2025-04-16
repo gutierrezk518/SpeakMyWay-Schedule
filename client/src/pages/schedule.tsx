@@ -651,6 +651,7 @@ export default function Schedule() {
                           key={activity.id} 
                           activity={activity} 
                           index={index}
+                          categoryId={selectedCategory}
                         />
                       ))}
                       {provided.placeholder}

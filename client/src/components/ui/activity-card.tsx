@@ -11,6 +11,7 @@ interface ActivityCardProps {
   isDraggable?: boolean;
   showRemoveButton?: boolean;
   onRemove?: () => void;
+  categoryId?: string;
 }
 
 export default function ActivityCard({ 
@@ -18,7 +19,8 @@ export default function ActivityCard({
   index, 
   isDraggable = true, 
   showRemoveButton = false,
-  onRemove
+  onRemove,
+  categoryId
 }: ActivityCardProps) {
   // Get favorites functionality from context
   const { 
@@ -28,8 +30,7 @@ export default function ActivityCard({
     removeFromTemporaryFavorites,
     isTemporaryFavorite,
     toggleFavoritesMode,
-    toggleFavorite,
-    selectedCategory
+    toggleFavorite
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -160,7 +161,7 @@ export default function ActivityCard({
           )}
           
           {/* Remove button for favorites - shown on cards in favorites category */}
-          {!isInSchedule && selectedCategory === 'favorites' && (
+          {!isInSchedule && categoryId === 'favorites' && (
             <button 
               className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
               onClick={(e) => {
@@ -175,7 +176,7 @@ export default function ActivityCard({
           )}
           
           {/* Add button for non-favorites when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && selectedCategory !== 'favorites' && !isInFavorites && (
+          {!isInSchedule && isFavoritesMode && categoryId !== 'favorites' && !isInFavorites && (
             <button 
               className="absolute -top-1.5 -right-1.5 p-1 bg-green-500 text-white hover:bg-green-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
@@ -190,7 +191,7 @@ export default function ActivityCard({
           )}
           
           {/* Remove button for items that are already in favorites when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && selectedCategory !== 'favorites' && isInFavorites && (
+          {!isInSchedule && isFavoritesMode && categoryId !== 'favorites' && isInFavorites && (
             <button 
               className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
