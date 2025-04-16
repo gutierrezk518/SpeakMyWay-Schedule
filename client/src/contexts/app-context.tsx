@@ -114,12 +114,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       speak(toastMessage);
       toast(toastMessage, {
         duration: 5000,
-        position: 'top-center',
+        position: 'top-right',
         style: {
           background: '#22c55e',
           color: 'white',
           maxWidth: '350px',
           fontWeight: 'medium',
+          fontSize: '0.9rem',
         },
         icon: '⭐',
       });
