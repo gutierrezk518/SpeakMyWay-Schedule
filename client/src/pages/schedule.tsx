@@ -599,7 +599,6 @@ export default function Schedule() {
                         ? 'border-black shadow-lg ring-1 ring-offset-1 ring-black font-bold'
                         : 'border-transparent shadow-sm hover:shadow-md'
                       }
-                      ${isFavoritesMode && category.id !== 'favorites' ? 'opacity-30' : ''}
                     }`}
                     onClick={() => {
                       setSelectedCategory(category.id);
