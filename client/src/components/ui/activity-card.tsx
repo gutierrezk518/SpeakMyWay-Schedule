@@ -28,7 +28,8 @@ export default function ActivityCard({
     removeFromTemporaryFavorites,
     isTemporaryFavorite,
     toggleFavoritesMode,
-    toggleFavorite
+    toggleFavorite,
+    selectedCategory
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -158,28 +159,48 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Remove button for favorites - shown on all cards when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && (
+          {/* Remove button for favorites - shown on cards in favorites category */}
+          {!isInSchedule && selectedCategory === 'favorites' && (
+            <button 
+              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(activity);
+                speak("Removed from favorites");
+              }}
+              aria-label="Remove from favorites"
+            >
+              <i className="ri-close-line text-[8px]"></i>
+            </button>
+          )}
+          
+          {/* Add button for non-favorites when in favorites mode */}
+          {!isInSchedule && isFavoritesMode && selectedCategory !== 'favorites' && !isInFavorites && (
+            <button 
+              className="absolute -top-1.5 -right-1.5 p-1 bg-green-500 text-white hover:bg-green-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToTemporaryFavorites(activity);
+                speak("Added to favorites");
+              }}
+              aria-label="Add to favorites"
+            >
+              <i className="ri-add-line text-[10px]"></i>
+            </button>
+          )}
+          
+          {/* Remove button for items that are already in favorites when in favorites mode */}
+          {!isInSchedule && isFavoritesMode && selectedCategory !== 'favorites' && isInFavorites && (
             <button 
               className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
-                // Use the toggleFavorite function from context
-                if (isInFavorites) {
-                  toggleFavorite(activity);
-                  speak("Removed from favorites");
-                } else {
-                  addToTemporaryFavorites(activity);
-                  speak("Added to favorites");
-                }
+                toggleFavorite(activity);
+                speak("Removed from favorites");
               }}
-              aria-label={isInFavorites ? "Remove from favorites" : "Add to favorites"}
+              aria-label="Remove from favorites"
             >
-              {isInFavorites ? (
-                <i className="ri-close-line text-[10px]"></i>
-              ) : (
-                <i className="ri-add-line text-[10px]"></i>
-              )}
+              <i className="ri-close-line text-[10px]"></i>
             </button>
           )}
         </div>

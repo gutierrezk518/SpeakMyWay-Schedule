@@ -462,10 +462,17 @@ export default function Schedule() {
               </div>
             )}
             
-            <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
-              <div className="font-bold mr-auto">My Schedule</div>
+            <div className={`p-2 ${isFavoritesMode ? 'bg-gray-100' : 'bg-blue-100'} border-b border-gray-200 flex items-center justify-between`}>
+              {isFavoritesMode ? (
+                <div className="font-bold text-center w-full flex justify-center items-center space-x-1">
+                  <i className="ri-star-fill text-yellow-500"></i>
+                  <span className={`${isFavoritesMode ? 'text-gray-700' : ''}`}>Favorites Mode</span>
+                </div>
+              ) : (
+                <div className="font-bold mr-auto">My Schedule</div>
+              )}
               
-              <div className="flex space-x-1 ml-auto">
+              <div className={`flex space-x-1 ml-auto ${isFavoritesMode ? 'opacity-0' : ''}`}>
                 <button 
                   className={`p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={toggleFullscreen}
