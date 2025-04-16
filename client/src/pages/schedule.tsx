@@ -654,7 +654,7 @@ export default function Schedule() {
                           key={activity.id} 
                           activity={activity} 
                           index={index}
-                          categoryId={isFavoritesMode && selectedCategory === "favorites" ? "favorites" : selectedCategory}
+                          categoryId={selectedCategory}
                         />
                       ))}
                       {provided.placeholder}
