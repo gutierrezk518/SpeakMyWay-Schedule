@@ -173,7 +173,11 @@ const imagePath = (imageName: string) => {
     // Transportation
     "bus": busImg,
     "train": trainImg,
-    "car": carImg,
+    "car": carImg,  
+    "transport_bus": busImg,
+    "transport_train": trainImg,
+    "transport_car": carImg,
+    "transport_airplane": airplaneImg,
     "car_ride": carImg, // For the vacation category car ride
     "airplane": airplaneImg,
     
@@ -665,7 +669,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
   ],
   "transportation": [
     { 
-      id: "bus", 
+      id: "transport_bus", 
       title: "Bus", 
       icon: "ri-bus-fill", 
       bgColor: "blue-500", 
@@ -673,7 +677,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Get on a Bus" 
     },
     { 
-      id: "train", 
+      id: "transport_train", 
       title: "Train", 
       icon: "ri-train-fill", 
       bgColor: "blue-500", 
@@ -681,7 +685,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Go on a Train" 
     },
     { 
-      id: "car", 
+      id: "transport_car", 
       title: "Car", 
       icon: "ri-car-fill", 
       bgColor: "blue-500", 
@@ -689,7 +693,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Car Ride" 
     },
     { 
-      id: "airplane", 
+      id: "transport_airplane", 
       title: "Airplane", 
       icon: "ri-plane-fill", 
       bgColor: "blue-500", 
