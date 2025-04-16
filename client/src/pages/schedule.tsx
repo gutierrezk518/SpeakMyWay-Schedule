@@ -531,6 +531,7 @@ export default function Schedule() {
                             activity={activity} 
                             index={index}
                             showRemoveButton={false}
+                            categoryId={selectedCategory}
                           />
                           <button 
                             className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
@@ -623,9 +624,9 @@ export default function Schedule() {
               <div className={`flex-grow ${isPortrait ? 'p-0.5' : 'p-1'} bg-gray-100 flex flex-col relative overflow-hidden`}>
                 <div className={`text-center ${isPortrait ? 'text-[10px] mb-0.5 mt-0.5' : 'mb-1 text-xs mt-1'} font-medium flex items-center justify-center`}>
                 {isFavoritesMode ? (
-                  <span className="bg-green-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center">
-                    <i className="ri-star-line mr-1"></i>
-                    Selecting Favorites
+                  <span className="bg-gray-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center">
+                    <i className="ri-star-fill mr-1 text-yellow-300"></i>
+                    Favorites Mode
                   </span>
                 ) : (
                   <span className="text-gray-700">Activity Cards</span>
