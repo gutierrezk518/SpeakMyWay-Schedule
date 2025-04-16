@@ -364,7 +364,7 @@ export default function Schedule() {
               <button 
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${
                   isFavoritesMode 
-                    ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
+                    ? 'bg-yellow-600 text-white ring-2 ring-yellow-300 animate-pulse shadow-lg shadow-yellow-300/50' 
                     : selectedCategory === 'favorites'
                       ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
                       : 'bg-yellow-400 text-white'
@@ -439,7 +439,7 @@ export default function Schedule() {
                 <button 
                   className={`w-7 h-7 rounded-md ${
                     isFavoritesMode 
-                      ? 'bg-yellow-600 text-white ring-2 ring-yellow-300' 
+                      ? 'bg-yellow-600 text-white ring-2 ring-yellow-300 animate-pulse shadow-lg shadow-yellow-300/50' 
                       : selectedCategory === 'favorites'
                         ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
                         : 'bg-yellow-400 text-white'
@@ -464,9 +464,9 @@ export default function Schedule() {
             
             <div className={`p-2 ${isFavoritesMode ? 'bg-gray-100' : 'bg-blue-100'} border-b border-gray-200 flex items-center justify-between`}>
               {isFavoritesMode ? (
-                <div className="font-bold text-center w-full flex justify-center items-center space-x-1">
-                  <i className="ri-star-fill text-yellow-500"></i>
-                  <span className={`${isFavoritesMode ? 'text-gray-700' : ''}`}>Favorites Mode</span>
+                <div className="font-bold text-center w-full flex justify-center items-center bg-black text-white py-1 px-2 rounded space-x-1">
+                  <i className="ri-star-fill text-yellow-300"></i>
+                  <span>Favorites Mode Enabled</span>
                 </div>
               ) : (
                 <div className="font-bold mr-auto">My Schedule</div>
