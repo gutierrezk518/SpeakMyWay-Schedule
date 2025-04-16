@@ -313,7 +313,13 @@ export default function Schedule() {
 
   return (
     <section className="h-full flex flex-col">
-      {/* We've removed the favorites mode banner in favor of individual stars on cards */}
+      {/* Favorites Mode Banner - Shown at the top when favorites mode is enabled */}
+      {isFavoritesMode && (
+        <div className="bg-black text-white py-2 flex justify-center items-center shadow-md sticky top-0 z-50 border-b border-yellow-400">
+          <i className="ri-star-fill text-yellow-300 mr-2.5 text-xl"></i>
+          <span className="font-bold text-lg">Favorites Mode Enabled</span>
+        </div>
+      )}
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden ${isFavoritesMode ? 'favorites-mode' : ''}`}>
           {/* Side buttons panel - non portrait mode */}
@@ -441,12 +447,14 @@ export default function Schedule() {
                 {/* Favorites button */}
                 <button 
                   className={`w-7 h-7 rounded-md ${
-                    selectedCategory === 'favorites'
-                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
-                      : 'bg-yellow-400 text-white'
+                    isFavoritesMode 
+                      ? 'bg-yellow-600 text-white ring-2 ring-yellow-300 animate-pulse shadow-lg shadow-yellow-300/50' 
+                      : selectedCategory === 'favorites'
+                        ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
+                        : 'bg-yellow-400 text-white'
                   } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                  onClick={() => setSelectedCategory('favorites')}
-                  title="View favorites"
+                  onClick={() => toggleFavoritesMode()}
+                  title={isFavoritesMode ? "Finish selecting favorites" : "Select favorites"}
                 >
                   <i className="ri-star-fill text-xs"></i>
                 </button>
