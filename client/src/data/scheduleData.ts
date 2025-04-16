@@ -41,14 +41,20 @@ export const timeSections: ScheduleTimeSection[] = [
 export const activityCategories = [
   { id: "all", name: "All", color: "gray-300" },
   { id: "favorites", name: "Favorites", color: "yellow-300" },
+  { id: "media", name: "Media", color: "blue-400" },
   { id: "meals", name: "Meals", color: "purple-300" },
-  { id: "hygiene", name: "Hygiene", color: "green-400" },
   { id: "arts", name: "Arts", color: "blue-300" },
-  { id: "outdoors", name: "Outdoors", color: "orange-300" },
-  { id: "indoors", name: "Indoors", color: "blue-400" },
   { id: "social", name: "Social", color: "purple-200" },
   { id: "holiday", name: "Holiday", color: "orange-100" },
-  { id: "vacation", name: "Vacation", color: "orange-200" },
+  { id: "vacation", name: "Vacation", color: "orange-200" }, 
+  { id: "outdoors", name: "Outdoors", color: "orange-300" },
+  { id: "indoors", name: "Indoors", color: "blue-400" },
+  { id: "hygiene", name: "Hygiene", color: "green-400" },
+  { id: "chores", name: "Chores", color: "green-200" },
+  { id: "dressing", name: "Dressing", color: "green-400" },
+  { id: "appointments", name: "Appointments", color: "purple-300" },
+  { id: "transportation", name: "Transportation", color: "blue-500" },
+  { id: "places", name: "Places", color: "orange-300" },
 ];
 
 // All available activities grouped by category - using clear, high-contrast colors
