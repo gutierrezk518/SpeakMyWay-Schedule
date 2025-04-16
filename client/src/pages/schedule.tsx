@@ -387,7 +387,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full ${isFavoritesMode ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-1 border-b border-gray-200 items-center justify-center space-x-3">
@@ -562,7 +562,7 @@ export default function Schedule() {
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
-                <div className={`p-2 border-b border-gray-200 ${isFavoritesMode ? 'opacity-50 pointer-events-none' : ''}`}>
+                <div className={`p-2 border-b border-gray-200 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                   <ActivityTimer />
                 </div>
               )}
@@ -648,7 +648,7 @@ export default function Schedule() {
                 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className={`mt-1 flex justify-center ${isFavoritesMode ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <div className={`mt-1 flex justify-center ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                     <div className="flex space-x-1">
                       <button
                         className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50 text-xs"
@@ -675,7 +675,7 @@ export default function Schedule() {
               </div>
               
               {/* Bottom spacing */}
-              <div className={`p-1.5 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md ${isFavoritesMode ? 'opacity-50 pointer-events-none' : ''}`}>
+              <div className={`p-1.5 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                 <div className="h-2"></div>
               </div>
             </div>

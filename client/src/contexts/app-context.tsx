@@ -110,7 +110,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } else {
       // Enter favorites mode and show instructions
       setFavoritesMode(true);
-      const toastMessage = "Select any cards you'd like to add to the Favorites category. Select the Star again when finished.";
+      const toastMessage = "Select cards to add to Favorites category. Select star again when finished.";
       speak(toastMessage);
       toast(toastMessage, {
         duration: 5000,
