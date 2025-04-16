@@ -1,47 +1,85 @@
 import { ScheduleActivity } from "./scheduleData";
 
 // Custom activity card data with image paths and speech text
-// Based on the provided specification from the user
+// Based on the provided specification from the spreadsheet
 
-// We have some images available in the assets folder that we can use directly
-// Instead of expecting exact image names for each activity, we'll map a few key activities
-// to the images we have, and use a default for the rest
-
-// Define image paths directly from public folder
-const artsncraftsImg = "/activity-cards/artsncrafts.png";
-const bathImg = "/activity-cards/bath.png";
-const bathroomImg = "/activity-cards/bathroom.png";
-const bikeImg = "/activity-cards/bike.png";
-const birthdaypartyImg = "/activity-cards/birthdayparty.png";
-const blocksImg = "/activity-cards/blocks.png";
-const bookImg = "/activity-cards/book.png";
+// Define all image paths for the activity cards
+// Image paths are relative to the public folder
+const youtubeImg = "/activity-cards/youtube.png";
+const tabletImg = "/activity-cards/tablet.png";
+const tvImg = "/activity-cards/tv.png";
+const movieImg = "/activity-cards/movie.png";
+const phoneImg = "/activity-cards/phone.png";
 const breakfastImg = "/activity-cards/breakfast.png";
-const brushhairImg = "/activity-cards/brushhair.png";
-const brushteethImg = "/activity-cards/brushteeth.png";
-const campingImg = "/activity-cards/camping.png";
+const lunchImg = "/activity-cards/lunch.png";
+const dinnerImg = "/activity-cards/dinner.png";
+const snackImg = "/activity-cards/snack.png";
+const waterImg = "/activity-cards/glassofwater.png";
+const juiceImg = "/activity-cards/juice.png";
+const colorImg = "/activity-cards/color.png";
+const paintImg = "/activity-cards/paint.png";
+const drawImg = "/activity-cards/draw.png";
+const scissorsImg = "/activity-cards/scissor.png";
+const artsncraftsImg = "/activity-cards/artsncrafts.png";
+const friendsImg = "/activity-cards/friends.png";
+const groupactivityImg = "/activity-cards/groupactivity.png";
 const halloweenImg = "/activity-cards/halloween.png";
 const hanukkahImg = "/activity-cards/hanukkah.png";
-const hotelImg = "/activity-cards/hotel.png";
-const juiceImg = "/activity-cards/juice.png";
-const lunchImg = "/activity-cards/lunch.png";
-const movieImg = "/activity-cards/movie.png";
-const paintImg = "/activity-cards/paint.png";
+const christmasImg = "/activity-cards/christmas.png";
+const birthdaypartyImg = "/activity-cards/birthdayparty.png";
+const familygatheringImg = "/activity-cards/familygathering.png";
 const paradeImg = "/activity-cards/parade.png";
-const parkImg = "/activity-cards/park.png";
-const phoneImg = "/activity-cards/phone.png";
-const playgroundImg = "/activity-cards/playground.png";
-const puzzleImg = "/activity-cards/puzzle.png";
-const tabletImg = "/activity-cards/tablet.png";
-const toysImg = "/activity-cards/toys.png";
-const tvImg = "/activity-cards/tv.png";
 const walkImg = "/activity-cards/walk.png";
-const walkdogImg = "/activity-cards/walkdog.png";
-const washhandsImg = "/activity-cards/wash hands.png";
-const washfaceImg = "/activity-cards/washface.png";
-const waterplayImg = "/activity-cards/waterplay.png";
-const youtubeImg = "/activity-cards/youtube.png";
+const playgroundImg = "/activity-cards/playground.png";
+const runImg = "/activity-cards/run.png";
+const swimmingImg = "/activity-cards/swimming.png";
+const campingImg = "/activity-cards/camping.png";
+const bikeImg = "/activity-cards/bike.png";
 const swingImg = "/activity-cards/swing.png";
-const snackImg = "/activity-cards/snack.png";
+const sandboxImg = "/activity-cards/sandbox.png";
+const waterplayImg = "/activity-cards/waterplay.png";
+const parkImg = "/activity-cards/park.png";
+const walkdogImg = "/activity-cards/walkdog.png";
+const quiettimeImg = "/activity-cards/quiettime.png";
+const bookImg = "/activity-cards/book.png";
+const blocksImg = "/activity-cards/blocks.png";
+const toysImg = "/activity-cards/toys.png";
+const bathroomImg = "/activity-cards/bathroom.png";
+const brushteethImg = "/activity-cards/brushteeth.png";
+const washhandsImg = "/activity-cards/wash hands.png";
+const showerImg = "/activity-cards/shower.png";
+const combhairImg = "/activity-cards/brushhair.png";
+const bathImg = "/activity-cards/bath.png";
+const washfaceImg = "/activity-cards/washface.png";
+const cleanupImg = "/activity-cards/cleanup.png";
+const feedpetImg = "/activity-cards/feedpet.png";
+const shoesoffImg = "/activity-cards/shoesoff.png";
+const shoesonImg = "/activity-cards/shoeson.png";
+const coatonImg = "/activity-cards/coaton.png";
+const getdressedImg = "/activity-cards/getdressed.png";
+const pajamasImg = "/activity-cards/pajamas on.png";
+const doctorImg = "/activity-cards/doctor.png";
+const therapyImg = "/activity-cards/therapy.png";
+const hospitalImg = "/activity-cards/doctor.png";
+const busImg = "/activity-cards/schoolbus.png";
+const trainImg = "/activity-cards/train.png";
+const carImg = "/activity-cards/car.png";
+const airplaneImg = "/activity-cards/plane.png";
+const homeImg = "/activity-cards/home.png";
+const grandmasImg = "/activity-cards/grandma.png";
+const restaurantImg = "/activity-cards/resturant.png";
+const poolImg = "/activity-cards/pool.png";
+const backyardImg = "/activity-cards/backyard.png";
+const waterParkImg = "/activity-cards/waterpark.png";
+const amusementParkImg = "/activity-cards/amusementpark.png";
+const ymcaImg = "/activity-cards/ymca.png";
+const gymImg = "/activity-cards/gym.png";
+const friendshouseImg = "/activity-cards/friendshouse.png";
+const bowlingImg = "/activity-cards/bowling.png";
+const libraryImg = "/activity-cards/library.png";
+const churchImg = "/activity-cards/church.png";
+const groceryImg = "/activity-cards/grocerystore.png";
+const postOfficeImg = "/activity-cards/postoffice.png";
 
 // Helper function to get image path
 const imagePath = (imageName: string) => {
@@ -57,62 +95,96 @@ const imagePath = (imageName: string) => {
     // Meals
     "breakfast": breakfastImg,
     "lunch": lunchImg,
+    "dinner": dinnerImg,
+    "snack": snackImg,
+    "water": waterImg,
     "juice": juiceImg,
-    "dinner": "/activity-cards/dinner.png",
-    "snack": "/activity-cards/snack.png",
-    "water": "/activity-cards/glassofwater.png",
     
     // Arts
+    "color": colorImg,
     "paint": paintImg,
+    "draw": drawImg,
+    "scissors": scissorsImg,
     "artsncrafts": artsncraftsImg,
-    "color": "/activity-cards/color.png",
-    "draw": "/activity-cards/draw.png",
-    "scissors": "/activity-cards/scissor.png",
     
-    // Holidays & Events
+    // Social
+    "friends": friendsImg,
+    "group": groupactivityImg,
+    
+    // Holiday
     "halloween": halloweenImg,
-    "hanukah": hanukkahImg,
-    "birthday": birthdaypartyImg,
+    "hanukkah": hanukkahImg,
+    "christmas": christmasImg,
+    "birthdayparty": birthdaypartyImg,
+    "familygathering": familygatheringImg,
     "parade": paradeImg,
-    "christmas": "/activity-cards/christmas.png",
     
     // Outdoors
     "walk": walkImg,
     "playground": playgroundImg,
-    "park": parkImg,
-    "waterplay": waterplayImg,
-    "walkdog": walkdogImg,
+    "run": runImg,
+    "swimming": swimmingImg,
+    "camping": campingImg,
     "bike": bikeImg,
-    "run": "/activity-cards/run.png",
-    "swim": "/activity-cards/swimming.png",
-    "camp": "/activity-cards/camping.png", 
-    "hike": "/activity-cards/walk.png",
-    "swing": "/activity-cards/swing.png",
-    "sandbox": "/activity-cards/sandbox.png",
-    
-    // Social
-    "friends": "/activity-cards/friends.png",
-    "group": "/activity-cards/groupactivity.png",
-    "playtime": "/activity-cards/playground.png",
+    "swing": swingImg,
+    "sandbox": sandboxImg,
+    "waterplay": waterplayImg,
+    "park": parkImg,
+    "walkdog": walkdogImg,
     
     // Indoors
+    "quiettime": quiettimeImg,
     "book": bookImg,
     "blocks": blocksImg,
     "toys": toysImg,
-    "puzzle": puzzleImg,
-    "quiettime": "/activity-cards/quiettime.png",
     
     // Hygiene
-    "washhands": washhandsImg,
-    "brushteeth": brushteethImg,
     "bathroom": bathroomImg,
-    "bath": bathImg, 
-    "shower": "/activity-cards/shower.png",
-    "brushhair": "/activity-cards/brushhair.png",
+    "brushteeth": brushteethImg,
+    "washhands": washhandsImg,
+    "shower": showerImg,
+    "combhair": combhairImg,
+    "bath": bathImg,
     "washface": washfaceImg,
     
+    // Chores
+    "cleanup": cleanupImg,
+    "feedpet": feedpetImg,
+    
+    // Dressing
+    "shoesoff": shoesoffImg,
+    "shoeson": shoesonImg,
+    "coaton": coatonImg,
+    "getdressed": getdressedImg,
+    "pajamas": pajamasImg,
+    
+    // Appointments
+    "doctor": doctorImg,
+    "therapy": therapyImg,
+    "hospital": hospitalImg,
+    
+    // Transportation
+    "bus": busImg,
+    "train": trainImg,
+    "car": carImg,
+    "airplane": airplaneImg,
+    
     // Places
-    "hotel": hotelImg,
+    "home": homeImg,
+    "grandmas": grandmasImg,
+    "restaurant": restaurantImg,
+    "pool": poolImg,
+    "backyard": backyardImg,
+    "waterpark": waterParkImg,
+    "amusementpark": amusementParkImg,
+    "ymca": ymcaImg,
+    "gym": gymImg,
+    "friendshouse": friendshouseImg,
+    "bowling": bowlingImg,
+    "library": libraryImg,
+    "church": churchImg,
+    "grocery": groceryImg,
+    "postoffice": postOfficeImg,
     
     // Fallback to a generic icon if specific icon isn't found
     "default": toysImg, // Using toys as a default fallback icon
@@ -501,12 +573,254 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Wash your Face" 
     },
   ],
+  "chores": [
+    { 
+      id: "cleanup", 
+      title: "Clean Up", 
+      icon: "ri-broom-fill", 
+      bgColor: "green-200", 
+      imageSrc: imagePath("cleanup"),
+      speechText: "Clean Up" 
+    },
+    { 
+      id: "feedpet", 
+      title: "Feed Pet", 
+      icon: "ri-restaurant-fill", 
+      bgColor: "green-200", 
+      imageSrc: imagePath("feedpet"),
+      speechText: "Feed Pet" 
+    },
+  ],
+  "dressing": [
+    { 
+      id: "shoeson", 
+      title: "Shoes On", 
+      icon: "ri-footprint-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("shoeson"),
+      speechText: "Put Shoes On" 
+    },
+    { 
+      id: "shoesoff", 
+      title: "Shoes Off", 
+      icon: "ri-footprint-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("shoesoff"),
+      speechText: "Take our Shoes Off" 
+    },
+    { 
+      id: "coaton", 
+      title: "Coat On", 
+      icon: "ri-t-shirt-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("coaton"),
+      speechText: "Put Coat On" 
+    },
+    { 
+      id: "getdressed", 
+      title: "Get Dressed", 
+      icon: "ri-shirt-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("getdressed"),
+      speechText: "Get Dressed" 
+    },
+    { 
+      id: "pajamas", 
+      title: "Pajamas On", 
+      icon: "ri-shirt-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("pajamas"),
+      speechText: "Put Pajamas On" 
+    },
+  ],
+  "appointments": [
+    { 
+      id: "doctor", 
+      title: "Doctor", 
+      icon: "ri-hospital-fill", 
+      bgColor: "purple-300", 
+      imageSrc: imagePath("doctor"),
+      speechText: "Go to the Doctor" 
+    },
+    { 
+      id: "therapy", 
+      title: "Therapy", 
+      icon: "ri-mental-health-fill", 
+      bgColor: "purple-300", 
+      imageSrc: imagePath("therapy"),
+      speechText: "Go to Therapy" 
+    },
+    { 
+      id: "hospital", 
+      title: "Hospital", 
+      icon: "ri-hospital-fill", 
+      bgColor: "purple-300", 
+      imageSrc: imagePath("hospital"),
+      speechText: "Go to Hospital" 
+    },
+  ],
+  "transportation": [
+    { 
+      id: "bus", 
+      title: "Bus", 
+      icon: "ri-bus-fill", 
+      bgColor: "blue-500", 
+      imageSrc: imagePath("bus"),
+      speechText: "Get on a Bus" 
+    },
+    { 
+      id: "train", 
+      title: "Train", 
+      icon: "ri-train-fill", 
+      bgColor: "blue-500", 
+      imageSrc: imagePath("train"),
+      speechText: "Go on a Train" 
+    },
+    { 
+      id: "car", 
+      title: "Car", 
+      icon: "ri-car-fill", 
+      bgColor: "blue-500", 
+      imageSrc: imagePath("car"),
+      speechText: "Car Ride" 
+    },
+    { 
+      id: "airplane", 
+      title: "Airplane", 
+      icon: "ri-plane-fill", 
+      bgColor: "blue-500", 
+      imageSrc: imagePath("airplane"),
+      speechText: "Go on an Airplane" 
+    },
+  ],
+  "places": [
+    { 
+      id: "home", 
+      title: "Home", 
+      icon: "ri-home-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("home"),
+      speechText: "Go Home" 
+    },
+    { 
+      id: "grandmas", 
+      title: "Grandma's", 
+      icon: "ri-home-heart-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("grandmas"),
+      speechText: "Go to Grandma's House" 
+    },
+    { 
+      id: "restaurant", 
+      title: "Restaurant", 
+      icon: "ri-restaurant-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("restaurant"),
+      speechText: "Go to the Restaurant" 
+    },
+    { 
+      id: "pool", 
+      title: "Pool", 
+      icon: "ri-water-flash-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("pool"),
+      speechText: "Go to the Pool" 
+    },
+    { 
+      id: "backyard", 
+      title: "Backyard", 
+      icon: "ri-home-gear-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("backyard"),
+      speechText: "Go to the Backyard" 
+    },
+    { 
+      id: "waterpark", 
+      title: "Water Park", 
+      icon: "ri-water-flash-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("waterpark"),
+      speechText: "Go to the Waterpark" 
+    },
+    { 
+      id: "amusementpark", 
+      title: "Amusement Park", 
+      icon: "ri-ferris-wheel-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("amusementpark"),
+      speechText: "Go to the Amusement Park" 
+    },
+    { 
+      id: "ymca", 
+      title: "YMCA", 
+      icon: "ri-run-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("ymca"),
+      speechText: "Go to the YMCA" 
+    },
+    { 
+      id: "gym", 
+      title: "Gym", 
+      icon: "ri-run-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("gym"),
+      speechText: "Go to the Gym" 
+    },
+    { 
+      id: "friendshouse", 
+      title: "Friend's House", 
+      icon: "ri-home-smile-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("friendshouse"),
+      speechText: "Go to a Friend's House" 
+    },
+    { 
+      id: "bowling", 
+      title: "Bowling", 
+      icon: "ri-ball-pen-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("bowling"),
+      speechText: "Go Bowling" 
+    },
+    { 
+      id: "library", 
+      title: "Library", 
+      icon: "ri-book-open-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("library"),
+      speechText: "Go to the Library" 
+    },
+    { 
+      id: "church", 
+      title: "Church", 
+      icon: "ri-building-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("church"),
+      speechText: "Go to Church" 
+    },
+    { 
+      id: "grocery", 
+      title: "Grocery Store", 
+      icon: "ri-shopping-cart-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("grocery"),
+      speechText: "Go to the Grocery Store" 
+    },
+    { 
+      id: "postoffice", 
+      title: "Post Office", 
+      icon: "ri-mail-fill", 
+      bgColor: "orange-300", 
+      imageSrc: imagePath("postoffice"),
+      speechText: "Go to the Post Office" 
+    },
+  ],
   "vacation": [
     { 
       id: "hotel", 
       title: "Hotel", 
       icon: "ri-hotel-fill", 
-      bgColor: "orange-300", 
+      bgColor: "orange-200", 
       imageSrc: imagePath("hotel"),
       speechText: "Go to Hotel" 
     },
@@ -535,272 +849,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Go to the Zoo" 
     },
   ],
-  "chores": [
-    { 
-      id: "pickup", 
-      title: "Pick Up Toys", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("pickup"),
-      speechText: "Pick Up Your Toys" 
-    },
-    { 
-      id: "feedpet", 
-      title: "Feed Pet", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("feedpet"),
-      speechText: "Feed your pet" 
-    },
-    { 
-      id: "settable", 
-      title: "Set Table", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("settable"),
-      speechText: "Set the Table" 
-    },
-  ],
-  "dressing": [
-    { 
-      id: "pajamas", 
-      title: "Put on PJs", 
-      icon: "ri-brush-fill", 
-      bgColor: "green-400", 
-      imageSrc: imagePath("pajamas"),
-      speechText: "Put on Pajamas" 
-    },
-    { 
-      id: "shoes", 
-      title: "Put on Shoes", 
-      icon: "ri-brush-fill", 
-      bgColor: "green-400", 
-      imageSrc: imagePath("shoes"),
-      speechText: "Put on Our Shoes" 
-    },
-    { 
-      id: "coat", 
-      title: "Put on Coat", 
-      icon: "ri-brush-fill", 
-      bgColor: "green-400", 
-      imageSrc: imagePath("coat"),
-      speechText: "Put on Your Coat" 
-    },
-    { 
-      id: "getdressed", 
-      title: "Get Dressed", 
-      icon: "ri-shirt-fill", 
-      bgColor: "green-400", 
-      imageSrc: imagePath("getdressed"),
-      speechText: "Get Dressed" 
-    },
-    { 
-      id: "shoesoff", 
-      title: "Take Shoes Off", 
-      icon: "ri-brush-fill", 
-      bgColor: "green-400", 
-      imageSrc: imagePath("shoesoff"),
-      speechText: "Take our Shoes Off" 
-    },
-  ],
-  "appointments": [
-    { 
-      id: "doctor", 
-      title: "Doctor", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("doctor"),
-      speechText: "Go to the Doctor" 
-    },
-    { 
-      id: "dentist", 
-      title: "Dentist", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("dentist"),
-      speechText: "Go to the Dentist" 
-    },
-    { 
-      id: "haircut", 
-      title: "Haircut", 
-      icon: "ri-brush-fill", 
-      bgColor: "purple-300", 
-      imageSrc: imagePath("haircut"),
-      speechText: "Get a Haircut" 
-    },
-  ],
-  "transportation": [
-    { 
-      id: "bus", 
-      title: "Bus", 
-      icon: "ri-brush-fill", 
-      bgColor: "blue-400", 
-      imageSrc: imagePath("bus"),
-      speechText: "Get on a Bus" 
-    },
-    { 
-      id: "train", 
-      title: "Train", 
-      icon: "ri-train-fill", 
-      bgColor: "blue-400", 
-      imageSrc: imagePath("train"),
-      speechText: "Go on a Train" 
-    },
-    { 
-      id: "car2", 
-      title: "Car", 
-      icon: "ri-car-fill", 
-      bgColor: "blue-400", 
-      imageSrc: imagePath("car2"),
-      speechText: "Go in the Car" 
-    },
-    { 
-      id: "airplane", 
-      title: "Airplane", 
-      icon: "ri-plane-fill", 
-      bgColor: "blue-400", 
-      imageSrc: imagePath("airplane"),
-      speechText: "Go on the Airplane" 
-    },
-  ],
-  "places": [
-    { 
-      id: "school", 
-      title: "School", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("school"),
-      speechText: "Go to School" 
-    },
-    { 
-      id: "home", 
-      title: "Home", 
-      icon: "ri-home-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("home"),
-      speechText: "Go Home" 
-    },
-    { 
-      id: "grandmas", 
-      title: "Grandma's", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("grandmas"),
-      speechText: "Go to Grandma's House" 
-    },
-    { 
-      id: "restaurant", 
-      title: "Restaurant", 
-      icon: "ri-restaurant-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("restaurant"),
-      speechText: "Go to the Restaurant" 
-    },
-    { 
-      id: "pool", 
-      title: "Pool", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("pool"),
-      speechText: "Go to the Pool" 
-    },
-    { 
-      id: "backyard", 
-      title: "Backyard", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("backyard"),
-      speechText: "Go to the Backyard" 
-    },
-    { 
-      id: "waterpark", 
-      title: "Water Park", 
-      icon: "ri-water-flash-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("waterpark"),
-      speechText: "Go to the Waterpark" 
-    },
-    { 
-      id: "amusementpark", 
-      title: "Amusement Park", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("amusementpark"),
-      speechText: "Go to the Amusement Park" 
-    },
-    { 
-      id: "temple", 
-      title: "Temple", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("temple"),
-      speechText: "Go to the Temple" 
-    },
-    { 
-      id: "gym", 
-      title: "Gym", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("gym"),
-      speechText: "Go to the Gym" 
-    },
-    { 
-      id: "house", 
-      title: "Friend's House", 
-      icon: "ri-home-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("house"),
-      speechText: "Go to a Friend's House" 
-    },
-    { 
-      id: "bowling", 
-      title: "Bowling", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("bowling"),
-      speechText: "Go Bowling" 
-    },
-    { 
-      id: "library", 
-      title: "Library", 
-      icon: "ri-book-open-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("library"),
-      speechText: "Go to the Library" 
-    },
-    { 
-      id: "church", 
-      title: "Church", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("church"),
-      speechText: "Go to Church" 
-    },
-    { 
-      id: "temple2", 
-      title: "Temple", 
-      icon: "ri-brush-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("temple2"),
-      speechText: "Go to the Temple" 
-    },
-    { 
-      id: "grocerystore", 
-      title: "Grocery Store", 
-      icon: "ri-shopping-cart-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("grocerystore"),
-      speechText: "Go to the Grocery Store" 
-    },
-    { 
-      id: "postoffice", 
-      title: "Post Office", 
-      icon: "ri-mail-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("postoffice"),
-      speechText: "Go to the Post Office" 
-    },
-  ]
+
 };
 
 // Combine all categories into a single array for the "all" view
