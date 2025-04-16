@@ -144,7 +144,7 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* We removed star indicators on individual cards per user request */}
+          {/* We've restored the mode-based approach as requested */}
           
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
@@ -160,49 +160,35 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Remove button for favorites - shown on cards in favorites category when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && isInFavorites && (
+          {/* Add button for cards when in favorites mode and not already a favorite */}
+          {!isInSchedule && isFavoritesMode && !isInFavorites && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-sm shadow-md z-50 border-2 border-white w-7 h-7 flex items-center justify-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(activity);
-                speak("Removed from favorites");
-              }}
-              aria-label="Remove from favorites"
-              style={{ pointerEvents: 'auto' }} /* Force button to stay clickable */
-            >
-              <i className="ri-close-line"></i>
-            </button>
-          )}
-          
-          {/* Add button for non-favorites when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && categoryId !== 'favorites' && !isInFavorites && (
-            <button 
-              className="absolute -top-1.5 -right-1.5 p-1 bg-green-500 text-white hover:bg-green-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-2 -right-2 p-1 bg-green-600 text-white hover:bg-green-700 rounded-full text-sm shadow-md z-50 border-2 border-white w-8 h-8 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 addToTemporaryFavorites(activity);
                 speak("Added to favorites");
               }}
               aria-label="Add to favorites"
+              style={{ pointerEvents: 'auto' }}
             >
-              <i className="ri-add-line text-[10px]"></i>
+              <i className="ri-add-line"></i>
             </button>
           )}
           
-          {/* Remove button for items that are already in favorites when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && categoryId !== 'favorites' && isInFavorites && (
+          {/* Remove button for cards that are already in favorites when in favorites mode */}
+          {!isInSchedule && isFavoritesMode && isInFavorites && (
             <button 
-              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-2 -right-2 p-1 bg-red-600 text-white hover:bg-red-700 rounded-full text-sm shadow-md z-50 border-2 border-white w-8 h-8 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
                 speak("Removed from favorites");
               }}
               aria-label="Remove from favorites"
+              style={{ pointerEvents: 'auto' }}
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line"></i>
             </button>
           )}
         </div>
