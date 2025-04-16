@@ -27,7 +27,8 @@ export default function ActivityCard({
     addToTemporaryFavorites, 
     removeFromTemporaryFavorites,
     isTemporaryFavorite,
-    toggleFavoritesMode
+    toggleFavoritesMode,
+    toggleFavorite
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -163,6 +164,7 @@ export default function ActivityCard({
               className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
+                // Use the toggleFavorite function from context
                 toggleFavorite(activity);
                 speak("Removed from favorites");
               }}

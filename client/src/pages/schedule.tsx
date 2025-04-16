@@ -33,6 +33,7 @@ export default function Schedule() {
     isFavorite,
     isFavoritesMode,
     setFavoritesMode,
+    toggleFavoritesMode,
     temporaryFavorites,
     addToTemporaryFavorites,
     removeFromTemporaryFavorites,
