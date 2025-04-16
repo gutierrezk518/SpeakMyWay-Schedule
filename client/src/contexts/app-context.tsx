@@ -99,9 +99,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       speak('Favorites updated!');
       toast.success('Favorites updated!', {
         duration: 3000,
-        position: 'top-right',
+        position: 'top-center',
         style: {
-          background: '#22c55e',
+          background: '#6b7280', // Gray-500 for consistency with header
           color: 'white',
           fontWeight: 'bold',
           fontSize: '0.9rem',
@@ -115,9 +115,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       speak(toastMessage);
       toast(toastMessage, {
         duration: 5000,
-        position: 'top-right',
+        position: 'top-center',
         style: {
-          background: '#22c55e',
+          background: '#6b7280', // Gray-500 for consistency with header
           color: 'white',
           maxWidth: '350px',
           fontWeight: 'medium',
