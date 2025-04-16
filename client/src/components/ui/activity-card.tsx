@@ -76,7 +76,7 @@ export default function ActivityCard({
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
             ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'ring-4 ring-yellow-400 ring-opacity-70' : ''}
-            ${isFavoritesMode && !isInSchedule ? 'opacity-100' : ''}
+            ${isFavoritesMode && !isInSchedule && categoryId !== 'favorites' ? 'opacity-30' : ''}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
               activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
@@ -163,13 +163,14 @@ export default function ActivityCard({
           {/* Remove button for favorites - always shown on cards in favorites category */}
           {!isInSchedule && categoryId === 'favorites' && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-sm z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-sm z-50 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
                 speak("Removed from favorites");
               }}
               aria-label="Remove from favorites"
+              style={{ pointerEvents: 'auto' }} /* Force button to stay clickable */
             >
               <i className="ri-close-line text-[10px]"></i>
             </button>

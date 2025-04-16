@@ -322,9 +322,9 @@ export default function Schedule() {
               <button 
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
                   canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
+                } ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                 onClick={handleUndo}
-                disabled={!canUndo}
+                disabled={!canUndo || isFavoritesMode}
                 title="Undo"
               >
                 <i className="ri-arrow-go-back-line text-sm sm:text-lg"></i>
@@ -334,9 +334,9 @@ export default function Schedule() {
               <button 
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
                   canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
+                } ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                 onClick={handleRedo}
-                disabled={!canRedo}
+                disabled={!canRedo || isFavoritesMode}
                 title="Redo"
               >
                 <i className="ri-arrow-go-forward-line text-sm sm:text-lg"></i>
@@ -344,8 +344,9 @@ export default function Schedule() {
               
               {/* Play button */}
               <button 
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                 onClick={playSchedule}
+                disabled={isFavoritesMode}
                 title="Play schedule"
               >
                 <i className="ri-play-line text-sm sm:text-lg"></i>
@@ -353,8 +354,9 @@ export default function Schedule() {
               
               {/* Timer toggle button */}
               <button 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                 onClick={() => setShowTimer(!showTimer)}
+                disabled={isFavoritesMode}
                 title={showTimer ? "Hide timer" : "Show timer"}
               >
                 <i className="ri-timer-line text-sm sm:text-lg"></i>
@@ -597,6 +599,7 @@ export default function Schedule() {
                         ? 'border-black shadow-lg ring-1 ring-offset-1 ring-black font-bold'
                         : 'border-transparent shadow-sm hover:shadow-md'
                       }
+                      ${isFavoritesMode && category.id !== 'favorites' ? 'opacity-30' : ''}
                     }`}
                     onClick={() => {
                       setSelectedCategory(category.id);
