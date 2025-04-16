@@ -174,6 +174,7 @@ const imagePath = (imageName: string) => {
     "bus": busImg,
     "train": trainImg,
     "car": carImg,
+    "car_ride": carImg, // For the vacation category car ride
     "airplane": airplaneImg,
     
     // Places
@@ -828,7 +829,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Go to Hotel" 
     },
     { 
-      id: "car", 
+      id: "car_ride", 
       title: "Car Ride", 
       icon: "ri-car-fill", 
       bgColor: "orange-300", 
