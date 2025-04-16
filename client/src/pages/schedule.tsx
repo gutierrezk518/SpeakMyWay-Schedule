@@ -368,7 +368,7 @@ export default function Schedule() {
                       ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
                       : 'bg-yellow-400 text-white'
                 } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                onClick={isFavoritesMode ? toggleFavoritesMode : () => setSelectedCategory('favorites')}
+                onClick={() => isFavoritesMode ? toggleFavoritesMode() : setSelectedCategory('favorites')}
                 title={isFavoritesMode ? "Finish selecting favorites" : "View favorites"}
               >
                 <i className="ri-star-fill text-sm sm:text-lg"></i>
@@ -441,7 +441,7 @@ export default function Schedule() {
                         ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
                         : 'bg-yellow-400 text-white'
                   } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                  onClick={isFavoritesMode ? toggleFavoritesMode : () => setSelectedCategory('favorites')}
+                  onClick={() => isFavoritesMode ? toggleFavoritesMode() : setSelectedCategory('favorites')}
                   title={isFavoritesMode ? "Finish selecting favorites" : "View favorites"}
                 >
                   <i className="ri-star-fill text-xs"></i>
