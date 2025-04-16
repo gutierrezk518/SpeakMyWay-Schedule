@@ -158,19 +158,28 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Remove button for favorites - only shown when in favorites mode and viewing the favorites category */}
-          {!isInSchedule && isInFavorites && isFavoritesMode && (
+          {/* Remove button for favorites - shown on all cards when in favorites mode */}
+          {!isInSchedule && isFavoritesMode && (
             <button 
               className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 // Use the toggleFavorite function from context
-                toggleFavorite(activity);
-                speak("Removed from favorites");
+                if (isInFavorites) {
+                  toggleFavorite(activity);
+                  speak("Removed from favorites");
+                } else {
+                  addToTemporaryFavorites(activity);
+                  speak("Added to favorites");
+                }
               }}
-              aria-label="Remove from favorites"
+              aria-label={isInFavorites ? "Remove from favorites" : "Add to favorites"}
             >
-              <i className="ri-close-line text-[10px]"></i>
+              {isInFavorites ? (
+                <i className="ri-close-line text-[10px]"></i>
+              ) : (
+                <i className="ri-add-line text-[10px]"></i>
+              )}
             </button>
           )}
         </div>

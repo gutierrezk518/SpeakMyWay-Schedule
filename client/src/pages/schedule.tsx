@@ -395,9 +395,9 @@ export default function Schedule() {
                 <button 
                   className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
                     canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                  }`}
+                  } ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={handleUndo}
-                  disabled={!canUndo}
+                  disabled={!canUndo || isFavoritesMode}
                   title="Undo"
                 >
                   <i className="ri-arrow-go-back-line text-xs"></i>
@@ -407,9 +407,9 @@ export default function Schedule() {
                 <button 
                   className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
                     canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                  }`}
+                  } ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={handleRedo}
-                  disabled={!canRedo}
+                  disabled={!canRedo || isFavoritesMode}
                   title="Redo"
                 >
                   <i className="ri-arrow-go-forward-line text-xs"></i>
@@ -417,8 +417,9 @@ export default function Schedule() {
                 
                 {/* Play button */}
                 <button 
-                  className="w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                  className={`w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={playSchedule}
+                  disabled={isFavoritesMode}
                   title="Play schedule"
                 >
                   <i className="ri-play-line text-xs"></i>
@@ -426,8 +427,9 @@ export default function Schedule() {
                 
                 {/* Timer toggle button */}
                 <button 
-                  className={`w-7 h-7 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                  className={`w-7 h-7 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={() => setShowTimer(!showTimer)}
+                  disabled={isFavoritesMode}
                   title={showTimer ? "Hide timer" : "Show timer"}
                 >
                   <i className="ri-timer-line text-xs"></i>
@@ -450,8 +452,9 @@ export default function Schedule() {
                 
                 {/* Save button */}
                 <button 
-                  className="w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                  className={`w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={() => setShowSaveModal(true)}
+                  disabled={isFavoritesMode}
                   title="Save schedule"
                 >
                   <i className="ri-save-line text-xs"></i>
@@ -464,15 +467,17 @@ export default function Schedule() {
               
               <div className="flex space-x-1 ml-auto">
                 <button 
-                  className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
+                  className={`p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={toggleFullscreen}
+                  disabled={isFavoritesMode}
                   aria-label="Fullscreen"
                 >
                   <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
                 <button 
-                  className="p-1.5 rounded-md bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
+                  className={`p-1.5 rounded-md bg-red-100 hover:bg-red-200 text-red-500 flex items-center ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
                   onClick={clearActivities}
+                  disabled={isFavoritesMode}
                   aria-label="Clear all activities"
                   title="Clear All Activities"
                 >
