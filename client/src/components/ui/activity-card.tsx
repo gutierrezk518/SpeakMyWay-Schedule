@@ -39,7 +39,7 @@ export default function ActivityCard({
   const isInSchedule = showRemoveButton;
   
   // Determine if this card is in the Favorites category based on the base activity ID
-  const isInFavorites = isActivityFavorite;
+  const isInFavorites = isActivityFavorite || isActivityTempFavorite;
   
   // Only click functionality, no long press as per user request
   

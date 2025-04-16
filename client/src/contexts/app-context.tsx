@@ -99,11 +99,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       speak('Favorites updated!');
       toast.success('Favorites updated!', {
         duration: 3000,
-        position: 'top-center',
+        position: 'top-right',
         style: {
           background: '#22c55e',
           color: 'white',
           fontWeight: 'bold',
+          fontSize: '0.9rem',
         },
         icon: '⭐',
       });
