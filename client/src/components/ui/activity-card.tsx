@@ -163,7 +163,7 @@ export default function ActivityCard({
           {/* Remove button for favorites - always shown on cards in favorites category */}
           {!isInSchedule && categoryId === 'favorites' && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-50 border border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-1.5 -right-1.5 p-0.5 bg-red-600 text-white hover:bg-red-700 rounded-full text-xs shadow-lg z-50 border-2 border-white w-7 h-7 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
@@ -172,7 +172,7 @@ export default function ActivityCard({
               aria-label="Remove from favorites"
               style={{ pointerEvents: 'auto' }} /* Force button to stay clickable */
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line text-sm"></i>
             </button>
           )}
           

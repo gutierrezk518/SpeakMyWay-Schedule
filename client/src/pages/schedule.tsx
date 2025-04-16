@@ -315,9 +315,9 @@ export default function Schedule() {
     <section className="h-full flex flex-col">
       {/* Favorites Mode Banner - Shown at the top when favorites mode is enabled */}
       {isFavoritesMode && (
-        <div className="bg-black text-white py-2 flex justify-center items-center shadow-md sticky top-0 z-50">
-          <i className="ri-star-fill text-yellow-300 mr-2 text-lg"></i>
-          <span className="font-bold">Favorites Mode Enabled</span>
+        <div className="bg-black text-white py-2 flex justify-center items-center shadow-md sticky top-0 z-50 border-b border-yellow-400">
+          <i className="ri-star-fill text-yellow-300 mr-2.5 text-xl"></i>
+          <span className="font-bold text-lg">Favorites Mode Enabled</span>
         </div>
       )}
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
@@ -396,7 +396,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full ${isFavoritesMode ? 'opacity-25 pointer-events-none' : ''}`}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-1 border-b border-gray-200 items-center justify-center space-x-3">
@@ -577,7 +577,7 @@ export default function Schedule() {
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
-                <div className={`p-2 border-b border-gray-200 ${isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <div className={`p-2 border-b border-gray-200 ${isFavoritesMode ? 'opacity-25 pointer-events-none' : ''}`}>
                   <ActivityTimer />
                 </div>
               )}
@@ -627,10 +627,10 @@ export default function Schedule() {
               <div className={`flex-grow ${isPortrait ? 'p-0.5' : 'p-1'} bg-gray-100 flex flex-col relative overflow-hidden`}>
                 <div className={`text-center ${isPortrait ? 'text-[10px] mb-0.5 mt-0.5' : 'mb-1 text-xs mt-1'} font-medium flex items-center justify-center`}>
                 {isFavoritesMode ? (
-                  <span className="bg-gray-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center">
-                    <i className="ri-star-fill mr-1 text-yellow-300"></i>
+                  <div className="bg-gray-500 text-white px-3 py-1 rounded-md text-[11px] font-bold flex items-center">
+                    <i className="ri-star-fill mr-1.5 text-yellow-300"></i>
                     Favorites Mode
-                  </span>
+                  </div>
                 ) : (
                   <span className="text-gray-700">Activity Cards</span>
                 )}
