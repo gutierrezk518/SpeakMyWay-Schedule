@@ -313,6 +313,13 @@ export default function Schedule() {
 
   return (
     <section className="h-full flex flex-col">
+      {/* Favorites Mode Banner - Shown at the top when favorites mode is enabled */}
+      {isFavoritesMode && (
+        <div className="bg-black text-white py-2 flex justify-center items-center shadow-md sticky top-0 z-50">
+          <i className="ri-star-fill text-yellow-300 mr-2 text-lg"></i>
+          <span className="font-bold">Favorites Mode Enabled</span>
+        </div>
+      )}
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden ${isFavoritesMode ? 'favorites-mode' : ''}`}>
           {/* Side buttons panel - non portrait mode */}
@@ -465,14 +472,7 @@ export default function Schedule() {
             )}
             
             <div className={`p-2 ${isFavoritesMode ? 'bg-gray-100' : 'bg-blue-100'} border-b border-gray-200 flex items-center justify-between`}>
-              {isFavoritesMode ? (
-                <div className="font-bold text-center w-full flex justify-center items-center bg-black text-white py-1 px-2 rounded space-x-1">
-                  <i className="ri-star-fill text-yellow-300"></i>
-                  <span>Favorites Mode Enabled</span>
-                </div>
-              ) : (
-                <div className="font-bold mr-auto">My Schedule</div>
-              )}
+              <div className="font-bold mr-auto">My Schedule</div>
               
               <div className={`flex space-x-1 ml-auto ${isFavoritesMode ? 'opacity-0' : ''}`}>
                 <button 

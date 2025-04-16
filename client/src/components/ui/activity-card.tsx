@@ -163,7 +163,7 @@ export default function ActivityCard({
           {/* Remove button for favorites - always shown on cards in favorites category */}
           {!isInSchedule && categoryId === 'favorites' && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-sm z-50 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-50 border border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
