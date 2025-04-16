@@ -101,10 +101,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         duration: 3000,
         position: 'top-center',
         style: {
-          background: '#6b7280', // Gray-500 for consistency with header
+          background: '#000000', // Black background for header consistency
           color: 'white',
           fontWeight: 'bold',
           fontSize: '0.9rem',
+          borderRadius: '4px',
+          padding: '8px 12px',
         },
         icon: '⭐',
       });
@@ -113,18 +115,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setFavoritesMode(true);
       const toastMessage = "Select cards to add to Favorites category. Select star again when finished.";
       speak(toastMessage);
-      toast(toastMessage, {
-        duration: 5000,
-        position: 'top-center',
-        style: {
-          background: '#6b7280', // Gray-500 for consistency with header
-          color: 'white',
-          maxWidth: '350px',
-          fontWeight: 'medium',
-          fontSize: '0.9rem',
-        },
-        icon: '⭐',
-      });
+      // We don't show a toast here anymore as the black header already shows the status
     }
   };
   

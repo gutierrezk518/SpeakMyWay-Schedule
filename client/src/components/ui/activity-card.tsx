@@ -160,10 +160,10 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Remove button for favorites - shown on cards in favorites category */}
+          {/* Remove button for favorites - always shown on cards in favorites category */}
           {!isInSchedule && categoryId === 'favorites' && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+              className="absolute -top-1 -right-1 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-sm z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
@@ -171,7 +171,7 @@ export default function ActivityCard({
               }}
               aria-label="Remove from favorites"
             >
-              <i className="ri-close-line text-[8px]"></i>
+              <i className="ri-close-line text-[10px]"></i>
             </button>
           )}
           
