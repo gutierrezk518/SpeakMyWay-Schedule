@@ -80,6 +80,9 @@ const libraryImg = "/activity-cards/library.png";
 const churchImg = "/activity-cards/church.png";
 const groceryImg = "/activity-cards/grocerystore.png";
 const postOfficeImg = "/activity-cards/postoffice.png";
+const hotelImg = "/activity-cards/hotel.png";
+const beachImg = "/activity-cards/beach.png";
+const zooImg = "/activity-cards/zoo.png";
 
 // Helper function to get image path
 const imagePath = (imageName: string) => {
@@ -115,7 +118,9 @@ const imagePath = (imageName: string) => {
     "halloween": halloweenImg,
     "hanukkah": hanukkahImg,
     "christmas": christmasImg,
+    "birthday": birthdaypartyImg,
     "birthdayparty": birthdaypartyImg,
+    "party": familygatheringImg,
     "familygathering": familygatheringImg,
     "parade": paradeImg,
     
@@ -123,7 +128,9 @@ const imagePath = (imageName: string) => {
     "walk": walkImg,
     "playground": playgroundImg,
     "run": runImg,
+    "swim": swimmingImg,
     "swimming": swimmingImg,
+    "camp": campingImg,
     "camping": campingImg,
     "bike": bikeImg,
     "swing": swingImg,
@@ -185,6 +192,9 @@ const imagePath = (imageName: string) => {
     "church": churchImg,
     "grocery": groceryImg,
     "postoffice": postOfficeImg,
+    "hotel": hotelImg,
+    "beach": beachImg,
+    "zoo": zooImg,
     
     // Fallback to a generic icon if specific icon isn't found
     "default": toysImg, // Using toys as a default fallback icon
@@ -365,19 +375,19 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Have Christmas" 
     },
     { 
-      id: "hanukah", 
-      title: "Hanukah", 
+      id: "hanukkah", 
+      title: "Hanukkah", 
       icon: "ri-candle-fill", 
       bgColor: "orange-300",
-      imageSrc: imagePath("hanukah"),
-      speechText: "Have Hanukah" 
+      imageSrc: imagePath("hanukkah"),
+      speechText: "Have Hanukkah" 
     },
     { 
       id: "birthday", 
       title: "Birthday Party", 
       icon: "ri-cake-fill", 
       bgColor: "orange-300",
-      imageSrc: imagePath("birthday"),
+      imageSrc: imagePath("birthdayparty"),
       speechText: "Have a Birthday Party" 
     },
     { 
@@ -385,7 +395,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Family Gathering", 
       icon: "ri-group-fill", 
       bgColor: "orange-300",
-      imageSrc: imagePath("party"),
+      imageSrc: imagePath("familygathering"),
       speechText: "Have a Family Gathering" 
     },
     { 
@@ -423,29 +433,22 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Go to the Playground" 
     },
     { 
-      id: "swim", 
-      title: "Swim", 
+      id: "swimming", 
+      title: "Swimming", 
       icon: "ri-ship-fill", 
       bgColor: "green-400",
-      imageSrc: imagePath("swim"),
+      imageSrc: imagePath("swimming"),
       speechText: "Go Swimming" 
     },
     { 
-      id: "camp", 
-      title: "Camp", 
+      id: "camping", 
+      title: "Camping", 
       icon: "ri-tent-fill", 
       bgColor: "green-400",
-      imageSrc: imagePath("camp"),
+      imageSrc: imagePath("camping"),
       speechText: "Go Camping" 
     },
-    { 
-      id: "hike", 
-      title: "Hike", 
-      icon: "ri-walk-fill", 
-      bgColor: "green-400",
-      imageSrc: imagePath("hike"),
-      speechText: "Go on a Hike" 
-    },
+
     { 
       id: "swing", 
       title: "Swing", 
