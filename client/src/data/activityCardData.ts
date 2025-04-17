@@ -300,7 +300,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Juice", 
       icon: "ri-cup-fill", 
       bgColor: "blue-300",
-      imageSrc: "/attached_assets/juice.png",
+      imageSrc: "attached_assets/juice.png",
       speechText: "Drink Juice" 
     },
     { 
@@ -308,7 +308,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Milk", 
       icon: "ri-cup-fill", 
       bgColor: "blue-300",
-      imageSrc: "/attached_assets/milk.png",
+      imageSrc: "attached_assets/milk.png",
       speechText: "Drink Milk" 
     },
     { 
@@ -316,7 +316,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Chocolate Milk", 
       icon: "ri-cup-fill", 
       bgColor: "blue-300",
-      imageSrc: "/attached_assets/chocolatemilk.png",
+      imageSrc: "attached_assets/chocolatemilk.png",
       speechText: "Drink Chocolate Milk" 
     },
   ],
@@ -535,7 +535,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Puzzle", 
       icon: "ri-puzzle-fill", 
       bgColor: "blue-400",
-      imageSrc: "/attached_assets/puzzle.png",
+      imageSrc: "attached_assets/puzzle.png",
       speechText: "Do a Puzzle" 
     },
   ],
@@ -595,7 +595,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Bath", 
       icon: "ri-showers-fill", 
       bgColor: "green-400", 
-      imageSrc: "/attached_assets/bath.png",
+      imageSrc: "attached_assets/bath.png",
       speechText: "Take a Bath" 
     },
     { 
@@ -611,7 +611,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Brush Hair", 
       icon: "ri-brush-fill", 
       bgColor: "green-400", 
-      imageSrc: "/attached_assets/brushhair.png",
+      imageSrc: "attached_assets/brushhair.png",
       speechText: "Comb your Hair" 
     },
     { 
@@ -645,7 +645,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Set the Table", 
       icon: "ri-restaurant-2-fill", 
       bgColor: "green-200", 
-      imageSrc: "/attached_assets/settable.png",
+      imageSrc: "attached_assets/settable.png",
       speechText: "Set the Table" 
     },
   ],
@@ -721,7 +721,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Haircut", 
       icon: "ri-scissors-fill", 
       bgColor: "purple-300", 
-      imageSrc: "/attached_assets/haircut.png",
+      imageSrc: "attached_assets/haircut.png",
       speechText: "Get a Haircut" 
     },
     { 
