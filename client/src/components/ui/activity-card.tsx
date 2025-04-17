@@ -45,21 +45,29 @@ export default function ActivityCard({
   
   // Only click functionality, no long press as per user request
   
-  // Handle card click to speak the activity title or speech text if available
-  // or add to favorites when in selection mode
+  // Handle card click to add to schedule or handle favorites
   const handleCardClick = () => {
     if (isFavoritesMode && !isInSchedule) {
+      // Handle favorites mode - same as before
       if (isActivityTempFavorite) {
         removeFromTemporaryFavorites(activity.id);
-        // Provide feedback - less intrusive than a toast
         speak("Removed from favorites");
       } else {
         addToTemporaryFavorites(activity);
-        // Provide feedback - less intrusive than a toast
         speak("Added to favorites");
       }
-    } else {
+    } else if (!isInSchedule) {
+      // NEW: If not in schedule and not in favorites mode, add to schedule
+      // Custom event to add card to schedule when clicked
+      const event = new CustomEvent('addCardToSchedule', { 
+        detail: { activity } 
+      });
+      document.dispatchEvent(event);
+      
       // Use custom speech text if available, otherwise use the title
+      speak(activity.speechText || activity.title);
+    } else {
+      // If in schedule, just speak the title
       speak(activity.speechText || activity.title);
     }
   };
