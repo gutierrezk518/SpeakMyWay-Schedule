@@ -293,6 +293,30 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("water"),
       speechText: "Drink Water" 
     },
+    { 
+      id: "juice", 
+      title: "Juice", 
+      icon: "ri-cup-fill", 
+      bgColor: "blue-300",
+      imageSrc: "/activity-cards/juice.png",
+      speechText: "Drink Juice" 
+    },
+    { 
+      id: "milk", 
+      title: "Milk", 
+      icon: "ri-cup-fill", 
+      bgColor: "blue-300",
+      imageSrc: "/activity-cards/milk.png",
+      speechText: "Drink Milk" 
+    },
+    { 
+      id: "chocolatemilk", 
+      title: "Chocolate Milk", 
+      icon: "ri-cup-fill", 
+      bgColor: "blue-300",
+      imageSrc: "/activity-cards/chocolatemilk.png",
+      speechText: "Drink Chocolate Milk" 
+    },
   ],
   "arts": [
     { 
@@ -504,6 +528,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("toys"),
       speechText: "Play with Toys" 
     },
+    { 
+      id: "puzzle", 
+      title: "Puzzle", 
+      icon: "ri-puzzle-fill", 
+      bgColor: "blue-400",
+      imageSrc: "/activity-cards/puzzle.png",
+      speechText: "Do a Puzzle" 
+    },
   ],
   "indoors": [
     { 
@@ -557,6 +589,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       speechText: "Go to the Bathroom" 
     },
     { 
+      id: "bath", 
+      title: "Bath", 
+      icon: "ri-showers-fill", 
+      bgColor: "green-400", 
+      imageSrc: imagePath("bath"),
+      speechText: "Take a Bath" 
+    },
+    { 
       id: "shower", 
       title: "Shower", 
       icon: "ri-showers-fill", 
@@ -598,6 +638,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("feedpet"),
       speechText: "Feed Pet" 
     },
+    { 
+      id: "settable", 
+      title: "Set the Table", 
+      icon: "ri-restaurant-2-fill", 
+      bgColor: "green-200", 
+      imageSrc: "/activity-cards/settable.png",
+      speechText: "Set the Table" 
+    },
   ],
   "dressing": [
     { 
@@ -606,7 +654,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       icon: "ri-footprint-fill", 
       bgColor: "green-400", 
       imageSrc: imagePath("shoeson"),
-      speechText: "Put Shoes On" 
+      speechText: "Put on our shoes" 
     },
     { 
       id: "shoesoff", 
@@ -614,7 +662,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       icon: "ri-footprint-fill", 
       bgColor: "green-400", 
       imageSrc: imagePath("shoesoff"),
-      speechText: "Take our Shoes Off" 
+      speechText: "Take our shoes off" 
     },
     { 
       id: "coaton", 
@@ -665,6 +713,22 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       bgColor: "purple-300", 
       imageSrc: imagePath("hospital"),
       speechText: "Go to Hospital" 
+    },
+    { 
+      id: "haircut", 
+      title: "Haircut", 
+      icon: "ri-scissors-fill", 
+      bgColor: "purple-300", 
+      imageSrc: "/activity-cards/haircut.png",
+      speechText: "Get a Haircut" 
+    },
+    { 
+      id: "dentist", 
+      title: "Dentist", 
+      icon: "ri-surgical-mask-fill", 
+      bgColor: "purple-300", 
+      imageSrc: "/activity-cards/dentist.png",
+      speechText: "Go to the Dentist" 
     },
   ],
   "transportation": [
@@ -821,6 +885,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       bgColor: "orange-300", 
       imageSrc: imagePath("postoffice"),
       speechText: "Go to the Post Office" 
+    },
+    { 
+      id: "school", 
+      title: "School", 
+      icon: "ri-building-line", 
+      bgColor: "orange-300", 
+      imageSrc: "/activity-cards/school.png",
+      speechText: "Go to School" 
     },
   ],
   "vacation": [
