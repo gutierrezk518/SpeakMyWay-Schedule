@@ -593,7 +593,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Bath", 
       icon: "ri-showers-fill", 
       bgColor: "green-400", 
-      imageSrc: imagePath("bath"),
+      imageSrc: "/attached_assets/bath.png",
       speechText: "Take a Bath" 
     },
     { 
