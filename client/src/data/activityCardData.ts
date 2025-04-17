@@ -1,3 +1,4 @@
+import { Milk } from "lucide-react";
 import { ScheduleActivity } from "./scheduleData";
 
 // Custom activity card data with image paths and speech text
@@ -102,6 +103,7 @@ const imagePath = (imageName: string) => {
     "snack": snackImg,
     "water": waterImg,
     "juice": juiceImg,
+      
     
     // Arts
     "color": colorImg,
