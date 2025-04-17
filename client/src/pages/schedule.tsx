@@ -697,38 +697,147 @@ export default function Schedule() {
                     )}
                   </Droppable>
                   
+                  {/* Dressing Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'dressing' 
+                      ? 'bg-rose-500 text-white font-medium shadow-sm' 
+                      : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                    }`}
+                    onClick={() => setSelectedCategory('dressing')}
+                  >
+                    <i className="ri-shirt-line mr-1"></i>
+                    Dressing
+                  </button>
+                  
+                  {/* Holiday Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'holiday' 
+                      ? 'bg-orange-500 text-white font-medium shadow-sm' 
+                      : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                    }`}
+                    onClick={() => setSelectedCategory('holiday')}
+                  >
+                    <i className="ri-calendar-event-line mr-1"></i>
+                    Holiday
+                  </button>
+                  
+                  {/* Hygiene Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'hygiene' 
+                      ? 'bg-teal-500 text-white font-medium shadow-sm' 
+                      : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
+                    }`}
+                    onClick={() => setSelectedCategory('hygiene')}
+                  >
+                    <i className="ri-hand-sanitizer-line mr-1"></i>
+                    Hygiene
+                  </button>
+                  
+                  {/* Media Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'media' 
+                      ? 'bg-blue-500 text-white font-medium shadow-sm' 
+                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                    }`}
+                    onClick={() => setSelectedCategory('media')}
+                  >
+                    <i className="ri-tv-line mr-1"></i>
+                    Media
+                  </button>
+                  
+                  {/* Arts Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'arts' 
+                      ? 'bg-violet-500 text-white font-medium shadow-sm' 
+                      : 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+                    }`}
+                    onClick={() => setSelectedCategory('arts')}
+                  >
+                    <i className="ri-palette-line mr-1"></i>
+                    Arts
+                  </button>
+                  
+                  {/* Indoors Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'indoors' 
+                      ? 'bg-amber-500 text-white font-medium shadow-sm' 
+                      : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                    }`}
+                    onClick={() => setSelectedCategory('indoors')}
+                  >
+                    <i className="ri-home-line mr-1"></i>
+                    Indoors
+                  </button>
+                  
+                  {/* Chores Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'chores' 
+                      ? 'bg-emerald-500 text-white font-medium shadow-sm' 
+                      : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                    }`}
+                    onClick={() => setSelectedCategory('chores')}
+                  >
+                    <i className="ri-todo-line mr-1"></i>
+                    Chores
+                  </button>
+                  
+                  {/* Meals Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'meals' 
+                      ? 'bg-green-500 text-white font-medium shadow-sm' 
+                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                    }`}
+                    onClick={() => setSelectedCategory('meals')}
+                  >
+                    <i className="ri-restaurant-line mr-1"></i>
+                    Meals
+                  </button>
+                  
+                  {/* Outdoors Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'outdoors' 
+                      ? 'bg-sky-500 text-white font-medium shadow-sm' 
+                      : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
+                    }`}
+                    onClick={() => setSelectedCategory('outdoors')}
+                  >
+                    <i className="ri-sun-line mr-1"></i>
+                    Outdoors
+                  </button>
+                  
+                  {/* Places Category */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      selectedCategory === 'places' 
+                      ? 'bg-purple-500 text-white font-medium shadow-sm' 
+                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                    }`}
+                    onClick={() => setSelectedCategory('places')}
+                  >
+                    <i className="ri-map-pin-line mr-1"></i>
+                    Places
+                  </button>
+                  
+                  {/* Transportation Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'transportation' 
-                      ? 'bg-blue-500 text-white font-medium shadow-sm' 
-                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      ? 'bg-indigo-500 text-white font-medium shadow-sm' 
+                      : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                     }`}
                     onClick={() => setSelectedCategory('transportation')}
                   >
                     <i className="ri-car-line mr-1"></i>
                     Transportation
-                  </button>
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'food' 
-                      ? 'bg-green-500 text-white font-medium shadow-sm' 
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                    onClick={() => setSelectedCategory('food')}
-                  >
-                    <i className="ri-restaurant-line mr-1"></i>
-                    Food
-                  </button>
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'activities' 
-                      ? 'bg-purple-500 text-white font-medium shadow-sm' 
-                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                    onClick={() => setSelectedCategory('activities')}
-                  >
-                    <i className="ri-game-line mr-1"></i>
-                    Activities
                   </button>
                 </div>
               </div>

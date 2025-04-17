@@ -135,21 +135,21 @@ export default function ActivityCard({
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white flex items-center justify-center rounded-full shadow-md hover:bg-red-600 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
               }}
               aria-label="Remove activity"
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line text-sm"></i>
             </button>
           )}
           
-          {/* Add a remove button to favorites when in the favorites category */}
+          {/* Add a remove button to favorites when in the favorites category - matching schedule style */}
           {!isInSchedule && isInFavorites && (
             <button 
-              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white flex items-center justify-center rounded-full shadow-md hover:bg-red-600 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
@@ -157,7 +157,7 @@ export default function ActivityCard({
               }}
               aria-label="Remove from favorites"
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line text-sm"></i>
             </button>
           )}
         </div>
