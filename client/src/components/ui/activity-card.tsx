@@ -131,24 +131,24 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Remove button for schedule cards - using the light-colored design */}
+          {/* Remove button for schedule cards */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute top-0 right-0 w-5 h-5 bg-white bg-opacity-70 text-red-500 flex items-center justify-center rounded-tr-md hover:bg-white hover:text-red-600 transition-colors"
+              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
               }}
               aria-label="Remove activity"
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line text-[8px]"></i>
             </button>
           )}
           
-          {/* Light colored X button for favorites, matching the style in the Schedule section */}
+          {/* X button for favorites category, matching the preferred style */}
           {!isInSchedule && isInFavorites && (
             <button 
-              className="absolute top-0 right-0 w-5 h-5 bg-white bg-opacity-70 text-red-500 flex items-center justify-center rounded-tr-md hover:bg-white hover:text-red-600 transition-colors"
+              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
@@ -156,7 +156,7 @@ export default function ActivityCard({
               }}
               aria-label="Remove from favorites"
             >
-              <i className="ri-close-line text-[10px]"></i>
+              <i className="ri-close-line text-[8px]"></i>
             </button>
           )}
         </div>
