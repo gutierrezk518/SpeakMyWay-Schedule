@@ -19,7 +19,7 @@ export default function ActivityCard({
   showRemoveButton = false,
   onRemove,
   categoryId
-}: ActivityCardProps) {
+}: ActivityCardProps): JSX.Element {
   // Get favorites functionality from context - simplified
   const { 
     isFavorite, 
@@ -40,20 +40,21 @@ export default function ActivityCard({
   
   // Handle card click to add to schedule
   const handleCardClick = () => {
-    if (!isInSchedule) {
-      // If not in schedule, add to schedule
-      // Custom event to add card to schedule when clicked
-      const event = new CustomEvent('addCardToSchedule', { 
-        detail: { activity } 
-      });
-      document.dispatchEvent(event);
-      
-      // Use custom speech text if available, otherwise use the title
-      speak(activity.speechText || activity.title);
-    } else {
-      // If in schedule, just speak the title
-      speak(activity.speechText || activity.title);
-    }
+    // Determine the source area based on where the card is
+    const sourceArea = isInSchedule ? "schedule" : 
+                      isInFavorites ? "favorites" : "activity-cards";
+                      
+    // Custom event to add card to schedule when clicked
+    const event = new CustomEvent('addCardToSchedule', { 
+      detail: { 
+        activity,
+        sourceArea 
+      } 
+    });
+    document.dispatchEvent(event);
+    
+    // Speak the activity regardless of location
+    speak(activity.speechText || activity.title);
   };
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction

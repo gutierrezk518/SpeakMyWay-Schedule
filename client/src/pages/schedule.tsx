@@ -379,7 +379,15 @@ export default function Schedule() {
     // Event handler for adding cards to schedule when clicked
     const handleAddCardToSchedule = (event: CustomEvent) => {
       const activity = event.detail?.activity;
+      const sourceArea = event.detail?.sourceArea;
       if (!activity) return;
+      
+      // If the card was clicked from within the schedule area, don't add it again
+      if (sourceArea === "schedule") {
+        // Just speak the activity text without adding it again
+        speak(activity.speechText || activity.title);
+        return;
+      }
       
       // Save current state for undo history
       const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
