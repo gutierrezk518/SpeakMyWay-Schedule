@@ -603,7 +603,7 @@ export default function Schedule() {
                             categoryId={selectedCategory}
                           />
                           <button 
-                            className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                            className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
                             onClick={() => removeActivity(index)}
                             aria-label="Remove activity"
                           >
@@ -874,15 +874,8 @@ export default function Schedule() {
                               />
                               {/* X button positioned in top-right corner like the new screenshot */}
                               <button 
-                                style={{ 
-                                  position: 'absolute', 
-                                  top: '0', 
-                                  right: '0', 
-                                  width: '16px', 
-                                  height: '16px',
-                                  transform: 'translate(25%, -25%)'
-                                }}
-                                className="bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm border border-red-300 flex items-center justify-center"
+                                className="absolute top-0 right-0 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm border border-red-300 flex items-center justify-center w-4 h-4"
+                                style={{ transform: 'translate(8px, -8px)' }}
                                 onClick={() => toggleFavorite(activity)}
                                 aria-label="Remove from favorites"
                               >
