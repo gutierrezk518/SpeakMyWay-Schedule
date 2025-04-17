@@ -340,6 +340,47 @@ export default function Schedule() {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
   
+  // Handle adding cards to schedule when clicked
+  useEffect(() => {
+    // Event handler for adding cards to schedule when clicked
+    const handleAddCardToSchedule = (event: CustomEvent) => {
+      const activity = event.detail?.activity;
+      if (!activity || isFavoritesMode) return;
+      
+      // Save current state for undo history
+      const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
+      if (currentSection) {
+        addToScheduleHistory([...currentSection.activities]);
+      }
+      
+      // Create a new copy of the activity with a unique ID
+      const newActivity: ScheduleActivity = {
+        ...activity,
+        id: `${activity.id}-${uuidv4().slice(0, 8)}`
+      };
+      
+      // Add the activity to the schedule
+      const newSchedule = [...scheduleData];
+      const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
+      if (!section) return;
+      
+      section.activities = [...section.activities, newActivity]; // Add to the end
+      setScheduleData(newSchedule);
+      
+      // Speak the activity's full speech text when it's added to the schedule
+      speak(newActivity.speechText || newActivity.title);
+      console.log("Added activity to schedule via click:", newActivity.title);
+    };
+    
+    // Listen for the custom event
+    document.addEventListener('addCardToSchedule', handleAddCardToSchedule as EventListener);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('addCardToSchedule', handleAddCardToSchedule as EventListener);
+    };
+  }, [scheduleData, selectedTimeSection, addToScheduleHistory, isFavoritesMode]);
+  
   // We're now using the toggleFavoritesMode from context
 
   return (
