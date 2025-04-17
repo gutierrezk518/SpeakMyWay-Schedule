@@ -67,7 +67,6 @@ export default function ActivityCard({
           onClick={handleCardClick}
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
-            ${isActivityFavorite ? 'ring-2 ring-yellow-300' : ''}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
               activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
@@ -132,10 +131,10 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
+          {/* Remove button for schedule cards - using the light-colored design */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white flex items-center justify-center rounded-full shadow-md hover:bg-red-600 transition-colors"
+              className="absolute top-0 right-0 w-5 h-5 bg-white bg-opacity-70 text-red-500 flex items-center justify-center rounded-tr-md hover:bg-white hover:text-red-600 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
@@ -146,10 +145,10 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Add a remove button to favorites when in the favorites category - matching schedule style exactly */}
+          {/* Light colored X button for favorites, matching the style in the Schedule section */}
           {!isInSchedule && isInFavorites && (
             <button 
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white flex items-center justify-center rounded-full shadow-md hover:bg-red-600 transition-colors"
+              className="absolute top-0 right-0 w-5 h-5 bg-white bg-opacity-70 text-red-500 flex items-center justify-center rounded-tr-md hover:bg-white hover:text-red-600 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
