@@ -789,7 +789,7 @@ export default function Schedule() {
                     Outdoors & Social
                   </button>
                   
-                  {/* Places Category */}
+                  {/* Places & Transportation Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'places' 
@@ -799,7 +799,7 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('places')}
                   >
                     <i className="ri-map-pin-line mr-1"></i>
-                    Places
+                    Places & Transport
                   </button>
                   
                   {/* Vacation Category */}
