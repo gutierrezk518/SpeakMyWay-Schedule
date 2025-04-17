@@ -128,9 +128,6 @@ export default function ActivityCard({
               {/* Text container - more mobile-friendly */}
               <div className="w-full bg-white bg-opacity-70 rounded-sm py-0.5 sm:py-1 px-1 text-center">
                 <span className="font-medium text-[8px] sm:text-[9px] leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
-                <span className="absolute right-1 bottom-1 text-[7px] sm:text-[8px] text-gray-600">
-                  <i className="ri-volume-up-line"></i>
-                </span>
               </div>
             </>
           )}
@@ -149,11 +146,19 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Only show a subtle indicator if the card is already a favorite */}
-          {!isInSchedule && isActivityFavorite && (
-            <div className="absolute -top-1 -right-1 text-yellow-500 text-[9px] opacity-70">
-              <i className="ri-star-fill"></i>
-            </div>
+          {/* Add a remove button to favorites when in the favorites category */}
+          {!isInSchedule && isInFavorites && (
+            <button 
+              className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white hover:bg-red-600 rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(activity);
+                speak("Removed from favorites");
+              }}
+              aria-label="Remove from favorites"
+            >
+              <i className="ri-close-line text-[10px]"></i>
+            </button>
           )}
         </div>
       )}
