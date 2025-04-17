@@ -131,10 +131,10 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* Remove button for schedule cards */}
+          {/* Remove button for schedule cards - positioned to overlap the card */}
           {showRemoveButton && onRemove && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+              className="absolute top-0 right-0 translate-x-1 -translate-y-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
@@ -145,10 +145,10 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* X button for favorites category, matching the preferred style */}
+          {/* X button for favorites category - positioned to overlap the card */}
           {!isInSchedule && isInFavorites && (
             <button 
-              className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+              className="absolute top-0 right-0 translate-x-1 -translate-y-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
