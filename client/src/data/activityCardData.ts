@@ -729,7 +729,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Dentist", 
       icon: "ri-surgical-mask-fill", 
       bgColor: "purple-300", 
-      imageSrc: "/attached_assets/dentist.png",
+      imageSrc: "attached_assets/dentist.png",
       speechText: "Go to the Dentist" 
     },
   ],
@@ -893,7 +893,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "School", 
       icon: "ri-building-line", 
       bgColor: "orange-300", 
-      imageSrc: "/attached_assets/school.png",
+      imageSrc: "attached_assets/school.png",
       speechText: "Go to School" 
     },
   ],
