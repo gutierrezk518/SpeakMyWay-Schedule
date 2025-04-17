@@ -613,7 +613,7 @@ export default function Schedule() {
                           <ActivityCard 
                             activity={activity} 
                             index={index}
-                            showRemoveButton={false}
+                            showRemoveButton={true}
                             categoryId={selectedCategory}
                           />
                           <button 

@@ -43,6 +43,8 @@ export default function ActivityCard({
     // Determine the source area based on where the card is
     const sourceArea = isInSchedule ? "schedule" : 
                       isInFavorites ? "favorites" : "activity-cards";
+    
+    console.log("Card clicked:", activity.title, "Source area:", sourceArea, "isInSchedule:", isInSchedule);
                       
     // Custom event to add card to schedule when clicked
     const event = new CustomEvent('addCardToSchedule', { 
