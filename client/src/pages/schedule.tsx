@@ -865,15 +865,17 @@ export default function Schedule() {
                           </div>
                         ) : (
                           favoriteActivities.map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="relative">
+                            <div key={activity.id} className="relative" style={{ position: 'relative' }}>
                               <ActivityCard
                                 activity={activity}
                                 index={index}
                                 isDraggable={true}
                                 categoryId="favorites"
                               />
+                              {/* X button with exact positioning to match My Schedule */}
                               <button 
-                                className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                                className="absolute top-0 right-0 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                                style={{ transform: 'translate(35%, -35%)' }}
                                 onClick={() => toggleFavorite(activity)}
                                 aria-label="Remove from favorites"
                               >
