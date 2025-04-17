@@ -865,22 +865,23 @@ export default function Schedule() {
                           </div>
                         ) : (
                           favoriteActivities.map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="relative" style={{ position: 'relative' }}>
+                            <div key={activity.id} style={{ position: 'relative', display: 'inline-block' }}>
                               <ActivityCard
                                 activity={activity}
                                 index={index}
                                 isDraggable={true}
                                 categoryId="favorites"
                               />
-                              {/* X button with exact positioning to match My Schedule */}
-                              <button 
-                                className="absolute top-0 right-0 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
-                                style={{ transform: 'translate(35%, -35%)' }}
-                                onClick={() => toggleFavorite(activity)}
-                                aria-label="Remove from favorites"
-                              >
-                                <i className="ri-close-line text-[8px]"></i>
-                              </button>
+                              {/* X button positioned exactly like the screenshot */}
+                              <div style={{ position: 'absolute', top: '-6px', right: '-6px', zIndex: 40 }}>
+                                <button 
+                                  className="w-4 h-4 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm border border-red-300 flex items-center justify-center"
+                                  onClick={() => toggleFavorite(activity)}
+                                  aria-label="Remove from favorites"
+                                >
+                                  <i className="ri-close-line text-[8px]"></i>
+                                </button>
+                              </div>
                             </div>
                           ))
                         )}
