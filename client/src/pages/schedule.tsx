@@ -739,52 +739,13 @@ export default function Schedule() {
                   {/* Indoors & Chores Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'media' 
+                      selectedCategory === 'indoors-chores' 
                       ? 'bg-blue-500 text-white font-medium shadow-sm' 
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
-                    onClick={() => setSelectedCategory('media')}
-                  >
-                    <i className="ri-tv-line mr-1"></i>
-                    Indoors & Chores
-                  </button>
-                  
-                  {/* Indoors & Chores Category (second instance for Arts) */}
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'arts' 
-                      ? 'bg-violet-500 text-white font-medium shadow-sm' 
-                      : 'bg-violet-100 text-violet-700 hover:bg-violet-200'
-                    }`}
-                    onClick={() => setSelectedCategory('arts')}
-                  >
-                    <i className="ri-palette-line mr-1"></i>
-                    Indoors & Chores
-                  </button>
-                  
-                  {/* Indoors & Chores Category (third instance for Indoors) */}
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'indoors' 
-                      ? 'bg-amber-500 text-white font-medium shadow-sm' 
-                      : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                    }`}
-                    onClick={() => setSelectedCategory('indoors')}
+                    onClick={() => setSelectedCategory('indoors-chores')}
                   >
                     <i className="ri-home-line mr-1"></i>
-                    Indoors & Chores
-                  </button>
-                  
-                  {/* Indoors & Chores Category (fourth instance for Chores) */}
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'chores' 
-                      ? 'bg-emerald-500 text-white font-medium shadow-sm' 
-                      : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                    }`}
-                    onClick={() => setSelectedCategory('chores')}
-                  >
-                    <i className="ri-todo-line mr-1"></i>
                     Indoors & Chores
                   </button>
                   
@@ -804,11 +765,11 @@ export default function Schedule() {
                   {/* Outdoors & Social Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'outdoors' 
+                      selectedCategory === 'outdoors-social' 
                       ? 'bg-sky-500 text-white font-medium shadow-sm' 
                       : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
                     }`}
-                    onClick={() => setSelectedCategory('outdoors')}
+                    onClick={() => setSelectedCategory('outdoors-social')}
                   >
                     <i className="ri-sun-line mr-1"></i>
                     Outdoors & Social
@@ -830,13 +791,13 @@ export default function Schedule() {
                   {/* Vacation Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'transportation' 
+                      selectedCategory === 'vacation' 
                       ? 'bg-indigo-500 text-white font-medium shadow-sm' 
                       : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                     }`}
-                    onClick={() => setSelectedCategory('transportation')}
+                    onClick={() => setSelectedCategory('vacation')}
                   >
-                    <i className="ri-car-line mr-1"></i>
+                    <i className="ri-suitcase-line mr-1"></i>
                     Vacation
                   </button>
                 </div>
