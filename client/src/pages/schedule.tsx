@@ -872,6 +872,13 @@ export default function Schedule() {
                                 isDraggable={true}
                                 categoryId="favorites"
                               />
+                              <button 
+                                className="absolute -top-1 -right-1 p-1 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                                onClick={() => toggleFavorite(activity)}
+                                aria-label="Remove from favorites"
+                              >
+                                <i className="ri-close-line text-[8px]"></i>
+                              </button>
                             </div>
                           ))
                         )}
