@@ -595,7 +595,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`card-container ${isPortrait ? 'inline-block' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
+                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-block' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
@@ -603,7 +603,7 @@ export default function Schedule() {
                             categoryId={selectedCategory}
                           />
                           <button 
-                            className="remove-button bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                            className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
                             onClick={() => removeActivity(index)}
                             aria-label="Remove activity"
                           >
@@ -865,21 +865,22 @@ export default function Schedule() {
                           </div>
                         ) : (
                           favoriteActivities.map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="card-container">
+                            <div key={activity.id} className="relative inline-block bg-yellow-50 rounded p-1">
                               <ActivityCard
                                 activity={activity}
                                 index={index}
                                 isDraggable={true}
                                 categoryId="favorites"
                               />
-                              {/* X button positioned in top-right corner like the new screenshot */}
-                              <button 
-                                className="remove-button bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm border border-red-300 flex items-center justify-center w-4 h-4"
-                                onClick={() => toggleFavorite(activity)}
-                                aria-label="Remove from favorites"
-                              >
-                                <i className="ri-close-line text-[8px]"></i>
-                              </button>
+                              <div className="mt-1 w-full text-center">
+                                <button 
+                                  className="px-1 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                  onClick={() => toggleFavorite(activity)}
+                                  aria-label="Remove from favorites"
+                                >
+                                  Remove
+                                </button>
+                              </div>
                             </div>
                           ))
                         )}

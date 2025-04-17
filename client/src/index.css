@@ -14,17 +14,3 @@
     font-family: 'Poppins', sans-serif;
   }
 }
-
-@layer components {
-  .card-container {
-    display: grid;
-    position: relative;
-  }
-
-  .card-container .remove-button {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    z-index: 10;
-  }
-}
