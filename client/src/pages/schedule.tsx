@@ -736,7 +736,7 @@ export default function Schedule() {
                     Hygiene
                   </button>
                   
-                  {/* Media Category */}
+                  {/* Indoors & Chores Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'media' 
@@ -746,10 +746,10 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('media')}
                   >
                     <i className="ri-tv-line mr-1"></i>
-                    Media
+                    Indoors & Chores
                   </button>
                   
-                  {/* Arts Category */}
+                  {/* Indoors & Chores Category (second instance for Arts) */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'arts' 
@@ -759,10 +759,10 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('arts')}
                   >
                     <i className="ri-palette-line mr-1"></i>
-                    Arts
+                    Indoors & Chores
                   </button>
                   
-                  {/* Indoors Category */}
+                  {/* Indoors & Chores Category (third instance for Indoors) */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'indoors' 
@@ -772,10 +772,10 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('indoors')}
                   >
                     <i className="ri-home-line mr-1"></i>
-                    Indoors
+                    Indoors & Chores
                   </button>
                   
-                  {/* Chores Category */}
+                  {/* Indoors & Chores Category (fourth instance for Chores) */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'chores' 
@@ -785,7 +785,7 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('chores')}
                   >
                     <i className="ri-todo-line mr-1"></i>
-                    Chores
+                    Indoors & Chores
                   </button>
                   
                   {/* Meals Category */}
@@ -801,7 +801,7 @@ export default function Schedule() {
                     Meals
                   </button>
                   
-                  {/* Outdoors Category */}
+                  {/* Outdoors & Social Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'outdoors' 
@@ -811,7 +811,7 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('outdoors')}
                   >
                     <i className="ri-sun-line mr-1"></i>
-                    Outdoors
+                    Outdoors & Social
                   </button>
                   
                   {/* Places Category */}
@@ -827,7 +827,7 @@ export default function Schedule() {
                     Places
                   </button>
                   
-                  {/* Transportation Category */}
+                  {/* Vacation Category */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'transportation' 
@@ -837,7 +837,7 @@ export default function Schedule() {
                     onClick={() => setSelectedCategory('transportation')}
                   >
                     <i className="ri-car-line mr-1"></i>
-                    Transportation
+                    Vacation
                   </button>
                 </div>
               </div>
@@ -904,7 +904,7 @@ export default function Schedule() {
                             <ActivityCard
                               activity={activity}
                               index={index}
-                              isDraggable={selectedCategory === 'all'}
+                              isDraggable={true}
                               categoryId={selectedCategory}
                             />
                           </div>
