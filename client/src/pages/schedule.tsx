@@ -171,13 +171,19 @@ export default function Schedule() {
     }
     
     // NEW: If adding to favorites category by dragging
-    if (source.droppableId === "activity-cards" && destination.droppableId === "favorites") {
+    if (source.droppableId === "activity-cards" && 
+        (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
       try {
         const activityToAdd = visibleActivities[source.index];
         if (!activityToAdd) return;
         
         // Add to favorites - this will avoid duplicates by checking isFavorite
         addToFavorites(activityToAdd);
+        
+        // Automatically switch to favorites category to show the result
+        if (destination.droppableId === "favorites-button") {
+          setSelectedCategory('favorites');
+        }
         
         // Speak confirmation
         speak("Added to favorites");
@@ -660,17 +666,37 @@ export default function Schedule() {
                     <i className="ri-apps-line mr-1"></i>
                     All
                   </button>
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      selectedCategory === 'favorites' 
-                      ? 'bg-yellow-500 text-white font-medium shadow-sm' 
-                      : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                    }`}
-                    onClick={() => setSelectedCategory('favorites')}
-                  >
-                    <i className="ri-star-fill mr-1"></i>
-                    Favorites
-                  </button>
+                  
+                  {/* Make the favorites button a droppable target */}
+                  <Droppable droppableId="favorites-button" direction="horizontal" isDropDisabled={false}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`${snapshot.isDraggingOver ? 'scale-110 transition-transform' : ''}`}
+                      >
+                        <button
+                          className={`px-2 py-1 rounded-md text-xs ${
+                            selectedCategory === 'favorites' 
+                            ? 'bg-yellow-500 text-white font-medium shadow-sm' 
+                            : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                          } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
+                          ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
+                          onClick={() => setSelectedCategory('favorites')}
+                        >
+                          <i className="ri-star-fill mr-1"></i>
+                          Favorites
+                          {snapshot.isDraggingOver && (
+                            <div className="absolute inset-0 bg-yellow-300 bg-opacity-30 rounded-md flex items-center justify-center">
+                              <span className="text-[9px] font-bold text-yellow-800">DROP TO ADD</span>
+                            </div>
+                          )}
+                        </button>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                  
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'transportation' 

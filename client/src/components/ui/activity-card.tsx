@@ -149,31 +149,9 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Toggle favorite button for activity cards - more visible */}
-          {!isInSchedule && (
-            <button 
-              className={`absolute -top-1.5 -right-1.5 p-1 ${isActivityFavorite ? 'bg-yellow-500' : 'bg-gray-300'} 
-                text-white hover:${isActivityFavorite ? 'bg-yellow-600' : 'bg-yellow-400'} 
-                rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 
-                flex items-center justify-center`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(activity);
-                if (!isActivityFavorite) {
-                  speak("Added to favorites");
-                } else {
-                  speak("Removed from favorites");
-                }
-              }}
-              aria-label={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
-            >
-              <i className={`${isActivityFavorite ? 'ri-star-fill' : 'ri-star-line'} text-[10px]`}></i>
-            </button>
-          )}
-          
-          {/* Show star icon if it's a favorite */}
+          {/* Only show a subtle indicator if the card is already a favorite */}
           {!isInSchedule && isActivityFavorite && (
-            <div className="absolute -top-1 -right-1 text-yellow-500 text-xs">
+            <div className="absolute -top-1 -right-1 text-yellow-500 text-[9px] opacity-70">
               <i className="ri-star-fill"></i>
             </div>
           )}
