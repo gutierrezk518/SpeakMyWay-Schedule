@@ -865,7 +865,7 @@ export default function Schedule() {
                           </div>
                         ) : (
                           favoriteActivities.map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="relative inline-block bg-yellow-50 rounded p-1">
+                            <div key={activity.id} className="relative inline-block rounded p-1">
                               <ActivityCard
                                 activity={activity}
                                 index={index}
