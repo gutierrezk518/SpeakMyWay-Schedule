@@ -7,7 +7,7 @@ import {
   ScheduleActivity,
   ScheduleTimeSection
 } from "@/data/scheduleData";
-import { customActivityCards, allCustomActivityCards } from "@/data/activityCardData";
+import { customActivityCards, allCustomActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import ActivityCard from "@/components/ui/activity-card";
 import ActivityTimer from "@/components/ui/activity-timer";
@@ -120,34 +120,36 @@ export default function Schedule() {
       setScheduleData(newSchedule);
     }
     
-    // NEW: If reordering within activity cards section
+    // If reordering within activity cards section
     if (source.droppableId === "activity-cards" && destination.droppableId === "activity-cards") {
       if (selectedCategory === "all") {
-        // Calculate the actual source and destination indices across pages
-        const sourcePage = Math.floor(source.index / itemsPerPage);
-        const destPage = Math.floor(destination.index / itemsPerPage);
-        
-        // If moving between pages, update the activities page
-        if (sourcePage !== destPage) {
-          setActivitiesPage(destPage + 1);
-        }
-        
         // Get the full list of activities for the "all" category
         const allActivities = [...allCustomActivityCards];
         
-        // Calculate the actual indices in the full list
+        // Calculate the actual source and destination indices
         const actualSourceIndex = (activitiesPage - 1) * itemsPerPage + source.index;
-        const actualDestIndex = (destPage !== sourcePage) 
-          ? destPage * itemsPerPage + (destination.index % itemsPerPage)
-          : (activitiesPage - 1) * itemsPerPage + destination.index;
+        const actualDestIndex = (activitiesPage - 1) * itemsPerPage + destination.index;
         
-        // Move the activity in the full list
-        const [movedActivity] = allActivities.splice(actualSourceIndex, 1);
-        allActivities.splice(actualDestIndex, 0, movedActivity);
-        
-        // This is just a UI reordering since we don't have a direct way to modify allCustomActivityCards
-        // In a real application with state management, you would update the global state here
-        console.log("Reordered activity cards (visual only)");
+        // Make sure indices are valid
+        if (actualSourceIndex >= 0 && actualSourceIndex < allActivities.length &&
+            actualDestIndex >= 0 && actualDestIndex < allActivities.length) {
+          
+          // Move the activity in the full list
+          const [movedActivity] = allActivities.splice(actualSourceIndex, 1);
+          allActivities.splice(actualDestIndex, 0, movedActivity);
+          
+          // Update the global allCustomActivityCards array
+          updateAllActivitiesOrder(allActivities);
+          
+          // Force re-render by setting state
+          setActivitiesPage(activitiesPage);
+          
+          console.log("Reordered activity cards successfully");
+        }
+      } else {
+        // For other categories, just reorder within the visible items
+        // This is just a UI change and doesn't persist between category changes
+        console.log("Reordering within category (visual only)");
       }
     }
     

@@ -861,4 +861,10 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
 };
 
 // Combine all categories into a single array for the "all" view
-export const allCustomActivityCards: ScheduleActivity[] = Object.values(customActivityCards).flat();
+// Export a mutable reference to all activity cards
+export let allCustomActivityCards: ScheduleActivity[] = Object.values(customActivityCards).flat();
+
+// Function to update the all activities array - will be called when reordering
+export function updateAllActivitiesOrder(newActivities: ScheduleActivity[]) {
+  allCustomActivityCards = [...newActivities];
+}
