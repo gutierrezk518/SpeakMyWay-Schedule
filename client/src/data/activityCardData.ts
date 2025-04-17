@@ -15,7 +15,7 @@ const lunchImg = "/activity-cards/lunch.png";
 const dinnerImg = "/activity-cards/dinner.png";
 const snackImg = "/activity-cards/snack.png";
 const waterImg = "/activity-cards/glassofwater.png";
-const juiceImg = "/activity-cards/juice.png";
+const juiceImg = "/attached_assets/juice.png";
 const colorImg = "/activity-cards/color.png";
 const paintImg = "/activity-cards/paint.png";
 const drawImg = "/activity-cards/draw.png";
@@ -48,8 +48,8 @@ const bathroomImg = "/activity-cards/bathroom.png";
 const brushteethImg = "/activity-cards/brushteeth.png";
 const washhandsImg = "/activity-cards/wash hands.png";
 const showerImg = "/activity-cards/shower.png";
-const combhairImg = "/activity-cards/brushhair.png";
-const bathImg = "/activity-cards/bath.png";
+const combhairImg = "/attached_assets/brushhair.png";
+const bathImg = "/attached_assets/bath.png";
 const washfaceImg = "/activity-cards/washface.png";
 const cleanupImg = "/activity-cards/cleanup.png";
 const feedpetImg = "/activity-cards/feedpet.png";
@@ -609,7 +609,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Brush Hair", 
       icon: "ri-brush-fill", 
       bgColor: "green-400", 
-      imageSrc: imagePath("brushhair"),
+      imageSrc: "/attached_assets/brushhair.png",
       speechText: "Comb your Hair" 
     },
     { 
