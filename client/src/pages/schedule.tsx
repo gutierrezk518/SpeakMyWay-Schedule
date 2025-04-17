@@ -69,7 +69,13 @@ export default function Schedule() {
     ? allCustomActivityCards // Use our custom activities with images
     : selectedCategory === 'favorites'
       ? favoriteActivities // Show user's favorite activities
-      : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
+      : selectedCategory === 'indoors-chores' 
+        ? [...(customActivityCards['media'] || []), ...(customActivityCards['arts'] || []), ...(customActivityCards['indoors'] || []), ...(customActivityCards['chores'] || [])]
+        : selectedCategory === 'outdoors-social'
+          ? [...(customActivityCards['outdoors'] || []), ...(customActivityCards['social'] || [])]
+          : selectedCategory === 'vacation'
+            ? [...(customActivityCards['vacation'] || [])]
+            : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
   
   // Calculate pagination
   const totalPages = Math.ceil(categoryActivities.length / itemsPerPage);
