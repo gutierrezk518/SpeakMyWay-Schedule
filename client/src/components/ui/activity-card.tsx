@@ -1,8 +1,6 @@
 import { ScheduleActivity } from "@/data/scheduleData";
 import { Draggable } from "react-beautiful-dnd";
 import { speak } from "@/lib/tts";
-// For importing custom image assets
-import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
 
 interface ActivityCardProps {
@@ -25,7 +23,8 @@ export default function ActivityCard({
   // Get favorites functionality from context - simplified
   const { 
     isFavorite, 
-    toggleFavorite
+    toggleFavorite,
+    addToFavorites
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -68,8 +67,7 @@ export default function ActivityCard({
           onClick={handleCardClick}
           className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
-            ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'ring-4 ring-yellow-400 ring-opacity-70' : ''}
-            ${isFavoritesMode && !isInSchedule && categoryId !== 'favorites' ? 'opacity-30' : ''}
+            ${isActivityFavorite ? 'ring-2 ring-yellow-300' : ''}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
               activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
@@ -78,14 +76,14 @@ export default function ActivityCard({
               activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
               activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
               activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
-            text-gray-800 ${isFavoritesMode && !isInSchedule && isActivityTempFavorite ? 'border-2 border-yellow-500' : 'border-none'}`}
+            text-gray-800`}
           style={{
             ...provided.draggableProps.style,
             opacity: snapshot.isDragging ? 0.9 : 1,
             transition: 'all 0.2s ease'
           }}
         >
-{isInSchedule ? (
+          {isInSchedule ? (
             // Compact horizontal layout for schedule cards
             <div className="flex flex-col items-center justify-between w-full h-full">
               <div className="flex-grow flex items-center justify-center w-full h-3/4">
@@ -137,8 +135,6 @@ export default function ActivityCard({
             </>
           )}
           
-          {/* We've restored the mode-based approach as requested */}
-          
           {/* Remove button positioned absolutely in the corner - always visible on schedule cards */}
           {showRemoveButton && onRemove && (
             <button 
@@ -153,36 +149,33 @@ export default function ActivityCard({
             </button>
           )}
           
-          {/* Add button for cards when in favorites mode and not already a favorite */}
-          {!isInSchedule && isFavoritesMode && !isInFavorites && (
+          {/* Toggle favorite button for activity cards */}
+          {!isInSchedule && (
             <button 
-              className="absolute -top-2 -right-2 p-1 bg-green-600 text-white hover:bg-green-700 rounded-full text-sm shadow-md z-50 border-2 border-white w-8 h-8 flex items-center justify-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                addToTemporaryFavorites(activity);
-                speak("Added to favorites");
-              }}
-              aria-label="Add to favorites"
-              style={{ pointerEvents: 'auto' }}
-            >
-              <i className="ri-add-line"></i>
-            </button>
-          )}
-          
-          {/* Remove button for cards that are already in favorites when in favorites mode */}
-          {!isInSchedule && isFavoritesMode && isInFavorites && (
-            <button 
-              className="absolute -top-2 -right-2 p-1 bg-red-600 text-white hover:bg-red-700 rounded-full text-sm shadow-md z-50 border-2 border-white w-8 h-8 flex items-center justify-center"
+              className={`absolute -top-1.5 -right-1.5 p-1 ${isActivityFavorite ? 'bg-yellow-500' : 'bg-gray-300'} 
+                text-white hover:${isActivityFavorite ? 'bg-yellow-600' : 'bg-yellow-400'} 
+                rounded-full text-xs shadow-md z-40 border-2 border-white w-5 h-5 
+                flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(activity);
-                speak("Removed from favorites");
+                if (!isActivityFavorite) {
+                  speak("Added to favorites");
+                } else {
+                  speak("Removed from favorites");
+                }
               }}
-              aria-label="Remove from favorites"
-              style={{ pointerEvents: 'auto' }}
+              aria-label={isActivityFavorite ? "Remove from favorites" : "Add to favorites"}
             >
-              <i className="ri-close-line"></i>
+              <i className={`${isActivityFavorite ? 'ri-star-fill' : 'ri-star-line'} text-[10px]`}></i>
             </button>
+          )}
+          
+          {/* Show star icon if it's a favorite */}
+          {!isInSchedule && isActivityFavorite && (
+            <div className="absolute -top-1 -right-1 text-yellow-500 text-xs">
+              <i className="ri-star-fill"></i>
+            </div>
           )}
         </div>
       )}

@@ -864,6 +864,9 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
 // Export a mutable reference to all activity cards
 export let allCustomActivityCards: ScheduleActivity[] = Object.values(customActivityCards).flat();
 
+// Export availableActivities as a copy of customActivityCards for backwards compatibility
+export const availableActivities: Record<string, ScheduleActivity[]> = customActivityCards;
+
 // Function to update the all activities array - will be called when reordering
 export function updateAllActivitiesOrder(newActivities: ScheduleActivity[]) {
   allCustomActivityCards = [...newActivities];
