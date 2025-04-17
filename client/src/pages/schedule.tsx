@@ -874,7 +874,14 @@ export default function Schedule() {
                               />
                               {/* X button positioned in top-right corner like the new screenshot */}
                               <button 
-                                style={{ position: 'absolute', top: '3px', right: '3px', width: '16px', height: '16px' }}
+                                style={{ 
+                                  position: 'absolute', 
+                                  top: '0', 
+                                  right: '0', 
+                                  width: '16px', 
+                                  height: '16px',
+                                  transform: 'translate(25%, -25%)'
+                                }}
                                 className="bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm border border-red-300 flex items-center justify-center"
                                 onClick={() => toggleFavorite(activity)}
                                 aria-label="Remove from favorites"
