@@ -22,42 +22,27 @@ export default function ActivityCard({
   onRemove,
   categoryId
 }: ActivityCardProps) {
-  // Get favorites functionality from context
+  // Get favorites functionality from context - simplified
   const { 
     isFavorite, 
-    isFavoritesMode, 
-    addToTemporaryFavorites, 
-    removeFromTemporaryFavorites,
-    isTemporaryFavorite,
-    toggleFavoritesMode,
     toggleFavorite
   } = useAppContext();
   
   // Determine if this activity is a favorite
   const isActivityFavorite = isFavorite(activity.id);
-  const isActivityTempFavorite = isTemporaryFavorite(activity.id);
   
   // Determine if card is in the schedule section (checking removeButton)
   const isInSchedule = showRemoveButton;
   
-  // Determine if this card is in the Favorites category based on the base activity ID
-  const isInFavorites = isActivityFavorite || isActivityTempFavorite;
+  // Determine if this card is in the Favorites category based on category ID
+  const isInFavorites = categoryId === 'favorites';
   
   // Only click functionality, no long press as per user request
   
-  // Handle card click to add to schedule or handle favorites
+  // Handle card click to add to schedule
   const handleCardClick = () => {
-    if (isFavoritesMode && !isInSchedule) {
-      // Handle favorites mode - same as before
-      if (isActivityTempFavorite) {
-        removeFromTemporaryFavorites(activity.id);
-        speak("Removed from favorites");
-      } else {
-        addToTemporaryFavorites(activity);
-        speak("Added to favorites");
-      }
-    } else if (!isInSchedule) {
-      // NEW: If not in schedule and not in favorites mode, add to schedule
+    if (!isInSchedule) {
+      // If not in schedule, add to schedule
       // Custom event to add card to schedule when clicked
       const event = new CustomEvent('addCardToSchedule', { 
         detail: { activity } 

@@ -43,19 +43,12 @@ interface AppContextType {
   canRedo: boolean;
   undoScheduleChange: () => ScheduleActivity[] | undefined;
   redoScheduleChange: () => ScheduleActivity[] | undefined;
-  // Favorites functionality
+  // Favorites functionality - simplified
   favoriteActivities: ScheduleActivity[];
   toggleFavorite: (activity: ScheduleActivity) => void;
   isFavorite: (activityId: string) => boolean;
-  // Favorites selection mode
-  isFavoritesMode: boolean;
-  setFavoritesMode: (mode: boolean) => void;
-  toggleFavoritesMode: () => void;
-  temporaryFavorites: ScheduleActivity[];
-  addToTemporaryFavorites: (activity: ScheduleActivity) => void;
-  removeFromTemporaryFavorites: (activityId: string) => void;
-  isTemporaryFavorite: (activityId: string) => boolean;
-  commitTemporaryFavorites: () => void;
+  addToFavorites: (activity: ScheduleActivity) => void;
+  removeFromFavorites: (activityId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -87,22 +80,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
   
-  // Favorites selection mode
-  const [isFavoritesMode, setFavoritesMode] = useState(false);
-  const [temporaryFavorites, setTemporaryFavorites] = useState<ScheduleActivity[]>([]);
-  
-  // Toggle favorites selection mode
-  const toggleFavoritesMode = () => {
-    if (isFavoritesMode) {
-      // If we're already in favorites mode, commit the changes and exit the mode
-      commitTemporaryFavorites();
-      speak('Favorites updated!');
-      toast.success('Favorites updated!', {
-        duration: 3000,
+  // Simple favorites management - no mode needed
+  const addToFavorites = (activity: ScheduleActivity) => {
+    if (!isFavorite(activity.id)) {
+      // Create a clean copy without any draggable IDs
+      const cleanActivity = { ...activity };
+      if (cleanActivity.id.includes('-')) {
+        // Strip any UUID suffix that might have been added
+        cleanActivity.id = cleanActivity.id.split('-')[0];
+      }
+      
+      const updatedFavorites = [...favoriteActivities, cleanActivity];
+      setFavoriteActivities(updatedFavorites);
+      localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
+      
+      speak('Added to favorites!');
+      toast.success('Added to favorites!', {
+        duration: 2000,
         position: 'top-center',
         style: {
-          background: '#000000', // Black background for header consistency
-          color: 'white',
+          background: '#ffd700',
+          color: 'black',
           fontWeight: 'bold',
           fontSize: '0.9rem',
           borderRadius: '4px',
@@ -110,13 +108,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
         },
         icon: '⭐',
       });
-    } else {
-      // Enter favorites mode and show instructions
-      setFavoritesMode(true);
-      const toastMessage = "Select cards to add to Favorites category. Select star again when finished.";
-      speak(toastMessage);
-      // We don't show a toast here anymore as the black header already shows the status
     }
+  };
+  
+  // Remove from favorites
+  const removeFromFavorites = (activityId: string) => {
+    // Strip UUID if present
+    const baseId = activityId.split('-')[0];
+    const updatedFavorites = favoriteActivities.filter(
+      activity => activity.id.split('-')[0] !== baseId
+    );
+    
+    setFavoriteActivities(updatedFavorites);
+    localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
+    
+    speak('Removed from favorites');
+    toast.success('Removed from favorites', {
+      duration: 2000,
+      position: 'top-center',
+      style: {
+        background: '#e5e5e5',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: '0.9rem',
+        borderRadius: '4px',
+        padding: '8px 12px',
+      },
+      icon: '✓',
+    });
   };
   
   // Derived properties
@@ -187,24 +206,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       favActivity.id.split('-')[0] === activity.id.split('-')[0]
     );
     
-    let updatedFavorites;
-    
     if (isAlreadyFavorited) {
-      // Remove from favorites
-      updatedFavorites = favoriteActivities.filter(favActivity => 
-        favActivity.id.split('-')[0] !== activity.id.split('-')[0]
-      );
+      removeFromFavorites(activity.id);
     } else {
-      // Add to favorites - create a clean copy without any draggable item IDs
-      const cleanActivity = { ...activity };
-      // If ID contains a UUID suffix, remove it to keep the original activity ID
-      cleanActivity.id = cleanActivity.id.split('-')[0];
-      updatedFavorites = [...favoriteActivities, cleanActivity];
+      addToFavorites(activity);
     }
-    
-    // Update state and save to localStorage
-    setFavoriteActivities(updatedFavorites);
-    localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
   };
   
   // Check if an activity is in favorites
@@ -212,63 +218,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Strip UUID if present
     const baseId = activityId.split('-')[0];
     return favoriteActivities.some(activity => activity.id.split('-')[0] === baseId);
-  };
-  
-  // Add activity to temporary favorites during selection mode
-  const addToTemporaryFavorites = (activity: ScheduleActivity) => {
-    // Check if already in temporary favorites
-    const baseId = activity.id.split('-')[0];
-    const isAlreadyInTemp = temporaryFavorites.some(temp => temp.id.split('-')[0] === baseId);
-    
-    if (!isAlreadyInTemp) {
-      // Create a clean copy without any draggable item IDs
-      const cleanActivity = { ...activity };
-      // If ID contains a UUID suffix, remove it to keep the original ID
-      cleanActivity.id = cleanActivity.id.split('-')[0];
-      setTemporaryFavorites([...temporaryFavorites, cleanActivity]);
-    }
-  };
-  
-  // Remove activity from temporary favorites
-  const removeFromTemporaryFavorites = (activityId: string) => {
-    // Strip UUID if present
-    const baseId = activityId.split('-')[0];
-    setTemporaryFavorites(temporaryFavorites.filter(
-      activity => activity.id.split('-')[0] !== baseId
-    ));
-  };
-  
-  // Check if an activity is in temporary favorites
-  const isTemporaryFavorite = (activityId: string) => {
-    // Strip UUID if present
-    const baseId = activityId.split('-')[0];
-    return temporaryFavorites.some(activity => activity.id.split('-')[0] === baseId);
-  };
-  
-  // Save temporary favorites to permanent favorites
-  const commitTemporaryFavorites = () => {
-    // Combine existing favorites with temporary favorites
-    const combinedFavorites = [...favoriteActivities];
-    
-    // Add only new temporary favorites that aren't already in the permanent favorites
-    temporaryFavorites.forEach(tempActivity => {
-      const tempBaseId = tempActivity.id.split('-')[0];
-      const alreadyExists = combinedFavorites.some(
-        existingFav => existingFav.id.split('-')[0] === tempBaseId
-      );
-      
-      if (!alreadyExists) {
-        combinedFavorites.push(tempActivity);
-      }
-    });
-    
-    // Update favorites state
-    setFavoriteActivities(combinedFavorites);
-    localStorage.setItem('userFavorites', JSON.stringify(combinedFavorites));
-    
-    // Clear temporary favorites and exit selection mode
-    setTemporaryFavorites([]);
-    setFavoritesMode(false);
   };
 
   return (
@@ -299,14 +248,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         favoriteActivities,
         toggleFavorite,
         isFavorite,
-        isFavoritesMode,
-        setFavoritesMode,
-        toggleFavoritesMode,
-        temporaryFavorites,
-        addToTemporaryFavorites,
-        removeFromTemporaryFavorites,
-        isTemporaryFavorite,
-        commitTemporaryFavorites
+        addToFavorites,
+        removeFromFavorites
       }}
     >
       {children}
