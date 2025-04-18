@@ -10,7 +10,7 @@ import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/da
 
 // Timer Component
 const TimerComponent = () => {
-  const [minutes, setMinutes] = useState(15);
+  const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -65,7 +65,7 @@ const TimerComponent = () => {
   const handleReset = () => {
     setIsActive(false);
     setIsPaused(false);
-    setMinutes(15);
+    setMinutes(5);
     setSeconds(0);
   };
   
@@ -90,11 +90,11 @@ const TimerComponent = () => {
             value={minutes}
             onChange={handleMinutesChange}
             disabled={isActive}
-            className={`w-16 px-2 py-1 text-center rounded-l-md border border-r-0 border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
+            className={`w-14 px-2 py-1 text-center rounded-l-md border border-r-0 border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
             title="Minutes"
           >
             {minuteOptions.map(min => (
-              <option key={`min-${min}`} value={min}>{min} min</option>
+              <option key={`min-${min}`} value={min}>{min}</option>
             ))}
           </select>
           
@@ -102,11 +102,11 @@ const TimerComponent = () => {
             value={seconds}
             onChange={handleSecondsChange}
             disabled={isActive}
-            className={`w-16 px-2 py-1 text-center rounded-r-md border border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
+            className={`w-14 px-2 py-1 text-center rounded-r-md border border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
             title="Seconds"
           >
             {secondOptions.map(sec => (
-              <option key={`sec-${sec}`} value={sec}>{sec} sec</option>
+              <option key={`sec-${sec}`} value={sec}>{sec}</option>
             ))}
           </select>
         </div>
