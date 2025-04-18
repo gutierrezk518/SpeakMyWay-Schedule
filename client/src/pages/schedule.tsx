@@ -204,16 +204,34 @@ export default function Schedule() {
   // Dynamic grid layout based on screen size
   // Calculate items per page based on viewport size to prevent scrolling
   const getItemsPerPage = () => {
-    // Use more items per page on larger screens
+    // Prevent scrolling by calculating exact number of items that fit on screen
     if (typeof window !== 'undefined') {
-      if (window.innerWidth >= 1600) return 60; // 2xl screens
-      if (window.innerWidth >= 1280) return 48; // xl screens
-      if (window.innerWidth >= 1024) return 35; // lg screens
-      if (window.innerWidth >= 768) return 30;  // md screens
-      if (window.innerWidth >= 640) return 25;  // sm screens
-      return 20; // xs screens
+      // Calculate the appropriate height available for cards section
+      // For different screen sizes and orientations
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const scheduleSectionHeight = isLandscape 
+        ? window.innerHeight * 0.6  // In landscape, we have more vertical space available
+        : window.innerHeight * 0.45; // In portrait, we need to account for "My Schedule" taking up space
+
+      // Account for different card sizes on different screens
+      const cardHeight = window.innerWidth >= 768 ? 95 : 80; // Smaller cards on phones
+      const availableRows = Math.floor(scheduleSectionHeight / cardHeight);
+      
+      // Calculate columns based on responsive grid classes we set
+      let columns = 4; // Default mobile columns
+      if (window.innerWidth >= 1536) columns = 7; // 2xl screens (matches 2xl:grid-cols-7)
+      if (window.innerWidth >= 1280 && window.innerWidth < 1536) columns = 7; // xl screens (matches xl:grid-cols-7)
+      if (window.innerWidth >= 1024 && window.innerWidth < 1280) columns = 6; // lg screens (matches lg:grid-cols-6)
+      if (window.innerWidth >= 768 && window.innerWidth < 1024) columns = 5; // md screens (matches md:grid-cols-5)
+      if (window.innerWidth >= 640 && window.innerWidth < 768) columns = 4; // sm screens (matches sm:grid-cols-4)
+      
+      // Calculate exact items that fit on screen without scrolling
+      const maxItems = availableRows * columns;
+      
+      // Enforce minimum items per page for small screens where scrolling is expected
+      return Math.max(maxItems, window.innerWidth < 768 ? 20 : 24);
     }
-    return 25; // Default fallback
+    return 24; // Default fallback
   };
   
   const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
