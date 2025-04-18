@@ -68,7 +68,14 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-lg ${isInSchedule ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-[80px] h-[80px] sm:w-24 sm:h-24'} flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-lg ${
+            // For cards in schedule section:
+            isInSchedule 
+              ? 'w-16 h-16 sm:w-20 sm:h-20' 
+              // For cards in activity selection:
+              // Use smaller size on phones, larger on tablets & computers
+              : 'w-[64px] h-[64px] xs:w-[70px] xs:h-[70px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
+            } flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md hover:shadow-lg'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -103,7 +110,7 @@ export default function ActivityCard({
                 )}
               </div>
               <div className="w-full flex justify-center items-center">
-                <span className="text-[11px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                   {activity.title}
                 </span>
               </div>
@@ -128,8 +135,8 @@ export default function ActivityCard({
               </div>
               
               {/* Text container - more accessible */}
-              <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-1 px-1 text-center">
-                <span className="font-medium text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
+              <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
+                <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
               </div>
             </>
           )}
