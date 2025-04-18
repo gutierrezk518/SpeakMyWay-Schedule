@@ -570,7 +570,8 @@ export default function Schedule() {
       
       // If the card was clicked from within the schedule area, don't add it again
       if (sourceArea === "schedule") {
-        // Just speak the activity text without adding it again
+        // Speak the activity text without adding it again
+        // This is necessary since we removed the speak call from the ActivityCard component
         speak(activity.speechText || activity.title);
         return;
       }

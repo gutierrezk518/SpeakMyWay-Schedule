@@ -59,8 +59,8 @@ export default function ActivityCard({
     });
     document.dispatchEvent(event);
     
-    // Speak the activity regardless of location
-    speak(activity.speechText || activity.title);
+    // Don't speak here as it will be handled in the event handler
+    // Removed to fix the double-speaking issue on iOS
   };
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
