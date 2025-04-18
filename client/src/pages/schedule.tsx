@@ -763,6 +763,26 @@ export default function Schedule() {
               </div>
             </div>
             
+            {/* Time section tabs - moved to top */}
+            <div className="p-1 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
+              <div className="flex justify-center space-x-1 md:space-x-2">
+                {scheduleData.map((section: ScheduleSection) => (
+                  <button 
+                    key={section.id}
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                      selectedTimeSection === section.id 
+                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    onClick={() => setSelectedTimeSection(section.id)}
+                  >
+                    <i className={`${section.icon} mr-1`}></i>
+                    {section.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
             {/* Droppable schedule area */}
             <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
               <Droppable 
@@ -820,25 +840,8 @@ export default function Schedule() {
               </Droppable>
             </div>
             
-            {/* Time section tabs - different styling for mobile vs larger screens */}
-            <div className="p-1 md:p-2 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-30 flex-shrink-0 md:shadow-md">
-              <div className="flex justify-center space-x-1 md:space-x-2">
-                {scheduleData.map((section: ScheduleSection) => (
-                  <button 
-                    key={section.id}
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedTimeSection === section.id 
-                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                    onClick={() => setSelectedTimeSection(section.id)}
-                  >
-                    <i className={`${section.icon} mr-1`}></i>
-                    {section.name}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Extra padding at the bottom to prevent content from being too close to the edge */}
+            <div className="h-2"></div>
           </div>
           
           {/* Activity cards section - right side */}
