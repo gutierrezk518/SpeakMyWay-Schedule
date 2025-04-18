@@ -545,6 +545,11 @@ export default function Schedule() {
       const sourceArea = event.detail?.sourceArea;
       if (!activity) return;
       
+      // Always clear the search query when any card is clicked
+      if (searchQuery) {
+        setSearchQuery('');
+      }
+      
       // If the card was clicked from within the schedule area, don't add it again
       if (sourceArea === "schedule") {
         // Just speak the activity text without adding it again
@@ -756,7 +761,7 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center gap-6'
+                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center space-x-12'
                       : 'overflow-y-auto rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
                     } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
@@ -771,7 +776,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`relative flex-shrink-0 mx-1 ${!isPortrait && 'w-14 h-14 mx-auto'}`}>
+                        <div key={activity.id} className={`relative flex-shrink-0 ${!isPortrait && 'w-14 h-14 mx-auto'}`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
