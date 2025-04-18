@@ -119,7 +119,9 @@ function AppContent() {
                 value={inputName} 
                 onChange={(e) => {
                   setInputName(e.target.value);
-                  if (e.target.value.trim()) setNameError(false);
+                  if (e.target.value.trim()) {
+                    setNameError(false);
+                  }
                 }}
                 placeholder="Enter your name"
                 className={`w-full ${nameError ? 'border-red-500' : ''}`}
@@ -148,7 +150,9 @@ function AppContent() {
                 value={inputEmail} 
                 onChange={(e) => {
                   setInputEmail(e.target.value);
-                  if (!e.target.value || validateEmail(e.target.value)) setEmailError(false);
+                  if (!e.target.value || validateEmail(e.target.value)) {
+                    setEmailError(false);
+                  }
                 }}
                 placeholder="your.email@example.com"
                 className={`w-full ${emailError ? 'border-red-500' : ''}`}
