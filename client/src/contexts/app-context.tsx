@@ -22,6 +22,14 @@ interface AppContextType {
   setUserBirthday: (date: string) => void;
   userEmail: string;
   setUserEmail: (email: string) => void;
+  userConsentGiven: boolean;
+  setUserConsentGiven: (consent: boolean) => void;
+  userConsentDate: string;
+  setUserConsentDate: (date: string) => void; 
+  userMarketingConsent: boolean;
+  setUserMarketingConsent: (consent: boolean) => void;
+  userDataRetentionConsent: boolean;
+  setUserDataRetentionConsent: (consent: boolean) => void;
   voiceSettings: VoiceSettingsType;
   setVoiceSettings: React.Dispatch<React.SetStateAction<VoiceSettingsType>>;
   displaySettings: {
@@ -65,6 +73,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState("");
   const [userBirthday, setUserBirthday] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [userConsentGiven, setUserConsentGiven] = useState(false);
+  const [userConsentDate, setUserConsentDate] = useState("");
+  const [userMarketingConsent, setUserMarketingConsent] = useState(false);
+  const [userDataRetentionConsent, setUserDataRetentionConsent] = useState(false);
   const [voiceSettings, setVoiceSettings] = useState({
     voiceType: "default",
     rate: 1,
@@ -244,6 +256,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setUserBirthday,
         userEmail,
         setUserEmail,
+        userConsentGiven,
+        setUserConsentGiven,
+        userConsentDate,
+        setUserConsentDate,
+        userMarketingConsent,
+        setUserMarketingConsent,
+        userDataRetentionConsent,
+        setUserDataRetentionConsent,
         voiceSettings,
         setVoiceSettings,
         displaySettings,

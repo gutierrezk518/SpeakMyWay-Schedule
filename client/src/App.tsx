@@ -43,7 +43,17 @@ function Router() {
 }
 
 function AppContent() {
-  const { setUserName, userName, setUserBirthday, setUserEmail } = useAppContext();
+  const { 
+    setUserName, 
+    userName, 
+    setUserBirthday, 
+    setUserEmail,
+    setUserConsentGiven,
+    setUserConsentDate,
+    setUserMarketingConsent,
+    setUserDataRetentionConsent
+  } = useAppContext();
+  
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [inputName, setInputName] = useState("");
@@ -61,16 +71,36 @@ function AppContent() {
     const storedName = localStorage.getItem("speakMyWayUser");
     const storedBirthday = localStorage.getItem("speakMyWayBirthday");
     const storedEmail = localStorage.getItem("speakMyWayEmail");
+    const storedConsentGiven = localStorage.getItem("speakMyWayConsentGiven");
+    const storedConsentDate = localStorage.getItem("speakMyWayConsentDate");
+    const storedMarketingConsent = localStorage.getItem("speakMyWayMarketingConsent");
+    const storedDataRetentionConsent = localStorage.getItem("speakMyWayDataRetentionConsent");
     
     if (!storedName && !userName) {
       // Open the name input dialog
       setNameDialogOpen(true);
     } else if (storedName && !userName) {
+      // Load data into context
       setUserName(storedName);
       if (storedBirthday) setUserBirthday(storedBirthday);
       if (storedEmail) setUserEmail(storedEmail);
+      
+      // Set consent data in context
+      if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
+      if (storedConsentDate) setUserConsentDate(storedConsentDate);
+      if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
+      if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
     }
-  }, [setUserName, userName, setUserBirthday, setUserEmail]);
+  }, [
+    setUserName, 
+    userName, 
+    setUserBirthday, 
+    setUserEmail, 
+    setUserConsentGiven, 
+    setUserConsentDate, 
+    setUserMarketingConsent, 
+    setUserDataRetentionConsent
+  ]);
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -80,13 +110,28 @@ function AppContent() {
     // Basic validation
     const hasNameError = !inputName.trim();
     const hasEmailError = inputEmail.length > 0 && !validateEmail(inputEmail);
+    const hasConsentError = !consentGiven;
     
     setNameError(hasNameError);
     setEmailError(hasEmailError);
+    setConsentError(hasConsentError);
     
-    if (!hasNameError && !hasEmailError) {
+    if (!hasNameError && !hasEmailError && !hasConsentError) {
+      const currentDate = new Date().toISOString();
+      
+      // Store in localStorage
       localStorage.setItem("speakMyWayUser", inputName);
+      localStorage.setItem("speakMyWayConsentGiven", "true");
+      localStorage.setItem("speakMyWayConsentDate", currentDate);
+      localStorage.setItem("speakMyWayMarketingConsent", marketingConsent.toString());
+      localStorage.setItem("speakMyWayDataRetentionConsent", dataRetentionConsent.toString());
+      
+      // Update context
       setUserName(inputName);
+      setUserConsentGiven(true);
+      setUserConsentDate(currentDate);
+      setUserMarketingConsent(marketingConsent);
+      setUserDataRetentionConsent(dataRetentionConsent);
       
       if (inputBirthday) {
         localStorage.setItem("speakMyWayBirthday", inputBirthday);
@@ -97,6 +142,9 @@ function AppContent() {
         localStorage.setItem("speakMyWayEmail", inputEmail);
         setUserEmail(inputEmail);
       }
+      
+      // TODO: Store user data in database via API call
+      // This would include sending all user data including consent information
       
       setNameDialogOpen(false);
       setWelcomeDialogOpen(true);
@@ -166,6 +214,58 @@ function AppContent() {
                 className={`w-full ${emailError ? 'border-red-500' : ''}`}
               />
               {emailError && <p className="text-red-500 text-sm mt-1">Please enter a valid email address</p>}
+            </div>
+            
+            <div className="space-y-3 pt-2">
+              <div className={`flex items-start space-x-2 ${consentError ? 'pb-1' : ''}`}>
+                <Checkbox 
+                  id="consent" 
+                  checked={consentGiven}
+                  onCheckedChange={(checked) => {
+                    setConsentGiven(checked === true);
+                    if (checked) setConsentError(false);
+                  }}
+                  className={consentError ? 'border-red-500' : ''}
+                />
+                <Label 
+                  htmlFor="consent" 
+                  className="text-sm leading-tight cursor-pointer"
+                >
+                  I consent to the collection and processing of my personal information as described in the 
+                  <Link href="/privacy-policy" className="text-blue-600 hover:underline ml-1" target="_blank">
+                    Privacy Policy
+                  </Link>. <span className="text-red-500">*</span>
+                </Label>
+              </div>
+              {consentError && <p className="text-red-500 text-sm">You must agree to the privacy policy to continue</p>}
+              
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="marketing" 
+                  checked={marketingConsent}
+                  onCheckedChange={(checked) => setMarketingConsent(checked === true)}
+                />
+                <Label 
+                  htmlFor="marketing" 
+                  className="text-sm leading-tight cursor-pointer"
+                >
+                  I agree to receive promotional emails about product updates and features (optional)
+                </Label>
+              </div>
+              
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="dataRetention" 
+                  checked={dataRetentionConsent}
+                  onCheckedChange={(checked) => setDataRetentionConsent(checked === true)}
+                />
+                <Label 
+                  htmlFor="dataRetention" 
+                  className="text-sm leading-tight cursor-pointer"
+                >
+                  I agree to my data being stored for analytics and improvement purposes (optional)
+                </Label>
+              </div>
             </div>
           </div>
           <DialogFooter>
