@@ -138,30 +138,40 @@ export default function Customize() {
 
   return (
     <section className="h-full flex flex-col">
-      <div className="p-4 bg-white border-b border-gray-200">
-        <h2 className="text-xl font-bold text-center mb-2">Customize</h2>
-        <p className="text-center text-gray-600 mb-4">Personalize your SpeakMyWay experience</p>
+      <div className="p-6 bg-white border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+        <h2 className="text-2xl font-bold text-center mb-2">My Settings</h2>
+        <p className="text-center text-gray-600 mb-2">Make SpeakMyWay work just right for you!</p>
+        <div className="flex justify-center">
+          <div className="flex space-x-2 items-center text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+            <i className="ri-information-line"></i>
+            <span>Parents can help with these settings</span>
+          </div>
+        </div>
       </div>
       
       <div className="flex-grow overflow-y-auto p-4 bg-gray-50">
         <div className="space-y-6">
           {/* Profile Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-bold text-lg mb-4">Profile Settings</h3>
+          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
+            <div className="flex items-center mb-4">
+              <i className="ri-user-smile-line text-2xl mr-2 text-purple-500"></i>
+              <h3 className="font-bold text-lg">About Me</h3>
+            </div>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2">Name</label>
+                <label className="block text-gray-700 mb-2 font-medium">My Name</label>
                 <input 
                   type="text" 
                   value={userName} 
                   onChange={handleUserNameChange}
                   className="w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="What should we call you?"
                 />
               </div>
               
               <div>
-                <label className="block text-gray-700 mb-2">Preferred Language</label>
+                <label className="block text-gray-700 mb-2 font-medium">My Language</label>
                 <select 
                   className="w-full p-2 border border-gray-300 rounded-md"
                   value={language}
@@ -175,8 +185,11 @@ export default function Customize() {
           </div>
           
           {/* Voice Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-bold text-lg mb-4">Voice Settings</h3>
+          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-green-200">
+            <div className="flex items-center mb-4">
+              <i className="ri-volume-up-line text-2xl mr-2 text-green-500"></i>
+              <h3 className="font-bold text-lg">My Voice Helper</h3>
+            </div>
             
             <div className="space-y-4">
               <div>
@@ -286,14 +299,17 @@ export default function Customize() {
           </div>
           
           {/* Display Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-bold text-lg mb-4">Display Settings</h3>
+          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-orange-200">
+            <div className="flex items-center mb-4">
+              <i className="ri-eye-line text-2xl mr-2 text-orange-500"></i>
+              <h3 className="font-bold text-lg">How I See Things</h3>
+            </div>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2">Text Size</label>
+                <label className="block text-gray-700 mb-2 font-medium">Text Size</label>
                 <div className="flex items-center">
-                  <span className="mr-2">Small</span>
+                  <span className="mr-2 text-sm">Small</span>
                   <input 
                     type="range" 
                     min="1" 
@@ -303,66 +319,136 @@ export default function Customize() {
                     onChange={handleTextSizeChange}
                     className="flex-grow"
                   />
-                  <span className="ml-2">Large</span>
+                  <span className="ml-2 text-sm">Large</span>
+                </div>
+                <div className="mt-2 text-center">
+                  <span className="inline-block px-4 py-1 bg-gray-100 rounded-md" style={{fontSize: `${displaySettings.textSize}rem`}}>
+                    Sample Text
+                  </span>
                 </div>
               </div>
               
-              <div>
+              <div className="p-3 bg-gray-50 rounded-md">
                 <label className="flex items-center cursor-pointer">
                   <input 
                     type="checkbox" 
-                    className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                     checked={displaySettings.highContrast}
                     onChange={handleHighContrastChange}
                   />
-                  <span className="ml-2">High Contrast Mode</span>
+                  <span className="ml-2 font-medium">Make colors easier to see</span>
                 </label>
+                <p className="text-xs text-gray-500 mt-1 ml-7">
+                  Higher contrast makes text and buttons easier to see
+                </p>
               </div>
               
-              <div>
+              <div className="p-3 bg-gray-50 rounded-md">
                 <label className="flex items-center cursor-pointer">
                   <input 
                     type="checkbox" 
-                    className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                     checked={displaySettings.reduceAnimations}
                     onChange={handleReduceAnimationsChange}
                   />
-                  <span className="ml-2">Reduce Animations</span>
+                  <span className="ml-2 font-medium">Make things move less</span>
                 </label>
+                <p className="text-xs text-gray-500 mt-1 ml-7">
+                  Reduces moving parts that might be distracting
+                </p>
               </div>
             </div>
           </div>
           
-          {/* Create Custom Cards */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-bold text-lg mb-4">Create Custom Cards</h3>
+          {/* Parental Controls & Privacy */}
+          <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+            <h3 className="font-bold text-lg mb-2">For Parents & Guardians</h3>
+            <p className="text-gray-600 mb-4">Manage privacy settings and parental controls</p>
             
-            <p className="text-gray-600 mb-4">Upload your own images and create custom vocabulary cards.</p>
-            
-            <button className="w-full py-3 bg-primary text-white rounded-md flex items-center justify-center">
-              <i className="ri-add-circle-line mr-2"></i>
-              Create New Card
-            </button>
+            <div className="space-y-4">
+              <div className="p-3 bg-blue-50 rounded-md">
+                <h4 className="font-medium text-blue-800 mb-2">Privacy Settings</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      checked={true}
+                      readOnly
+                    />
+                    <span className="ml-2 text-sm">Parental consent provided</span>
+                  </label>
+                  
+                  <label className="flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm">Enable additional privacy protections</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div className="p-3 bg-blue-50 rounded-md">
+                <h4 className="font-medium text-blue-800 mb-2">Usage Controls</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm">Set daily usage limits</span>
+                  </label>
+                  
+                  <label className="flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm">Enable parent notifications</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div className="p-3 bg-blue-50 rounded-md">
+                <h4 className="font-medium text-blue-800 mb-2">Data Management</h4>
+                <button className="w-full py-2 px-4 bg-white border border-blue-300 text-blue-700 rounded-md text-sm hover:bg-blue-50">
+                  Request data export
+                </button>
+              </div>
+            </div>
           </div>
           
           {/* Help & Support */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-bold text-lg mb-4">Help & Support</h3>
+          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
+            <div className="flex items-center mb-4">
+              <i className="ri-question-answer-line text-2xl mr-2 text-purple-500"></i>
+              <h3 className="font-bold text-lg">Help Center</h3>
+            </div>
             
-            <div className="space-y-2">
-              <button className="w-full py-2 px-4 text-left flex items-center hover:bg-gray-50 rounded-md">
-                <i className="ri-video-line mr-2 text-primary"></i>
-                <span>Tutorial Videos</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                <i className="ri-video-line text-2xl text-purple-500 mb-2"></i>
+                <span className="font-medium">Watch How-To Videos</span>
+                <p className="text-xs text-gray-500 mt-1">Learn with fun videos</p>
               </button>
               
-              <button className="w-full py-2 px-4 text-left flex items-center hover:bg-gray-50 rounded-md">
-                <i className="ri-question-line mr-2 text-primary"></i>
-                <span>Frequently Asked Questions</span>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                <i className="ri-question-line text-2xl text-green-500 mb-2"></i>
+                <span className="font-medium">Questions & Answers</span>
+                <p className="text-xs text-gray-500 mt-1">Find solutions fast</p>
               </button>
               
-              <button className="w-full py-2 px-4 text-left flex items-center hover:bg-gray-50 rounded-md">
-                <i className="ri-mail-line mr-2 text-primary"></i>
-                <span>Contact Support</span>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <i className="ri-shield-line text-2xl text-blue-500 mb-2"></i>
+                <span className="font-medium">Privacy Rules</span>
+                <p className="text-xs text-gray-500 mt-1">How we protect you</p>
+              </button>
+              
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
+                <i className="ri-mail-line text-2xl text-yellow-500 mb-2"></i>
+                <span className="font-medium">Talk to a Helper</span>
+                <p className="text-xs text-gray-500 mt-1">Get extra help when needed</p>
               </button>
             </div>
           </div>
