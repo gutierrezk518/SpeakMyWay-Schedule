@@ -49,6 +49,8 @@ interface AppContextType {
   isFavorite: (activityId: string) => boolean;
   addToFavorites: (activity: ScheduleActivity) => void;
   removeFromFavorites: (activityId: string) => void;
+  // UI state
+  isFavoritesMode: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -220,6 +222,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return favoriteActivities.some(activity => activity.id.split('-')[0] === baseId);
   };
 
+  // Default to false
+  const isFavoritesMode = false;
+
   return (
     <AppContext.Provider
       value={{
@@ -249,7 +254,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         toggleFavorite,
         isFavorite,
         addToFavorites,
-        removeFromFavorites
+        removeFromFavorites,
+        isFavoritesMode
       }}
     >
       {children}

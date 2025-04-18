@@ -971,7 +971,57 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
 
 // Combine all categories into a single array for the "all" view
 // Export a mutable reference to all activity cards
-export let allCustomActivityCards: ScheduleActivity[] = Object.values(customActivityCards).flat();
+const flattenedCards = Object.values(customActivityCards).flat();
+
+// Define the priority order for frequently used cards
+const priorityOrder = [
+  "wakeup",      // Wake Up
+  "sleep",       // Go to Sleep
+  "breakfast",   // Breakfast
+  "brushteeth",  // Brush Teeth
+  "lunch",       // Lunch
+  "dinner",      // Dinner
+  "snack",       // Snack
+  "school",      // School
+  "color",       // Color
+  "tablet",      // Tablet
+  "youtube",     // YouTube
+  "tv",          // TV
+  "phone",       // Phone
+  "transport_bus", // Bus
+  "playground",  // Playground
+  "combhair",    // Brush Hair
+  "pajamas",     // Pajamas On
+  "cleanup",     // Clean Up
+  "school",      // School (duplicate - keeping for completeness)
+  "restaurant",  // Restaurant
+  "friendshouse", // Friend's House
+  "car",         // Car
+  "grocery"      // Grocery Store
+];
+
+// Find the holiday cards to move to the end
+const holidayCards = customActivityCards["holiday"] || [];
+const holidayIds = holidayCards.map(card => card.id);
+
+// Function to get priority value for sorting
+const getPriorityValue = (card: ScheduleActivity): number => {
+  const priorityIndex = priorityOrder.indexOf(card.id);
+  if (priorityIndex !== -1) {
+    return priorityIndex; // High priority (low value = first)
+  }
+  
+  if (holidayIds.includes(card.id)) {
+    return 10000; // Very low priority (high value = last)
+  }
+  
+  return 1000; // Medium priority (middle value)
+};
+
+// Sort the cards based on priority
+export let allCustomActivityCards: ScheduleActivity[] = [...flattenedCards].sort(
+  (a, b) => getPriorityValue(a) - getPriorityValue(b)
+);
 
 // Export availableActivities as a copy of customActivityCards for backwards compatibility
 export const availableActivities: Record<string, ScheduleActivity[]> = customActivityCards;
