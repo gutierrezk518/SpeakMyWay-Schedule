@@ -215,6 +215,7 @@ const imagePath = (imageName: string) => {
     "hotel": hotelImg,
     "beach": beachImg,
     "zoo": zooImg,
+    "school": schoolImg,
     
     // Fallback to a generic icon if specific icon isn't found
     "default": toysImg, // Using toys as a default fallback icon

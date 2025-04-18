@@ -45,6 +45,7 @@ export default function Schedule() {
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
   
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
