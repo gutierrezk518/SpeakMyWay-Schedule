@@ -669,7 +669,7 @@ export default function Schedule() {
             </div>
           )}
           
-          {/* Schedule section - ensure it's always visible */}
+          {/* Schedule section */}
           <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
@@ -887,33 +887,6 @@ export default function Schedule() {
                 </div>
               )}
                 
-              {/* Special pagination for larger screens - positioned ABOVE activity cards */}
-              {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="hidden md:flex p-2 border-b border-gray-200 justify-center space-x-2 bg-blue-50">
-                  <button
-                    className={`px-3 py-1.5 rounded-md text-sm ${
-                      activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                    }`}
-                    onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
-                    disabled={activitiesPage === 1}
-                  >
-                    <i className="ri-arrow-left-s-line"></i>
-                  </button>
-                  <span className="px-3 py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
-                    Page {activitiesPage} of {totalPages}
-                  </span>
-                  <button
-                    className={`px-3 py-1.5 rounded-md text-sm ${
-                      activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                    }`}
-                    onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
-                    disabled={activitiesPage === totalPages}
-                  >
-                    <i className="ri-arrow-right-s-line"></i>
-                  </button>
-                </div>
-              )}
-              
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 bg-blue-50">
                 <div className="flex flex-wrap gap-1 justify-center">
@@ -1165,11 +1138,11 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - only for mobile at the bottom */}
+              {/* Pagination controls - positioned at bottom right on medium screens to avoid overlap */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="md:hidden sticky bottom-0 left-0 p-2 border-t border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full z-40">
+                <div className="sticky md:fixed bottom-0 left-0 md:left-auto md:right-4 md:bottom-4 p-2 border-t md:border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full md:w-auto md:rounded-lg z-40">
                   <button
-                    className={`px-2 py-1 rounded-md text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
@@ -1177,11 +1150,11 @@ export default function Schedule() {
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-2 py-1 bg-white rounded-md text-sm font-medium border border-blue-200">
+                  <span className="px-2 py-1 md:px-3 md:py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
                     Page {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-2 py-1 rounded-md text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
                       activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
