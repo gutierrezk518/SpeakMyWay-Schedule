@@ -820,15 +820,15 @@ export default function Schedule() {
               </Droppable>
             </div>
             
-            {/* Time section tabs - made more prominent and always visible */}
-            <div className="p-2 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-30 flex-shrink-0 shadow-md">
-              <div className="flex justify-center space-x-2">
+            {/* Time section tabs - different styling for mobile vs larger screens */}
+            <div className="p-1 md:p-2 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-30 flex-shrink-0 md:shadow-md">
+              <div className="flex justify-center space-x-1 md:space-x-2">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
                     key={section.id}
-                    className={`px-3 py-1.5 rounded-md text-xs sm:text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedTimeSection === section.id 
-                        ? 'bg-blue-500 text-white font-semibold shadow-sm' 
+                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                     onClick={() => setSelectedTimeSection(section.id)}
@@ -1064,8 +1064,8 @@ export default function Schedule() {
                 </div>
               </div>
               
-              {/* Activity cards - main area with extra padding at bottom to prevent overlap with pagination */}
-              <div className="flex-grow overflow-auto bg-white p-2 pb-16">
+              {/* Activity cards - main area with extra padding at bottom on larger screens */}
+              <div className="flex-grow overflow-auto bg-white p-2 pb-2 md:pb-16">
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
@@ -1138,11 +1138,11 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - fixed to bottom of the viewport */}
+              {/* Pagination controls - only fixed on large screens */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="fixed bottom-0 left-0 right-0 p-2 border-t border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full z-40">
+                <div className="sticky md:fixed bottom-0 left-0 right-0 p-2 border-t border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full z-40">
                   <button
-                    className={`px-3 py-1.5 rounded-md text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
@@ -1150,11 +1150,11 @@ export default function Schedule() {
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-3 py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
+                  <span className="px-2 py-1 md:px-3 md:py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
                     Page {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-3 py-1.5 rounded-md text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
                       activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
