@@ -8,9 +8,16 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   displayName: text("display_name"),
+  email: text("email"),
+  birthday: text("birthday"),
   language: text("language").default("en"),
   isPremium: boolean("is_premium").default(false),
   isEnterprise: boolean("is_enterprise").default(false),
+  consentGiven: boolean("consent_given").default(false),
+  consentDate: text("consent_date"),
+  marketingConsent: boolean("marketing_consent").default(false),
+  dataRetentionConsent: boolean("data_retention_consent").default(false),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
 // Categories
@@ -93,7 +100,13 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   displayName: true,
+  email: true,
+  birthday: true,
   language: true,
+  consentGiven: true,
+  consentDate: true,
+  marketingConsent: true,
+  dataRetentionConsent: true,
 });
 
 export const insertCategorySchema = createInsertSchema(categories).pick({

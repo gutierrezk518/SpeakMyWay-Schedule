@@ -9,6 +9,7 @@ import QuickMode from "@/pages/quick-mode";
 import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
 import Admin from "@/pages/admin";
+import PrivacyPolicy from "@/pages/privacy-policy";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -23,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "wouter";
 
 function Router() {
   return (
@@ -33,6 +36,7 @@ function Router() {
       <Route path="/schedule" component={Schedule} />
       <Route path="/customize" component={Customize} />
       <Route path="/admin" component={Admin} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -47,6 +51,10 @@ function AppContent() {
   const [inputEmail, setInputEmail] = useState("");
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentError, setConsentError] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [dataRetentionConsent, setDataRetentionConsent] = useState(false);
 
   useEffect(() => {
     // Check if it's the first time the user is using the app
