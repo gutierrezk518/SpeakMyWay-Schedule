@@ -195,6 +195,9 @@ export default function Schedule() {
       })
     : categoryActivities;
   
+  // Dynamic grid layout based on screen size
+  const [itemsPerPage, setItemsPerPage] = useState(25); // Default to 25 (5x5 grid)
+  
   // Effect to adjust items per page based on window width
   useEffect(() => {
     const handleResize = () => {
@@ -1034,14 +1037,14 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-5 gap-3 p-2 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-2 rounded-md min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100' : 'bg-white'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300' : 'border-gray-200'
                         }`}
                       >
                         {favoriteActivities.length === 0 ? (
-                          <div className="col-span-5 flex flex-col items-center justify-center text-center p-4 text-gray-500">
+                          <div className="col-span-full flex flex-col items-center justify-center text-center p-4 text-gray-500">
                             <div className="text-3xl mb-2">⭐</div>
                             <h3 className="font-bold mb-1">No favorites yet</h3>
                             <p className="text-sm">Drag activities here to add them to your favorites.</p>
@@ -1078,7 +1081,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 gap-3 p-2 ${
+                        className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-2 ${
                           snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
                         }`}
                       >
@@ -1099,9 +1102,9 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls */}
+              {/* Pagination controls - sticky to bottom of the viewport */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="p-2 border-t border-gray-200 flex justify-center space-x-1 bg-gray-50">
+                <div className="sticky bottom-0 p-2 border-t border-gray-200 flex justify-center space-x-1 bg-gray-50 shadow-md z-10 w-full">
                   <button
                     className={`px-2 py-1 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
@@ -1111,7 +1114,7 @@ export default function Schedule() {
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-2 py-1 text-sm">
+                  <span className="px-2 py-1 bg-white rounded-md text-sm border border-blue-200">
                     Page {activitiesPage} of {totalPages}
                   </span>
                   <button
