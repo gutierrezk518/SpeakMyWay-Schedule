@@ -1138,9 +1138,9 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - only fixed on large screens */}
+              {/* Pagination controls - positioned at bottom right on medium screens to avoid overlap */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky md:fixed bottom-0 left-0 right-0 p-2 border-t border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full z-40">
+                <div className="sticky md:fixed bottom-0 left-0 md:left-auto md:right-4 md:bottom-4 p-2 border-t md:border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full md:w-auto md:rounded-lg z-40">
                   <button
                     className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
