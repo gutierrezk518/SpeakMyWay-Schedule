@@ -71,10 +71,10 @@ export default function ActivityCard({
           className={`rounded-lg ${
             // For cards in schedule section:
             isInSchedule 
-              ? 'w-16 h-16 sm:w-20 sm:h-20' 
+              ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 
               // For cards in activity selection:
               // Use smaller size on phones, larger on tablets & computers
-              : 'w-[64px] h-[64px] xs:w-[70px] xs:h-[70px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
+              : 'w-[56px] h-[56px] xs:w-[64px] xs:h-[64px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
             } flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md hover:shadow-lg'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 

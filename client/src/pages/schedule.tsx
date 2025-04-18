@@ -757,7 +757,7 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto flex-grow rounded-md p-2 flex flex-row gap-3 items-center'
+                      ? 'overflow-x-auto flex-grow rounded-md p-1 flex flex-row items-center'
                       : 'overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
                     } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
@@ -772,12 +772,13 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-block' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
+                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-block mx-1' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
                             showRemoveButton={true}
                             categoryId={selectedCategory}
+                            isDraggable={true}
                           />
                           <button 
                             className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
@@ -1043,7 +1044,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 p-2 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3 p-0.5 sm:p-1 md:p-2 rounded-md min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100' : 'bg-white'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300' : 'border-gray-200'
@@ -1087,7 +1088,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 p-1 sm:p-2 ${
+                        className={`grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3 p-0.5 sm:p-1 md:p-2 ${
                           snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
                         }`}
                       >
