@@ -180,8 +180,8 @@ const imagePath = (imageName: string) => {
     "coaton": coatonImg,
     "getdressed": getdressedImg,
     "pajamas": pajamasImg,
-    "wakeup": wakeupImg,
-    "sleep": sleepImg,
+    "wakeup": "/activity-cards/wakeup.png",
+    "sleep": "/activity-cards/sleep.png",
     
     // Appointments
     "doctor": doctorImg,
@@ -674,8 +674,8 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Wake Up", 
       icon: "ri-sun-fill", 
       bgColor: "yellow-400", 
-      imageSrc: imagePath("wakeup"),
-      speechText: "Time to wake up" 
+      imageSrc: "/activity-cards/wakeup.png",
+      speechText: "Wake up" 
     },
     { 
       id: "shoeson", 
@@ -722,8 +722,8 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       title: "Go to Sleep", 
       icon: "ri-moon-fill", 
       bgColor: "indigo-400", 
-      imageSrc: imagePath("sleep"),
-      speechText: "Time to go to sleep" 
+      imageSrc: "/activity-cards/sleep.png",
+      speechText: "Go to sleep" 
     },
   ],
   "appointments": [
