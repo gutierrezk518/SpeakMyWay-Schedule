@@ -601,7 +601,7 @@ export default function Schedule() {
   }, [scheduleData, selectedTimeSection, addToScheduleHistory]);
 
   return (
-    <section className="h-full flex flex-col" style={{ height: '100vh', maxHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <section className="h-full flex flex-col pb-14" style={{ height: '100vh', maxHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`} style={{ flex: 1, overflow: 'hidden' }}>
           {/* Side buttons panel - non portrait mode */}
@@ -784,7 +784,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-16 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
@@ -812,7 +812,7 @@ export default function Schedule() {
             </div>
             
             {/* Time section tabs */}
-            <div className="p-1 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-10 shadow-md flex-shrink-0" style={{ position: isPortrait ? 'sticky' : 'sticky', bottom: 0 }}>
+            <div className="p-1 bg-gray-50 border-t border-gray-200 sticky flex-shrink-0" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100 }}>
               <div className="flex justify-center space-x-1">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
@@ -1056,7 +1056,7 @@ export default function Schedule() {
               </div>
               
               {/* Activity cards - main area */}
-              <div className="flex-grow overflow-auto bg-white p-2">
+              <div className="flex-grow overflow-auto bg-white p-2 pb-14">
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
@@ -1131,7 +1131,7 @@ export default function Schedule() {
               
               {/* Pagination controls - sticky to bottom of the viewport */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky bottom-0 p-2 border-t border-gray-200 flex justify-center space-x-1 bg-gray-50 shadow-md z-10 w-full" style={{ position: 'sticky', bottom: 0, zIndex: 50 }}>
+                <div className="fixed bottom-0 p-2 border-t border-gray-200 flex justify-center space-x-1 bg-gray-50 shadow-md w-full" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100 }}>
                   <button
                     className={`px-2 py-1 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
