@@ -39,26 +39,57 @@ function Router() {
 }
 
 function AppContent() {
-  const { setUserName, userName } = useAppContext();
+  const { setUserName, userName, setUserBirthday, setUserEmail } = useAppContext();
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [inputName, setInputName] = useState("");
+  const [inputBirthday, setInputBirthday] = useState("");
+  const [inputEmail, setInputEmail] = useState("");
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
     // Check if it's the first time the user is using the app
     const storedName = localStorage.getItem("speakMyWayUser");
+    const storedBirthday = localStorage.getItem("speakMyWayBirthday");
+    const storedEmail = localStorage.getItem("speakMyWayEmail");
+    
     if (!storedName && !userName) {
       // Open the name input dialog
       setNameDialogOpen(true);
     } else if (storedName && !userName) {
       setUserName(storedName);
+      if (storedBirthday) setUserBirthday(storedBirthday);
+      if (storedEmail) setUserEmail(storedEmail);
     }
-  }, [setUserName, userName]);
+  }, [setUserName, userName, setUserBirthday, setUserEmail]);
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
   const handleNameSubmit = () => {
-    if (inputName.trim()) {
+    // Basic validation
+    const hasNameError = !inputName.trim();
+    const hasEmailError = inputEmail.length > 0 && !validateEmail(inputEmail);
+    
+    setNameError(hasNameError);
+    setEmailError(hasEmailError);
+    
+    if (!hasNameError && !hasEmailError) {
       localStorage.setItem("speakMyWayUser", inputName);
       setUserName(inputName);
+      
+      if (inputBirthday) {
+        localStorage.setItem("speakMyWayBirthday", inputBirthday);
+        setUserBirthday(inputBirthday);
+      }
+      
+      if (inputEmail) {
+        localStorage.setItem("speakMyWayEmail", inputEmail);
+        setUserEmail(inputEmail);
+      }
+      
       setNameDialogOpen(false);
       setWelcomeDialogOpen(true);
     }
@@ -77,24 +108,53 @@ function AppContent() {
           <DialogHeader>
             <DialogTitle className="text-xl">Welcome to SpeakMyWay</DialogTitle>
             <DialogDescription>
-              Please enter your name. We'll refer to you for the schedule and prompts when using the application.
+              Please enter your information to get started.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label htmlFor="name" className="mb-2 block">Your Name</Label>
-            <Input 
-              id="name" 
-              value={inputName} 
-              onChange={(e) => setInputName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleNameSubmit();
-                }
-              }}
-              autoFocus
-            />
+          <div className="py-4 space-y-4">
+            <div>
+              <Label htmlFor="name" className="mb-2 block">Your Name <span className="text-red-500">*</span></Label>
+              <Input 
+                id="name" 
+                value={inputName} 
+                onChange={(e) => {
+                  setInputName(e.target.value);
+                  if (e.target.value.trim()) setNameError(false);
+                }}
+                placeholder="Enter your name"
+                className={`w-full ${nameError ? 'border-red-500' : ''}`}
+                autoFocus
+              />
+              {nameError && <p className="text-red-500 text-sm mt-1">Name is required</p>}
+            </div>
+            
+            <div>
+              <Label htmlFor="birthday" className="mb-2 block">Birthday</Label>
+              <Input 
+                id="birthday" 
+                type="date"
+                value={inputBirthday} 
+                onChange={(e) => setInputBirthday(e.target.value)}
+                className="w-full"
+                max={new Date().toISOString().split('T')[0]} // Sets max date to today
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="email" className="mb-2 block">Email Address</Label>
+              <Input 
+                id="email" 
+                type="email"
+                value={inputEmail} 
+                onChange={(e) => {
+                  setInputEmail(e.target.value);
+                  if (!e.target.value || validateEmail(e.target.value)) setEmailError(false);
+                }}
+                placeholder="your.email@example.com"
+                className={`w-full ${emailError ? 'border-red-500' : ''}`}
+              />
+              {emailError && <p className="text-red-500 text-sm mt-1">Please enter a valid email address</p>}
+            </div>
           </div>
           <DialogFooter>
             <Button 

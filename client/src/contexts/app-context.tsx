@@ -18,6 +18,10 @@ interface AppContextType {
   setLanguage: (lang: string) => void;
   userName: string;
   setUserName: (name: string) => void;
+  userBirthday: string;
+  setUserBirthday: (date: string) => void;
+  userEmail: string;
+  setUserEmail: (email: string) => void;
   voiceSettings: VoiceSettingsType;
   setVoiceSettings: React.Dispatch<React.SetStateAction<VoiceSettingsType>>;
   displaySettings: {
@@ -59,6 +63,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentPage, setCurrentPage] = useState("home");
   const [language, setLanguage] = useState("en");
   const [userName, setUserName] = useState("");
+  const [userBirthday, setUserBirthday] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [voiceSettings, setVoiceSettings] = useState({
     voiceType: "default",
     rate: 1,
@@ -234,6 +240,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setLanguage,
         userName,
         setUserName,
+        userBirthday,
+        setUserBirthday,
+        userEmail,
+        setUserEmail,
         voiceSettings,
         setVoiceSettings,
         displaySettings,
