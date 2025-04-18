@@ -8,6 +8,147 @@ import { useAppContext } from "@/contexts/app-context";
 import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
 
+// Timer Component
+const TimerComponent = () => {
+  const [time, setTime] = useState(15 * 60); // Default: 15 minutes in seconds
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [customTime, setCustomTime] = useState("15:00");
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (isActive && !isPaused && time > 0) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (time === 0) {
+      // Timer finished
+      setIsActive(false);
+      // Play a sound or notification
+      speak("Time is up!");
+      // Optional: vibration if available
+      if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200, 100, 200]);
+      }
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, isPaused, time]);
+  
+  const formatTime = (timeInSeconds: number): string => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+  const handleStart = () => {
+    if (!isActive) {
+      setIsActive(true);
+      setIsPaused(false);
+    } else if (isPaused) {
+      setIsPaused(false);
+    }
+  };
+  
+  const handlePause = () => {
+    setIsPaused(true);
+  };
+  
+  const handleReset = () => {
+    setIsActive(false);
+    setIsPaused(false);
+    setTime(15 * 60); // Reset to default
+  };
+  
+  const handleCustomTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomTime(e.target.value);
+  };
+  
+  const applyCustomTime = () => {
+    const [minutes, seconds] = customTime.split(':').map(Number);
+    if (!isNaN(minutes) && !isNaN(seconds)) {
+      const newTime = (minutes * 60) + seconds;
+      if (newTime > 0) {
+        setTime(newTime);
+        setShowCustomInput(false);
+      }
+    }
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      applyCustomTime();
+    }
+  };
+  
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <div className="flex items-center mb-1">
+        {showCustomInput ? (
+          <div className="flex">
+            <input
+              type="text"
+              pattern="[0-9]{1,2}:[0-9]{2}"
+              placeholder="mm:ss"
+              value={customTime}
+              onChange={handleCustomTimeChange}
+              onKeyDown={handleKeyDown}
+              className="w-16 px-1 py-0.5 text-center border border-purple-300 rounded mr-1"
+              maxLength={5}
+              autoFocus
+            />
+            <button 
+              onClick={applyCustomTime}
+              className="px-1 py-0.5 bg-purple-600 text-white rounded text-xs hover:bg-purple-700"
+            >
+              Set
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center">
+            <div 
+              onClick={() => setShowCustomInput(true)}
+              className="text-2xl font-mono font-bold text-purple-800 cursor-pointer"
+              title="Click to edit time"
+            >
+              {formatTime(time)}
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="flex space-x-2">
+        {!isActive || isPaused ? (
+          <button 
+            onClick={handleStart} 
+            className="px-2 py-1 bg-green-500 text-white rounded-md text-xs hover:bg-green-600"
+          >
+            {!isActive ? "Start" : "Resume"}
+          </button>
+        ) : (
+          <button 
+            onClick={handlePause} 
+            className="px-2 py-1 bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600"
+          >
+            Pause
+          </button>
+        )}
+        
+        <button 
+          onClick={handleReset} 
+          className="px-2 py-1 bg-red-500 text-white rounded-md text-xs hover:bg-red-600"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // Define the shape of a schedule section with activities
 interface ScheduleSection extends ScheduleTimeSection {
   activities: ScheduleActivity[];
@@ -46,6 +187,7 @@ export default function Schedule() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
+  const [showSearchBar, setShowSearchBar] = useState(false); // Toggle search bar visibility
   
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
@@ -672,42 +814,70 @@ export default function Schedule() {
               {showTimer && (
                 <div className="p-2 border-b border-gray-200 bg-purple-50 flex justify-center">
                   <div className="text-center p-2 bg-purple-100 rounded-md text-lg font-bold w-full max-w-xs">
-                    {/* Simple timer display */}
-                    <span className="text-purple-800">⏰ Timer Coming Soon</span>
+                    <div className="flex items-center justify-center">
+                      <div className="mr-3">
+                        <i className="ri-timer-line text-2xl text-purple-700"></i>
+                      </div>
+                      <TimerComponent />
+                    </div>
                   </div>
                 </div>
               )}
               
-              {/* Search bar above categories */}
-              <div className="p-2 border-b border-gray-200 bg-blue-50">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="relative w-full max-w-md">
-                    <input 
-                      type="text" 
-                      className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Search for activities..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <i className="ri-search-line text-gray-400"></i>
+              {/* Search bar above categories - conditionally shown */}
+              {showSearchBar && (
+                <div className="p-2 border-b border-gray-200 bg-blue-50">
+                  <div className="flex items-center justify-center mb-2">
+                    <div className="relative w-full max-w-md">
+                      <input 
+                        type="text" 
+                        className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search for activities..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        autoFocus
+                      />
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i className="ri-search-line text-gray-400"></i>
+                      </div>
+                      {searchQuery && (
+                        <button 
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          onClick={() => setSearchQuery('')}
+                          title="Clear search"
+                        >
+                          <i className="ri-close-circle-line"></i>
+                        </button>
+                      )}
                     </div>
-                    {searchQuery && (
-                      <button 
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        onClick={() => setSearchQuery('')}
-                        title="Clear search"
-                      >
-                        <i className="ri-close-circle-line"></i>
-                      </button>
-                    )}
                   </div>
                 </div>
-              </div>
+              )}
                 
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 bg-blue-50">
                 <div className="flex flex-wrap gap-1 justify-center">
+                  {/* Search button */}
+                  <button
+                    className={`px-2 py-1 rounded-md text-xs ${
+                      showSearchBar
+                      ? 'bg-cyan-500 text-white font-medium shadow-sm' 
+                      : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
+                    }`}
+                    onClick={() => {
+                      setShowSearchBar(!showSearchBar);
+                      if (!showSearchBar) {
+                        // Reset search query when closing search bar
+                        setSearchQuery('');
+                      }
+                    }}
+                    title={showSearchBar ? "Close search" : "Search for activities"}
+                  >
+                    <i className={`${showSearchBar ? 'ri-close-line' : 'ri-search-line'} mr-1`}></i>
+                    {showSearchBar ? 'Close' : 'Search'}
+                  </button>
+                
+                  {/* All category button */}
                   <button
                     className={`px-2 py-1 rounded-md text-xs ${
                       selectedCategory === 'all' 
