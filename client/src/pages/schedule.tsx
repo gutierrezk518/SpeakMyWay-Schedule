@@ -202,36 +202,27 @@ export default function Schedule() {
     : categoryActivities;
   
   // Dynamic grid layout based on screen size
-  const [itemsPerPage, setItemsPerPage] = useState(25); // Default to 25 (5x5 grid)
+  // Calculate items per page based on viewport size to prevent scrolling
+  const getItemsPerPage = () => {
+    // Use more items per page on larger screens
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth >= 1600) return 60; // 2xl screens
+      if (window.innerWidth >= 1280) return 48; // xl screens
+      if (window.innerWidth >= 1024) return 35; // lg screens
+      if (window.innerWidth >= 768) return 30;  // md screens
+      if (window.innerWidth >= 640) return 25;  // sm screens
+      return 20; // xs screens
+    }
+    return 25; // Default fallback
+  };
+  
+  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
   
   // Effect to adjust items per page based on window width
   useEffect(() => {
     const handleResize = () => {
-      // Get window dimensions
-      const width = window.innerWidth;
-      
-      // Determine columns based on width
-      let columns = 5; // Default
-      
-      if (width < 640) { // Small mobile
-        columns = 2;
-      } else if (width < 768) { // Mobile
-        columns = 3;
-      } else if (width < 1024) { // Tablet
-        columns = 4;
-      } else if (width < 1280) { // Small desktop
-        columns = 5;
-      } else { // Large desktop
-        columns = 6;
-      }
-      
-      // Calculate rows to show approximately 5 rows
-      const rows = 5;
-      setItemsPerPage(columns * rows);
+      setItemsPerPage(getItemsPerPage());
     };
-    
-    // Initial calculation
-    handleResize();
     
     // Add event listener
     window.addEventListener('resize', handleResize);
@@ -1064,7 +1055,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3 p-0.5 sm:p-1 md:p-2 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-2 p-0.5 sm:p-1 rounded-md min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100' : 'bg-white'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300' : 'border-gray-200'
@@ -1108,7 +1099,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-2 md:gap-3 p-0.5 sm:p-1 md:p-2 ${
+                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-2 p-0.5 sm:p-1 ${
                           snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
                         }`}
                       >
