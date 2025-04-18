@@ -784,7 +784,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto space-x-32 pb-2 w-full' : 'grid grid-cols-1 gap-10'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-16 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
