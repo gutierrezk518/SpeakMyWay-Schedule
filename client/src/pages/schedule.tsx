@@ -1099,7 +1099,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 ${
+                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 ${
                           snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
                         }`}
                       >
