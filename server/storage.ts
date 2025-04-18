@@ -21,6 +21,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
   
   // Category operations
   getCategories(type?: string): Promise<Category[]>;
@@ -104,9 +105,29 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id, isPremium: false, isEnterprise: false };
+    // Add created timestamp if not present
+    const createdAt = insertUser.createdAt || new Date().toISOString();
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      isPremium: false, 
+      isEnterprise: false,
+      createdAt 
+    };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User> {
+    const existingUser = this.users.get(id);
+    
+    if (!existingUser) {
+      throw new Error(`User with id ${id} not found`);
+    }
+    
+    const updatedUser: User = { ...existingUser, ...updateData };
+    this.users.set(id, updatedUser);
+    return updatedUser;
   }
 
   // Card operations

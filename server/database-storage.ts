@@ -48,9 +48,16 @@ export class DatabaseStorage implements IStorage {
       ...insertUser,
       username: insertUser.username.toLowerCase(),
       displayName: insertUser.displayName ?? null,
+      email: insertUser.email ?? null,
+      birthday: insertUser.birthday ?? null,
       language: insertUser.language ?? "en",
       isPremium: false,
-      isEnterprise: false
+      isEnterprise: false,
+      consentGiven: insertUser.consentGiven ?? null,
+      consentDate: insertUser.consentDate ?? null,
+      marketingConsent: insertUser.marketingConsent ?? null,
+      dataRetentionConsent: insertUser.dataRetentionConsent ?? null,
+      createdAt: insertUser.createdAt ?? new Date().toISOString()
     };
     
     const [user] = await db
@@ -58,6 +65,28 @@ export class DatabaseStorage implements IStorage {
       .values(userToInsert)
       .returning();
     return user;
+  }
+  
+  async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User> {
+    // Check if user exists
+    const existingUser = await this.getUser(id);
+    if (!existingUser) {
+      throw new Error(`User with id ${id} not found`);
+    }
+    
+    // Normalize fields
+    if (updateData.username) {
+      updateData.username = updateData.username.toLowerCase();
+    }
+    
+    // Perform update
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
+      
+    return updatedUser;
   }
 
   // Card operations

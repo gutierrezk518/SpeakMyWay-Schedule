@@ -36,6 +36,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Username already exists" });
       }
       
+      // Ensure GDPR compliance by requiring consent
+      if (userData.consentGiven !== true) {
+        return res.status(400).json({ message: "User consent is required" });
+      }
+      
+      // Set the created timestamp if not provided
+      if (!userData.createdAt) {
+        userData.createdAt = new Date().toISOString();
+      }
+      
       const user = await storage.createUser(userData);
       return res.status(201).json(user);
     } catch (err) {
@@ -57,6 +67,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     return res.json(user);
+  });
+  
+  // GDPR-related consent endpoints
+  app.post("/api/users/:id/consent", async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const user = await storage.getUser(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    try {
+      // Validate consent data
+      const consentData = {
+        consentGiven: Boolean(req.body.consentGiven),
+        consentDate: req.body.consentDate || new Date().toISOString(),
+        marketingConsent: Boolean(req.body.marketingConsent),
+        dataRetentionConsent: Boolean(req.body.dataRetentionConsent)
+      };
+      
+      // Update user with consent information
+      const updatedUser = await storage.updateUser(userId, consentData);
+      return res.json(updatedUser);
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to update user consent" });
+    }
   });
 
   // Card routes
