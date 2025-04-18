@@ -757,7 +757,7 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto flex-grow rounded-md p-1 flex flex-row items-center'
+                      ? 'overflow-x-auto flex-grow rounded-md p-1 flex flex-row items-center space-x-4'
                       : 'overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
                     } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
@@ -772,7 +772,7 @@ export default function Schedule() {
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-block mx-1' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
+                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-flex flex-shrink-0' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
@@ -874,11 +874,10 @@ export default function Schedule() {
                       : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
                     }`}
                     onClick={() => {
-                      setShowSearchBar(!showSearchBar);
-                      if (!showSearchBar) {
-                        // Reset search query when closing search bar
-                        setSearchQuery('');
-                      }
+                      const newState = !showSearchBar;
+                      setShowSearchBar(newState);
+                      // Always reset search query when toggling the search
+                      setSearchQuery('');
                     }}
                     title={showSearchBar ? "Close search" : "Search for activities"}
                   >
