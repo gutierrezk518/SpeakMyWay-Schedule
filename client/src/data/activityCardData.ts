@@ -17,6 +17,8 @@ const dinnerImg = "/activity-cards/dinner.png";
 const snackImg = "/activity-cards/snack.png";
 const waterImg = "/activity-cards/glassofwater.png";
 const juiceImg = "/attached_assets/juice.png";
+const milkImg = "/attached_assets/milk.png";
+const chocolatemilkImg = "/attached_assets/chocolatemilk.png";
 const colorImg = "/activity-cards/color.png";
 const paintImg = "/activity-cards/paint.png";
 const drawImg = "/activity-cards/draw.png";
@@ -54,6 +56,7 @@ const bathImg = "/attached_assets/bath.png";
 const washfaceImg = "/activity-cards/washface.png";
 const cleanupImg = "/activity-cards/cleanup.png";
 const feedpetImg = "/activity-cards/feedpet.png";
+const settableImg = "/attached_assets/settable.png";
 const shoesoffImg = "/activity-cards/shoesoff.png";
 const shoesonImg = "/activity-cards/shoeson.png";
 const coatonImg = "/activity-cards/coaton.png";
@@ -62,6 +65,8 @@ const pajamasImg = "/activity-cards/pajamas on.png";
 const doctorImg = "/activity-cards/doctor.png";
 const therapyImg = "/activity-cards/therapy.png";
 const hospitalImg = "/activity-cards/doctor.png";
+const haircutImg = "/attached_assets/haircut.png";
+const dentistImg = "/attached_assets/dentist.png";
 const busImg = "/activity-cards/schoolbus.png";
 const trainImg = "/activity-cards/train.png";
 const carImg = "/activity-cards/car.png";
@@ -84,6 +89,7 @@ const postOfficeImg = "/activity-cards/postoffice.png";
 const hotelImg = "/activity-cards/hotel.png";
 const beachImg = "/activity-cards/beach.png";
 const zooImg = "/activity-cards/zoo.png";
+const schoolImg = "/attached_assets/school.png";
 
 // Helper function to get image path
 const imagePath = (imageName: string) => {
@@ -103,6 +109,8 @@ const imagePath = (imageName: string) => {
     "snack": snackImg,
     "water": waterImg,
     "juice": juiceImg,
+    "milk": milkImg,
+    "chocolatemilk": chocolatemilkImg,
       
     
     // Arts
@@ -159,6 +167,7 @@ const imagePath = (imageName: string) => {
     // Chores
     "cleanup": cleanupImg,
     "feedpet": feedpetImg,
+    "settable": settableImg,
     
     // Dressing
     "shoesoff": shoesoffImg,
@@ -171,6 +180,8 @@ const imagePath = (imageName: string) => {
     "doctor": doctorImg,
     "therapy": therapyImg,
     "hospital": hospitalImg,
+    "haircut": haircutImg,
+    "dentist": dentistImg,
     
     // Transportation
     "bus": busImg,
