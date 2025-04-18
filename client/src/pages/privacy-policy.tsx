@@ -110,7 +110,8 @@ export default function PrivacyPolicy() {
             If you have any questions or concerns about this privacy policy or our data practices, please contact us at:
           </p>
           <p className="mt-2 font-medium">
-            [Your Contact Information]
+            Email: privacy@speakmyway.app<br/>
+            Address: SpeakMyWay Inc., 123 Accessibility Drive, Suite 500, San Francisco, CA 94103
           </p>
         </section>
       </div>

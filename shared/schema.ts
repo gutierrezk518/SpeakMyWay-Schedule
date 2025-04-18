@@ -107,6 +107,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   consentDate: true,
   marketingConsent: true,
   dataRetentionConsent: true,
+  createdAt: true,
 });
 
 export const insertCategorySchema = createInsertSchema(categories).pick({

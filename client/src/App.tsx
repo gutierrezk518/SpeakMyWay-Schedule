@@ -106,7 +106,7 @@ function AppContent() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleNameSubmit = () => {
+  const handleNameSubmit = async () => {
     // Basic validation
     const hasNameError = !inputName.trim();
     const hasEmailError = inputEmail.length > 0 && !validateEmail(inputEmail);
@@ -143,8 +143,47 @@ function AppContent() {
         setUserEmail(inputEmail);
       }
       
-      // TODO: Store user data in database via API call
-      // This would include sending all user data including consent information
+      // Generate a temporary username based on display name and timestamp
+      // In a real app, you'd likely implement proper user registration
+      const tmpUsername = `${inputName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
+      
+      try {
+        // Store user data in database via API call
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: tmpUsername,
+            password: 'temporary_password', // In a real app, implement proper authentication
+            displayName: inputName,
+            email: inputEmail || null,
+            birthday: inputBirthday || null,
+            language: 'en',
+            consentGiven: true,
+            consentDate: currentDate,
+            marketingConsent: marketingConsent,
+            dataRetentionConsent: dataRetentionConsent
+          }),
+        });
+        
+        if (response.ok) {
+          // Successfully stored user in database
+          const userData = await response.json();
+          
+          // Store user ID in localStorage for future API calls
+          localStorage.setItem("speakMyWayUserId", userData.id.toString());
+          
+          console.log('User data saved to server', userData);
+        } else {
+          // Handle error but don't block the user experience
+          console.error('Failed to save user data to server');
+        }
+      } catch (error) {
+        // Log error but don't block user experience
+        console.error('Error saving user data:', error);
+      }
       
       setNameDialogOpen(false);
       setWelcomeDialogOpen(true);
