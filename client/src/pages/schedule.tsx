@@ -820,53 +820,23 @@ export default function Schedule() {
               </Droppable>
             </div>
             
-            {/* Time section tabs with pagination - different styling for mobile vs larger screens */}
+            {/* Time section tabs - different styling for mobile vs larger screens */}
             <div className="p-1 md:p-2 bg-gray-50 border-t border-gray-200 sticky bottom-0 z-30 flex-shrink-0 md:shadow-md">
-              <div className="flex flex-wrap justify-center gap-2">
-                {/* Time section tabs */}
-                <div className="flex justify-center space-x-1 md:space-x-2">
-                  {scheduleData.map((section: ScheduleSection) => (
-                    <button 
-                      key={section.id}
-                      className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                        selectedTimeSection === section.id 
-                          ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                      onClick={() => setSelectedTimeSection(section.id)}
-                    >
-                      <i className={`${section.icon} mr-1`}></i>
-                      {section.name}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Pagination controls for desktop - will be together with time tabs */}
-                {totalPages > 1 && selectedCategory !== 'favorites' && (
-                  <div className="hidden md:flex justify-center space-x-1">
-                    <button
-                      className={`px-2 py-1 rounded-md text-xs ${
-                        activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                      }`}
-                      onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
-                      disabled={activitiesPage === 1}
-                    >
-                      <i className="ri-arrow-left-s-line"></i>
-                    </button>
-                    <span className="px-2 py-1 bg-white rounded-md text-xs font-medium border border-blue-200">
-                      {activitiesPage}/{totalPages}
-                    </span>
-                    <button
-                      className={`px-2 py-1 rounded-md text-xs ${
-                        activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                      }`}
-                      onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
-                      disabled={activitiesPage === totalPages}
-                    >
-                      <i className="ri-arrow-right-s-line"></i>
-                    </button>
-                  </div>
-                )}
+              <div className="flex justify-center space-x-1 md:space-x-2">
+                {scheduleData.map((section: ScheduleSection) => (
+                  <button 
+                    key={section.id}
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                      selectedTimeSection === section.id 
+                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    onClick={() => setSelectedTimeSection(section.id)}
+                  >
+                    <i className={`${section.icon} mr-1`}></i>
+                    {section.name}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -917,7 +887,32 @@ export default function Schedule() {
                 </div>
               )}
                 
-
+              {/* Special pagination for larger screens - positioned ABOVE activity cards */}
+              {totalPages > 1 && selectedCategory !== 'favorites' && (
+                <div className="hidden md:flex p-2 border-b border-gray-200 justify-center space-x-2 bg-blue-50">
+                  <button
+                    className={`px-3 py-1.5 rounded-md text-sm ${
+                      activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                    }`}
+                    onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
+                    disabled={activitiesPage === 1}
+                  >
+                    <i className="ri-arrow-left-s-line"></i>
+                  </button>
+                  <span className="px-3 py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
+                    Page {activitiesPage} of {totalPages}
+                  </span>
+                  <button
+                    className={`px-3 py-1.5 rounded-md text-sm ${
+                      activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                    }`}
+                    onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
+                    disabled={activitiesPage === totalPages}
+                  >
+                    <i className="ri-arrow-right-s-line"></i>
+                  </button>
+                </div>
+              )}
               
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 bg-blue-50">
