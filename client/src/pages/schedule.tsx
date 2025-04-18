@@ -892,7 +892,7 @@ export default function Schedule() {
                       ? 'bg-blue-500 text-white font-medium shadow-sm' 
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
-                    onClick={() => setSelectedCategory('all')}
+                    onClick={() => handleCategoryChange('all')}
                   >
                     <i className="ri-apps-line mr-1"></i>
                     All
@@ -913,7 +913,7 @@ export default function Schedule() {
                             : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                           } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
                           ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
-                          onClick={() => setSelectedCategory('favorites')}
+                          onClick={() => handleCategoryChange('favorites')}
                         >
                           <i className="ri-star-fill mr-1"></i>
                           Favorites
@@ -935,10 +935,7 @@ export default function Schedule() {
                       ? 'bg-rose-500 text-white font-medium shadow-sm' 
                       : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
                     }`}
-                    onClick={() => {
-                      setSelectedCategory('dressing');
-                      setActivitiesPage(1); // Reset to page 1 when changing categories
-                    }}
+                    onClick={() => handleCategoryChange('dressing')}
                   >
                     <i className="ri-shirt-line mr-1"></i>
                     Dressing
@@ -1016,7 +1013,7 @@ export default function Schedule() {
                       ? 'bg-purple-500 text-white font-medium shadow-sm' 
                       : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                     }`}
-                    onClick={() => setSelectedCategory('places')}
+                    onClick={() => handleCategoryChange('places')}
                   >
                     <i className="ri-map-pin-line mr-1"></i>
                     Places & Transport
@@ -1029,7 +1026,7 @@ export default function Schedule() {
                       ? 'bg-indigo-500 text-white font-medium shadow-sm' 
                       : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                     }`}
-                    onClick={() => setSelectedCategory('vacation')}
+                    onClick={() => handleCategoryChange('vacation')}
                   >
                     <i className="ri-suitcase-line mr-1"></i>
                     Vacation
