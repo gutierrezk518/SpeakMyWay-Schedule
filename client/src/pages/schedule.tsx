@@ -153,6 +153,12 @@ export default function Schedule() {
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
   const [showSearchBar, setShowSearchBar] = useState(false); // Toggle search bar visibility
   
+  // Helper function to handle category selection and reset page number
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setActivitiesPage(1); // Reset to page 1 when changing categories
+  };
+  
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -929,7 +935,10 @@ export default function Schedule() {
                       ? 'bg-rose-500 text-white font-medium shadow-sm' 
                       : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
                     }`}
-                    onClick={() => setSelectedCategory('dressing')}
+                    onClick={() => {
+                      setSelectedCategory('dressing');
+                      setActivitiesPage(1); // Reset to page 1 when changing categories
+                    }}
                   >
                     <i className="ri-shirt-line mr-1"></i>
                     Dressing
@@ -942,7 +951,7 @@ export default function Schedule() {
                       ? 'bg-orange-500 text-white font-medium shadow-sm' 
                       : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                     }`}
-                    onClick={() => setSelectedCategory('holiday')}
+                    onClick={() => handleCategoryChange('holiday')}
                   >
                     <i className="ri-calendar-event-line mr-1"></i>
                     Holiday
@@ -955,7 +964,7 @@ export default function Schedule() {
                       ? 'bg-teal-500 text-white font-medium shadow-sm' 
                       : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
                     }`}
-                    onClick={() => setSelectedCategory('hygiene')}
+                    onClick={() => handleCategoryChange('hygiene')}
                   >
                     <i className="ri-hand-sanitizer-line mr-1"></i>
                     Hygiene
@@ -968,7 +977,7 @@ export default function Schedule() {
                       ? 'bg-blue-500 text-white font-medium shadow-sm' 
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
-                    onClick={() => setSelectedCategory('indoors-chores')}
+                    onClick={() => handleCategoryChange('indoors-chores')}
                   >
                     <i className="ri-home-line mr-1"></i>
                     Indoors & Chores
@@ -981,7 +990,7 @@ export default function Schedule() {
                       ? 'bg-green-500 text-white font-medium shadow-sm' 
                       : 'bg-green-100 text-green-700 hover:bg-green-200'
                     }`}
-                    onClick={() => setSelectedCategory('meals')}
+                    onClick={() => handleCategoryChange('meals')}
                   >
                     <i className="ri-restaurant-line mr-1"></i>
                     Meals
@@ -994,7 +1003,7 @@ export default function Schedule() {
                       ? 'bg-sky-500 text-white font-medium shadow-sm' 
                       : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
                     }`}
-                    onClick={() => setSelectedCategory('outdoors-social')}
+                    onClick={() => handleCategoryChange('outdoors-social')}
                   >
                     <i className="ri-sun-line mr-1"></i>
                     Outdoors & Social
