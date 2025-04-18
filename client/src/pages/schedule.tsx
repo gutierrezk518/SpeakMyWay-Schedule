@@ -601,9 +601,9 @@ export default function Schedule() {
   }, [scheduleData, selectedTimeSection, addToScheduleHistory]);
 
   return (
-    <section className="h-full flex flex-col">
+    <section className="h-full flex flex-col" style={{ height: '100vh', maxHeight: '100vh' }}>
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`}>
+        <div className={`flex-grow ${isPortrait ? 'flex flex-col h-full' : 'flex'} overflow-hidden`} style={{ height: 'calc(100vh - 60px)' }}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
             <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
@@ -661,7 +661,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-1 border-b border-gray-200 items-center justify-center space-x-3">
@@ -755,7 +755,7 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden`}>
+            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
               <Droppable 
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
@@ -765,8 +765,8 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '100px' : 'auto',
-                      minHeight: isPortrait ? '100px' : '200px',
+                      height: isPortrait ? '100px' : '100%',
+                      minHeight: isPortrait ? '100px' : 'calc(100% - 16px)',
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
