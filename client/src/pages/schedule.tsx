@@ -741,7 +741,7 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'flex flex-row' : 'flex flex-col'} overflow-hidden`}>
+            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden`}>
               <Droppable 
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
@@ -751,14 +751,13 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      padding: '4px',
                       height: isPortrait ? '100px' : 'auto',
                       minHeight: isPortrait ? '100px' : '200px',
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto flex-grow rounded-md p-1 flex flex-row items-center space-x-4'
-                      : 'overflow-y-auto flex-grow rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
+                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center gap-6'
+                      : 'overflow-y-auto rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
                     } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
@@ -766,13 +765,13 @@ export default function Schedule() {
                     }`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center">
+                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
                         <div className="text-lg mb-0.5">👋</div>
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
                       currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`relative ${isPortrait ? 'inline-flex flex-shrink-0' : 'w-14 h-14 mx-auto'} pt-1.5 pb-1.5`}>
+                        <div key={activity.id} className={`relative flex-shrink-0 mx-1 ${!isPortrait && 'w-14 h-14 mx-auto'}`}>
                           <ActivityCard 
                             activity={activity} 
                             index={index}
@@ -876,6 +875,12 @@ export default function Schedule() {
                     onClick={() => {
                       const newState = !showSearchBar;
                       setShowSearchBar(newState);
+                      
+                      if (newState) {
+                        // When opening search, clear category filters and reset to 'all'
+                        handleCategoryChange('all');
+                      }
+                      
                       // Always reset search query when toggling the search
                       setSearchQuery('');
                     }}
