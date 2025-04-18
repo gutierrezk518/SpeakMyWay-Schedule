@@ -169,18 +169,6 @@ export default function Customize() {
                   placeholder="What should we call you?"
                 />
               </div>
-              
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">My Language</label>
-                <select 
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  value={language}
-                  onChange={handleLanguageChange}
-                >
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                </select>
-              </div>
             </div>
           </div>
           
@@ -193,40 +181,43 @@ export default function Customize() {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2">Voice Type</label>
-                <select 
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  value={voiceSettings.voiceType}
-                  onChange={handleVoiceTypeChange}
-                >
-                  <option value="default">System Default</option>
+                <label className="block text-gray-700 mb-2 font-medium">Voice Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="relative flex items-center justify-center p-4 border rounded-lg cursor-pointer peer-checked:border-green-500 hover:bg-green-50">
+                    <input
+                      type="radio"
+                      name="voiceType"
+                      value="female"
+                      className="absolute opacity-0"
+                      checked={voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default"}
+                      onChange={() => {
+                        handleVoiceTypeChange({ target: { value: "female" } } as React.ChangeEvent<HTMLSelectElement>);
+                      }}
+                    />
+                    <div className="flex flex-col items-center">
+                      <i className="ri-user-voice-line text-3xl text-green-500 mb-2"></i>
+                      <span className="font-medium">Female Voice</span>
+                      <span className="text-xs text-gray-500">(Default)</span>
+                    </div>
+                  </label>
                   
-                  {/* English Voices */}
-                  <optgroup label="English Voices">
-                    <option value="en-US-female-warm">Warm & Friendly Female</option>
-                    <option value="en-US-female-professional">Professional Female</option>
-                    <option value="en-US-male-warm">Warm & Friendly Male</option>
-                    <option value="en-US-male-deep">Deep & Clear Male</option>
-                    <option value="en-GB-female">British Female</option>
-                    <option value="en-GB-male">British Male</option>
-                    <option value="en-US-child">Child Voice</option>
-                  </optgroup>
-                  
-                  {/* Spanish Voices */}
-                  <optgroup label="Spanish Voices">
-                    <option value="es-ES-female">Spanish Female</option>
-                    <option value="es-ES-male">Spanish Male</option>
-                    <option value="es-MX-female">Mexican Female</option>
-                    <option value="es-MX-male">Mexican Male</option>
-                  </optgroup>
-                  
-                  {/* Simple Options (for backward compatibility) */}
-                  <optgroup label="Basic Options">
-                    <option value="female">Generic Female</option>
-                    <option value="male">Generic Male</option>
-                    <option value="child">Generic Child</option>
-                  </optgroup>
-                </select>
+                  <label className="relative flex items-center justify-center p-4 border rounded-lg cursor-pointer peer-checked:border-blue-500 hover:bg-blue-50">
+                    <input
+                      type="radio"
+                      name="voiceType"
+                      value="male"
+                      className="absolute opacity-0"
+                      checked={voiceSettings.voiceType === "male"}
+                      onChange={() => {
+                        handleVoiceTypeChange({ target: { value: "male" } } as React.ChangeEvent<HTMLSelectElement>);
+                      }}
+                    />
+                    <div className="flex flex-col items-center">
+                      <i className="ri-user-voice-line text-3xl text-blue-500 mb-2"></i>
+                      <span className="font-medium">Male Voice</span>
+                    </div>
+                  </label>
+                </div>
               </div>
               
               <div>

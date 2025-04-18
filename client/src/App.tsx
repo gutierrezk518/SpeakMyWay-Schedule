@@ -30,7 +30,7 @@ import { Link } from "wouter";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Schedule} />
       <Route path="/communication" component={CommunicationBoard} />
       <Route path="/quick-mode" component={QuickMode} />
       <Route path="/schedule" component={Schedule} />
