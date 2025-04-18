@@ -19,6 +19,9 @@ const waterImg = "/activity-cards/glassofwater.png";
 const juiceImg = "/activity-cards/juice.png";
 const milkImg = "/activity-cards/milk.png";
 const chocolatemilkImg = "/activity-cards/chocolatemilk.png";
+// Temporarily using getdressed and pajamas as placeholders - will need actual images
+const wakeupImg = "/activity-cards/getdressed.png"; 
+const sleepImg = "/activity-cards/pajamas on.png";
 const colorImg = "/activity-cards/color.png";
 const paintImg = "/activity-cards/paint.png";
 const drawImg = "/activity-cards/draw.png";
@@ -177,6 +180,8 @@ const imagePath = (imageName: string) => {
     "coaton": coatonImg,
     "getdressed": getdressedImg,
     "pajamas": pajamasImg,
+    "wakeup": wakeupImg,
+    "sleep": sleepImg,
     
     // Appointments
     "doctor": doctorImg,
@@ -664,6 +669,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
     },
   ],
   "dressing": [
+    { 
+      id: "wakeup", 
+      title: "Wake Up", 
+      icon: "ri-sun-fill", 
+      bgColor: "yellow-400", 
+      imageSrc: imagePath("wakeup"),
+      speechText: "Time to wake up" 
+    },
     { 
       id: "shoeson", 
       title: "Shoes On", 
