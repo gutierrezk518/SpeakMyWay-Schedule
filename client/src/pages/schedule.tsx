@@ -10,42 +10,46 @@ import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/da
 
 // Timer Component
 const TimerComponent = () => {
-  const [time, setTime] = useState(15 * 60); // Default: 15 minutes in seconds
+  const [minutes, setMinutes] = useState(15);
+  const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [customTime, setCustomTime] = useState("15:00");
-  const [showCustomInput, setShowCustomInput] = useState(false);
+  
+  // Generate options for dropdowns
+  const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
+  const secondOptions = Array.from({ length: 60 }, (_, i) => i);
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
-    if (isActive && !isPaused && time > 0) {
+    if (isActive && !isPaused) {
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
+        if (seconds > 0) {
+          setSeconds(seconds - 1);
+        } else if (minutes > 0) {
+          setMinutes(minutes - 1);
+          setSeconds(59);
+        } else {
+          // Timer finished
+          setIsActive(false);
+          // Play a sound or notification
+          speak("Time is up!");
+          // Optional: vibration if available
+          if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200, 100, 200]);
+          }
+        }
       }, 1000);
-    } else if (time === 0) {
-      // Timer finished
-      setIsActive(false);
-      // Play a sound or notification
-      speak("Time is up!");
-      // Optional: vibration if available
-      if ('vibrate' in navigator) {
-        navigator.vibrate([200, 100, 200, 100, 200]);
-      }
     }
     
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, isPaused, time]);
-  
-  const formatTime = (timeInSeconds: number): string => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+  }, [isActive, isPaused, minutes, seconds]);
   
   const handleStart = () => {
+    if (minutes === 0 && seconds === 0) return;
+    
     if (!isActive) {
       setIsActive(true);
       setIsPaused(false);
@@ -61,71 +65,63 @@ const TimerComponent = () => {
   const handleReset = () => {
     setIsActive(false);
     setIsPaused(false);
-    setTime(15 * 60); // Reset to default
+    setMinutes(15);
+    setSeconds(0);
   };
   
-  const handleCustomTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomTime(e.target.value);
-  };
-  
-  const applyCustomTime = () => {
-    const [minutes, seconds] = customTime.split(':').map(Number);
-    if (!isNaN(minutes) && !isNaN(seconds)) {
-      const newTime = (minutes * 60) + seconds;
-      if (newTime > 0) {
-        setTime(newTime);
-        setShowCustomInput(false);
-      }
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!isActive) {
+      setMinutes(parseInt(e.target.value));
     }
   };
   
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      applyCustomTime();
+  const handleSecondsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!isActive) {
+      setSeconds(parseInt(e.target.value));
     }
   };
   
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="flex items-center mb-1">
-        {showCustomInput ? (
-          <div className="flex">
-            <input
-              type="text"
-              pattern="[0-9]{1,2}:[0-9]{2}"
-              placeholder="mm:ss"
-              value={customTime}
-              onChange={handleCustomTimeChange}
-              onKeyDown={handleKeyDown}
-              className="w-16 px-1 py-0.5 text-center border border-purple-300 rounded mr-1"
-              maxLength={5}
-              autoFocus
-            />
-            <button 
-              onClick={applyCustomTime}
-              className="px-1 py-0.5 bg-purple-600 text-white rounded text-xs hover:bg-purple-700"
-            >
-              Set
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center">
-            <div 
-              onClick={() => setShowCustomInput(true)}
-              className="text-2xl font-mono font-bold text-purple-800 cursor-pointer"
-              title="Click to edit time"
-            >
-              {formatTime(time)}
-            </div>
-          </div>
-        )}
+      <div className="flex items-center mb-2">
+        {/* Time selection dropdowns */}
+        <div className="flex items-center">
+          <select
+            value={minutes}
+            onChange={handleMinutesChange}
+            disabled={isActive}
+            className={`w-16 px-2 py-1 text-center rounded-l-md border border-r-0 border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
+            title="Minutes"
+          >
+            {minuteOptions.map(min => (
+              <option key={`min-${min}`} value={min}>{min} min</option>
+            ))}
+          </select>
+          
+          <select
+            value={seconds}
+            onChange={handleSecondsChange}
+            disabled={isActive}
+            className={`w-16 px-2 py-1 text-center rounded-r-md border border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
+            title="Seconds"
+          >
+            {secondOptions.map(sec => (
+              <option key={`sec-${sec}`} value={sec}>{sec} sec</option>
+            ))}
+          </select>
+        </div>
       </div>
       
       <div className="flex space-x-2">
         {!isActive || isPaused ? (
           <button 
             onClick={handleStart} 
-            className="px-2 py-1 bg-green-500 text-white rounded-md text-xs hover:bg-green-600"
+            className={`px-2 py-1 rounded-md text-xs text-white ${
+              minutes === 0 && seconds === 0 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-500 hover:bg-green-600'
+            }`}
+            disabled={minutes === 0 && seconds === 0}
           >
             {!isActive ? "Start" : "Resume"}
           </button>
@@ -145,6 +141,12 @@ const TimerComponent = () => {
           Reset
         </button>
       </div>
+      
+      {isActive && !isPaused && (
+        <div className="mt-2 text-center text-purple-700 text-sm font-medium">
+          {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+        </div>
+      )}
     </div>
   );
 };
