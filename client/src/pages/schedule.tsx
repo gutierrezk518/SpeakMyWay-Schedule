@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import ActivityCard from "@/components/ui/activity-card";
 import { speak } from "@/lib/tts";
+import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
@@ -31,9 +32,15 @@ const TimerComponent = () => {
           // Timer finished
           setIsActive(false);
           
-          // Custom message with user's name
-          const message = `OK ${userName || 'friend'}, time for our next activity`;
-          speak(message);
+          // Play sound effect first
+          playTimerComplete();
+          
+          // Add a small delay before speaking
+          setTimeout(() => {
+            // Custom message with user's name
+            const message = `OK ${userName || 'friend'}, time for our next activity`;
+            speak(message);
+          }, 800);
           
           // Optional: vibration if available
           if ('vibrate' in navigator) {
@@ -140,7 +147,6 @@ export default function Schedule() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
-  const itemsPerPage = 25; // Show a 5x5 grid of activities at once
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
@@ -188,6 +194,42 @@ export default function Schedule() {
         );
       })
     : categoryActivities;
+  
+  // Effect to adjust items per page based on window width
+  useEffect(() => {
+    const handleResize = () => {
+      // Get window dimensions
+      const width = window.innerWidth;
+      
+      // Determine columns based on width
+      let columns = 5; // Default
+      
+      if (width < 640) { // Small mobile
+        columns = 2;
+      } else if (width < 768) { // Mobile
+        columns = 3;
+      } else if (width < 1024) { // Tablet
+        columns = 4;
+      } else if (width < 1280) { // Small desktop
+        columns = 5;
+      } else { // Large desktop
+        columns = 6;
+      }
+      
+      // Calculate rows to show approximately 5 rows
+      const rows = 5;
+      setItemsPerPage(columns * rows);
+    };
+    
+    // Initial calculation
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Calculate pagination
   const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
