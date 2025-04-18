@@ -68,8 +68,8 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md ${isInSchedule ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-[58px] h-[58px] sm:w-16 sm:h-16'} flex flex-col items-center justify-between cursor-pointer
-            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-sm hover:shadow-md'}
+          className={`rounded-md ${isInSchedule ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-[72px] h-[72px] sm:w-20 sm:h-20'} flex flex-col items-center justify-between cursor-pointer
+            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md hover:shadow-lg'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
               activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
@@ -103,7 +103,7 @@ export default function ActivityCard({
                 )}
               </div>
               <div className="w-full flex justify-center items-center">
-                <span className="text-[8px] sm:text-[9px] text-gray-800 bg-white bg-opacity-60 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] text-gray-800 bg-white bg-opacity-70 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                   {activity.title}
                 </span>
               </div>
@@ -128,8 +128,8 @@ export default function ActivityCard({
               </div>
               
               {/* Text container - more mobile-friendly */}
-              <div className="w-full bg-white bg-opacity-70 rounded-sm py-0.5 sm:py-1 px-1 text-center">
-                <span className="font-medium text-[8px] sm:text-[9px] leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
+              <div className="w-full bg-white bg-opacity-75 rounded-sm py-0.5 sm:py-1 px-1 text-center">
+                <span className="font-medium text-[10px] sm:text-[12px] leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
               </div>
             </>
           )}

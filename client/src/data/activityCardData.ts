@@ -673,7 +673,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       id: "wakeup", 
       title: "Wake Up", 
       icon: "ri-sun-fill", 
-      bgColor: "yellow-400", 
+      bgColor: "green-400", 
       imageSrc: "/activity-cards/wakeup.png",
       speechText: "Wake up" 
     },
@@ -721,7 +721,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       id: "sleep", 
       title: "Go to Sleep", 
       icon: "ri-moon-fill", 
-      bgColor: "indigo-400", 
+      bgColor: "green-400", 
       imageSrc: "/activity-cards/sleep.png",
       speechText: "Go to sleep" 
     },
