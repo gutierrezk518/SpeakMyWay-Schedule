@@ -13,7 +13,6 @@ const TimerComponent = () => {
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -53,24 +52,30 @@ const TimerComponent = () => {
     setSeconds(0);
   };
   
-  const formatTime = (mins: number, secs: number) => {
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-  
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center">
-        <button 
-          onClick={() => setShowSettings(!showSettings)}
-          className="text-purple-600 hover:text-purple-800 mx-1"
-          title="Timer settings"
+      <div className="flex items-center mr-3">
+        <select 
+          value={minutes}
+          onChange={(e) => !isActive && setMinutes(parseInt(e.target.value))}
+          disabled={isActive}
+          className={`w-12 px-1 py-0.5 text-xs text-center rounded-l border border-r-0 border-purple-300 bg-white ${isActive ? 'opacity-80' : ''}`}
         >
-          <i className="ri-settings-line text-lg"></i>
-        </button>
-        
-        <span className="text-lg font-mono font-semibold text-purple-800 mx-2">
-          {formatTime(minutes, seconds)}
-        </span>
+          {Array.from({ length: 60 }, (_, i) => (
+            <option key={`min-${i}`} value={i}>{i}</option>
+          ))}
+        </select>
+        <span className="text-xs px-1 text-purple-800">:</span>
+        <select 
+          value={seconds}
+          onChange={(e) => !isActive && setSeconds(parseInt(e.target.value))}
+          disabled={isActive}
+          className={`w-12 px-1 py-0.5 text-xs text-center rounded-r border border-purple-300 bg-white ${isActive ? 'opacity-80' : ''}`}
+        >
+          {Array.from({ length: 60 }, (_, i) => (
+            <option key={`sec-${i}`} value={i}>{i}</option>
+          ))}
+        </select>
       </div>
       
       <div className="flex">
@@ -79,6 +84,7 @@ const TimerComponent = () => {
           className={`px-2 py-0.5 rounded text-xs text-white mx-1 ${
             isActive ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'
           }`}
+          disabled={minutes === 0 && seconds === 0 && !isActive}
         >
           {isActive ? "Pause" : "Start"}
         </button>
@@ -90,35 +96,6 @@ const TimerComponent = () => {
           Reset
         </button>
       </div>
-      
-      {showSettings && (
-        <div className="absolute top-full left-0 mt-1 p-2 bg-white border border-purple-200 rounded-md shadow-md z-10">
-          <div className="text-xs font-medium mb-1 text-center text-purple-700">Timer Settings</div>
-          <div className="flex items-center">
-            <select 
-              value={minutes}
-              onChange={(e) => !isActive && setMinutes(parseInt(e.target.value))}
-              disabled={isActive}
-              className="w-12 px-1 py-0.5 text-xs text-center rounded-l border border-r-0 border-purple-300"
-            >
-              {Array.from({ length: 60 }, (_, i) => (
-                <option key={`min-${i}`} value={i}>{i}</option>
-              ))}
-            </select>
-            <span className="text-xs px-1">:</span>
-            <select 
-              value={seconds}
-              onChange={(e) => !isActive && setSeconds(parseInt(e.target.value))}
-              disabled={isActive}
-              className="w-12 px-1 py-0.5 text-xs text-center rounded-r border border-purple-300"
-            >
-              {Array.from({ length: 60 }, (_, i) => (
-                <option key={`sec-${i}`} value={i}>{i}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
