@@ -769,11 +769,14 @@ export default function Schedule() {
                       minHeight: isPortrait ? '100px' : '200px',
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
-                    className={`${
+                    className={`${isPortrait 
+                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
+                      : 'overflow-y-auto rounded-md p-2 flex flex-col items-center'
+                    } ${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
-                    } rounded-md p-2 w-full h-full`}
+                    } w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
                       <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
@@ -781,7 +784,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto space-x-16 pb-2 w-full' : 'grid grid-cols-1 gap-6'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto space-x-32 pb-2 w-full' : 'grid grid-cols-1 gap-10'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
