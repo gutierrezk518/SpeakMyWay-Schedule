@@ -14,6 +14,9 @@ const TimerComponent = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   
+  // Get the user name from context
+  const { userName } = useAppContext();
+  
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
@@ -27,7 +30,11 @@ const TimerComponent = () => {
         } else {
           // Timer finished
           setIsActive(false);
-          speak("Time is up!");
+          
+          // Custom message with user's name
+          const message = `OK ${userName || 'friend'}, time for our next activity`;
+          speak(message);
+          
           // Optional: vibration if available
           if ('vibrate' in navigator) {
             navigator.vibrate([200, 100, 200, 100, 200]);
@@ -39,7 +46,7 @@ const TimerComponent = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, minutes, seconds]);
+  }, [isActive, minutes, seconds, userName]);
   
   const handleToggleTimer = () => {
     if (minutes === 0 && seconds === 0 && !isActive) return;
