@@ -8,21 +8,17 @@ import { useAppContext } from "@/contexts/app-context";
 import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
 
-// Timer Component
+// Compact Timer Component
 const TimerComponent = () => {
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  
-  // Generate options for dropdowns
-  const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
-  const secondOptions = Array.from({ length: 60 }, (_, i) => i);
+  const [showSettings, setShowSettings] = useState(false);
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
-    if (isActive && !isPaused) {
+    if (isActive) {
       interval = setInterval(() => {
         if (seconds > 0) {
           setSeconds(seconds - 1);
@@ -32,7 +28,6 @@ const TimerComponent = () => {
         } else {
           // Timer finished
           setIsActive(false);
-          // Play a sound or notification
           speak("Time is up!");
           // Optional: vibration if available
           if ('vibrate' in navigator) {
@@ -45,106 +40,83 @@ const TimerComponent = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, isPaused, minutes, seconds]);
+  }, [isActive, minutes, seconds]);
   
-  const handleStart = () => {
-    if (minutes === 0 && seconds === 0) return;
-    
-    if (!isActive) {
-      setIsActive(true);
-      setIsPaused(false);
-    } else if (isPaused) {
-      setIsPaused(false);
-    }
-  };
-  
-  const handlePause = () => {
-    setIsPaused(true);
+  const handleToggleTimer = () => {
+    if (minutes === 0 && seconds === 0 && !isActive) return;
+    setIsActive(!isActive);
   };
   
   const handleReset = () => {
     setIsActive(false);
-    setIsPaused(false);
     setMinutes(5);
     setSeconds(0);
   };
   
-  const handleMinutesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!isActive) {
-      setMinutes(parseInt(e.target.value));
-    }
-  };
-  
-  const handleSecondsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!isActive) {
-      setSeconds(parseInt(e.target.value));
-    }
+  const formatTime = (mins: number, secs: number) => {
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
   
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="flex items-center mb-2">
-        {/* Time selection dropdowns */}
-        <div className="flex items-center">
-          <select
-            value={minutes}
-            onChange={handleMinutesChange}
-            disabled={isActive}
-            className={`w-14 px-2 py-1 text-center rounded-l-md border border-r-0 border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
-            title="Minutes"
-          >
-            {minuteOptions.map(min => (
-              <option key={`min-${min}`} value={min}>{min}</option>
-            ))}
-          </select>
-          
-          <select
-            value={seconds}
-            onChange={handleSecondsChange}
-            disabled={isActive}
-            className={`w-14 px-2 py-1 text-center rounded-r-md border border-purple-300 bg-white ${isActive ? 'opacity-70' : ''}`}
-            title="Seconds"
-          >
-            {secondOptions.map(sec => (
-              <option key={`sec-${sec}`} value={sec}>{sec}</option>
-            ))}
-          </select>
-        </div>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center">
+        <button 
+          onClick={() => setShowSettings(!showSettings)}
+          className="text-purple-600 hover:text-purple-800 mx-1"
+          title="Timer settings"
+        >
+          <i className="ri-settings-line text-lg"></i>
+        </button>
+        
+        <span className="text-lg font-mono font-semibold text-purple-800 mx-2">
+          {formatTime(minutes, seconds)}
+        </span>
       </div>
       
-      <div className="flex space-x-2">
-        {!isActive || isPaused ? (
-          <button 
-            onClick={handleStart} 
-            className={`px-2 py-1 rounded-md text-xs text-white ${
-              minutes === 0 && seconds === 0 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-green-500 hover:bg-green-600'
-            }`}
-            disabled={minutes === 0 && seconds === 0}
-          >
-            {!isActive ? "Start" : "Resume"}
-          </button>
-        ) : (
-          <button 
-            onClick={handlePause} 
-            className="px-2 py-1 bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600"
-          >
-            Pause
-          </button>
-        )}
+      <div className="flex">
+        <button 
+          onClick={handleToggleTimer}
+          className={`px-2 py-0.5 rounded text-xs text-white mx-1 ${
+            isActive ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'
+          }`}
+        >
+          {isActive ? "Pause" : "Start"}
+        </button>
         
         <button 
-          onClick={handleReset} 
-          className="px-2 py-1 bg-red-500 text-white rounded-md text-xs hover:bg-red-600"
+          onClick={handleReset}
+          className="px-2 py-0.5 bg-red-500 text-white rounded text-xs hover:bg-red-600 mx-1"
         >
           Reset
         </button>
       </div>
       
-      {isActive && !isPaused && (
-        <div className="mt-2 text-center text-purple-700 text-sm font-medium">
-          {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+      {showSettings && (
+        <div className="absolute top-full left-0 mt-1 p-2 bg-white border border-purple-200 rounded-md shadow-md z-10">
+          <div className="text-xs font-medium mb-1 text-center text-purple-700">Timer Settings</div>
+          <div className="flex items-center">
+            <select 
+              value={minutes}
+              onChange={(e) => !isActive && setMinutes(parseInt(e.target.value))}
+              disabled={isActive}
+              className="w-12 px-1 py-0.5 text-xs text-center rounded-l border border-r-0 border-purple-300"
+            >
+              {Array.from({ length: 60 }, (_, i) => (
+                <option key={`min-${i}`} value={i}>{i}</option>
+              ))}
+            </select>
+            <span className="text-xs px-1">:</span>
+            <select 
+              value={seconds}
+              onChange={(e) => !isActive && setSeconds(parseInt(e.target.value))}
+              disabled={isActive}
+              className="w-12 px-1 py-0.5 text-xs text-center rounded-r border border-purple-300"
+            >
+              {Array.from({ length: 60 }, (_, i) => (
+                <option key={`sec-${i}`} value={i}>{i}</option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
     </div>
@@ -814,14 +786,13 @@ export default function Schedule() {
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
-                <div className="p-2 border-b border-gray-200 bg-purple-50 flex justify-center">
-                  <div className="text-center p-2 bg-purple-100 rounded-md text-lg font-bold w-full max-w-xs">
-                    <div className="flex items-center justify-center">
-                      <div className="mr-3">
-                        <i className="ri-timer-line text-2xl text-purple-700"></i>
-                      </div>
-                      <TimerComponent />
+                <div className="px-3 py-1 border-b border-gray-200 bg-purple-50 flex justify-center">
+                  <div className="flex items-center justify-between bg-purple-100 rounded-md w-full px-3 py-1.5 max-w-md">
+                    <div className="flex items-center">
+                      <i className="ri-timer-line text-lg text-purple-700 mr-2"></i>
+                      <span className="text-sm text-purple-800 font-medium">Timer:</span>
                     </div>
+                    <TimerComponent />
                   </div>
                 </div>
               )}
