@@ -69,14 +69,83 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentPage, setCurrentPage] = useState("home");
-  const [language, setLanguage] = useState("en");
-  const [userName, setUserName] = useState("");
-  const [userBirthday, setUserBirthday] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userConsentGiven, setUserConsentGiven] = useState(false);
-  const [userConsentDate, setUserConsentDate] = useState("");
-  const [userMarketingConsent, setUserMarketingConsent] = useState(false);
-  const [userDataRetentionConsent, setUserDataRetentionConsent] = useState(false);
+  
+  // Language with localStorage persistence
+  const [language, setLanguageState] = useState(() => {
+    return localStorage.getItem('userLanguage') || "en";
+  });
+  
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+    localStorage.setItem('userLanguage', lang);
+  };
+  
+  // User profile data with localStorage persistence
+  const [userName, setUserNameState] = useState(() => {
+    return localStorage.getItem('userName') || "";
+  });
+  
+  const setUserName = (name: string) => {
+    setUserNameState(name);
+    localStorage.setItem('userName', name);
+  };
+  
+  const [userBirthday, setUserBirthdayState] = useState(() => {
+    return localStorage.getItem('userBirthday') || "";
+  });
+  
+  const setUserBirthday = (date: string) => {
+    setUserBirthdayState(date);
+    localStorage.setItem('userBirthday', date);
+  };
+  
+  const [userEmail, setUserEmailState] = useState(() => {
+    return localStorage.getItem('userEmail') || "";
+  });
+  
+  const setUserEmail = (email: string) => {
+    setUserEmailState(email);
+    localStorage.setItem('userEmail', email);
+  };
+  
+  const [userConsentGiven, setUserConsentGivenState] = useState(() => {
+    const savedConsent = localStorage.getItem('userConsentGiven');
+    return savedConsent ? savedConsent === 'true' : false;
+  });
+  
+  const setUserConsentGiven = (consent: boolean) => {
+    setUserConsentGivenState(consent);
+    localStorage.setItem('userConsentGiven', consent.toString());
+  };
+  
+  const [userConsentDate, setUserConsentDateState] = useState(() => {
+    return localStorage.getItem('userConsentDate') || "";
+  });
+  
+  const setUserConsentDate = (date: string) => {
+    setUserConsentDateState(date);
+    localStorage.setItem('userConsentDate', date);
+  };
+  
+  const [userMarketingConsent, setUserMarketingConsentState] = useState(() => {
+    const savedConsent = localStorage.getItem('userMarketingConsent');
+    return savedConsent ? savedConsent === 'true' : false;
+  });
+  
+  const setUserMarketingConsent = (consent: boolean) => {
+    setUserMarketingConsentState(consent);
+    localStorage.setItem('userMarketingConsent', consent.toString());
+  };
+  
+  const [userDataRetentionConsent, setUserDataRetentionConsentState] = useState(() => {
+    const savedConsent = localStorage.getItem('userDataRetentionConsent');
+    return savedConsent ? savedConsent === 'true' : false;
+  });
+  
+  const setUserDataRetentionConsent = (consent: boolean) => {
+    setUserDataRetentionConsentState(consent);
+    localStorage.setItem('userDataRetentionConsent', consent.toString());
+  };
   const [voiceSettings, setVoiceSettings] = useState({
     voiceType: "default",
     rate: 1,
