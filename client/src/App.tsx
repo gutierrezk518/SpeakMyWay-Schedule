@@ -203,12 +203,12 @@ function AppContent() {
           <DialogHeader>
             <DialogTitle className="text-xl">Welcome to SpeakMyWay</DialogTitle>
             <DialogDescription>
-              Please enter your information to get started.
+              Parent/Guardian: Please provide information to set up the application for your child.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div>
-              <Label htmlFor="name" className="mb-2 block">Your Name <span className="text-red-500">*</span></Label>
+              <Label htmlFor="name" className="mb-2 block">Child's Name or Nickname <span className="text-red-500">*</span></Label>
               <Input 
                 id="name" 
                 value={inputName} 
@@ -218,7 +218,7 @@ function AppContent() {
                     setNameError(false);
                   }
                 }}
-                placeholder="Enter your name"
+                placeholder="Enter child's name or nickname"
                 className={`w-full ${nameError ? 'border-red-500' : ''}`}
                 autoFocus
               />
@@ -226,7 +226,7 @@ function AppContent() {
             </div>
             
             <div>
-              <Label htmlFor="birthday" className="mb-2 block">Birthday</Label>
+              <Label htmlFor="birthday" className="mb-2 block">Child's Birthday</Label>
               <Input 
                 id="birthday" 
                 type="date"
@@ -235,10 +235,11 @@ function AppContent() {
                 className="w-full"
                 max={new Date().toISOString().split('T')[0]} // Sets max date to today
               />
+              <p className="text-xs text-gray-500 mt-1">This helps us customize the experience for your child's age group</p>
             </div>
             
             <div>
-              <Label htmlFor="email" className="mb-2 block">Email Address</Label>
+              <Label htmlFor="email" className="mb-2 block">Parent/Guardian Email Address <span className="text-red-500">*</span></Label>
               <Input 
                 id="email" 
                 type="email"
@@ -249,10 +250,11 @@ function AppContent() {
                     setEmailError(false);
                   }
                 }}
-                placeholder="your.email@example.com"
+                placeholder="parent.email@example.com"
                 className={`w-full ${emailError ? 'border-red-500' : ''}`}
               />
               {emailError && <p className="text-red-500 text-sm mt-1">Please enter a valid email address</p>}
+              <p className="text-xs text-gray-500 mt-1">Required for parental verification and account management</p>
             </div>
             
             <div className="space-y-3 pt-2">
@@ -270,13 +272,13 @@ function AppContent() {
                   htmlFor="consent" 
                   className="text-sm leading-tight cursor-pointer"
                 >
-                  I consent to the collection and processing of my personal information as described in the 
+                  As the parent/guardian, I consent to the collection and processing of my child's information as described in the 
                   <Link href="/privacy-policy" className="text-blue-600 hover:underline ml-1" target="_blank">
                     Privacy Policy
                   </Link>. <span className="text-red-500">*</span>
                 </Label>
               </div>
-              {consentError && <p className="text-red-500 text-sm">You must agree to the privacy policy to continue</p>}
+              {consentError && <p className="text-red-500 text-sm">Parental consent is required to continue</p>}
               
               <div className="flex items-start space-x-2">
                 <Checkbox 
@@ -288,7 +290,7 @@ function AppContent() {
                   htmlFor="marketing" 
                   className="text-sm leading-tight cursor-pointer"
                 >
-                  I agree to receive promotional emails about product updates and features (optional)
+                  I agree to receive occasional emails about updates and features that may help my child (optional)
                 </Label>
               </div>
               
@@ -302,7 +304,7 @@ function AppContent() {
                   htmlFor="dataRetention" 
                   className="text-sm leading-tight cursor-pointer"
                 >
-                  I agree to my data being stored for analytics and improvement purposes (optional)
+                  I consent to anonymous usage data being collected to improve the application for my child and other children with similar needs (optional)
                 </Label>
               </div>
             </div>
@@ -323,17 +325,29 @@ function AppContent() {
       <Dialog open={welcomeDialogOpen} onOpenChange={setWelcomeDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl">Thanks {inputName}!</DialogTitle>
+            <DialogTitle className="text-xl">Hi {inputName}!</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <p className="mb-4">I'm your personal assistant. Use me to communicate and organize your schedule.</p>
-            <p>Check out our customize page to:</p>
-            <ul className="list-disc list-inside ml-2 mt-2 space-y-1">
-              <li>Change my voice</li>
-              <li>Upload your own cards</li>
-              <li>Update your profile and settings</li>
-              <li>Watch help videos for getting started</li>
-            </ul>
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <h3 className="text-sm font-medium text-blue-800 mb-2">For {inputName}</h3>
+              <p className="text-blue-700 mb-2">I'm your friendly helper! I can help you:</p>
+              <ul className="list-disc list-inside ml-2 space-y-1 text-blue-700">
+                <li>Talk with pictures</li>
+                <li>Plan your day</li>
+                <li>Learn new words</li>
+              </ul>
+            </div>
+            
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h3 className="text-sm font-medium text-gray-800 mb-2">For Parents/Guardians</h3>
+              <p className="text-gray-700 mb-2">You can customize the experience by visiting the customize page:</p>
+              <ul className="list-disc list-inside ml-2 space-y-1 text-gray-700">
+                <li>Adjust voice settings</li>
+                <li>Add personalized communication cards</li>
+                <li>Modify display preferences</li>
+                <li>Access privacy settings and parental controls</li>
+              </ul>
+            </div>
           </div>
           <DialogFooter>
             <Button 

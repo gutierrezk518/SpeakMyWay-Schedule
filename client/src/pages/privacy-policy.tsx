@@ -92,8 +92,34 @@ export default function PrivacyPolicy() {
 
         <section>
           <h2 className="text-2xl font-semibold mb-3">7. Children's Privacy</h2>
+          <p className="mb-3">
+            Our application is designed for children, including those under 13 years of age and children with neurodivergent needs. We are committed to protecting children's privacy in compliance with applicable laws, including the Children's Online Privacy Protection Act (COPPA) in the United States.
+          </p>
+          <p className="mb-3">
+            <strong>Parental Consent:</strong> We require verifiable parental consent before collecting personal information from children under 13. Parents/guardians must provide consent during the registration process.
+          </p>
+          <p className="mb-3">
+            <strong>Limited Information Collection:</strong> We only collect information that is reasonably necessary for the child to participate in our application's activities, such as:
+          </p>
+          <ul className="list-disc ml-6 mb-3">
+            <li>First name (or nickname)</li>
+            <li>Parent/guardian email address (for account management and consent)</li>
+            <li>Usage data to improve the child's experience</li>
+          </ul>
+          <p className="mb-3">
+            <strong>Parental Rights:</strong> Parents/guardians have the right to:
+          </p>
+          <ul className="list-disc ml-6 mb-3">
+            <li>Review their child's information</li>
+            <li>Request deletion of their child's personal information</li>
+            <li>Refuse further collection or use of their child's information</li>
+            <li>Revoke previously granted consent</li>
+          </ul>
+          <p className="mb-3">
+            <strong>Special Considerations for Neurodivergent Users:</strong> We design our application with accessibility in mind, using clear, simple language and visual supports to help all users, including those with neurodivergent needs, understand how their information is used.
+          </p>
           <p>
-            Our application is not intended for children under 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us.
+            To exercise any of these rights or discuss concerns about your child's privacy, please contact us using the information in the "Contact Us" section.
           </p>
         </section>
 
