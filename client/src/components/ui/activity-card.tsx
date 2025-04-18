@@ -59,7 +59,7 @@ export default function ActivityCard({
     speak(activity.speechText || activity.title);
   };
   
-  // Neurodivergent-friendly design - high contrast, clear visual distinction
+  // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
   return (
     <Draggable draggableId={activity.id} index={index} isDragDisabled={!isDraggable}>
       {(provided, snapshot) => (
@@ -68,7 +68,7 @@ export default function ActivityCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleCardClick}
-          className={`rounded-md ${isInSchedule ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-[72px] h-[72px] sm:w-20 sm:h-20'} flex flex-col items-center justify-between cursor-pointer
+          className={`rounded-lg ${isInSchedule ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-[80px] h-[80px] sm:w-24 sm:h-24'} flex flex-col items-center justify-between cursor-pointer
             ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md hover:shadow-lg'}
             ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
               activity.bgColor === 'green-400' ? 'bg-green-400' : 
@@ -90,30 +90,6 @@ export default function ActivityCard({
             <div className="flex flex-col items-center justify-between w-full h-full">
               <div className="flex-grow flex items-center justify-center w-full h-3/4">
                 {activity.imageSrc ? (
-                  <div className="w-full h-full p-0.5 flex items-center justify-center">
-                    <img 
-                      src={activity.imageSrc} 
-                      alt={activity.title}
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxHeight: "75%" }}
-                    />
-                  </div>
-                ) : (
-                  <i className={`${activity.icon} text-sm sm:text-xl text-gray-800`}></i>
-                )}
-              </div>
-              <div className="w-full flex justify-center items-center">
-                <span className="text-[10px] sm:text-[11px] text-gray-800 bg-white bg-opacity-70 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                  {activity.title}
-                </span>
-              </div>
-            </div>
-          ) : (
-            // Original layout for activity selection cards
-            <>
-              {/* Image/Icon container with responsive sizing - reduced height for image area */}
-              <div className="flex-grow flex items-center justify-center w-full h-3/4">
-                {activity.imageSrc ? (
                   <div className="w-full h-full p-1 flex items-center justify-center">
                     <img 
                       src={activity.imageSrc} 
@@ -123,18 +99,40 @@ export default function ActivityCard({
                     />
                   </div>
                 ) : (
-                  <i className={`${activity.icon} text-sm sm:text-xl text-gray-800`}></i>
+                  <i className={`${activity.icon} text-base sm:text-2xl text-gray-800`}></i>
+                )}
+              </div>
+              <div className="w-full flex justify-center items-center">
+                <span className="text-[11px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                  {activity.title}
+                </span>
+              </div>
+            </div>
+          ) : (
+            // Original layout for activity selection cards
+            <>
+              {/* Image/Icon container with responsive sizing */}
+              <div className="flex-grow flex items-center justify-center w-full h-3/4">
+                {activity.imageSrc ? (
+                  <div className="w-full h-full p-1.5 flex items-center justify-center">
+                    <img 
+                      src={activity.imageSrc} 
+                      alt={activity.title}
+                      className="max-w-full max-h-full object-contain"
+                      style={{ maxHeight: "85%" }}
+                    />
+                  </div>
+                ) : (
+                  <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800`}></i>
                 )}
               </div>
               
-              {/* Text container - more mobile-friendly */}
-              <div className="w-full bg-white bg-opacity-75 rounded-sm py-0.5 sm:py-1 px-1 text-center">
-                <span className="font-medium text-[10px] sm:text-[12px] leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
+              {/* Text container - more accessible */}
+              <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-1 px-1 text-center">
+                <span className="font-medium text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
               </div>
             </>
           )}
-          
-{/* All remove buttons are now handled externally to match the schedule section exactly */}
         </div>
       )}
     </Draggable>
