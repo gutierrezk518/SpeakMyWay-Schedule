@@ -537,6 +537,20 @@ export default function Schedule() {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
   
+  // Event handler for clearing search when any card is clicked
+  useEffect(() => {
+    const handleClearSearch = () => {
+      console.log("Clearing search from card click event");
+      setSearchQuery('');
+    };
+    
+    document.addEventListener('clearSearchOnCardClick', handleClearSearch);
+    
+    return () => {
+      document.removeEventListener('clearSearchOnCardClick', handleClearSearch);
+    };
+  }, []);
+  
   // Handle adding cards to schedule when clicked
   useEffect(() => {
     // Event handler for adding cards to schedule when clicked
@@ -544,11 +558,6 @@ export default function Schedule() {
       const activity = event.detail?.activity;
       const sourceArea = event.detail?.sourceArea;
       if (!activity) return;
-      
-      // Always clear the search query when any card is clicked
-      if (searchQuery) {
-        setSearchQuery('');
-      }
       
       // If the card was clicked from within the schedule area, don't add it again
       if (sourceArea === "schedule") {
@@ -760,14 +769,11 @@ export default function Schedule() {
                       minHeight: isPortrait ? '100px' : '200px',
                       maxHeight: isPortrait ? '100px' : '100%'
                     }}
-                    className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center space-x-12'
-                      : 'overflow-y-auto rounded-md p-2 grid grid-cols-1 gap-4 auto-rows-max place-items-center'
-                    } ${
+                    className={`${
                       snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
-                    }`}
+                    } rounded-md p-2 w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
                       <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
@@ -775,24 +781,26 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                        <div key={activity.id} className={`relative flex-shrink-0 ${!isPortrait && 'w-14 h-14 mx-auto'}`}>
-                          <ActivityCard 
-                            activity={activity} 
-                            index={index}
-                            showRemoveButton={true}
-                            categoryId={selectedCategory}
-                            isDraggable={true}
-                          />
-                          <button 
-                            className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
-                            onClick={() => removeActivity(index)}
-                            aria-label="Remove activity"
-                          >
-                            <i className="ri-close-line text-[8px]"></i>
-                          </button>
-                        </div>
-                      ))
+                      <div className={isPortrait ? 'flex overflow-x-auto space-x-16 pb-2 w-full' : 'grid grid-cols-1 gap-6'}>
+                        {currentSchedule.map((activity: ScheduleActivity, index: number) => (
+                          <div key={activity.id} className={`relative ${isPortrait ? 'flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
+                            <ActivityCard 
+                              activity={activity} 
+                              index={index}
+                              showRemoveButton={true}
+                              categoryId={selectedCategory}
+                              isDraggable={true}
+                            />
+                            <button 
+                              className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
+                              onClick={() => removeActivity(index)}
+                              aria-label="Remove activity"
+                            >
+                              <i className="ri-close-line text-[8px]"></i>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     )}
                     {provided.placeholder}
                   </div>

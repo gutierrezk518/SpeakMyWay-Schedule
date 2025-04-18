@@ -46,7 +46,11 @@ export default function ActivityCard({
     
     console.log("Card clicked:", activity.title, "Source area:", sourceArea, "isInSchedule:", isInSchedule);
                       
-    // Custom event to add card to schedule when clicked
+    // First, dispatch a custom event specifically to clear search
+    const clearSearchEvent = new CustomEvent('clearSearchOnCardClick', {});
+    document.dispatchEvent(clearSearchEvent);
+    
+    // Then, dispatch the regular event to add card to schedule
     const event = new CustomEvent('addCardToSchedule', { 
       detail: { 
         activity,
