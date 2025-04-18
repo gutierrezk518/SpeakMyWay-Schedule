@@ -343,7 +343,6 @@ function AppContent() {
               <p className="text-gray-700 mb-2">You can customize the experience by visiting the customize page:</p>
               <ul className="list-disc list-inside ml-2 space-y-1 text-gray-700">
                 <li>Adjust voice settings</li>
-                <li>Add personalized communication cards</li>
                 <li>Modify display preferences</li>
                 <li>Access privacy settings and parental controls</li>
               </ul>
@@ -351,7 +350,13 @@ function AppContent() {
           </div>
           <DialogFooter>
             <Button 
-              onClick={() => setWelcomeDialogOpen(false)}
+              onClick={() => {
+                // Play welcome voice message
+                import('@/lib/tts').then(({ speak }) => {
+                  speak(`Welcome ${inputName}! Let's get going!`);
+                });
+                setWelcomeDialogOpen(false);
+              }}
               className="w-full sm:w-auto"
             >
               Let's Get Started
