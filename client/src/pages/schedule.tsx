@@ -77,11 +77,22 @@ export default function Schedule() {
           : selectedCategory === 'vacation'
             ? [...(customActivityCards['vacation'] || [])]
             : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
+            
+  // Filter activities by search query if one exists
+  const filteredActivities = searchQuery 
+    ? categoryActivities.filter(activity => {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+          activity.title.toLowerCase().includes(searchLower) || 
+          (activity.speechText && activity.speechText.toLowerCase().includes(searchLower))
+        );
+      })
+    : categoryActivities;
   
   // Calculate pagination
-  const totalPages = Math.ceil(categoryActivities.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
   const startIndex = (activitiesPage - 1) * itemsPerPage;
-  const visibleActivities = categoryActivities.slice(startIndex, startIndex + itemsPerPage);
+  const visibleActivities = filteredActivities.slice(startIndex, startIndex + itemsPerPage);
   
   // Handle drag end event
   const onDragEnd = useCallback((result: DropResult) => {
@@ -667,6 +678,33 @@ export default function Schedule() {
                 </div>
               )}
               
+              {/* Search bar above categories */}
+              <div className="p-2 border-b border-gray-200 bg-blue-50">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="relative w-full max-w-md">
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Search for activities..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <i className="ri-search-line text-gray-400"></i>
+                    </div>
+                    {searchQuery && (
+                      <button 
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                        onClick={() => setSearchQuery('')}
+                        title="Clear search"
+                      >
+                        <i className="ri-close-circle-line"></i>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+                
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 bg-blue-50">
                 <div className="flex flex-wrap gap-1 justify-center">
