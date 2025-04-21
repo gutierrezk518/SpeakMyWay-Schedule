@@ -814,7 +814,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
@@ -837,14 +837,16 @@ export default function Schedule() {
                                 </button>
                               </div>
                             ) : (
-                              // Landscape mode: Show circle with checkmark
-                              <button 
-                                className="absolute -top-2 -right-2 p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-7 h-7 flex items-center justify-center"
-                                onClick={() => removeActivity(index)}
-                                aria-label="Mark as completed"
-                              >
-                                <i className="ri-check-line text-base font-bold"></i>
-                              </button>
+                              // Landscape mode: Show circle with checkmark to the left of the card
+                              <div className="absolute top-0 -left-12 h-full flex items-center">
+                                <button 
+                                  className="p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-8 h-8 flex items-center justify-center"
+                                  onClick={() => removeActivity(index)}
+                                  aria-label="Mark as completed"
+                                >
+                                  <i className="ri-check-line text-lg font-bold"></i>
+                                </button>
+                              </div>
                             )}
                           </div>
                         ))}
