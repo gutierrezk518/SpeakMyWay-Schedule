@@ -288,11 +288,14 @@ export default function Schedule() {
       setScheduleData(newSchedule);
     }
     
-    // No longer need to handle reordering within activity cards section as it's not draggable anymore
+    // Reordering within activity cards section - prevent it
+    if (source.droppableId === "activity-cards" && destination.droppableId === "activity-cards") {
+      // We don't want to allow reordering within the activity cards section
+      // So we do nothing here
+      return;
+    }
     
-    // If adding from activity cards to schedule - this should no longer happen
-    // since we made activity cards not draggable, but we'll keep this code commented for reference
-    /* 
+    // If adding from activity cards to schedule
     if (source.droppableId === "activity-cards" && destination.droppableId === "schedule") {
       try {
         const activityToAdd = visibleActivities[source.index];
@@ -320,7 +323,6 @@ export default function Schedule() {
         console.error("Error adding activity to schedule:", error);
       }
     }
-    */
     
     // NEW: If adding to favorites category by dragging
     if (source.droppableId === "activity-cards" && 
@@ -366,15 +368,17 @@ export default function Schedule() {
     const { source } = start;
     setIsDragging(true); // Set dragging state to true
     
-    // Activity cards are no longer draggable, only handle schedule and favorites
-    if (source.droppableId === "schedule") {
+    if (source.droppableId === "activity-cards") {
+      const draggedActivity = visibleActivities[source.index];
+      setDraggedItem(draggedActivity);
+    } else if (source.droppableId === "schedule") {
       const draggedActivity = currentSchedule[source.index];
       setDraggedItem(draggedActivity);
     } else if (source.droppableId === "favorites") {
       const draggedActivity = favoriteActivities[source.index];
       setDraggedItem(draggedActivity);
     }
-  }, [currentSchedule, favoriteActivities]);
+  }, [visibleActivities, currentSchedule, favoriteActivities]);
   
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
@@ -1121,19 +1125,30 @@ export default function Schedule() {
                     )}
                   </Droppable>
                 ) : (
-                  // Regular activity cards - not draggable for reordering
-                  <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 bg-white">
-                    {visibleActivities.map((activity: ScheduleActivity, index: number) => (
-                      <div key={activity.id} className="relative">
-                        <ActivityCard
-                          activity={activity}
-                          index={index}
-                          isDraggable={false} // Set to false to prevent reordering
-                          categoryId={selectedCategory}
-                        />
+                  // Regular activity cards - draggable but with disabled reordering
+                  <Droppable droppableId="activity-cards" direction="horizontal" isDropDisabled={true}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 ${
+                          snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
+                        }`}
+                      >
+                        {visibleActivities.map((activity: ScheduleActivity, index: number) => (
+                          <div key={activity.id} className="relative">
+                            <ActivityCard
+                              activity={activity}
+                              index={index}
+                              isDraggable={true} // Enable dragging
+                              categoryId={selectedCategory}
+                            />
+                          </div>
+                        ))}
+                        {provided.placeholder}
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </Droppable>
                 )}
               </div>
               
