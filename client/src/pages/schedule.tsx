@@ -1048,7 +1048,13 @@ export default function Schedule() {
                         className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Search for activities..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          // If user starts typing, reset to "all" category to search all cards
+                          if (e.target.value.length > 0 && selectedCategory !== 'all') {
+                            handleCategoryChange('all');
+                          }
+                        }}
                         autoFocus
                       />
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
