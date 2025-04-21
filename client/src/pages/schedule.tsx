@@ -861,36 +861,6 @@ export default function Schedule() {
                 </div>
               )}
               
-              {/* Search bar above categories - conditionally shown */}
-              {showSearchBar && (
-                <div className="p-2 border-b border-gray-200 bg-blue-50">
-                  <div className="flex items-center justify-center mb-2">
-                    <div className="relative w-full max-w-md">
-                      <input 
-                        type="text" 
-                        className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Search for activities..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        autoFocus
-                      />
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <i className="ri-search-line text-gray-400"></i>
-                      </div>
-                      {searchQuery && (
-                        <button 
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                          onClick={() => setSearchQuery('')}
-                          title="Clear search"
-                        >
-                          <i className="ri-close-circle-line"></i>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-                
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 bg-blue-50">
                 <div className="flex flex-wrap gap-1 justify-center">
@@ -905,8 +875,8 @@ export default function Schedule() {
                       const newState = !showSearchBar;
                       setShowSearchBar(newState);
                       
+                      // When clicking search, always reset to 'all' to search all cards
                       if (newState) {
-                        // When opening search, clear category filters and reset to 'all'
                         handleCategoryChange('all');
                       }
                       
@@ -1067,6 +1037,36 @@ export default function Schedule() {
                   </button>
                 </div>
               </div>
+              
+              {/* Search bar below categories - conditionally shown */}
+              {showSearchBar && (
+                <div className="p-2 border-b border-gray-200 bg-blue-50">
+                  <div className="flex items-center justify-center">
+                    <div className="relative w-full max-w-md">
+                      <input 
+                        type="text" 
+                        className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search for activities..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        autoFocus
+                      />
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i className="ri-search-line text-gray-400"></i>
+                      </div>
+                      {searchQuery && (
+                        <button 
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          onClick={() => setSearchQuery('')}
+                          title="Clear search"
+                        >
+                          <i className="ri-close-circle-line"></i>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {/* Activity cards - main area with extra padding at bottom on larger screens */}
               <div className="flex-grow overflow-auto bg-white p-2 pb-2 md:pb-16">
