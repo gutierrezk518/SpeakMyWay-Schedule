@@ -816,7 +816,7 @@ export default function Schedule() {
                     ) : (
                       <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                          <div key={activity.id} className={`relative ${isPortrait ? 'flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
+                          <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
                               activity={activity} 
                               index={index}
@@ -824,13 +824,28 @@ export default function Schedule() {
                               categoryId={selectedCategory}
                               isDraggable={true}
                             />
-                            <button 
-                              className="absolute -top-1 -right-1 p-0 bg-red-100 text-red-500 hover:bg-red-200 rounded-full text-xs shadow-sm z-40 border border-red-300 w-4 h-4 flex items-center justify-center"
-                              onClick={() => removeActivity(index)}
-                              aria-label="Remove activity"
-                            >
-                              <i className="ri-close-line text-[8px]"></i>
-                            </button>
+                            
+                            {isPortrait ? (
+                              // Portrait mode: Show remove button below card
+                              <div className="mt-1 w-full text-center">
+                                <button 
+                                  className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                  onClick={() => removeActivity(index)}
+                                  aria-label="Remove activity"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ) : (
+                              // Landscape mode: Show circle with checkmark
+                              <button 
+                                className="absolute -top-2 -right-2 p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-7 h-7 flex items-center justify-center"
+                                onClick={() => removeActivity(index)}
+                                aria-label="Mark as completed"
+                              >
+                                <i className="ri-check-line text-base font-bold"></i>
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>
