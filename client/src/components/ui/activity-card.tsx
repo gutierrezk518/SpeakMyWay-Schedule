@@ -63,89 +63,112 @@ export default function ActivityCard({
     // Removed to fix the double-speaking issue on iOS
   };
   
-  // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
-  return (
-    <Draggable draggableId={activity.id} index={index} isDragDisabled={!isDraggable}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onClick={handleCardClick}
-          className={`rounded-lg ${
-            // For cards in schedule section:
-            isInSchedule 
-              ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 
-              // For cards in activity selection:
-              // Use smaller size on phones, larger on tablets & computers
-              : 'w-[56px] h-[56px] xs:w-[64px] xs:h-[64px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
-            } flex flex-col items-center justify-between cursor-pointer
-            ${snapshot.isDragging ? 'shadow-xl transform scale-105' : 'shadow-md hover:shadow-lg'}
-            ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
-              activity.bgColor === 'green-400' ? 'bg-green-400' : 
-              activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
-              activity.bgColor === 'blue-400' ? 'bg-blue-400' : 
-              activity.bgColor === 'orange-300' ? 'bg-orange-300' : 
-              activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
-              activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
-              activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
-            text-gray-800`}
-          style={{
-            ...provided.draggableProps.style,
-            opacity: snapshot.isDragging ? 0.9 : 1,
-            transition: 'all 0.2s ease'
-          }}
-        >
-          {isInSchedule ? (
-            // Compact horizontal layout for schedule cards
-            <div className="flex flex-col items-center justify-between w-full h-full">
-              <div className="flex-grow flex items-center justify-center w-full h-3/4">
-                {activity.imageSrc ? (
-                  <div className="w-full h-full p-1 flex items-center justify-center">
-                    <img 
-                      src={activity.imageSrc} 
-                      alt={activity.title}
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxHeight: "80%" }}
-                    />
-                  </div>
-                ) : (
-                  <i className={`${activity.icon} text-base sm:text-2xl text-gray-800`}></i>
-                )}
+  // Create a common card UI based on where it's used
+  const cardContent = (isDragging = false) => (
+    <>
+      {isInSchedule ? (
+        // Compact horizontal layout for schedule cards
+        <div className="flex flex-col items-center justify-between w-full h-full">
+          <div className="flex-grow flex items-center justify-center w-full h-3/4">
+            {activity.imageSrc ? (
+              <div className="w-full h-full p-1 flex items-center justify-center">
+                <img 
+                  src={activity.imageSrc} 
+                  alt={activity.title}
+                  className="max-w-full max-h-full object-contain"
+                  style={{ maxHeight: "80%" }}
+                />
               </div>
-              <div className="w-full flex justify-center items-center">
-                <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                  {activity.title}
-                </span>
-              </div>
-            </div>
-          ) : (
-            // Original layout for activity selection cards
-            <>
-              {/* Image/Icon container with responsive sizing */}
-              <div className="flex-grow flex items-center justify-center w-full h-3/4">
-                {activity.imageSrc ? (
-                  <div className="w-full h-full p-1.5 flex items-center justify-center">
-                    <img 
-                      src={activity.imageSrc} 
-                      alt={activity.title}
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxHeight: "85%" }}
-                    />
-                  </div>
-                ) : (
-                  <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800`}></i>
-                )}
-              </div>
-              
-              {/* Text container - more accessible */}
-              <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
-                <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
-              </div>
-            </>
-          )}
+            ) : (
+              <i className={`${activity.icon} text-base sm:text-2xl text-gray-800`}></i>
+            )}
+          </div>
+          <div className="w-full flex justify-center items-center">
+            <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              {activity.title}
+            </span>
+          </div>
         </div>
+      ) : (
+        // Original layout for activity selection cards
+        <>
+          {/* Image/Icon container with responsive sizing */}
+          <div className="flex-grow flex items-center justify-center w-full h-3/4">
+            {activity.imageSrc ? (
+              <div className="w-full h-full p-1.5 flex items-center justify-center">
+                <img 
+                  src={activity.imageSrc} 
+                  alt={activity.title}
+                  className="max-w-full max-h-full object-contain"
+                  style={{ maxHeight: "85%" }}
+                />
+              </div>
+            ) : (
+              <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800`}></i>
+            )}
+          </div>
+          
+          {/* Text container - more accessible */}
+          <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
+            <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
+          </div>
+        </>
       )}
-    </Draggable>
+    </>
   );
+  
+  // Common class names for card
+  const cardClassNames = `rounded-lg ${
+    // For cards in schedule section:
+    isInSchedule 
+      ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 
+      // For cards in activity selection:
+      // Use smaller size on phones, larger on tablets & computers
+      : 'w-[56px] h-[56px] xs:w-[64px] xs:h-[64px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
+    } flex flex-col items-center justify-between cursor-pointer
+    shadow-md hover:shadow-lg
+    ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
+      activity.bgColor === 'green-400' ? 'bg-green-400' : 
+      activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
+      activity.bgColor === 'blue-400' ? 'bg-blue-400' : 
+      activity.bgColor === 'orange-300' ? 'bg-orange-300' : 
+      activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
+      activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
+      activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
+    text-gray-800`;
+  
+  // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
+  if (isDraggable) {
+    // For elements that need to be draggable (schedule items and favorites)
+    return (
+      <Draggable draggableId={activity.id} index={index} isDragDisabled={false}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            onClick={handleCardClick}
+            className={`${cardClassNames} ${snapshot.isDragging ? 'shadow-xl transform scale-105' : ''}`}
+            style={{
+              ...provided.draggableProps.style,
+              opacity: snapshot.isDragging ? 0.9 : 1,
+              transition: 'all 0.2s ease'
+            }}
+          >
+            {cardContent(snapshot.isDragging)}
+          </div>
+        )}
+      </Draggable>
+    );
+  } else {
+    // For non-draggable elements (regular activity cards)
+    return (
+      <div 
+        onClick={handleCardClick}
+        className={cardClassNames}
+      >
+        {cardContent(false)}
+      </div>
+    );
+  }
 }
