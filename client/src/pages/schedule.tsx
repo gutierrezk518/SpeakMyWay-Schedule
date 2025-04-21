@@ -1121,22 +1121,25 @@ export default function Schedule() {
                           </div>
                         ) : (
                           favoriteActivities.map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="relative inline-block rounded p-1">
+                            <div key={activity.id} className="relative flex flex-col items-center rounded p-1">
                               <ActivityCard
                                 activity={activity}
                                 index={index}
                                 isDraggable={true}
                                 categoryId="favorites"
                               />
-                              <div className="mt-1 w-full text-center">
-                                <button 
-                                  className="px-1 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
-                                  onClick={() => toggleFavorite(activity)}
-                                  aria-label="Remove from favorites"
-                                >
-                                  Remove
-                                </button>
-                              </div>
+                              {/* Only show remove buttons when not dragging */}
+                              {!isDragging && (
+                                <div className="mt-1 w-full flex justify-center">
+                                  <button 
+                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                    onClick={() => toggleFavorite(activity)}
+                                    aria-label="Remove from favorites"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           ))
                         )}
