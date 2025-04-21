@@ -148,6 +148,7 @@ export default function Schedule() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activitiesPage, setActivitiesPage] = useState(1);
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
+  const [isDragging, setIsDragging] = useState(false); // Track when drag is in progress
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
@@ -258,6 +259,7 @@ export default function Schedule() {
   const onDragEnd = useCallback((result: DropResult) => {
     const { source, destination } = result;
     setDraggedItem(null);
+    setIsDragging(false); // Set dragging state to false
     
     // If dropped outside a droppable area
     if (!destination) return;
@@ -390,6 +392,8 @@ export default function Schedule() {
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
     const { source } = start;
+    setIsDragging(true); // Set dragging state to true
+    
     if (source.droppableId === "activity-cards") {
       const draggedActivity = visibleActivities[source.index];
       setDraggedItem(draggedActivity);
@@ -825,28 +829,31 @@ export default function Schedule() {
                               isDraggable={true}
                             />
                             
-                            {isPortrait ? (
-                              // Portrait mode: Show remove button below card
-                              <div className="mt-1 w-full text-center">
-                                <button 
-                                  className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
-                                  onClick={() => removeActivity(index)}
-                                  aria-label="Remove activity"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            ) : (
-                              // Landscape mode: Show circle with checkmark to the left of the card
-                              <div className="absolute top-0 -left-12 h-full flex items-center">
-                                <button 
-                                  className="p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-8 h-8 flex items-center justify-center"
-                                  onClick={() => removeActivity(index)}
-                                  aria-label="Mark as completed"
-                                >
-                                  <i className="ri-check-line text-lg font-bold"></i>
-                                </button>
-                              </div>
+                            {/* Only show remove buttons when not dragging */}
+                            {!isDragging && (
+                              isPortrait ? (
+                                // Portrait mode: Show remove button below card
+                                <div className="mt-1 w-full text-center">
+                                  <button 
+                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                    onClick={() => removeActivity(index)}
+                                    aria-label="Remove activity"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              ) : (
+                                // Landscape mode: Show circle with checkmark to the left of the card
+                                <div className="absolute top-0 -left-12 h-full flex items-center">
+                                  <button 
+                                    className="p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-8 h-8 flex items-center justify-center"
+                                    onClick={() => removeActivity(index)}
+                                    aria-label="Mark as completed"
+                                  >
+                                    <i className="ri-check-line text-lg font-bold"></i>
+                                  </button>
+                                </div>
+                              )
                             )}
                           </div>
                         ))}
