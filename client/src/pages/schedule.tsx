@@ -912,9 +912,9 @@ export default function Schedule() {
                         className={`${snapshot.isDraggingOver ? 'scale-110 transition-transform' : ''}`}
                       >
                         <button
-                          className={`px-2 py-1 rounded-md text-xs ${
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                             selectedCategory === 'favorites' 
-                            ? 'bg-yellow-500 text-white font-medium shadow-sm' 
+                            ? 'bg-yellow-500 text-white font-medium md:font-semibold shadow-sm' 
                             : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                           } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
                           ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
@@ -935,9 +935,9 @@ export default function Schedule() {
                   
                   {/* Dressing Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'dressing' 
-                      ? 'bg-rose-500 text-white font-medium shadow-sm' 
+                      ? 'bg-rose-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
                     }`}
                     onClick={() => handleCategoryChange('dressing')}
@@ -948,9 +948,9 @@ export default function Schedule() {
                   
                   {/* Holiday Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'holiday' 
-                      ? 'bg-orange-500 text-white font-medium shadow-sm' 
+                      ? 'bg-orange-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                     }`}
                     onClick={() => handleCategoryChange('holiday')}
@@ -961,9 +961,9 @@ export default function Schedule() {
                   
                   {/* Hygiene Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'hygiene' 
-                      ? 'bg-teal-500 text-white font-medium shadow-sm' 
+                      ? 'bg-teal-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
                     }`}
                     onClick={() => handleCategoryChange('hygiene')}
@@ -974,9 +974,9 @@ export default function Schedule() {
                   
                   {/* Indoors & Chores Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'indoors-chores' 
-                      ? 'bg-blue-500 text-white font-medium shadow-sm' 
+                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
                     onClick={() => handleCategoryChange('indoors-chores')}
@@ -987,9 +987,9 @@ export default function Schedule() {
                   
                   {/* Meals Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'meals' 
-                      ? 'bg-green-500 text-white font-medium shadow-sm' 
+                      ? 'bg-green-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-green-100 text-green-700 hover:bg-green-200'
                     }`}
                     onClick={() => handleCategoryChange('meals')}
@@ -1000,9 +1000,9 @@ export default function Schedule() {
                   
                   {/* Outdoors & Social Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'outdoors-social' 
-                      ? 'bg-sky-500 text-white font-medium shadow-sm' 
+                      ? 'bg-sky-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
                     }`}
                     onClick={() => handleCategoryChange('outdoors-social')}
@@ -1013,9 +1013,9 @@ export default function Schedule() {
                   
                   {/* Places & Transportation Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'places' 
-                      ? 'bg-purple-500 text-white font-medium shadow-sm' 
+                      ? 'bg-purple-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                     }`}
                     onClick={() => handleCategoryChange('places')}
@@ -1026,9 +1026,9 @@ export default function Schedule() {
                   
                   {/* Vacation Category */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'vacation' 
-                      ? 'bg-indigo-500 text-white font-medium shadow-sm' 
+                      ? 'bg-indigo-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                     }`}
                     onClick={() => handleCategoryChange('vacation')}
