@@ -80,8 +80,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('userLanguage', lang);
   };
   
+  // Check for anonymous user
+  const [anonymousUser, setAnonymousUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('anonymousUser');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Error parsing anonymous user data:", error);
+      return null;
+    }
+  });
+  
   // User profile data with localStorage persistence
   const [userName, setUserNameState] = useState(() => {
+    // If there's an anonymous user, use their nickname
+    if (anonymousUser?.nickname) {
+      return anonymousUser.nickname;
+    }
+    // Otherwise use the stored userName or empty string
     return localStorage.getItem('userName') || "";
   });
   
