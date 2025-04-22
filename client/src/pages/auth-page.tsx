@@ -579,7 +579,11 @@ export default function AuthPage() {
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" className="w-1/2">
+                        <Button 
+                          type="button" 
+                          className="w-1/2"
+                          onClick={() => handleNicknameSubmit({ nickname: "Friend" })}
+                        >
                           Continue
                         </Button>
                       </div>
