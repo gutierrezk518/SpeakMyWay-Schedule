@@ -201,20 +201,20 @@ export default function Customize() {
                     </div>
                   </label>
                   
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${voiceSettings.voiceType === "male" ? 'bg-blue-100 border-blue-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm" ? 'bg-blue-100 border-blue-500' : ''}`}>
                     <input
                       type="radio"
                       name="voiceType"
-                      value="en-US-male-warm"
+                      value="male"
                       className="absolute opacity-0"
-                      checked={voiceSettings.voiceType === "male"}
+                      checked={voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm"}
                       onChange={() => {
-                        handleVoiceTypeChange({ target: { value: "en-US-male-warm" } } as React.ChangeEvent<HTMLSelectElement>);
+                        handleVoiceTypeChange({ target: { value: "male" } } as React.ChangeEvent<HTMLSelectElement>);
                       }}
                     />
                     <div className="flex flex-col items-center">
                       <i className="ri-user-voice-line text-3xl text-blue-500 mb-2"></i>
-                      <span className="font-medium">Warm & Friendly Male Voice</span>
+                      <span className="font-medium">Male Voice</span>
                     </div>
                   </label>
                 </div>
@@ -285,53 +285,6 @@ export default function Customize() {
                 <div className="text-center text-sm mt-1 text-gray-500">
                   {Math.round(voiceSettings.volume * 100)}%
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Display Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-orange-200">
-            <div className="flex items-center mb-4">
-              <i className="ri-eye-line text-2xl mr-2 text-orange-500"></i>
-              <h3 className="font-bold text-lg">How I See Things</h3>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-700 mb-2 font-medium">Text Size</label>
-                <div className="flex items-center">
-                  <span className="mr-2 text-sm">Small</span>
-                  <input 
-                    type="range" 
-                    min="1" 
-                    max="3" 
-                    step="0.5" 
-                    value={displaySettings.textSize}
-                    onChange={handleTextSizeChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 text-sm">Large</span>
-                </div>
-                <div className="mt-2 text-center">
-                  <span className="inline-block px-4 py-1 bg-gray-100 rounded-md" style={{fontSize: `${displaySettings.textSize}rem`}}>
-                    Sample Text
-                  </span>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-gray-50 rounded-md">
-                <label className="flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                    checked={displaySettings.highContrast}
-                    onChange={handleHighContrastChange}
-                  />
-                  <span className="ml-2 font-medium">High Contrast Mode</span>
-                </label>
-                <p className="text-xs text-gray-500 mt-1 ml-7">
-                  Makes cards and buttons easier to see with stronger colors
-                </p>
               </div>
             </div>
           </div>
