@@ -283,18 +283,19 @@ export default function Customize() {
                     <button 
                       className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
                       onClick={() => {
-                        // US English Male
-                        const voices = window.speechSynthesis.getVoices();
-                        const usEnglishMale = voices.find(v => 
-                          v.name === "Google US English" || (v.lang === "en-US" && !v.name.toLowerCase().includes("female")));
-                        
-                        if (usEnglishMale) {
-                          const utterance = new SpeechSynthesisUtterance("Hello, I'm the US English Male voice. How does this sound?");
-                          utterance.voice = usEnglishMale;
-                          speechSynthesis.speak(utterance);
-                        } else {
-                          tts.speak("US English Male voice not available on this device.");
-                        }
+                        // Simple direct approach for testing US Male voice
+                        setVoiceSettings(prev => {
+                          const newSettings = {
+                            ...prev,
+                            voiceType: "male",
+                            language: "en-US"
+                          };
+                          
+                          // Apply settings to TTS system
+                          tts.setVoicePreferences(newSettings);
+                          tts.speak("Hello, I'm the US English Male voice. How does this sound?");
+                          return newSettings;
+                        });
                       }}
                     >
                       1. US English Male
@@ -303,15 +304,38 @@ export default function Customize() {
                     <button 
                       className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
                       onClick={() => {
-                        // Microsoft David
-                        const voices = window.speechSynthesis.getVoices();
-                        const davidVoice = voices.find(v => v.name === "Microsoft David - English (United States)");
-                        if (davidVoice) {
-                          const utterance = new SpeechSynthesisUtterance("Hi there, I'm Microsoft David. How do I sound?");
-                          utterance.voice = davidVoice;
-                          speechSynthesis.speak(utterance);
+                        // Test Microsoft David voice directly
+                        const testVoice = () => {
+                          try {
+                            const utterance = new SpeechSynthesisUtterance("Hi there, I'm Microsoft David. How do I sound?");
+                            utterance.rate = voiceSettings.rate;
+                            utterance.volume = voiceSettings.volume;
+                            
+                            const voices = speechSynthesis.getVoices();
+                            console.log("Available voices for testing:", voices.map(v => v.name));
+                            
+                            const davidVoice = voices.find(v => v.name.includes("David"));
+                            if (davidVoice) {
+                              utterance.voice = davidVoice;
+                              console.log("Using voice:", davidVoice.name);
+                              speechSynthesis.speak(utterance);
+                            } else {
+                              tts.speak("Microsoft David voice not available. Using default male voice instead.");
+                            }
+                          } catch (error) {
+                            console.error("Voice test error:", error);
+                            tts.speak("Sorry, there was an error testing this voice. Using default male voice instead.");
+                          }
+                        };
+                        
+                        // Ensure voices are loaded
+                        if (speechSynthesis.getVoices().length) {
+                          testVoice();
                         } else {
-                          tts.speak("Microsoft David voice not available on this device.");
+                          speechSynthesis.onvoiceschanged = () => {
+                            testVoice();
+                            speechSynthesis.onvoiceschanged = null;
+                          };
                         }
                       }}
                     >
@@ -321,16 +345,18 @@ export default function Customize() {
                     <button 
                       className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
                       onClick={() => {
-                        // UK English Male
-                        const voices = window.speechSynthesis.getVoices();
-                        const ukMaleVoice = voices.find(v => v.name === "Google UK English Male");
-                        if (ukMaleVoice) {
-                          const utterance = new SpeechSynthesisUtterance("Hello there, I'm the British male voice. How does this sound to you?");
-                          utterance.voice = ukMaleVoice;
-                          speechSynthesis.speak(utterance);
-                        } else {
-                          tts.speak("UK Male voice not available on this device.");
-                        }
+                        // Set UK English Male using our tts module
+                        setVoiceSettings(prev => {
+                          const newSettings = {
+                            ...prev,
+                            voiceType: "male",
+                            language: "en-GB"
+                          };
+                          
+                          tts.setVoicePreferences(newSettings);
+                          tts.speak("Hello there, I'm the British male voice. How does this sound to you?");
+                          return newSettings;
+                        });
                       }}
                     >
                       3. UK English Male (British)
@@ -339,15 +365,36 @@ export default function Customize() {
                     <button 
                       className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
                       onClick={() => {
-                        // Microsoft Mark
-                        const voices = window.speechSynthesis.getVoices();
-                        const markVoice = voices.find(v => v.name === "Microsoft Mark - English (United States)");
-                        if (markVoice) {
-                          const utterance = new SpeechSynthesisUtterance("Hello, I'm Microsoft Mark. What do you think of my voice?");
-                          utterance.voice = markVoice;
-                          speechSynthesis.speak(utterance);
+                        // Test Microsoft Mark voice directly
+                        const testVoice = () => {
+                          try {
+                            const utterance = new SpeechSynthesisUtterance("Hello, I'm Microsoft Mark. What do you think of my voice?");
+                            utterance.rate = voiceSettings.rate;
+                            utterance.volume = voiceSettings.volume;
+                            
+                            const voices = speechSynthesis.getVoices();
+                            const markVoice = voices.find(v => v.name.includes("Mark"));
+                            if (markVoice) {
+                              utterance.voice = markVoice;
+                              console.log("Using voice:", markVoice.name);
+                              speechSynthesis.speak(utterance);
+                            } else {
+                              tts.speak("Microsoft Mark voice not available. Using default male voice instead.");
+                            }
+                          } catch (error) {
+                            console.error("Voice test error:", error);
+                            tts.speak("Sorry, there was an error testing this voice. Using default male voice instead.");
+                          }
+                        };
+                        
+                        // Ensure voices are loaded
+                        if (speechSynthesis.getVoices().length) {
+                          testVoice();
                         } else {
-                          tts.speak("Microsoft Mark voice not available on this device.");
+                          speechSynthesis.onvoiceschanged = () => {
+                            testVoice();
+                            speechSynthesis.onvoiceschanged = null;
+                          };
                         }
                       }}
                     >
@@ -356,7 +403,7 @@ export default function Customize() {
                   </div>
                   
                   <p className="text-xs text-gray-500 mt-3">
-                    After testing, choose your preferred voice type above. Different devices may have different available voices.
+                    After testing, choose your preferred voice type above. If some voices aren't available on your device, you'll hear a message.
                   </p>
                 </div>
               </div>
