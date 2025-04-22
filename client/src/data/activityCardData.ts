@@ -68,6 +68,8 @@ const coatonImg = "/activity-cards/coaton.png";
 const getdressedImg = "/activity-cards/getdressed.png";
 const pajamasImg = "/activity-cards/pajamas on.png";
 const doctorImg = "/activity-cards/doctor.png";
+const breakImg = "/activity-cards/break.png";
+const musicImg = "/activity-cards/music.png";
 const therapyImg = "/activity-cards/therapy.png";
 const hospitalImg = "/activity-cards/doctor.png";
 const haircutImg = "/activity-cards/haircut.png";
@@ -106,6 +108,7 @@ const imagePath = (imageName: string) => {
     "tv": tvImg,
     "movie": movieImg,
     "phone": phoneImg,
+    "music": musicImg,
     
     // Meals
     "breakfast": breakfastImg,
@@ -161,6 +164,7 @@ const imagePath = (imageName: string) => {
     "blocks": blocksImg,
     "toys": toysImg,
     "puzzle": puzzleImg,
+    "break": breakImg,
     
     // Hygiene
     "bathroom": bathroomImg,
@@ -264,6 +268,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       bgColor: "blue-400",
       imageSrc: imagePath("movie"),
       speechText: "Watch a Movie" 
+    },
+    { 
+      id: "music", 
+      title: "Music", 
+      icon: "ri-music-fill", 
+      bgColor: "blue-400",
+      imageSrc: imagePath("music"),
+      speechText: "Listen to Music"
     },
     { 
       id: "phone", 
