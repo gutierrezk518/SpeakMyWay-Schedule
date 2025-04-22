@@ -459,6 +459,63 @@ export default function Admin() {
           <div className="mb-8">
             <Card>
               <CardHeader>
+                <CardTitle>User Engagement</CardTitle>
+                <CardDescription>
+                  Activity statistics and user engagement metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Most Active Users</h3>
+                    {mostActiveUsersQuery.isLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      </div>
+                    ) : mostActiveUsersQuery.isError ? (
+                      <div className="text-center py-4 text-destructive">
+                        Error loading active users data
+                      </div>
+                    ) : mostActiveUsersQuery.data?.length === 0 ? (
+                      <div className="text-center py-4">
+                        No active user data available
+                      </div>
+                    ) : (
+                      <div className="rounded-md border">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Username</TableHead>
+                              <TableHead>Email</TableHead>
+                              <TableHead>Login Count</TableHead>
+                              <TableHead>Time in System</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {mostActiveUsersQuery.data?.slice(0, 5).map((item: any) => (
+                              <TableRow key={item.user.id}>
+                                <TableCell className="font-medium">{item.user.username}</TableCell>
+                                <TableCell>{item.user.email || "-"}</TableCell>
+                                <TableCell>{item.loginCount}</TableCell>
+                                <TableCell>
+                                  {item.user.createdAt ? 
+                                    formatDistance(new Date(item.user.createdAt), new Date()) : "-"}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
                 <CardTitle>User Management</CardTitle>
                 <CardDescription>
                   View and manage all registered users and their information.
@@ -487,6 +544,7 @@ export default function Admin() {
                           <TableHead>Email</TableHead>
                           <TableHead>Created</TableHead>
                           <TableHead>Last Login</TableHead>
+                          <TableHead>Time in System</TableHead>
                           <TableHead className="w-[100px]">Role</TableHead>
                           <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -510,6 +568,13 @@ export default function Admin() {
                                   {formatDistance(new Date(user.lastLoginAt), new Date(), { addSuffix: true })}
                                 </span>
                               ) : "Never"}
+                            </TableCell>
+                            <TableCell>
+                              {user.createdAt ? (
+                                <span title={`Account created ${format(new Date(user.createdAt), 'PPpp')}`}>
+                                  {formatDistance(new Date(user.createdAt), new Date())}
+                                </span>
+                              ) : "-"}
                             </TableCell>
                             <TableCell>
                               {user.isAdmin ? (
@@ -621,6 +686,26 @@ export default function Admin() {
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right">Last IP</Label>
                     <div className="col-span-3">{selectedUser.lastLoginIp || '-'}</div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Time in System</Label>
+                    <div className="col-span-3">
+                      {selectedUser.createdAt ? formatDistance(new Date(selectedUser.createdAt), new Date()) : '-'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Usage Analytics</Label>
+                    <div className="col-span-3">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-2"
+                        onClick={() => setUserLoginHistoryDialogOpen(true)}
+                      >
+                        <ClipboardList className="h-4 w-4 mr-2" />
+                        View Login History
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
