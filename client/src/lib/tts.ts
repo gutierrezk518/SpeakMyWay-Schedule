@@ -22,7 +22,7 @@ export const voiceTypes = {
   
   // Simplified options for UI
   "female": { name: "Google UK English Female", lang: "en-GB", gender: "female", description: "Female Voice" },
-  "male": { name: "Google UK English Male", lang: "en-GB", gender: "male", description: "Male Voice" },
+  "male": { name: "Google US English", lang: "en-US", gender: "male", description: "Male Voice" },
   
   // Default options
   "default": { name: "Default", lang: "en-US", gender: "neutral", description: "System Default" },
@@ -62,48 +62,46 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   
   // Handle simple "male" and "female" options directly
   if (voiceType === "male") {
-    // Debug available voices to make sure Google UK English Male is there
+    // Debug available voices
     const availableVoiceNames = voices.map(v => v.name);
     console.log("All available voice names:", availableVoiceNames);
     
-    // Find Google UK English Male specifically by exact name
-    const britishMaleVoice = voices.find(v => v.name === "Google UK English Male");
+    // First try to find Google US English specifically (not male/female specific)
+    const usEnglishVoice = voices.find(v => v.name === "Google US English");
     
-    if (britishMaleVoice) {
-      console.log("Found Google UK English Male voice:", {
-        name: britishMaleVoice.name,
-        lang: britishMaleVoice.lang
-      });
-      return britishMaleVoice;
+    if (usEnglishVoice) {
+      console.log("Using Google US English voice");
+      return usEnglishVoice;
     }
     
-    // Fallback to any male voice with "male" in the name but NOT "female"
-    const maleSoundingVoices = voices.filter(v => {
+    // If we can't find Google US English, try other US male voices
+    const usMaleVoice = voices.find(v => 
+      v.name === "Microsoft David - English (United States)" || 
+      v.name === "Microsoft Mark - English (United States)" ||
+      (v.lang === "en-US" && v.name.toLowerCase().includes("male"))
+    );
+    
+    if (usMaleVoice) {
+      console.log("Using US male voice:", usMaleVoice.name);
+      return usMaleVoice;
+    }
+    
+    // Fallback to any male voice 
+    const anyMaleVoice = voices.filter(v => {
       const name = v.name.toLowerCase();
       return name.includes("male") && !name.includes("female");
     });
     
-    if (maleSoundingVoices.length > 0) {
-      console.log("Selected MALE voice (generic):", {
-        name: maleSoundingVoices[0].name,
-        lang: maleSoundingVoices[0].lang
-      });
-      return maleSoundingVoices[0];
+    if (anyMaleVoice.length > 0) {
+      console.log("Using male voice:", anyMaleVoice[0].name);
+      return anyMaleVoice[0];
     }
     
-    // Last resort: use Microsoft David or other common male voices
-    const knownMaleVoices = voices.find(v => 
-      v.name === "Microsoft David - English (United States)" ||
-      v.name === "Google US English Male" ||
-      v.name.includes("Daniel")
-    );
-    
-    if (knownMaleVoices) {
-      console.log("Selected known MALE voice:", {
-        name: knownMaleVoices.name,
-        lang: knownMaleVoices.lang  
-      });
-      return knownMaleVoices;
+    // Last resort: any US English voice
+    const usVoice = voices.find(v => v.lang === "en-US");
+    if (usVoice) {
+      console.log("Using US voice:", usVoice.name);
+      return usVoice;
     }
   }
   
