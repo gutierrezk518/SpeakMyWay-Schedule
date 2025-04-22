@@ -15,8 +15,13 @@ import {
   InsertCoreWord
 } from "@shared/schema";
 
+import session from "express-session";
+
 // Interface for storage operations
 export interface IStorage {
+  // Session store for authentication
+  sessionStore: session.Store;
+
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -80,6 +85,7 @@ export class MemStorage implements IStorage {
   private cardIdCounter: number;
   private settingsIdCounter: number;
   private routineIdCounter: number;
+  sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
@@ -90,6 +96,12 @@ export class MemStorage implements IStorage {
     this.cardIdCounter = 1;
     this.settingsIdCounter = 1;
     this.routineIdCounter = 1;
+    
+    // Create an in-memory session store
+    const MemoryStore = require('memorystore')(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    });
   }
 
   // User operations

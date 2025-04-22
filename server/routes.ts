@@ -17,6 +17,9 @@ import * as csvParser from "csv-parse/sync";
 import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication routes and middleware
+  setupAuth(app);
+  
   // Error handling middleware for Zod validation errors
   const handleZodError = (err: unknown, res: Response) => {
     if (err instanceof ZodError) {
