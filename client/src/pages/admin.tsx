@@ -48,6 +48,10 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useAppContext();
+  
+  // Email test state
+  const [testEmail, setTestEmail] = useState('');
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
   const [selectedTab, setSelectedTab] = useState("users");
   
   // ==== Users Tab ====
@@ -329,6 +333,50 @@ export default function Admin() {
       });
     }
   });
+  
+  // Send test email mutation
+  const sendTestEmail = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await apiRequest("POST", '/api/admin/test-email', { recipientEmail: email });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Test Email Sent",
+        description: data.message || "A test email has been sent successfully.",
+      });
+      setSendingTestEmail(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Sending Test Email",
+        description: error.message || "Failed to send test email. Please check server logs.",
+        variant: "destructive"
+      });
+      setSendingTestEmail(false);
+    }
+  });
+  
+  // Send welcome email to user mutation
+  const sendWelcomeEmail = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await apiRequest("POST", `/api/admin/users/${userId}/send-welcome-email`, {});
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Welcome Email Sent",
+        description: data.message || "Welcome email sent successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Sending Welcome Email",
+        description: error.message || "Failed to send welcome email. Please check server logs.",
+        variant: "destructive"
+      });
+    }
+  });
 
   // Generate mock user signup data for the chart based on users data
   const generateUserSignupData = () => {
@@ -420,6 +468,10 @@ export default function Admin() {
           <TabsTrigger value="corewords">Core Words</TabsTrigger>
           <TabsTrigger value="cards">Activity Cards</TabsTrigger>
           <TabsTrigger value="import-export">Import/Export</TabsTrigger>
+          <TabsTrigger value="email-settings" className="flex items-center gap-1">
+            <Mail className="h-4 w-4" />
+            Email Settings
+          </TabsTrigger>
         </TabsList>
         
         {/* Users Tab */}
@@ -1924,6 +1976,136 @@ export default function Admin() {
                   Clear Selected Files
                 </Button>
               </CardFooter>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        {/* Email Settings Tab */}
+        <TabsContent value="email-settings">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="col-span-1">
+              <CardHeader>
+                <CardTitle>Email Configuration</CardTitle>
+                <CardDescription>
+                  Manage email settings and send test emails
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-5">
+                  <Label htmlFor="test-email">Test Email Address</Label>
+                  <div className="flex gap-2 mt-1.5">
+                    <Input 
+                      id="test-email" 
+                      placeholder="Enter email address" 
+                      value={testEmail}
+                      onChange={(e) => setTestEmail(e.target.value)}
+                    />
+                    <Button 
+                      onClick={() => {
+                        if (!testEmail || !testEmail.includes('@')) {
+                          toast({
+                            title: "Invalid Email",
+                            description: "Please enter a valid email address",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        setSendingTestEmail(true);
+                        sendTestEmail.mutate(testEmail);
+                      }}
+                      disabled={sendingTestEmail || !testEmail}
+                    >
+                      {sendingTestEmail ? 'Sending...' : 'Send Test'}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Send a test email to verify your email configuration
+                  </p>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col items-start space-y-2">
+                <div className="p-4 border rounded-md bg-amber-50 border-amber-200 w-full">
+                  <div className="flex items-start">
+                    <Info className="h-4 w-4 text-amber-500 mr-2 mt-0.5" />
+                    <div>
+                      <h3 className="text-sm font-medium text-amber-800">AWS SES Verification Required</h3>
+                      <p className="text-xs text-amber-700 mt-1">
+                        In AWS SES sandbox mode, both sender and recipient email addresses must be verified in the AWS SES console before sending emails.
+                      </p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        Current sender: <code className="bg-amber-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardFooter>
+            </Card>
+            
+            <Card className="col-span-1 md:col-span-2">
+              <CardHeader>
+                <CardTitle>Email Templates</CardTitle>
+                <CardDescription>
+                  Preview and test email templates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-6">
+                  <div className="border rounded-md p-4">
+                    <h3 className="text-lg font-medium mb-2">Welcome Email</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Sent automatically when a new user registers with an email address
+                    </p>
+                    
+                    <div className="space-y-1 mb-4">
+                      <span className="text-xs font-medium">Features:</span>
+                      <ul className="text-xs space-y-1 list-disc pl-5">
+                        <li>Personalized with username</li>
+                        <li>Application feature highlights</li>
+                        <li>Getting started links</li>
+                        <li>Support contact information</li>
+                        <li>Responsive design for mobile devices</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-gray-50 border rounded-md p-4 mb-4">
+                      <span className="text-xs font-medium block mb-1">Preview:</span>
+                      <div className="text-xs">
+                        <p><strong>Subject:</strong> Welcome to SpeakMyWay, [username]!</p>
+                        <p className="mt-1"><strong>From:</strong> info@speakmyway.com</p>
+                        <p className="mt-1"><strong>To:</strong> [user's email address]</p>
+                        <p className="mt-2 text-muted-foreground italic">Enhanced with HTML formatting, responsive design, and plain text fallback</p>
+                      </div>
+                    </div>
+                    
+                    {usersQuery.data && usersQuery.data.length > 0 && (
+                      <div>
+                        <span className="text-xs font-medium">Send test welcome email to user:</span>
+                        <div className="mt-2 flex flex-col gap-4">
+                          {usersQuery.data.slice(0, 3).map((user: any) => (
+                            <div key={user.id} className="flex items-center justify-between p-2 border rounded-md">
+                              <div>
+                                <span className="font-medium">{user.username}</span>
+                                <span className="text-xs text-muted-foreground block">
+                                  {user.email || 'No email address'}
+                                </span>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => sendWelcomeEmail.mutate(user.id)}
+                                disabled={!user.email}
+                              >
+                                <Mail className="h-4 w-4 mr-1" />
+                                Send Email
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
             </Card>
           </div>
         </TabsContent>
