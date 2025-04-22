@@ -19,7 +19,8 @@ const sesClient = new SESClient({
 });
 
 // The FROM email address must be verified in SES
-const FROM_EMAIL = 'notifications@speakmyway.app'; // Replace with your verified email
+// This email address must be verified in your AWS SES console
+const FROM_EMAIL = 'SpeakMyWay <notifications@speakmyway.app>';
 
 interface EmailOptions {
   to: string | string[];

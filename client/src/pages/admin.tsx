@@ -12,7 +12,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAppContext } from "@/contexts/app-context";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { format, formatDistance } from "date-fns";
+import { format, formatDistance, subDays, eachDayOfInterval } from "date-fns";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
 import { 
   ArrowUpDown, 
   Check, 
@@ -329,6 +330,57 @@ export default function Admin() {
     }
   });
 
+  // Generate mock user signup data for the chart based on users data
+  const generateUserSignupData = () => {
+    if (usersQuery.isLoading || usersQuery.isError || !usersQuery.data) {
+      return [];
+    }
+    
+    // Get last 30 days date range
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 30);
+    
+    // Create an array of dates for the last 30 days
+    const dateRange = eachDayOfInterval({
+      start: thirtyDaysAgo,
+      end: today
+    });
+    
+    // Map each user to their signup date (only using createdAt)
+    const userSignups = usersQuery.data
+      .filter((user: any) => user.createdAt)
+      .map((user: any) => ({
+        date: new Date(user.createdAt).toISOString().split('T')[0] // Format as YYYY-MM-DD
+      }));
+    
+    // Create a map to count signups by date
+    const signupsByDate = new Map();
+    
+    // Initialize all dates with 0 signups
+    dateRange.forEach(date => {
+      const dateStr = date.toISOString().split('T')[0];
+      signupsByDate.set(dateStr, 0);
+    });
+    
+    // Count signups for each date
+    userSignups.forEach((signup: { date: string }) => {
+      if (signupsByDate.has(signup.date)) {
+        signupsByDate.set(signup.date, signupsByDate.get(signup.date) + 1);
+      }
+    });
+    
+    // Convert to array for the chart
+    const chartData = Array.from(signupsByDate, ([date, count]) => ({
+      date,
+      signups: count
+    })).sort((a, b) => a.date.localeCompare(b.date)); // Sort by date
+    
+    return chartData;
+  };
+  
+  // Generate signup data
+  const userSignupData = generateUserSignupData();
+
   // Handle form submissions
   const handleCategorySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -506,6 +558,64 @@ export default function Admin() {
                             ))}
                           </TableBody>
                         </Table>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* User Signup Trend Chart */}
+                  <div className="mt-6">
+                    <h3 className="text-lg font-medium mb-2">User Signup Trend (Last 30 Days)</h3>
+                    {usersQuery.isLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      </div>
+                    ) : usersQuery.isError ? (
+                      <div className="text-center py-4 text-destructive">
+                        Error loading user data
+                      </div>
+                    ) : userSignupData.length === 0 ? (
+                      <div className="text-center py-4">
+                        No user signup data available
+                      </div>
+                    ) : (
+                      <div className="h-80 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={userSignupData}
+                            margin={{
+                              top: 5,
+                              right: 20,
+                              left: 5,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="date" 
+                              tick={{ fontSize: 12 }}
+                              tickFormatter={(value) => {
+                                const date = new Date(value);
+                                return format(date, 'MMM dd');
+                              }}
+                            />
+                            <YAxis 
+                              allowDecimals={false}
+                              tick={{ fontSize: 12 }}
+                            />
+                            <Tooltip 
+                              formatter={(value) => [`${value} signups`, 'Signups']}
+                              labelFormatter={(value) => format(new Date(value), 'MMMM d, yyyy')}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="signups"
+                              stroke="#4F46E5"
+                              strokeWidth={2}
+                              activeDot={{ r: 7 }}
+                              name="New Users"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
                       </div>
                     )}
                   </div>

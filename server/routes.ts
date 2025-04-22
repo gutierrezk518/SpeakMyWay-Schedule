@@ -883,6 +883,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint for admin to send welcome email to a user
+  app.post("/api/admin/users/:id/send-welcome-email", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      // Get user details
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (!user.email) {
+        return res.status(400).json({ message: "User does not have an email address" });
+      }
+      
+      // Import email service here to avoid circular dependencies
+      const { sendEmail, generateWelcomeEmailTemplate } = await import('./utils/email-service');
+      
+      // Generate and send welcome email
+      const { html, text } = generateWelcomeEmailTemplate(user.username, user.id);
+      
+      const emailResult = await sendEmail({
+        to: user.email,
+        subject: 'Welcome to SpeakMyWay!',
+        htmlBody: html,
+        textBody: text
+      });
+      
+      if (emailResult) {
+        return res.status(200).json({ message: `Welcome email sent to ${user.email}` });
+      } else {
+        return res.status(500).json({ message: "Failed to send welcome email" });
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      return res.status(500).json({ message: "Failed to send welcome email" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
