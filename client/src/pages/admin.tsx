@@ -22,6 +22,7 @@ import {
   Download, 
   Info, 
   Lock, 
+  Mail,
   MoreHorizontal,
   Search, 
   Users 
@@ -621,6 +622,34 @@ export default function Admin() {
                                     <Lock className="h-4 w-4 mr-2" />
                                     {user.isAdmin ? "Remove Admin" : "Make Admin"}
                                   </DropdownMenuItem>
+                                  {user.email && (
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        // Create function to send email manually
+                                        toast({
+                                          title: "Sending welcome email",
+                                          description: `Sending welcome email to ${user.username} at ${user.email}`
+                                        });
+                                        apiRequest("POST", `/api/admin/users/${user.id}/send-welcome-email`)
+                                          .then(() => {
+                                            toast({
+                                              title: "Email sent",
+                                              description: `Welcome email sent to ${user.email}`
+                                            });
+                                          })
+                                          .catch(err => {
+                                            toast({
+                                              title: "Error sending email",
+                                              description: err.message || "Failed to send welcome email",
+                                              variant: "destructive"
+                                            });
+                                          });
+                                      }}
+                                    >
+                                      <Mail className="h-4 w-4 mr-2" />
+                                      Send Welcome Email
+                                    </DropdownMenuItem>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>

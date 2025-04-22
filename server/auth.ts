@@ -8,6 +8,7 @@ import { storage } from "./storage";
 import { User as UserType } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
+import { sendEmail, generateWelcomeEmailTemplate } from "./utils/email-service";
 
 declare global {
   namespace Express {
@@ -95,6 +96,28 @@ export function setupAuth(app: Express) {
         ...req.body,
         password: await hashPassword(req.body.password),
       });
+
+      // Send welcome email if user has provided an email
+      if (user.email) {
+        try {
+          const { html, text } = generateWelcomeEmailTemplate(user.username, user.id);
+          
+          sendEmail({
+            to: user.email,
+            subject: 'Welcome to SpeakMyWay!',
+            htmlBody: html,
+            textBody: text
+          }).catch(err => {
+            console.error('Failed to send welcome email:', err);
+            // Don't reject registration if email fails
+          });
+          
+          console.log(`Welcome email queued for ${user.username} at ${user.email}`);
+        } catch (emailError) {
+          console.error('Error preparing welcome email:', emailError);
+          // Continue with registration even if email preparation fails
+        }
+      }
 
       req.login(user, (err) => {
         if (err) return next(err);
