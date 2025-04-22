@@ -33,7 +33,7 @@ async function testEmail() {
     // Send the test email
     const result = await sendEmail({
       to: testEmail,
-      subject: 'Test Email from SpeakMyWay',
+      subject: 'Welcome to SpeakMyWay, TestUser! [TEST EMAIL]',
       htmlBody: html,
       textBody: text
     });

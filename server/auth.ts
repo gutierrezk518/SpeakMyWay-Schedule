@@ -104,7 +104,7 @@ export function setupAuth(app: Express) {
           
           sendEmail({
             to: user.email,
-            subject: 'Welcome to SpeakMyWay!',
+            subject: `Welcome to SpeakMyWay, ${user.username}!`,
             htmlBody: html,
             textBody: text
           }).catch(err => {

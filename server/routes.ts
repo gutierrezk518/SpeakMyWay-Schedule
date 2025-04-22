@@ -910,7 +910,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const emailResult = await sendEmail({
         to: user.email,
-        subject: 'Welcome to SpeakMyWay!',
+        subject: `Welcome to SpeakMyWay, ${user.username}!`,
         htmlBody: html,
         textBody: text
       });

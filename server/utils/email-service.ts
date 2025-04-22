@@ -68,101 +68,226 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOption
 // Template for welcome emails
 export function generateWelcomeEmailTemplate(username: string, userId: number): { html: string; text: string } {
   const appUrl = process.env.APP_URL || 'https://speakmyway.app';
+  const currentYear = new Date().getFullYear();
+  const supportEmail = 'support@speakmyway.app';
   
   const html = `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
       <title>Welcome to SpeakMyWay</title>
       <style>
+        @media only screen and (max-width: 480px) {
+          .mobile-padding {
+            padding: 10px !important;
+          }
+          .mobile-font {
+            font-size: 16px !important;
+          }
+        }
         body {
-          font-family: Arial, sans-serif;
+          font-family: 'Segoe UI', Arial, sans-serif;
           line-height: 1.6;
           color: #333;
+          background-color: #f9f9f9;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
           max-width: 600px;
           margin: 0 auto;
-          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .header {
           background-color: #4F46E5;
-          padding: 20px;
+          padding: 24px;
           text-align: center;
           color: white;
-          border-radius: 8px 8px 0 0;
+        }
+        .logo {
+          margin-bottom: 16px;
         }
         .content {
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-top: none;
-          border-radius: 0 0 8px 8px;
+          padding: 32px 24px;
+        }
+        .welcome-text {
+          font-size: 18px;
+          margin-bottom: 24px;
+        }
+        .feature-box {
+          background-color: #f5f7ff;
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 24px;
+        }
+        .feature-list {
+          padding-left: 20px;
+        }
+        .feature-list li {
+          margin-bottom: 10px;
+        }
+        .button-container {
+          text-align: center;
+          margin: 32px 0;
         }
         .button {
           display: inline-block;
           background-color: #4F46E5;
           color: white;
           text-decoration: none;
-          padding: 10px 20px;
+          padding: 12px 32px;
           border-radius: 4px;
-          margin-top: 15px;
+          font-weight: bold;
+          font-size: 16px;
+        }
+        .button:hover {
+          background-color: #4338ca;
+        }
+        .divider {
+          height: 1px;
+          background-color: #eaeaea;
+          margin: 24px 0;
+        }
+        .help-section {
+          background-color: #f5f7ff;
+          padding: 16px;
+          border-radius: 8px;
+          margin-bottom: 24px;
         }
         .footer {
-          margin-top: 20px;
+          background-color: #f5f7ff;
+          padding: 16px;
           text-align: center;
           font-size: 12px;
           color: #666;
         }
+        .social-icons {
+          margin: 16px 0;
+        }
+        .social-icon {
+          display: inline-block;
+          margin: 0 8px;
+        }
+        a {
+          color: #4F46E5;
+          text-decoration: underline;
+        }
+        .info-badge {
+          display: inline-block;
+          background-color: #e5e7eb;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 14px;
+          margin-right: 8px;
+        }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h1>Welcome to SpeakMyWay!</h1>
-      </div>
-      <div class="content">
-        <p>Hello ${username},</p>
-        <p>Welcome to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application!</p>
-        <p>Your account has been successfully created with User ID: <strong>${userId}</strong></p>
-        <p>With SpeakMyWay, you can:</p>
-        <ul>
-          <li>Create custom communication cards</li>
-          <li>Organize daily routines</li>
-          <li>Customize your experience with different voices and languages</li>
-        </ul>
-        <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-        <a href="${appUrl}/schedule" class="button">Go to My Dashboard</a>
-        <p style="margin-top: 20px;">Thank you for choosing SpeakMyWay!</p>
-      </div>
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} SpeakMyWay. All rights reserved.</p>
-        <p>This email was sent to confirm your registration with SpeakMyWay.</p>
+      <div class="container">
+        <div class="header">
+          <!-- You can add a logo image here -->
+          <!-- <img src="${appUrl}/logo.png" alt="SpeakMyWay Logo" width="180" height="auto" class="logo"> -->
+          <h1 style="margin: 0; font-size: 28px;">Welcome to SpeakMyWay!</h1>
+        </div>
+        
+        <div class="content">
+          <p class="welcome-text">Hello <strong>${username}</strong>,</p>
+          
+          <p>We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!</p>
+          
+          <div class="feature-box">
+            <p><strong>Your account info:</strong></p>
+            <p>Username: <strong>${username}</strong></p>
+            <p>User ID: <span class="info-badge">${userId}</span></p>
+          </div>
+          
+          <p><strong>With SpeakMyWay, you can:</strong></p>
+          <ul class="feature-list">
+            <li>Create custom communication cards with personalized images and text</li>
+            <li>Set up and organize daily routines for better predictability</li>
+            <li>Choose from different voice options to match preferences</li>
+            <li>Switch between languages for multilingual support</li>
+            <li>Track progress and usage patterns over time</li>
+          </ul>
+          
+          <div class="button-container">
+            <a href="${appUrl}/schedule" class="button">Get Started Now</a>
+          </div>
+          
+          <div class="help-section">
+            <p><strong>Need help getting started?</strong></p>
+            <p>Check out our <a href="${appUrl}/help">quick start guide</a> or contact our support team at <a href="mailto:${supportEmail}">${supportEmail}</a> if you have any questions.</p>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <p>Thank you for choosing SpeakMyWay to support communication needs. We're excited to be part of your journey!</p>
+          
+          <p>Warmly,<br>The SpeakMyWay Team</p>
+        </div>
+        
+        <div class="footer">
+          <p>© ${currentYear} SpeakMyWay. All rights reserved.</p>
+          <p>
+            <a href="${appUrl}/privacy">Privacy Policy</a> | 
+            <a href="${appUrl}/terms">Terms of Service</a> | 
+            <a href="${appUrl}/contact">Contact Us</a>
+          </p>
+          <p>This is a transactional email regarding your SpeakMyWay account.</p>
+          <!-- You can add social media icons here -->
+          <!-- <div class="social-icons">
+            <a href="#" class="social-icon"><img src="${appUrl}/twitter-icon.png" alt="Twitter" width="24"></a>
+            <a href="#" class="social-icon"><img src="${appUrl}/facebook-icon.png" alt="Facebook" width="24"></a>
+            <a href="#" class="social-icon"><img src="${appUrl}/instagram-icon.png" alt="Instagram" width="24"></a>
+          </div> -->
+        </div>
       </div>
     </body>
     </html>
   `;
 
   const text = `
-Welcome to SpeakMyWay!
+WELCOME TO SPEAKMYWAY!
 
 Hello ${username},
 
-Welcome to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application!
+We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!
 
-Your account has been successfully created with User ID: ${userId}
+YOUR ACCOUNT INFO:
+Username: ${username}
+User ID: ${userId}
 
-With SpeakMyWay, you can:
-- Create custom communication cards
-- Organize daily routines
-- Customize your experience with different voices and languages
+WITH SPEAKMYWAY, YOU CAN:
+- Create custom communication cards with personalized images and text
+- Set up and organize daily routines for better predictability
+- Choose from different voice options to match preferences
+- Switch between languages for multilingual support
+- Track progress and usage patterns over time
 
-If you have any questions or need assistance, please don't hesitate to contact our support team.
+GET STARTED NOW: ${appUrl}/schedule
 
-Visit your dashboard at: ${appUrl}/schedule
+NEED HELP GETTING STARTED?
+Check out our quick start guide at ${appUrl}/help or contact our support team at ${supportEmail} if you have any questions.
 
-Thank you for choosing SpeakMyWay!
+Thank you for choosing SpeakMyWay to support communication needs. We're excited to be part of your journey!
 
-© ${new Date().getFullYear()} SpeakMyWay. All rights reserved.
-This email was sent to confirm your registration with SpeakMyWay.
+Warmly,
+The SpeakMyWay Team
+
+---
+© ${currentYear} SpeakMyWay. All rights reserved.
+Privacy Policy: ${appUrl}/privacy
+Terms of Service: ${appUrl}/terms
+Contact Us: ${appUrl}/contact
+
+This is a transactional email regarding your SpeakMyWay account.
   `;
 
   return { html, text };
