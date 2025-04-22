@@ -2077,11 +2077,11 @@ export default function Admin() {
                       </div>
                     </div>
                     
-                    {usersQuery.data && usersQuery.data.length > 0 && (
+                    {usersQuery.data && Array.isArray(usersQuery.data) && usersQuery.data.length > 0 && (
                       <div>
                         <span className="text-xs font-medium">Send test welcome email to user:</span>
                         <div className="mt-2 flex flex-col gap-4">
-                          {usersQuery.data.slice(0, 3).map((user: any) => (
+                          {(usersQuery.data as any[]).slice(0, 3).map((user: any) => (
                             <div key={user.id} className="flex items-center justify-between p-2 border rounded-md">
                               <div>
                                 <span className="font-medium">{user.username}</span>
@@ -2093,10 +2093,19 @@ export default function Admin() {
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => sendWelcomeEmail.mutate(user.id)}
-                                disabled={!user.email}
+                                disabled={!user.email || sendWelcomeEmail.isPending}
                               >
-                                <Mail className="h-4 w-4 mr-1" />
-                                Send Email
+                                {sendWelcomeEmail.isPending ? (
+                                  <>
+                                    <div className="h-4 w-4 mr-1 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Mail className="h-4 w-4 mr-1" />
+                                    Send Email
+                                  </>
+                                )}
                               </Button>
                             </div>
                           ))}
