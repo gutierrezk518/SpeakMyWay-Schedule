@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
+import { Link } from "wouter";
 
 function Router() {
   return (
@@ -35,15 +36,46 @@ function Router() {
 
 function AppContent() {
   // Simple version without welcome dialog
-  const { setUserName } = useAppContext();
+  const { 
+    setUserName,
+    setUserBirthday,
+    setUserEmail,
+    setUserConsentGiven,
+    setUserConsentDate,
+    setUserMarketingConsent,
+    setUserDataRetentionConsent
+  } = useAppContext();
 
   useEffect(() => {
     // Load any existing user data from localStorage if available
     const storedName = localStorage.getItem("speakMyWayUser");
+    const storedBirthday = localStorage.getItem("speakMyWayBirthday");
+    const storedEmail = localStorage.getItem("speakMyWayEmail");
+    const storedConsentGiven = localStorage.getItem("speakMyWayConsentGiven");
+    const storedConsentDate = localStorage.getItem("speakMyWayConsentDate");
+    const storedMarketingConsent = localStorage.getItem("speakMyWayMarketingConsent");
+    const storedDataRetentionConsent = localStorage.getItem("speakMyWayDataRetentionConsent");
+    
     if (storedName) {
       setUserName(storedName);
+      if (storedBirthday) setUserBirthday(storedBirthday);
+      if (storedEmail) setUserEmail(storedEmail);
+      
+      // Set consent data in context
+      if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
+      if (storedConsentDate) setUserConsentDate(storedConsentDate);
+      if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
+      if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
     }
-  }, [setUserName]);
+  }, [
+    setUserName, 
+    setUserBirthday, 
+    setUserEmail, 
+    setUserConsentGiven, 
+    setUserConsentDate, 
+    setUserMarketingConsent, 
+    setUserDataRetentionConsent
+  ]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
