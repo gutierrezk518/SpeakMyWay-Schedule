@@ -61,7 +61,7 @@ const bathImg = "/activity-cards/bath.png";
 const washfaceImg = "/activity-cards/washface.png";
 const cleanupImg = "/activity-cards/cleanup.png";
 const feedpetImg = "/activity-cards/feedpet.png";
-const settableImg = "/activity-cards/cleanup.png"; // Temporarily using cleanup image for "Set the Table"
+const settableImg = "/activity-cards/settable.png"; 
 const shoesoffImg = "/activity-cards/shoesoff.png";
 const shoesonImg = "/activity-cards/shoeson.png";
 const coatonImg = "/activity-cards/coaton.png";
@@ -97,6 +97,16 @@ const hotelImg = "/activity-cards/hotel.png";
 const beachImg = "/activity-cards/beach.png";
 const zooImg = "/activity-cards/zoo.png";
 const schoolImg = "/activity-cards/school.png";
+const sportsImg = "/activity-cards/sports.png";
+const ballImg = "/activity-cards/ball.png";
+const scooterImg = "/activity-cards/scooter.png";
+const slideImg = "/activity-cards/slide.png";
+const soccerImg = "/activity-cards/soccer.png";
+const basketballImg = "/activity-cards/basketball.png";
+const baseballImg = "/activity-cards/baseball.png";
+const footballImg = "/activity-cards/football.png";
+const playoutsideimg = "/activity-cards/playoutside.png"
+const dessertImg = "/activity-cards/dessert.png"
 
 // Helper function to get image path
 const imagePath = (imageName: string) => {
@@ -120,6 +130,8 @@ const imagePath = (imageName: string) => {
     "juice": juiceImg,
     "milk": milkImg,
     "chocolatemilk": chocolatemilkImg,
+    "dessert": dessertImg,
+    
       
     
     // Arts
@@ -157,6 +169,15 @@ const imagePath = (imageName: string) => {
     "waterplay": waterplayImg,
     "park": parkImg,
     "walkdog": walkdogImg,
+    "sports": sportsImg,
+    "ball": ballImg,
+    "scooter": scooterImg,
+    "slide": slideImg,
+    "soccer": soccerImg,
+    "basketball": basketballImg,
+    "baseball": baseballImg,
+    "football": footballImg,
+    "playoutside": playoutsideimg,
     
     // Indoors
     "quiettime": quiettimeImg,
@@ -359,6 +380,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("chocolatemilk"),
       speechText: "Drink Chocolate Milk" 
     },
+    { 
+      id: "dessert", 
+      title: "Dessert", 
+      icon: "ri-dessert-fill", 
+      bgColor: "blue-300",
+      imageSrc: imagePath("dessert"),
+      speechText: "Eat Dessert" 
+    },
   ],
   "arts": [
     { 
@@ -560,6 +589,78 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("walkdog"),
       speechText: "Walk the Dog" 
     },
+    { 
+      id: "ball", 
+      title: "Ball", 
+      icon: "ri-Ball-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("ball"),
+      speechText: "Play with the Ball" 
+    },
+    { 
+      id: "baseball", 
+      title: "Baseball", 
+      icon: "ri-Ball-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("baseball"),
+      speechText: "Play Baseball" 
+    },
+    { 
+      id: "basketball", 
+      title: "Basketball", 
+      icon: "ri-basketball-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("basketball"),
+      speechText: "Play Basketball" 
+    },
+    { 
+      id: "football", 
+      title: "Football", 
+      icon: "ri-football-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("football"),
+      speechText: "Play Football" 
+    },
+    { 
+      id: "playoutside", 
+      title: "Play Outside", 
+      icon: "ri-playoutside-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("playoutside"),
+      speechText: "Play Outside" 
+    },
+    { 
+      id: "Scooter", 
+      title: "Scooter", 
+      icon: "ri-Scooter-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("scooter"),
+      speechText: "Go On Your Scooter" 
+    },
+    { 
+      id: "Slide", 
+      title: "Slide", 
+      icon: "ri-Slide-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("slide"),
+      speechText: "Go Down the Slide" 
+    },
+    { 
+      id: "Soccer", 
+      title: "Soccer", 
+      icon: "ri-soccer-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("soccer"),
+      speechText: "Play Soccer" 
+    },
+    { 
+      id: "sports", 
+      title: "Sports", 
+      icon: "ri-sports-fill", 
+      bgColor: "green-400",
+      imageSrc: imagePath("sports"),
+      speechText: "Play Sports" 
+    },
   ],
   "toys": [
     { 
@@ -587,6 +688,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       bgColor: "blue-400",
       imageSrc: imagePath("quiettime"),
       speechText: "Have quiet Time" 
+    },
+    { 
+      id: "Break", 
+      title: "Break", 
+      icon: "ri-Break-fill", 
+      bgColor: "blue-400",
+      imageSrc: imagePath("break"),
+      speechText: "Take a Break" 
     },
     { 
       id: "book", 

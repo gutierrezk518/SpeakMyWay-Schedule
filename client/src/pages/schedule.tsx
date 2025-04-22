@@ -867,9 +867,9 @@ export default function Schedule() {
                 <div className="flex flex-wrap gap-1 justify-center">
                   {/* Search button */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       showSearchBar
-                      ? 'bg-cyan-500 text-white font-medium shadow-sm' 
+                      ? 'bg-cyan-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
                     }`}
                     onClick={() => {
@@ -892,9 +892,9 @@ export default function Schedule() {
                 
                   {/* All category button */}
                   <button
-                    className={`px-2 py-1 rounded-md text-xs ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'all' 
-                      ? 'bg-blue-500 text-white font-medium shadow-sm' 
+                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                     onClick={() => handleCategoryChange('all')}
