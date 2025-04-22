@@ -87,27 +87,8 @@ export default function AuthPage() {
     setLocation("/schedule");
   };
 
-  // Set up a timer to show registration prompt after one hour of anonymous use
-  useEffect(() => {
-    if (anonymousUser) {
-      const sessionStartTime = new Date(anonymousUser.sessionStartTime).getTime();
-      const oneHourInMs = 60 * 60 * 1000;
-      const timeoutId = setTimeout(() => {
-        // Show registration prompt after one hour
-        if (document.visibilityState === 'visible') {
-          const shouldPrompt = window.confirm(
-            "Looks like you like this app! Consider registering to save your settings across devices. Would you like to create an account now?"
-          );
-          if (shouldPrompt) {
-            setLocation("/auth");
-            setActiveTab("register");
-          }
-        }
-      }, oneHourInMs - (Date.now() - sessionStartTime));
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [anonymousUser, setLocation]);
+  // Anonymous user handling without registration prompt
+  // No prompt will be shown after a time period
 
   // Form setup for login
   const loginForm = useForm<z.infer<typeof loginSchema>>({
