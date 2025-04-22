@@ -8,13 +8,15 @@ import {
   insertRoutineSchema,
   insertCategorySchema,
   insertSubcategorySchema,
-  insertCoreWordSchema
+  insertCoreWordSchema,
+  insertLoginHistorySchema
 } from "@shared/schema";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import multer from "multer";
 import * as csvParser from "csv-parse/sync";
 import { setupAuth } from "./auth";
+import { isAdmin } from "./middleware/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes and middleware
@@ -788,6 +790,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set up authentication
   setupAuth(app);
+
+  // Admin routes - protected by isAdmin middleware
+  app.get("/api/admin/users", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const users = await storage.getAllUsers();
+      return res.json(users);
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve users" });
+    }
+  });
+
+  app.get("/api/admin/users/count", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const count = await storage.getUserCount();
+      return res.json({ count });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve user count" });
+    }
+  });
+
+  app.get("/api/admin/users/new", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const days = parseInt(req.query.days as string) || 30;
+      const count = await storage.getNewUsersCount(days);
+      return res.json({ count, days });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve new user count" });
+    }
+  });
+
+  app.get("/api/admin/users/active", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const days = parseInt(req.query.days as string) || 30;
+      const count = await storage.getActiveUsersCount(days);
+      return res.json({ count, days });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve active user count" });
+    }
+  });
+
+  app.get("/api/admin/users/most-active", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const users = await storage.getMostActiveUsers(limit);
+      return res.json(users);
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve most active users" });
+    }
+  });
+  
+  app.patch("/api/admin/users/:id/admin", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const { isAdmin: makeAdmin } = req.body;
+      if (typeof makeAdmin !== 'boolean') {
+        return res.status(400).json({ message: "isAdmin must be a boolean value" });
+      }
+      
+      const user = await storage.makeUserAdmin(userId, makeAdmin);
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to update user admin status" });
+    }
+  });
+  
+  app.get("/api/admin/users/:id/login-history", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const loginHistory = await storage.getUserLoginHistory(userId);
+      return res.json(loginHistory);
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve login history" });
+    }
+  });
+  
+  app.post("/api/admin/login-history", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const loginData = insertLoginHistorySchema.parse(req.body);
+      const history = await storage.recordLogin(loginData);
+      return res.status(201).json(history);
+    } catch (err) {
+      return handleZodError(err, res);
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

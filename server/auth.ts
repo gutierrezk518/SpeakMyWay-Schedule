@@ -106,9 +106,69 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: any, user: UserType | false, info: any) => {
+    passport.authenticate("local", async (err: any, user: UserType | false, info: any) => {
       if (err) return next(err);
-      if (!user) return res.status(401).json(info || { message: "Authentication failed" });
+      
+      // Record login attempt
+      if (user) {
+        try {
+          // Get client IP address
+          const ip = req.headers['x-forwarded-for'] as string || 
+                    req.socket.remoteAddress || 
+                    'unknown';
+                    
+          // Get user agent info
+          const userAgent = req.headers['user-agent'] || 'unknown';
+          
+          // Extract browser and device info from user agent (simplified)
+          const browser = userAgent.match(/(chrome|safari|firefox|edge|msie|trident(?=\/))\/?\s*(\d+)/i)?.[1] || 'unknown';
+          const device = userAgent.match(/(mobile|tablet|android|iphone|ipad)/i)?.[1] || 'desktop';
+          
+          // Record successful login
+          await storage.recordLogin({
+            userId: user.id,
+            ipAddress: ip,
+            userAgent,
+            browser,
+            device,
+            success: true
+          });
+          
+          // Update user's last login info
+          await storage.updateUserLoginInfo(user.id, ip);
+        } catch (error) {
+          console.error('Failed to record login:', error);
+          // Continue with login even if recording fails
+        }
+      } else {
+        try {
+          // Record failed login attempt if username was provided
+          const username = req.body.username;
+          if (username) {
+            const existingUser = await storage.getUserByUsername(username);
+            if (existingUser) {
+              // If username exists but login failed, record the attempt
+              const ip = req.headers['x-forwarded-for'] as string || 
+                        req.socket.remoteAddress || 
+                        'unknown';
+              const userAgent = req.headers['user-agent'] || 'unknown';
+              
+              await storage.recordLogin({
+                userId: existingUser.id,
+                ipAddress: ip,
+                userAgent,
+                browser: 'unknown',
+                device: 'unknown',
+                success: false
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Failed to record failed login:', error);
+        }
+        
+        return res.status(401).json(info || { message: "Authentication failed" });
+      }
       
       req.login(user, (err: any) => {
         if (err) return next(err);
