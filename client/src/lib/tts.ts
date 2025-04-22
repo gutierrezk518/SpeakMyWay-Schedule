@@ -20,6 +20,10 @@ export const voiceTypes = {
   "es-MX-female": { name: "Paulina", lang: "es-MX", gender: "female", description: "Mexican Female" },
   "es-MX-male": { name: "Juan", lang: "es-MX", gender: "male", description: "Mexican Male" },
   
+  // Simplified options for UI
+  "female": { name: "Samantha", lang: "en-US", gender: "female", description: "Female Voice" },
+  "male": { name: "Alex", lang: "en-US", gender: "male", description: "Male Voice" },
+  
   // Default options
   "default": { name: "Default", lang: "en-US", gender: "neutral", description: "System Default" },
 };
@@ -56,6 +60,47 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   const voiceType = voicePreferences.voiceType;
   console.log("Selected voice type:", voiceType);
   
+  // Handle simple "male" and "female" options directly
+  if (voiceType === "male") {
+    // Try to find a male voice in English
+    const englishMaleVoices = voices.filter(v => {
+      const name = v.name.toLowerCase();
+      const isEnglish = v.lang.includes("en");
+      const isMale = name.includes("male") || name.includes("man") || 
+                    name.includes("david") || name.includes("mark") || 
+                    name.includes("guy") || name.includes("google uk english male");
+      return isEnglish && isMale;
+    });
+    
+    if (englishMaleVoices.length > 0) {
+      console.log("Selected MALE voice:", {
+        name: englishMaleVoices[0].name,
+        lang: englishMaleVoices[0].lang
+      });
+      return englishMaleVoices[0];
+    }
+  }
+  
+  if (voiceType === "female" || voiceType === "default") {
+    // Try to find a female voice in English
+    const englishFemaleVoices = voices.filter(v => {
+      const name = v.name.toLowerCase();
+      const isEnglish = v.lang.includes("en");
+      const isFemale = name.includes("female") || name.includes("woman") || 
+                      name.includes("girl") || name.includes("zira") || 
+                      name.includes("google uk english female");
+      return isEnglish && isFemale;
+    });
+    
+    if (englishFemaleVoices.length > 0) {
+      console.log("Selected FEMALE voice:", {
+        name: englishFemaleVoices[0].name,
+        lang: englishFemaleVoices[0].lang
+      });
+      return englishFemaleVoices[0];
+    }
+  }
+  
   // If voiceType is just "default", return the first voice for the language
   if (voiceType === "default") {
     // Get voices for the selected language
@@ -86,12 +131,12 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
         const name = v.name.toLowerCase();
         if (gender === "female") {
           return name.includes("female") || name.includes("woman") || 
-                 name.includes("girl") || name.includes("f ") || 
+                 name.includes("girl") || name.includes("zira") || 
                  name.includes("fiona") || name.includes("google uk english female");
         } else if (gender === "male") {
           return name.includes("male") || name.includes("man") || 
-                 name.includes("guy") || name.includes("m ") || 
-                 name.includes("david") || name.includes("google uk english male");
+                 name.includes("guy") || name.includes("david") || 
+                 name.includes("mark") || name.includes("google uk english male");
         } else if (gender === "child") {
           return name.includes("child") || name.includes("kid") || 
                  name.includes("junior") || name.includes("young");
