@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // User table
 export const users = pgTable("users", {
@@ -17,8 +18,53 @@ export const users = pgTable("users", {
   consentDate: text("consent_date"),
   marketingConsent: boolean("marketing_consent").default(false),
   dataRetentionConsent: boolean("data_retention_consent").default(false),
+  isAdmin: boolean("is_admin").default(false), // Admin flag for admin dashboard access
+  lastLogin: timestamp("last_login"), // Track user's last login time
+  lastLoginIp: text("last_login_ip"), // Store IP for security purposes
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
+
+// Define user relations
+export const usersRelations = relations(users, ({ many }) => ({
+  loginHistory: many(userLoginHistory),
+  passwordResets: many(passwordResetTokens)
+}));
+
+// User login history for analytics and security
+export const userLoginHistory = pgTable("user_login_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  loginTime: timestamp("login_time").defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  device: text("device"),
+  browser: text("browser"),
+  success: boolean("success").default(true),
+});
+
+export const userLoginHistoryRelations = relations(userLoginHistory, ({ one }) => ({
+  user: one(users, {
+    fields: [userLoginHistory.userId],
+    references: [users.id], 
+  }),
+}));
+
+// Password reset tokens
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: serial("id").primaryKey(), 
+  userId: integer("user_id").references(() => users.id).notNull(),
+  token: text("token").notNull().unique(),
+  expires: timestamp("expires").notNull(),
+  used: boolean("used").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const passwordResetTokensRelations = relations(passwordResetTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [passwordResetTokens.userId],
+    references: [users.id],
+  }),
+}));
 
 // Categories
 export const categories = pgTable("categories", {
@@ -167,6 +213,22 @@ export const insertRoutineSchema = createInsertSchema(routines).pick({
   activities: true,
 });
 
+// Insert schemas for new tables
+export const insertLoginHistorySchema = createInsertSchema(userLoginHistory).pick({
+  userId: true,
+  ipAddress: true,
+  userAgent: true,
+  device: true,
+  browser: true,
+  success: true
+});
+
+export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).pick({
+  userId: true,
+  token: true,
+  expires: true
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -188,3 +250,10 @@ export type Settings = typeof settings.$inferSelect;
 
 export type InsertRoutine = z.infer<typeof insertRoutineSchema>;
 export type Routine = typeof routines.$inferSelect;
+
+// Types for new admin-related tables
+export type InsertLoginHistory = z.infer<typeof insertLoginHistorySchema>;
+export type LoginHistory = typeof userLoginHistory.$inferSelect;
+
+export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
