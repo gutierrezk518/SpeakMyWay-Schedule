@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
-import { voiceTypes, speak, setVoicePreferences } from "@/lib/tts";
+import * as tts from "@/lib/tts";
 
 export default function Customize() {
   const { 
@@ -24,7 +24,7 @@ export default function Customize() {
     setCurrentPage("/customize");
     
     // Apply current voice settings on component load
-    setVoicePreferences(voiceSettings);
+    tts.setVoicePreferences(voiceSettings);
   }, [setCurrentPage, voiceSettings]);
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +55,7 @@ export default function Customize() {
       };
       
       // Apply settings to TTS system
-      setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings);
       return newSettings;
     });
   };
@@ -69,7 +69,7 @@ export default function Customize() {
       };
       
       // Apply settings to TTS system
-      setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings);
       return newSettings;
     });
   };
@@ -83,7 +83,7 @@ export default function Customize() {
       };
       
       // Apply settings to TTS system
-      setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings);
       return newSettings;
     });
   };
@@ -97,7 +97,7 @@ export default function Customize() {
       };
       
       // Apply settings to TTS system
-      setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings);
       return newSettings;
     });
   };
@@ -106,10 +106,10 @@ export default function Customize() {
     setIsTestingVoice(true);
     
     // Ensure the current voice settings are applied before testing
-    setVoicePreferences(voiceSettings);
+    tts.setVoicePreferences(voiceSettings);
     
     // Speak the test phrase
-    speak(testPhrase);
+    tts.speak(testPhrase);
     
     // Reset testing state after a delay
     setTimeout(() => setIsTestingVoice(false), 3000);
@@ -273,6 +273,91 @@ export default function Customize() {
                       "I need help with my homework, please."
                     </button>
                   </div>
+                </div>
+                
+                {/* Voice Test Panel */}
+                <div className="mt-4 p-3 bg-gray-50 rounded-md border border-gray-200">
+                  <h4 className="text-sm font-medium mb-2">Try Different Male Voices</h4>
+                  
+                  <div className="grid grid-cols-1 gap-2 text-xs">
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        // US English Male
+                        const voices = window.speechSynthesis.getVoices();
+                        const usEnglishMale = voices.find(v => 
+                          v.name === "Google US English" || (v.lang === "en-US" && !v.name.toLowerCase().includes("female")));
+                        
+                        if (usEnglishMale) {
+                          const utterance = new SpeechSynthesisUtterance("Hello, I'm the US English Male voice. How does this sound?");
+                          utterance.voice = usEnglishMale;
+                          speechSynthesis.speak(utterance);
+                        } else {
+                          tts.speak("US English Male voice not available on this device.");
+                        }
+                      }}
+                    >
+                      1. US English Male
+                    </button>
+                    
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        // Microsoft David
+                        const voices = window.speechSynthesis.getVoices();
+                        const davidVoice = voices.find(v => v.name === "Microsoft David - English (United States)");
+                        if (davidVoice) {
+                          const utterance = new SpeechSynthesisUtterance("Hi there, I'm Microsoft David. How do I sound?");
+                          utterance.voice = davidVoice;
+                          speechSynthesis.speak(utterance);
+                        } else {
+                          tts.speak("Microsoft David voice not available on this device.");
+                        }
+                      }}
+                    >
+                      2. Microsoft David
+                    </button>
+                    
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        // UK English Male
+                        const voices = window.speechSynthesis.getVoices();
+                        const ukMaleVoice = voices.find(v => v.name === "Google UK English Male");
+                        if (ukMaleVoice) {
+                          const utterance = new SpeechSynthesisUtterance("Hello there, I'm the British male voice. How does this sound to you?");
+                          utterance.voice = ukMaleVoice;
+                          speechSynthesis.speak(utterance);
+                        } else {
+                          tts.speak("UK Male voice not available on this device.");
+                        }
+                      }}
+                    >
+                      3. UK English Male (British)
+                    </button>
+                    
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        // Microsoft Mark
+                        const voices = window.speechSynthesis.getVoices();
+                        const markVoice = voices.find(v => v.name === "Microsoft Mark - English (United States)");
+                        if (markVoice) {
+                          const utterance = new SpeechSynthesisUtterance("Hello, I'm Microsoft Mark. What do you think of my voice?");
+                          utterance.voice = markVoice;
+                          speechSynthesis.speak(utterance);
+                        } else {
+                          tts.speak("Microsoft Mark voice not available on this device.");
+                        }
+                      }}
+                    >
+                      4. Microsoft Mark
+                    </button>
+                  </div>
+                  
+                  <p className="text-xs text-gray-500 mt-3">
+                    After testing, choose your preferred voice type above. Different devices may have different available voices.
+                  </p>
                 </div>
               </div>
               
