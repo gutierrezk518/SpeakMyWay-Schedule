@@ -84,7 +84,7 @@ export default function AuthPage() {
       isAnonymous: true
     };
     setAnonymousUser(anonymousUserData);
-    setLocation("/");
+    setLocation("/schedule");
   };
 
   // Set up a timer to show registration prompt after one hour of anonymous use
