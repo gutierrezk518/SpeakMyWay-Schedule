@@ -21,7 +21,7 @@ export const voiceTypes = {
   "es-MX-male": { name: "Juan", lang: "es-MX", gender: "male", description: "Mexican Male" },
   
   // Simplified options for UI
-  "female": { name: "Samantha", lang: "en-US", gender: "female", description: "Female Voice" },
+  "female": { name: "Google UK English Female", lang: "en-GB", gender: "female", description: "Female Voice" },
   "male": { name: "Alex", lang: "en-US", gender: "male", description: "Male Voice" },
   
   // Default options
@@ -82,13 +82,26 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   }
   
   if (voiceType === "female" || voiceType === "default") {
-    // Try to find a female voice in English
+    // First, try to get the British female voice specifically
+    const britishFemaleVoice = voices.find(v => 
+      v.name.toLowerCase().includes("uk english female") || 
+      (v.lang === "en-GB" && v.name.toLowerCase().includes("female"))
+    );
+    
+    if (britishFemaleVoice) {
+      console.log("Selected BRITISH FEMALE voice:", {
+        name: britishFemaleVoice.name,
+        lang: britishFemaleVoice.lang
+      });
+      return britishFemaleVoice;
+    }
+    
+    // If no British female voice, try to find any female voice in English
     const englishFemaleVoices = voices.filter(v => {
       const name = v.name.toLowerCase();
       const isEnglish = v.lang.includes("en");
       const isFemale = name.includes("female") || name.includes("woman") || 
-                      name.includes("girl") || name.includes("zira") || 
-                      name.includes("google uk english female");
+                      name.includes("girl") || name.includes("zira");
       return isEnglish && isFemale;
     });
     
