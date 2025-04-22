@@ -783,6 +783,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Set up authentication
+  setupAuth(app);
+
   const httpServer = createServer(app);
   return httpServer;
 }

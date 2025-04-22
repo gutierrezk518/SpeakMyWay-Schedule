@@ -77,7 +77,9 @@ export function setupAuth(app: Express) {
   );
 
   // Serialize and deserialize user for session management
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user: Express.User, done) => {
+    done(null, user.id);
+  });
   
   passport.deserializeUser(async (id: number, done) => {
     try {
@@ -121,14 +123,14 @@ export function setupAuth(app: Express) {
 
   // Login endpoint
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: Express.User | false, info: { message?: string }) => {
       if (err) return next(err);
       
       if (!user) {
         return res.status(401).json({ message: info?.message || "Authentication failed" });
       }
       
-      req.login(user, (err) => {
+      req.login(user, (err: any) => {
         if (err) return next(err);
         // Don't send the password back to the client
         const { password, ...userWithoutPassword } = user;
@@ -152,7 +154,7 @@ export function setupAuth(app: Express) {
     }
     
     // Don't send the password back to the client
-    const { password, ...userWithoutPassword } = req.user as User;
+    const { password, ...userWithoutPassword } = req.user as UserType;
     res.json(userWithoutPassword);
   });
 
