@@ -20,10 +20,16 @@ import {
   subcategories,
   coreWords,
   settings,
-  routines
+  routines,
+  userLoginHistory,
+  passwordResetTokens,
+  LoginHistory,
+  InsertLoginHistory,
+  PasswordResetToken,
+  InsertPasswordResetToken
 } from '@shared/schema';
 import { db } from './db';
-import { eq, and, isNull, desc, or } from 'drizzle-orm';
+import { eq, and, isNull, desc, or, count, gte, lte, sql } from 'drizzle-orm';
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
@@ -454,5 +460,166 @@ export class DatabaseStorage implements IStorage {
       .where(eq(cards.id, id));
     
     return result.rowCount > 0;
+  }
+  
+  // Admin-related operations
+  
+  // Login history
+  async recordLogin(loginData: InsertLoginHistory): Promise<LoginHistory> {
+    const [history] = await db
+      .insert(userLoginHistory)
+      .values(loginData)
+      .returning();
+    
+    return history;
+  }
+  
+  async getUserLoginHistory(userId: number): Promise<LoginHistory[]> {
+    return await db
+      .select()
+      .from(userLoginHistory)
+      .where(eq(userLoginHistory.userId, userId))
+      .orderBy(desc(userLoginHistory.loginTime));
+  }
+  
+  // Password reset tokens
+  async createPasswordResetToken(insertToken: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    const [token] = await db
+      .insert(passwordResetTokens)
+      .values(insertToken)
+      .returning();
+    
+    return token;
+  }
+  
+  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+    const [resetToken] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(
+        and(
+          eq(passwordResetTokens.token, token),
+          eq(passwordResetTokens.used, false)
+        )
+      );
+    
+    return resetToken;
+  }
+  
+  async usePasswordResetToken(token: string): Promise<boolean> {
+    const result = await db
+      .update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.token, token))
+      .returning();
+    
+    return result.length > 0;
+  }
+  
+  // Admin operations
+  async updateUserLoginInfo(userId: number, ip: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        lastLogin: new Date(), 
+        lastLoginIp: ip 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+    
+    return user;
+  }
+  
+  async getAllUsers(): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .orderBy(desc(users.lastLogin));
+  }
+  
+  async getAdminUsers(): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .where(eq(users.isAdmin, true));
+  }
+  
+  async makeUserAdmin(userId: number, isAdmin: boolean = true): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ isAdmin })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+    
+    return user;
+  }
+  
+  // Admin analytics
+  async getUserCount(): Promise<number> {
+    const [result] = await db
+      .select({ count: count() })
+      .from(users);
+    
+    return result.count;
+  }
+  
+  async getNewUsersCount(days: number): Promise<number> {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    
+    const [result] = await db
+      .select({ count: count() })
+      .from(users)
+      .where(gte(users.createdAt, date));
+    
+    return result.count;
+  }
+  
+  async getActiveUsersCount(days: number): Promise<number> {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    
+    const [result] = await db
+      .select({ count: count() })
+      .from(users)
+      .where(gte(users.lastLogin, date));
+    
+    return result.count;
+  }
+  
+  async getMostActiveUsers(limit: number = 10): Promise<{ user: User, loginCount: number }[]> {
+    type Result = { userId: number, loginCount: number };
+    
+    // Get login counts
+    const loginCounts = await db
+      .select({
+        userId: userLoginHistory.userId,
+        loginCount: count()
+      })
+      .from(userLoginHistory)
+      .groupBy(userLoginHistory.userId)
+      .orderBy(desc(sql`count(*)`))
+      .limit(limit) as Result[];
+    
+    // Fetch user details for each ID
+    const result = await Promise.all(
+      loginCounts.map(async ({ userId, loginCount }) => {
+        const user = await this.getUser(userId);
+        if (!user) {
+          throw new Error(`User with id ${userId} not found`);
+        }
+        return { user, loginCount };
+      })
+    );
+    
+    return result;
   }
 }
