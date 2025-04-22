@@ -56,7 +56,7 @@ export default function AuthPage() {
   const [_, setLocation] = useLocation();
   const [anonymousUser, setAnonymousUser] = useLocalStorage<AnonymousUser | null>("anonymousUser", null);
   const { user, loginMutation, registerMutation } = useAuth();
-  
+
   // Nickname form for anonymous users
   const nicknameForm = useForm<z.infer<typeof nicknameSchema>>({
     resolver: zodResolver(nicknameSchema),
@@ -64,18 +64,18 @@ export default function AuthPage() {
       nickname: ""
     }
   });
-  
+
   // Auto-focus first input on page load
   useEffect(() => {
     const firstInput = document.querySelector('input:not([type="hidden"])') as HTMLInputElement;
     if (firstInput) firstInput.focus();
   }, [activeTab, registrationStep, showNicknamePrompt]);
-  
+
   // Function to handle anonymous access
   const handleAnonymousAccess = () => {
     setShowNicknamePrompt(true);
   };
-  
+
   // Function to save anonymous user and redirect to app
   const handleNicknameSubmit = (data: z.infer<typeof nicknameSchema>) => {
     const anonymousUserData: AnonymousUser = {
@@ -86,7 +86,7 @@ export default function AuthPage() {
     setAnonymousUser(anonymousUserData);
     setLocation("/");
   };
-  
+
   // Set up a timer to show registration prompt after one hour of anonymous use
   useEffect(() => {
     if (anonymousUser) {
@@ -104,11 +104,11 @@ export default function AuthPage() {
           }
         }
       }, oneHourInMs - (Date.now() - sessionStartTime));
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [anonymousUser, setLocation]);
-  
+
   // Form setup for login
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -165,13 +165,13 @@ export default function AuthPage() {
                 : "Join SpeakMyWay to create your personalized communication experience"}
             </CardDescription>
           </CardHeader>
-          
+
           <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-2 mb-4 mx-4">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
-            
+
             {/* Login Form */}
             <TabsContent value="login">
               <CardContent>
@@ -198,7 +198,7 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={loginForm.control}
                       name="password"
@@ -233,7 +233,7 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <Button 
                       type="submit" 
                       className="w-full" 
@@ -245,7 +245,7 @@ export default function AuthPage() {
                 </Form>
               </CardContent>
             </TabsContent>
-            
+
             {/* Registration Form - Progressive Disclosure */}
             <TabsContent value="register">
               <CardContent>
@@ -260,7 +260,7 @@ export default function AuthPage() {
                             <div className="bg-primary h-full w-1/2 rounded-full"></div>
                           </div>
                         </div>
-                        
+
                         <FormField
                           control={registerForm.control}
                           name="username"
@@ -283,7 +283,7 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={registerForm.control}
                           name="password"
@@ -329,7 +329,7 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <Button 
                           type="button" 
                           className="w-full" 
@@ -337,7 +337,7 @@ export default function AuthPage() {
                             // Validate username and password before proceeding
                             const usernameValid = registerForm.trigger('username');
                             const passwordValid = registerForm.trigger('password');
-                            
+
                             // Only proceed if both fields are valid
                             Promise.all([usernameValid, passwordValid]).then(
                               ([isUsernameValid, isPasswordValid]) => {
@@ -352,7 +352,7 @@ export default function AuthPage() {
                         </Button>
                       </>
                     )}
-                    
+
                     {/* Step 2: Personal info and consent */}
                     {registrationStep === 2 && (
                       <>
@@ -362,7 +362,7 @@ export default function AuthPage() {
                             <div className="bg-primary h-full w-full rounded-full"></div>
                           </div>
                         </div>
-                        
+
                         <FormField
                           control={registerForm.control}
                           name="displayName"
@@ -385,7 +385,7 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={registerForm.control}
                           name="email"
@@ -409,7 +409,7 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={registerForm.control}
                           name="birthday"
@@ -432,14 +432,14 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        
+
                         {/* Consent checkboxes */}
                         <div className="space-y-3 border p-4 rounded-md bg-muted/20">
                           <h3 className="font-medium flex items-center gap-2 text-sm">
                             <AlertCircle className="h-4 w-4 text-primary" />
                             Consent Information
                           </h3>
-                          
+
                           <FormField
                             control={registerForm.control}
                             name="consentGiven"
@@ -461,7 +461,7 @@ export default function AuthPage() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={registerForm.control}
                             name="marketingConsent"
@@ -483,7 +483,7 @@ export default function AuthPage() {
                             )}
                           />
                         </div>
-                        
+
                         <div className="flex gap-2">
                           <Button 
                             type="button" 
@@ -493,7 +493,7 @@ export default function AuthPage() {
                           >
                             Back
                           </Button>
-                          
+
                           <Button 
                             type="submit" 
                             className="w-2/3" 
@@ -509,7 +509,7 @@ export default function AuthPage() {
               </CardContent>
             </TabsContent>
           </Tabs>
-          
+
           <CardFooter className="flex flex-col gap-3 mt-2">
             <div className="flex justify-center text-sm text-muted-foreground">
               {activeTab === "login" ? (
@@ -518,7 +518,7 @@ export default function AuthPage() {
                 <p>Already have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("login")}>Login</Button></p>
               )}
             </div>
-            
+
             <div className="text-center">
               <div className="relative mb-3">
                 <div className="absolute inset-0 flex items-center">
@@ -538,7 +538,7 @@ export default function AuthPage() {
               </Button>
             </div>
           </CardFooter>
-          
+
           {/* Nickname prompt modal for anonymous users */}
           {showNicknamePrompt && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -546,7 +546,7 @@ export default function AuthPage() {
                 <CardHeader>
                   <CardTitle className="text-xl">Quick Start</CardTitle>
                   <CardDescription>
-                    Enter a nickname to continue without registering. Your settings won't be saved across sessions.
+                    Enter a Name that the Text to Voice settings in this app will refer to you as. You may click continue and you will be referred to as 'Friend'.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -557,11 +557,11 @@ export default function AuthPage() {
                         name="nickname"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel htmlFor="nickname">Nickname</FormLabel>
+                            <FormLabel htmlFor="nickname">Name</FormLabel>
                             <FormControl>
                               <Input 
                                 id="nickname" 
-                                placeholder="Enter a nickname" 
+                                placeholder="Enter a Name" 
                                 autoFocus 
                                 {...field} 
                               />
@@ -591,7 +591,7 @@ export default function AuthPage() {
           )}
         </Card>
       </div>
-      
+
       {/* Hero section */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary-foreground flex-col items-center justify-center p-12">
         <div className="max-w-md text-center">
