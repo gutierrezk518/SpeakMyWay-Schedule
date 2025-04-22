@@ -152,9 +152,11 @@ export class DatabaseStorage implements IStorage {
       throw new Error(`Card with id ${id} not found`);
     }
     
+    const currentCount = card.usageCount ?? 0;
+    
     const [updatedCard] = await db
       .update(cards)
-      .set({ usageCount: card.usageCount + 1 })
+      .set({ usageCount: currentCount + 1 })
       .where(eq(cards.id, id))
       .returning();
     
@@ -241,7 +243,7 @@ export class DatabaseStorage implements IStorage {
       .delete(routines)
       .where(eq(routines.id, id));
     
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Category operations
@@ -297,7 +299,7 @@ export class DatabaseStorage implements IStorage {
       .delete(categories)
       .where(eq(categories.id, id));
     
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Subcategory operations
@@ -353,7 +355,7 @@ export class DatabaseStorage implements IStorage {
       .delete(subcategories)
       .where(eq(subcategories.id, id));
     
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Core Words operations
@@ -401,7 +403,7 @@ export class DatabaseStorage implements IStorage {
       .delete(coreWords)
       .where(eq(coreWords.id, id));
     
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Additional card operations
@@ -459,7 +461,7 @@ export class DatabaseStorage implements IStorage {
       .delete(cards)
       .where(eq(cards.id, id));
     
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
   
   // Admin-related operations
@@ -574,11 +576,12 @@ export class DatabaseStorage implements IStorage {
   async getNewUsersCount(days: number): Promise<number> {
     const date = new Date();
     date.setDate(date.getDate() - days);
+    const dateStr = date.toISOString();
     
     const [result] = await db
       .select({ count: count() })
       .from(users)
-      .where(gte(users.createdAt, date));
+      .where(sql`${users.createdAt} >= ${dateStr}`);
     
     return result.count;
   }
@@ -586,11 +589,12 @@ export class DatabaseStorage implements IStorage {
   async getActiveUsersCount(days: number): Promise<number> {
     const date = new Date();
     date.setDate(date.getDate() - days);
+    const dateStr = date.toISOString();
     
     const [result] = await db
       .select({ count: count() })
       .from(users)
-      .where(gte(users.lastLogin, date));
+      .where(sql`${users.lastLogin} >= ${dateStr}`);
     
     return result.count;
   }
