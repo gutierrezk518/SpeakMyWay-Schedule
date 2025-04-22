@@ -55,7 +55,7 @@ export default function AuthPage() {
       displayName: "",
       email: "",
       birthday: "",
-      consentGiven: false,
+      consentGiven: true,
       marketingConsent: false,
       dataRetentionConsent: false,
     },

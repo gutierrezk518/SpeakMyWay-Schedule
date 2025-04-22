@@ -10,9 +10,12 @@ import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
 import Admin from "@/pages/admin";
 import PrivacyPolicy from "@/pages/privacy-policy";
+import AuthPage from "@/pages/auth-page";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/components/protected-route";
 import { 
   Dialog, 
   DialogContent, 
@@ -30,12 +33,13 @@ import { Link } from "wouter";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Schedule} />
-      <Route path="/communication" component={CommunicationBoard} />
-      <Route path="/quick-mode" component={QuickMode} />
-      <Route path="/schedule" component={Schedule} />
-      <Route path="/customize" component={Customize} />
-      <Route path="/admin" component={Admin} />
+      <ProtectedRoute path="/" component={Schedule} />
+      <ProtectedRoute path="/communication" component={CommunicationBoard} />
+      <ProtectedRoute path="/quick-mode" component={QuickMode} />
+      <ProtectedRoute path="/schedule" component={Schedule} />
+      <ProtectedRoute path="/customize" component={Customize} />
+      <ProtectedRoute path="/admin" component={Admin} />
+      <Route path="/auth" component={AuthPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route component={NotFound} />
     </Switch>
@@ -371,8 +375,10 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
-      <Toaster />
+      <AuthProvider>
+        <AppContent />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
