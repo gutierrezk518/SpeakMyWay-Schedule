@@ -336,8 +336,6 @@ export default function Customize() {
             </div>
           </div>
           
-
-          
           {/* Help & Support */}
           <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
             <div className="flex items-center mb-4">
