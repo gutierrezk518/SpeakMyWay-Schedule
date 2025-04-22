@@ -228,7 +228,7 @@ export default function Customize() {
                     value={testPhrase}
                     onChange={(e) => setTestPhrase(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-md"
-                    placeholder="Enter text to test the voice"
+                    placeholder="Try: Hello, today we're going to the park"
                   />
                   <button 
                     className={`w-full py-2 px-4 rounded-md ${
@@ -245,6 +245,35 @@ export default function Customize() {
                 <p className="text-xs text-gray-500 mt-1">
                   Try different voices to find the one that works best for you
                 </p>
+                <div className="mt-3 text-xs">
+                  <p className="text-gray-600 font-medium mb-1">Example sentences to try:</p>
+                  <div className="grid gap-1">
+                    <button 
+                      className="text-left px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                      onClick={() => {
+                        setTestPhrase("Hello, today we're going to the park to play with our friends.");
+                      }}
+                    >
+                      "Hello, today we're going to the park to play with our friends."
+                    </button>
+                    <button 
+                      className="text-left px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                      onClick={() => {
+                        setTestPhrase("It's time for lunch now. Let's wash our hands first.");
+                      }}
+                    >
+                      "It's time for lunch now. Let's wash our hands first."
+                    </button>
+                    <button 
+                      className="text-left px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                      onClick={() => {
+                        setTestPhrase("I need help with my homework, please.");
+                      }}
+                    >
+                      "I need help with my homework, please."
+                    </button>
+                  </div>
+                </div>
               </div>
               
               <div>
