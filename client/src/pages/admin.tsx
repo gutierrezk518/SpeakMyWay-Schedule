@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAppContext } from "@/contexts/app-context";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -94,11 +94,10 @@ export default function Admin() {
   
   // Toggle admin status
   const toggleAdminStatus = useMutation({
-    mutationFn: ({ userId, isAdmin }: { userId: number, isAdmin: boolean }) => 
-      apiRequest(`/api/admin/users/${userId}/admin`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isAdmin })
-      }),
+    mutationFn: async ({ userId, isAdmin }: { userId: number, isAdmin: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/admin/users/${userId}/admin`, { isAdmin });
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
       toast({
@@ -205,10 +204,10 @@ export default function Admin() {
 
   // Create category mutation
   const createCategory = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/categories', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", '/api/categories', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setCategoryForm({
@@ -235,10 +234,10 @@ export default function Admin() {
 
   // Create subcategory mutation
   const createSubcategory = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/subcategories', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", '/api/subcategories', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/subcategories'] });
       setSubcategoryForm({
@@ -265,10 +264,10 @@ export default function Admin() {
 
   // Create core word mutation
   const createCoreWord = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/corewords', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", '/api/corewords', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/corewords'] });
       setCoreWordForm({
@@ -295,10 +294,10 @@ export default function Admin() {
 
   // Create activity card mutation
   const createCard = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/cards', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", '/api/cards', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/cards'] });
       setCardForm({
@@ -370,6 +369,323 @@ export default function Admin() {
           <TabsTrigger value="import-export">Import/Export</TabsTrigger>
         </TabsList>
         
+        {/* Users Tab */}
+        <TabsContent value="users">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {userCountQuery.isLoading ? (
+                    "Loading..."
+                  ) : userCountQuery.isError ? (
+                    "Error"
+                  ) : (
+                    userCountQuery.data?.count || 0
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Registered user accounts
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">New Users (30d)</CardTitle>
+                <CircleUser className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {newUsersQuery.isLoading ? (
+                    "Loading..."
+                  ) : newUsersQuery.isError ? (
+                    "Error"
+                  ) : (
+                    newUsersQuery.data?.count || 0
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  New accounts in the last 30 days
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Users (30d)</CardTitle>
+                <Check className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {activeUsersQuery.isLoading ? (
+                    "Loading..."
+                  ) : activeUsersQuery.isError ? (
+                    "Error"
+                  ) : (
+                    activeUsersQuery.data?.count || 0
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Users who logged in during last 30 days
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Admin Users</CardTitle>
+                <Lock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {usersQuery.isLoading 
+                    ? "Loading..."
+                    : usersQuery.isError 
+                    ? "Error" 
+                    : usersQuery.data?.filter((user: any) => user.isAdmin).length || 0
+                  }
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Users with administrative privileges
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>
+                  View and manage all registered users and their information.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {usersQuery.isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : usersQuery.isError ? (
+                  <div className="text-center py-8 text-destructive">
+                    Error loading users data
+                  </div>
+                ) : usersQuery.data?.length === 0 ? (
+                  <div className="text-center py-8">
+                    No users found in the database
+                  </div>
+                ) : (
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[80px]">ID</TableHead>
+                          <TableHead>Username</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Last Login</TableHead>
+                          <TableHead className="w-[100px]">Role</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {usersQuery.data?.map((user: any) => (
+                          <TableRow key={user.id}>
+                            <TableCell>{user.id}</TableCell>
+                            <TableCell className="font-medium">{user.username}</TableCell>
+                            <TableCell>{user.email || "-"}</TableCell>
+                            <TableCell>
+                              {user.createdAt ? (
+                                <span title={user.createdAt}>
+                                  {formatDistance(new Date(user.createdAt), new Date(), { addSuffix: true })}
+                                </span>
+                              ) : "-"}
+                            </TableCell>
+                            <TableCell>
+                              {user.lastLoginAt ? (
+                                <span title={user.lastLoginAt}>
+                                  {formatDistance(new Date(user.lastLoginAt), new Date(), { addSuffix: true })}
+                                </span>
+                              ) : "Never"}
+                            </TableCell>
+                            <TableCell>
+                              {user.isAdmin ? (
+                                <Badge className="bg-primary">Admin</Badge>
+                              ) : (
+                                <Badge variant="outline">User</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setSelectedUser(user);
+                                      setUserDetailDialogOpen(true);
+                                    }}
+                                  >
+                                    <Info className="h-4 w-4 mr-2" />
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setSelectedUser(user);
+                                      setUserLoginHistoryDialogOpen(true);
+                                    }}
+                                  >
+                                    <ClipboardList className="h-4 w-4 mr-2" />
+                                    Login History
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => toggleAdminStatus.mutate({ 
+                                      userId: user.id, 
+                                      isAdmin: !user.isAdmin 
+                                    })}
+                                  >
+                                    <Lock className="h-4 w-4 mr-2" />
+                                    {user.isAdmin ? "Remove Admin" : "Make Admin"}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* User Detail Dialog */}
+          <Dialog open={userDetailDialogOpen} onOpenChange={setUserDetailDialogOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>User Details</DialogTitle>
+                <DialogDescription>
+                  Detailed information about the selected user account.
+                </DialogDescription>
+              </DialogHeader>
+              {selectedUser && (
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">ID</Label>
+                    <div className="col-span-3">{selectedUser.id}</div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Username</Label>
+                    <div className="col-span-3 font-medium">{selectedUser.username}</div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Email</Label>
+                    <div className="col-span-3">{selectedUser.email || "-"}</div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Full Name</Label>
+                    <div className="col-span-3">{selectedUser.name || "-"}</div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Role</Label>
+                    <div className="col-span-3">
+                      {selectedUser.isAdmin ? (
+                        <Badge className="bg-primary">Administrator</Badge>
+                      ) : (
+                        <Badge variant="outline">Regular User</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Created</Label>
+                    <div className="col-span-3">
+                      {selectedUser.createdAt ? format(new Date(selectedUser.createdAt), 'PPpp') : '-'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Last Login</Label>
+                    <div className="col-span-3">
+                      {selectedUser.lastLoginAt ? format(new Date(selectedUser.lastLoginAt), 'PPpp') : 'Never'}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">Last IP</Label>
+                    <div className="col-span-3">{selectedUser.lastLoginIp || '-'}</div>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+          
+          {/* Login History Dialog */}
+          <Dialog open={userLoginHistoryDialogOpen} onOpenChange={setUserLoginHistoryDialogOpen}>
+            <DialogContent className="sm:max-w-[700px]">
+              <DialogHeader>
+                <DialogTitle>User Login History</DialogTitle>
+                <DialogDescription>
+                  {selectedUser && `Login activity for ${selectedUser.username}`}
+                </DialogDescription>
+              </DialogHeader>
+              {userLoginHistoryQuery.isLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : userLoginHistoryQuery.isError ? (
+                <div className="text-center py-8 text-destructive">
+                  Error loading login history
+                </div>
+              ) : userLoginHistoryQuery.data?.length === 0 ? (
+                <div className="text-center py-8">
+                  No login records found for this user
+                </div>
+              ) : (
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date & Time</TableHead>
+                        <TableHead>IP Address</TableHead>
+                        <TableHead>Browser</TableHead>
+                        <TableHead>Device</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userLoginHistoryQuery.data?.map((login: any) => (
+                        <TableRow key={login.id}>
+                          <TableCell>
+                            {login.createdAt ? format(new Date(login.createdAt), 'PPpp') : '-'}
+                          </TableCell>
+                          <TableCell>{login.ipAddress}</TableCell>
+                          <TableCell>{login.browser}</TableCell>
+                          <TableCell>{login.device}</TableCell>
+                          <TableCell className="text-right">
+                            {login.success ? (
+                              <Badge className="bg-green-500">Success</Badge>
+                            ) : (
+                              <Badge variant="destructive">Failed</Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
+      
         {/* Categories Tab */}
         <TabsContent value="categories">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
