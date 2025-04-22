@@ -102,15 +102,26 @@ export function setupAuth(app: Express) {
         try {
           const { html, text } = generateWelcomeEmailTemplate(user.username, user.id);
           
-          sendEmail({
-            to: user.email,
-            subject: `Welcome to SpeakMyWay, ${user.username}!`,
-            htmlBody: html,
-            textBody: text
-          }).catch(err => {
-            console.error('Failed to send welcome email:', err);
-            // Don't reject registration if email fails
-          });
+          const isDev = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
+          
+          if (isDev) {
+            console.log('=== DEV MODE: Welcome email would be sent on registration ===');
+            console.log(`User: ${user.username} (ID: ${user.id})`);
+            console.log(`Email: ${user.email}`);
+            console.log(`Subject: Welcome to SpeakMyWay, ${user.username}!`);
+            console.log('=== Set VERIFIED_EMAIL env var to enable sending real emails ===');
+          } else {
+            // Only attempt to send email if not in dev mode
+            sendEmail({
+              to: user.email,
+              subject: `Welcome to SpeakMyWay, ${user.username}!`,
+              htmlBody: html,
+              textBody: text
+            }).catch(err => {
+              console.error('Failed to send welcome email:', err);
+              // Don't reject registration if email fails
+            });
+          }
           
           console.log(`Welcome email queued for ${user.username} at ${user.email}`);
         } catch (emailError) {

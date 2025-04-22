@@ -908,6 +908,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate and send welcome email
       const { html, text } = generateWelcomeEmailTemplate(user.username, user.id);
       
+      // If we're in development mode without verified email, we'll see the logs
+      // but return success for better testing experience
+      const isDev = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
+      
       const emailResult = await sendEmail({
         to: user.email,
         subject: `Welcome to SpeakMyWay, ${user.username}!`,
@@ -916,9 +920,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       if (emailResult) {
+        if (isDev) {
+          return res.status(200).json({ 
+            message: `Welcome email preview generated for ${user.email}. Check server logs.`,
+            note: "In development mode, emails are logged but not sent. Verify emails in AWS SES to send real emails."
+          });
+        }
         return res.status(200).json({ message: `Welcome email sent to ${user.email}` });
       } else {
-        return res.status(500).json({ message: "Failed to send welcome email" });
+        // More informative error in development
+        if (isDev) {
+          return res.status(200).json({
+            message: "Email not sent - running in development mode",
+            note: "To send real emails, verify sender and recipient emails in AWS SES and set the VERIFIED_EMAIL environment variable"
+          });
+        }
+        return res.status(500).json({ message: "Failed to send welcome email. Check server logs for details." });
       }
     } catch (error) {
       console.error('Error sending welcome email:', error);

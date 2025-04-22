@@ -18,9 +18,12 @@ const sesClient = new SESClient({
   },
 });
 
-// The FROM email address must be verified in SES
-// This email address must be verified in your AWS SES console
-const FROM_EMAIL = 'SpeakMyWay <notifications@speakmyway.app>';
+// In AWS SES sandbox mode, both sender and recipient must be verified
+// Use a plain email format without the friendly name to avoid potential parsing issues
+const FROM_EMAIL = process.env.VERIFIED_EMAIL || 'info@speakmyway.com';
+
+// Development mode will log emails instead of sending them if true
+const DEV_MODE = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
 
 interface EmailOptions {
   to: string | string[];
@@ -30,8 +33,23 @@ interface EmailOptions {
 }
 
 export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOptions): Promise<boolean> {
+  const toAddresses = Array.isArray(to) ? to : [to];
+  
+  // If in development mode without a verified email, just log the email details
+  if (DEV_MODE) {
+    console.log('=== DEV MODE: Email would be sent with the following details ===');
+    console.log(`From: ${FROM_EMAIL}`);
+    console.log(`To: ${toAddresses.join(', ')}`);
+    console.log(`Subject: ${subject}`);
+    console.log('Text body preview:', textBody.substring(0, 150) + '...');
+    console.log('=== Set VERIFIED_EMAIL env var with an email verified in AWS SES to send real emails ===');
+    return true;
+  }
+  
+  // Proceed with actual email sending
   try {
-    const toAddresses = Array.isArray(to) ? to : [to];
+    // Check if FROM_EMAIL is verified in AWS SES
+    // We're now using info@speakmyway.com as the default sender
     
     const params: SendEmailCommandInput = {
       Source: FROM_EMAIL,
@@ -56,11 +74,20 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOption
       },
     };
 
-    await sesClient.send(new SendEmailCommand(params));
+    const result = await sesClient.send(new SendEmailCommand(params));
     console.log(`Email sent successfully to ${toAddresses.join(', ')}`);
     return true;
-  } catch (error) {
-    console.error('Failed to send email:', error);
+  } catch (error: any) {
+    // Check for AWS SES verification errors
+    if (error.message && error.message.includes('not verified')) {
+      console.error('EMAIL VERIFICATION ERROR:', error.message);
+      console.error('To fix this:');
+      console.error('1. Go to AWS SES console and verify both sender and recipient email addresses');
+      console.error('2. Once verified, set the VERIFIED_EMAIL environment variable to your verified sender email');
+      console.error('3. For testing, use a recipient email that you can verify in AWS SES console');
+    } else {
+      console.error('Failed to send email:', error);
+    }
     return false;
   }
 }
