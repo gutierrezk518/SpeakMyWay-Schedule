@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useLocalStorage } from "../hooks/use-local-storage";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -34,18 +35,79 @@ const registerSchema = z.object({
   dataRetentionConsent: z.boolean().optional(),
 });
 
+// Anonymous user nickname prompt schema
+const nicknameSchema = z.object({
+  nickname: z.string().min(1, "Please enter a nickname")
+});
+
+// Interface for anonymous user data
+interface AnonymousUser {
+  nickname: string;
+  sessionStartTime: string;
+  isAnonymous: true;
+}
+
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [registrationStep, setRegistrationStep] = useState(1);
+  const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
+  const [_, setLocation] = useLocation();
+  const [anonymousUser, setAnonymousUser] = useLocalStorage<AnonymousUser | null>("anonymousUser", null);
   const { user, loginMutation, registerMutation } = useAuth();
+  
+  // Nickname form for anonymous users
+  const nicknameForm = useForm<z.infer<typeof nicknameSchema>>({
+    resolver: zodResolver(nicknameSchema),
+    defaultValues: {
+      nickname: ""
+    }
+  });
   
   // Auto-focus first input on page load
   useEffect(() => {
     const firstInput = document.querySelector('input:not([type="hidden"])') as HTMLInputElement;
     if (firstInput) firstInput.focus();
-  }, [activeTab, registrationStep]);
+  }, [activeTab, registrationStep, showNicknamePrompt]);
+  
+  // Function to handle anonymous access
+  const handleAnonymousAccess = () => {
+    setShowNicknamePrompt(true);
+  };
+  
+  // Function to save anonymous user and redirect to app
+  const handleNicknameSubmit = (data: z.infer<typeof nicknameSchema>) => {
+    const anonymousUserData: AnonymousUser = {
+      nickname: data.nickname,
+      sessionStartTime: new Date().toISOString(),
+      isAnonymous: true
+    };
+    setAnonymousUser(anonymousUserData);
+    setLocation("/");
+  };
+  
+  // Set up a timer to show registration prompt after one hour of anonymous use
+  useEffect(() => {
+    if (anonymousUser) {
+      const sessionStartTime = new Date(anonymousUser.sessionStartTime).getTime();
+      const oneHourInMs = 60 * 60 * 1000;
+      const timeoutId = setTimeout(() => {
+        // Show registration prompt after one hour
+        if (document.visibilityState === 'visible') {
+          const shouldPrompt = window.confirm(
+            "Looks like you like this app! Consider registering to save your settings across devices. Would you like to create an account now?"
+          );
+          if (shouldPrompt) {
+            setLocation("/auth");
+            setActiveTab("register");
+          }
+        }
+      }, oneHourInMs - (Date.now() - sessionStartTime));
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [anonymousUser, setLocation]);
   
   // Form setup for login
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -271,7 +333,20 @@ export default function AuthPage() {
                         <Button 
                           type="button" 
                           className="w-full" 
-                          onClick={() => setRegistrationStep(2)}
+                          onClick={() => {
+                            // Validate username and password before proceeding
+                            const usernameValid = registerForm.trigger('username');
+                            const passwordValid = registerForm.trigger('password');
+                            
+                            // Only proceed if both fields are valid
+                            Promise.all([usernameValid, passwordValid]).then(
+                              ([isUsernameValid, isPasswordValid]) => {
+                                if (isUsernameValid && isPasswordValid) {
+                                  setRegistrationStep(2);
+                                }
+                              }
+                            );
+                          }}
                         >
                           Continue
                         </Button>
@@ -299,7 +374,7 @@ export default function AuthPage() {
                                 <FormControl>
                                   <Input 
                                     id="register-displayname"
-                                    placeholder="How should we call you?" 
+                                    placeholder="SpeakMyWay will refer to you as..." 
                                     className="pl-9" 
                                     aria-required="false"
                                     {...field} 
@@ -379,7 +454,7 @@ export default function AuthPage() {
                                 </FormControl>
                                 <div className="leading-tight">
                                   <FormLabel htmlFor="consent-required" className="text-sm font-medium">
-                                    I agree to the <a href="#" className="text-primary underline">Terms of Service</a> and <a href="#" className="text-primary underline">Privacy Policy</a> <span className="text-destructive">*</span>
+                                    I am over the age of 13 years old or the parent or legal guardian giving consent on behalf of a child under 13 to the <a href="#" className="text-primary underline">Terms of Service</a> and <a href="#" className="text-primary underline">Privacy Policy</a> <span className="text-destructive">*</span>
                                   </FormLabel>
                                   <FormMessage />
                                 </div>
@@ -402,27 +477,6 @@ export default function AuthPage() {
                                 <div className="leading-tight">
                                   <FormLabel htmlFor="marketing-consent" className="text-sm font-medium">
                                     I agree to receive marketing communications <span className="text-muted-foreground text-xs">(Optional)</span>
-                                  </FormLabel>
-                                </div>
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={registerForm.control}
-                            name="dataRetentionConsent"
-                            render={({ field }) => (
-                              <FormItem className="flex items-start space-x-2 space-y-0">
-                                <FormControl>
-                                  <Checkbox 
-                                    id="retention-consent"
-                                    checked={field.value} 
-                                    onCheckedChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <div className="leading-tight">
-                                  <FormLabel htmlFor="retention-consent" className="text-sm font-medium">
-                                    I agree to my data being retained for 30 years <span className="text-muted-foreground text-xs">(Optional)</span>
                                   </FormLabel>
                                 </div>
                               </FormItem>
@@ -456,13 +510,85 @@ export default function AuthPage() {
             </TabsContent>
           </Tabs>
           
-          <CardFooter className="flex justify-center text-sm text-muted-foreground mt-2">
-            {activeTab === "login" ? (
-              <p>Don't have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("register")}>Register</Button></p>
-            ) : (
-              <p>Already have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("login")}>Login</Button></p>
-            )}
+          <CardFooter className="flex flex-col gap-3 mt-2">
+            <div className="flex justify-center text-sm text-muted-foreground">
+              {activeTab === "login" ? (
+                <p>Don't have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("register")}>Register</Button></p>
+              ) : (
+                <p>Already have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("login")}>Login</Button></p>
+              )}
+            </div>
+            
+            <div className="text-center">
+              <div className="relative mb-3">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t"></span>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleAnonymousAccess}
+                className="w-full"
+              >
+                Continue without an account
+              </Button>
+            </div>
           </CardFooter>
+          
+          {/* Nickname prompt modal for anonymous users */}
+          {showNicknamePrompt && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <Card className="w-[350px] max-w-[90%]">
+                <CardHeader>
+                  <CardTitle className="text-xl">Quick Start</CardTitle>
+                  <CardDescription>
+                    Enter a nickname to continue without registering. Your settings won't be saved across sessions.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Form {...nicknameForm}>
+                    <form onSubmit={nicknameForm.handleSubmit(handleNicknameSubmit)} className="space-y-4">
+                      <FormField
+                        control={nicknameForm.control}
+                        name="nickname"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel htmlFor="nickname">Nickname</FormLabel>
+                            <FormControl>
+                              <Input 
+                                id="nickname" 
+                                placeholder="Enter a nickname" 
+                                autoFocus 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="w-1/2"
+                          onClick={() => setShowNicknamePrompt(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" className="w-1/2">
+                          Continue
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </Card>
       </div>
       
