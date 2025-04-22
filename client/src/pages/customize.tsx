@@ -278,12 +278,87 @@ export default function Customize() {
                 {/* Voice Test Panel */}
                 <div className="mt-4 p-3 bg-gray-50 rounded-md border border-gray-200">
                   <h4 className="text-sm font-medium mb-2">Try Different Male Voices</h4>
+                  <p className="text-xs text-gray-600 mb-2">These voices work across most platforms:</p>
                   
                   <div className="grid grid-cols-1 gap-2 text-xs">
                     <button 
                       className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
                       onClick={() => {
-                        // Simple direct approach for testing US Male voice
+                        try {
+                          // Google US English - widely available
+                          const utterance = new SpeechSynthesisUtterance("Hello, I'm the US English voice. How does this sound?");
+                          utterance.rate = voiceSettings.rate;
+                          utterance.volume = voiceSettings.volume;
+                          
+                          const voices = speechSynthesis.getVoices();
+                          const usVoice = voices.find(v => v.name === "Google US English");
+                          if (usVoice) {
+                            utterance.voice = usVoice;
+                            console.log("Using Google US English voice");
+                            speechSynthesis.speak(utterance);
+                          } else {
+                            // Fall back to our standard approach
+                            setVoiceSettings(prev => {
+                              const newSettings = {
+                                ...prev,
+                                voiceType: "male",
+                                language: "en-US"
+                              };
+                              tts.setVoicePreferences(newSettings);
+                              tts.speak("This is the default US English male voice.");
+                              return newSettings;
+                            });
+                          }
+                        } catch (error) {
+                          console.error("Voice test error:", error);
+                          tts.speak("Testing the default US English male voice instead.");
+                        }
+                      }}
+                    >
+                      1. Google US English
+                    </button>
+                    
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        try {
+                          // Try to use Google UK English Male directly
+                          const utterance = new SpeechSynthesisUtterance("Hello there, I'm the British male voice. How does this sound to you?");
+                          utterance.rate = voiceSettings.rate;
+                          utterance.volume = voiceSettings.volume;
+                          
+                          const voices = speechSynthesis.getVoices();
+                          const ukMaleVoice = voices.find(v => v.name === "Google UK English Male");
+                          if (ukMaleVoice) {
+                            utterance.voice = ukMaleVoice;
+                            console.log("Using Google UK English Male voice");
+                            speechSynthesis.speak(utterance);
+                          } else {
+                            // Fall back to our standard approach
+                            setVoiceSettings(prev => {
+                              const newSettings = {
+                                ...prev,
+                                voiceType: "male",
+                                language: "en-GB"
+                              };
+                              tts.setVoicePreferences(newSettings);
+                              tts.speak("This is the default British male voice.");
+                              return newSettings;
+                            });
+                          }
+                        } catch (error) {
+                          console.error("Voice test error:", error);
+                          tts.speak("Testing the default British male voice instead.");
+                        }
+                      }}
+                    >
+                      2. Google UK English Male (British)
+                    </button>
+                    
+                    <button 
+                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
+                      onClick={() => {
+                        // Set to standard default male voice
                         setVoiceSettings(prev => {
                           const newSettings = {
                             ...prev,
@@ -291,119 +366,19 @@ export default function Customize() {
                             language: "en-US"
                           };
                           
-                          // Apply settings to TTS system
                           tts.setVoicePreferences(newSettings);
-                          tts.speak("Hello, I'm the US English Male voice. How does this sound?");
+                          tts.speak("This is the standard default male voice used by the application.");
                           return newSettings;
                         });
                       }}
                     >
-                      1. US English Male
-                    </button>
-                    
-                    <button 
-                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
-                      onClick={() => {
-                        // Test Microsoft David voice directly
-                        const testVoice = () => {
-                          try {
-                            const utterance = new SpeechSynthesisUtterance("Hi there, I'm Microsoft David. How do I sound?");
-                            utterance.rate = voiceSettings.rate;
-                            utterance.volume = voiceSettings.volume;
-                            
-                            const voices = speechSynthesis.getVoices();
-                            console.log("Available voices for testing:", voices.map(v => v.name));
-                            
-                            const davidVoice = voices.find(v => v.name.includes("David"));
-                            if (davidVoice) {
-                              utterance.voice = davidVoice;
-                              console.log("Using voice:", davidVoice.name);
-                              speechSynthesis.speak(utterance);
-                            } else {
-                              tts.speak("Microsoft David voice not available. Using default male voice instead.");
-                            }
-                          } catch (error) {
-                            console.error("Voice test error:", error);
-                            tts.speak("Sorry, there was an error testing this voice. Using default male voice instead.");
-                          }
-                        };
-                        
-                        // Ensure voices are loaded
-                        if (speechSynthesis.getVoices().length) {
-                          testVoice();
-                        } else {
-                          speechSynthesis.onvoiceschanged = () => {
-                            testVoice();
-                            speechSynthesis.onvoiceschanged = null;
-                          };
-                        }
-                      }}
-                    >
-                      2. Microsoft David
-                    </button>
-                    
-                    <button 
-                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
-                      onClick={() => {
-                        // Set UK English Male using our tts module
-                        setVoiceSettings(prev => {
-                          const newSettings = {
-                            ...prev,
-                            voiceType: "male",
-                            language: "en-GB"
-                          };
-                          
-                          tts.setVoicePreferences(newSettings);
-                          tts.speak("Hello there, I'm the British male voice. How does this sound to you?");
-                          return newSettings;
-                        });
-                      }}
-                    >
-                      3. UK English Male (British)
-                    </button>
-                    
-                    <button 
-                      className="text-left px-3 py-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md"
-                      onClick={() => {
-                        // Test Microsoft Mark voice directly
-                        const testVoice = () => {
-                          try {
-                            const utterance = new SpeechSynthesisUtterance("Hello, I'm Microsoft Mark. What do you think of my voice?");
-                            utterance.rate = voiceSettings.rate;
-                            utterance.volume = voiceSettings.volume;
-                            
-                            const voices = speechSynthesis.getVoices();
-                            const markVoice = voices.find(v => v.name.includes("Mark"));
-                            if (markVoice) {
-                              utterance.voice = markVoice;
-                              console.log("Using voice:", markVoice.name);
-                              speechSynthesis.speak(utterance);
-                            } else {
-                              tts.speak("Microsoft Mark voice not available. Using default male voice instead.");
-                            }
-                          } catch (error) {
-                            console.error("Voice test error:", error);
-                            tts.speak("Sorry, there was an error testing this voice. Using default male voice instead.");
-                          }
-                        };
-                        
-                        // Ensure voices are loaded
-                        if (speechSynthesis.getVoices().length) {
-                          testVoice();
-                        } else {
-                          speechSynthesis.onvoiceschanged = () => {
-                            testVoice();
-                            speechSynthesis.onvoiceschanged = null;
-                          };
-                        }
-                      }}
-                    >
-                      4. Microsoft Mark
+                      3. Standard Default Male
                     </button>
                   </div>
                   
                   <p className="text-xs text-gray-500 mt-3">
-                    After testing, choose your preferred voice type above. If some voices aren't available on your device, you'll hear a message.
+                    The first two options use specific Google voices when available on your device. 
+                    The third option uses our application's default male voice which works everywhere.
                   </p>
                 </div>
               </div>
