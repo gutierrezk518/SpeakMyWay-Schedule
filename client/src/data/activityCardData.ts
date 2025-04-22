@@ -11,6 +11,7 @@ const tabletImg = "/activity-cards/tablet.png";
 const tvImg = "/activity-cards/tv.png";
 const movieImg = "/activity-cards/movie.png";
 const phoneImg = "/activity-cards/phone.png";
+const cookImg = "/activity-cards/cook.png";
 const breakfastImg = "/activity-cards/breakfast.png";
 const lunchImg = "/activity-cards/lunch.png";
 const dinnerImg = "/activity-cards/dinner.png";
@@ -111,6 +112,7 @@ const imagePath = (imageName: string) => {
     "lunch": lunchImg,
     "dinner": dinnerImg,
     "snack": snackImg,
+    "cook": cookImg,
     "water": waterImg,
     "juice": juiceImg,
     "milk": milkImg,
@@ -198,7 +200,6 @@ const imagePath = (imageName: string) => {
     "transport_train": trainImg,
     "transport_car": carImg,
     "transport_airplane": airplaneImg,
-    "car_ride": carImg, // For the vacation category car ride
     "airplane": airplaneImg,
     
     // Places
@@ -322,6 +323,14 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       imageSrc: imagePath("juice"),
       speechText: "Drink Juice" 
     },
+    {
+      id: "cook",
+      title: "Cook",
+      icon: "ri-restaurant-line",
+      bgColor: "blue-400", 
+      imageSrc: imagePath("cook"),
+      speechText: "Cook"
+    },
     { 
       id: "milk", 
       title: "Milk", 
@@ -404,7 +413,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       icon: "ri-gamepad-fill", 
       bgColor: "purple-200",
       imageSrc: imagePath("playtime"),
-      speechText: "Play Time" 
+      speechText: "Have Play Time" 
     },
   ],
   "holiday": [
@@ -438,7 +447,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       icon: "ri-cake-fill", 
       bgColor: "orange-300",
       imageSrc: imagePath("birthdayparty"),
-      speechText: "Have a Birthday Party" 
+      speechText: "Go to a Birthday Party" 
     },
     { 
       id: "party", 
@@ -603,7 +612,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
     },
     { 
       id: "toilet", 
-      title: "Toilet", 
+      title: "Potty", 
       icon: "ri-door-lock-fill", 
       bgColor: "green-400", 
       imageSrc: imagePath("bathroom"),
@@ -791,7 +800,7 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       icon: "ri-car-fill", 
       bgColor: "blue-500", 
       imageSrc: imagePath("car"),
-      speechText: "Car Ride" 
+      speechText: "Go in the Car" 
     },
     { 
       id: "transport_airplane", 
@@ -940,14 +949,6 @@ export const customActivityCards: Record<string, ScheduleActivity[]> = {
       bgColor: "orange-200", 
       imageSrc: imagePath("hotel"),
       speechText: "Go to Hotel" 
-    },
-    { 
-      id: "car_ride", 
-      title: "Car Ride", 
-      icon: "ri-car-fill", 
-      bgColor: "orange-300", 
-      imageSrc: imagePath("car"),
-      speechText: "Go for Car Ride" 
     },
     { 
       id: "beach", 
