@@ -36,7 +36,7 @@ function Router() {
       <ProtectedRoute path="/" component={Schedule} />
       <ProtectedRoute path="/communication" component={CommunicationBoard} />
       <ProtectedRoute path="/quick-mode" component={QuickMode} />
-      <ProtectedRoute path="/schedule" component={Schedule} />
+      <Route path="/schedule" component={Schedule} /> {/* Public route for anonymous users */}
       <ProtectedRoute path="/customize" component={Customize} />
       <ProtectedRoute path="/admin" component={Admin} />
       <Route path="/auth" component={AuthPage} />
