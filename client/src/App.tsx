@@ -57,7 +57,7 @@ function AppContent() {
     setUserMarketingConsent,
     setUserDataRetentionConsent
   } = useAppContext();
-  
+
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [inputName, setInputName] = useState("");
@@ -79,7 +79,7 @@ function AppContent() {
     const storedConsentDate = localStorage.getItem("speakMyWayConsentDate");
     const storedMarketingConsent = localStorage.getItem("speakMyWayMarketingConsent");
     const storedDataRetentionConsent = localStorage.getItem("speakMyWayDataRetentionConsent");
-    
+
     if (!storedName && !userName) {
       // Open the name input dialog
       setNameDialogOpen(true);
@@ -88,7 +88,7 @@ function AppContent() {
       setUserName(storedName);
       if (storedBirthday) setUserBirthday(storedBirthday);
       if (storedEmail) setUserEmail(storedEmail);
-      
+
       // Set consent data in context
       if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
       if (storedConsentDate) setUserConsentDate(storedConsentDate);
@@ -115,42 +115,42 @@ function AppContent() {
     const hasNameError = !inputName.trim();
     const hasEmailError = inputEmail.length > 0 && !validateEmail(inputEmail);
     const hasConsentError = !consentGiven;
-    
+
     setNameError(hasNameError);
     setEmailError(hasEmailError);
     setConsentError(hasConsentError);
-    
+
     if (!hasNameError && !hasEmailError && !hasConsentError) {
       const currentDate = new Date().toISOString();
-      
+
       // Store in localStorage
       localStorage.setItem("speakMyWayUser", inputName);
       localStorage.setItem("speakMyWayConsentGiven", "true");
       localStorage.setItem("speakMyWayConsentDate", currentDate);
       localStorage.setItem("speakMyWayMarketingConsent", marketingConsent.toString());
       localStorage.setItem("speakMyWayDataRetentionConsent", dataRetentionConsent.toString());
-      
+
       // Update context
       setUserName(inputName);
       setUserConsentGiven(true);
       setUserConsentDate(currentDate);
       setUserMarketingConsent(marketingConsent);
       setUserDataRetentionConsent(dataRetentionConsent);
-      
+
       if (inputBirthday) {
         localStorage.setItem("speakMyWayBirthday", inputBirthday);
         setUserBirthday(inputBirthday);
       }
-      
+
       if (inputEmail) {
         localStorage.setItem("speakMyWayEmail", inputEmail);
         setUserEmail(inputEmail);
       }
-      
+
       // Generate a temporary username based on display name and timestamp
       // In a real app, you'd likely implement proper user registration
       const tmpUsername = `${inputName.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
-      
+
       try {
         // Store user data in database via API call
         const response = await fetch('/api/users', {
@@ -171,14 +171,14 @@ function AppContent() {
             dataRetentionConsent: dataRetentionConsent
           }),
         });
-        
+
         if (response.ok) {
           // Successfully stored user in database
           const userData = await response.json();
-          
+
           // Store user ID in localStorage for future API calls
           localStorage.setItem("speakMyWayUserId", userData.id.toString());
-          
+
           console.log('User data saved to server', userData);
         } else {
           // Handle error but don't block the user experience
@@ -188,7 +188,7 @@ function AppContent() {
         // Log error but don't block user experience
         console.error('Error saving user data:', error);
       }
-      
+
       setNameDialogOpen(false);
       setWelcomeDialogOpen(true);
     }
@@ -228,7 +228,7 @@ function AppContent() {
               />
               {nameError && <p className="text-red-500 text-sm mt-1">Name is required</p>}
             </div>
-            
+
             <div>
               <Label htmlFor="birthday" className="mb-2 block">Child's Birthday</Label>
               <Input 
@@ -241,7 +241,7 @@ function AppContent() {
               />
               <p className="text-xs text-gray-500 mt-1">This helps us customize the experience for your child's age group</p>
             </div>
-            
+
             <div>
               <Label htmlFor="email" className="mb-2 block">Parent/Guardian Email Address <span className="text-red-500">*</span></Label>
               <Input 
@@ -260,7 +260,7 @@ function AppContent() {
               {emailError && <p className="text-red-500 text-sm mt-1">Please enter a valid email address</p>}
               <p className="text-xs text-gray-500 mt-1">Required for parental verification and account management</p>
             </div>
-            
+
             <div className="space-y-3 pt-2">
               <div className={`flex items-start space-x-2 ${consentError ? 'pb-1' : ''}`}>
                 <Checkbox 
@@ -283,7 +283,7 @@ function AppContent() {
                 </Label>
               </div>
               {consentError && <p className="text-red-500 text-sm">Parental consent is required to continue</p>}
-              
+
               <div className="flex items-start space-x-2">
                 <Checkbox 
                   id="marketing" 
@@ -297,7 +297,7 @@ function AppContent() {
                   I agree to receive occasional emails about updates and features that may help my child (optional)
                 </Label>
               </div>
-              
+
               <div className="flex items-start space-x-2">
                 <Checkbox 
                   id="dataRetention" 
@@ -341,7 +341,7 @@ function AppContent() {
                 <li>Learn new words</li>
               </ul>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
               <h3 className="text-sm font-medium text-gray-800 mb-2">For Parents/Guardians</h3>
               <p className="text-gray-700 mb-2">You can customize the experience by visiting the customize page:</p>
