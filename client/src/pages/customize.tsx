@@ -183,7 +183,7 @@ export default function Customize() {
               <div>
                 <label className="block text-gray-700 mb-2 font-medium">Voice Type</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className="relative flex items-center justify-center p-4 border rounded-lg cursor-pointer peer-checked:border-green-500 hover:bg-green-50">
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-green-50 ${(voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default") ? 'bg-green-100 border-green-500' : ''}`}>
                     <input
                       type="radio"
                       name="voiceType"
@@ -201,20 +201,20 @@ export default function Customize() {
                     </div>
                   </label>
                   
-                  <label className="relative flex items-center justify-center p-4 border rounded-lg cursor-pointer peer-checked:border-blue-500 hover:bg-blue-50">
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${voiceSettings.voiceType === "male" ? 'bg-blue-100 border-blue-500' : ''}`}>
                     <input
                       type="radio"
                       name="voiceType"
-                      value="male"
+                      value="en-US-male-warm"
                       className="absolute opacity-0"
                       checked={voiceSettings.voiceType === "male"}
                       onChange={() => {
-                        handleVoiceTypeChange({ target: { value: "male" } } as React.ChangeEvent<HTMLSelectElement>);
+                        handleVoiceTypeChange({ target: { value: "en-US-male-warm" } } as React.ChangeEvent<HTMLSelectElement>);
                       }}
                     />
                     <div className="flex flex-col items-center">
                       <i className="ri-user-voice-line text-3xl text-blue-500 mb-2"></i>
-                      <span className="font-medium">Male Voice</span>
+                      <span className="font-medium">Warm & Friendly Male Voice</span>
                     </div>
                   </label>
                 </div>
@@ -327,88 +327,16 @@ export default function Customize() {
                     checked={displaySettings.highContrast}
                     onChange={handleHighContrastChange}
                   />
-                  <span className="ml-2 font-medium">Make colors easier to see</span>
+                  <span className="ml-2 font-medium">High Contrast Mode</span>
                 </label>
                 <p className="text-xs text-gray-500 mt-1 ml-7">
-                  Higher contrast makes text and buttons easier to see
-                </p>
-              </div>
-              
-              <div className="p-3 bg-gray-50 rounded-md">
-                <label className="flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
-                    checked={displaySettings.reduceAnimations}
-                    onChange={handleReduceAnimationsChange}
-                  />
-                  <span className="ml-2 font-medium">Make things move less</span>
-                </label>
-                <p className="text-xs text-gray-500 mt-1 ml-7">
-                  Reduces moving parts that might be distracting
+                  Makes cards and buttons easier to see with stronger colors
                 </p>
               </div>
             </div>
           </div>
           
-          {/* Parental Controls & Privacy */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
-            <h3 className="font-bold text-lg mb-2">For Parents & Guardians</h3>
-            <p className="text-gray-600 mb-4">Manage privacy settings and parental controls</p>
-            
-            <div className="space-y-4">
-              <div className="p-3 bg-blue-50 rounded-md">
-                <h4 className="font-medium text-blue-800 mb-2">Privacy Settings</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      checked={true}
-                      readOnly
-                    />
-                    <span className="ml-2 text-sm">Parental consent provided</span>
-                  </label>
-                  
-                  <label className="flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm">Enable additional privacy protections</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-blue-50 rounded-md">
-                <h4 className="font-medium text-blue-800 mb-2">Usage Controls</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm">Set daily usage limits</span>
-                  </label>
-                  
-                  <label className="flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm">Enable parent notifications</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-blue-50 rounded-md">
-                <h4 className="font-medium text-blue-800 mb-2">Data Management</h4>
-                <button className="w-full py-2 px-4 bg-white border border-blue-300 text-blue-700 rounded-md text-sm hover:bg-blue-50">
-                  Request data export
-                </button>
-              </div>
-            </div>
-          </div>
+
           
           {/* Help & Support */}
           <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
