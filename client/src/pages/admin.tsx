@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,110 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAppContext } from "@/contexts/app-context";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { format, formatDistance } from "date-fns";
+import { 
+  ArrowUpDown, 
+  Check, 
+  ChevronDown, 
+  CircleUser, 
+  ClipboardList, 
+  Download, 
+  Info, 
+  Lock, 
+  MoreHorizontal,
+  Search, 
+  Users 
+} from "lucide-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useAppContext();
-  const [selectedTab, setSelectedTab] = useState("categories");
+  const [selectedTab, setSelectedTab] = useState("users");
+  
+  // ==== Users Tab ====
+  const [userDetailDialogOpen, setUserDetailDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userLoginHistoryDialogOpen, setUserLoginHistoryDialogOpen] = useState(false);
+  
+  // User metrics
+  const usersQuery = useQuery({
+    queryKey: ['/api/admin/users'],
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  const userCountQuery = useQuery({
+    queryKey: ['/api/admin/users/count'],
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  const newUsersQuery = useQuery({
+    queryKey: ['/api/admin/users/new'],
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  const activeUsersQuery = useQuery({
+    queryKey: ['/api/admin/users/active'],
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  const mostActiveUsersQuery = useQuery({
+    queryKey: ['/api/admin/users/most-active'],
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  // User login history
+  const userLoginHistoryQuery = useQuery({
+    queryKey: ['/api/admin/users', selectedUser?.id, 'login-history'],
+    enabled: !!selectedUser?.id && userLoginHistoryDialogOpen,
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+  
+  // Toggle admin status
+  const toggleAdminStatus = useMutation({
+    mutationFn: ({ userId, isAdmin }: { userId: number, isAdmin: boolean }) => 
+      apiRequest(`/api/admin/users/${userId}/admin`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isAdmin })
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: "User updated",
+        description: "Admin status has been updated successfully."
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating user",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
   
   // File upload state
   const [uploading, setUploading] = useState(false);
@@ -259,8 +357,12 @@ export default function Admin() {
         Manage categories, subcategories, core words, and activity cards for the AAC application.
       </p>
       
-      <Tabs defaultValue="categories" value={selectedTab} onValueChange={setSelectedTab}>
+      <Tabs defaultValue="users" value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="mb-4">
+          <TabsTrigger value="users" className="flex items-center gap-1">
+            <Users className="h-4 w-4" />
+            Users
+          </TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
           <TabsTrigger value="corewords">Core Words</TabsTrigger>
