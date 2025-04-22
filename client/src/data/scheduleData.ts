@@ -138,7 +138,7 @@ export const availableActivities: Record<string, ScheduleActivity[]> = {
   ],
 };
 
-// Initial schedule data with kid-friendly icons and colors
+// Initial schedule data with kid-friendly icons and colors - only shown to first-time users
 export const initialScheduleData = [
   {
     id: "morning",
@@ -147,11 +147,29 @@ export const initialScheduleData = [
     iconColor: "yellow-500",
     activities: [
       {
-        id: "morning-1",
+        id: "morning-wakeup",
         title: "Wake Up",
         icon: "ri-alarm-fill",
         bgColor: "purple-300",
+        imageSrc: "/activity-cards/wakeup.png",
+        speechText: "Wake up"
       },
+      {
+        id: "morning-breakfast",
+        title: "Eat Breakfast",
+        icon: "ri-cup-fill",
+        bgColor: "purple-300",
+        imageSrc: "/activity-cards/breakfast.png",
+        speechText: "Eat breakfast"
+      },
+      {
+        id: "morning-brushteeth",
+        title: "Brush Teeth",
+        icon: "ri-brush-2-fill",
+        bgColor: "green-400",
+        imageSrc: "/activity-cards/brushteeth.png",
+        speechText: "Brush your teeth"
+      }
     ]
   },
   {
@@ -161,11 +179,29 @@ export const initialScheduleData = [
     iconColor: "orange-500",
     activities: [
       {
-        id: "afternoon-1",
-        title: "Play",
-        icon: "ri-gamepad-fill",
-        bgColor: "purple-200",
+        id: "afternoon-lunch",
+        title: "Eat Lunch",
+        icon: "ri-sandwich-line",
+        bgColor: "purple-300",
+        imageSrc: "/activity-cards/lunch.png",
+        speechText: "Eat lunch"
       },
+      {
+        id: "afternoon-outside",
+        title: "Play Outside",
+        icon: "ri-sun-line",
+        bgColor: "green-400",
+        imageSrc: "/activity-cards/playground.png",
+        speechText: "Play outside"
+      },
+      {
+        id: "afternoon-color",
+        title: "Color",
+        icon: "ri-palette-fill",
+        bgColor: "blue-300",
+        imageSrc: "/activity-cards/color.png",
+        speechText: "Color"
+      }
     ]
   },
   {
@@ -175,11 +211,37 @@ export const initialScheduleData = [
     iconColor: "indigo-500",
     activities: [
       {
-        id: "evening-1",
-        title: "Dinner",
-        icon: "ri-restaurant-fill",
-        bgColor: "purple-300",
+        id: "evening-bath",
+        title: "Bath",
+        icon: "ri-bubble-chart-fill", 
+        bgColor: "green-400",
+        imageSrc: "/activity-cards/bath.png",
+        speechText: "Take a bath"
       },
+      {
+        id: "evening-book",
+        title: "Book",
+        icon: "ri-book-open-fill",
+        bgColor: "blue-400",
+        imageSrc: "/activity-cards/book.png",
+        speechText: "Read a book"
+      },
+      {
+        id: "evening-brushteeth",
+        title: "Brush Teeth",
+        icon: "ri-brush-2-fill",
+        bgColor: "green-400",
+        imageSrc: "/activity-cards/brushteeth.png",
+        speechText: "Brush your teeth"
+      },
+      {
+        id: "evening-bed",
+        title: "Go to Sleep",
+        icon: "ri-moon-clear-fill",
+        bgColor: "green-400",
+        imageSrc: "/activity-cards/sleep.png",
+        speechText: "Go to sleep"
+      }
     ]
   }
 ];

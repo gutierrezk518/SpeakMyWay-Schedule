@@ -139,7 +139,43 @@ export default function Schedule() {
   const [scheduleData, setScheduleData] = useState<ScheduleSection[]>(() => {
     // Try to load from localStorage first
     const savedSchedule = localStorage.getItem('userSchedule');
-    return savedSchedule ? JSON.parse(savedSchedule) : initialScheduleData;
+    
+    // Check if this is a first-time user by checking for a first-visit flag
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    
+    if (savedSchedule) {
+      // User has saved schedule data, use that
+      return JSON.parse(savedSchedule);
+    } else if (!hasVisitedBefore) {
+      // First-time user - set the flag and return initial data
+      localStorage.setItem('hasVisitedBefore', 'true');
+      return initialScheduleData;
+    } else {
+      // User has visited before but has no schedule - return empty schedule
+      return [
+        {
+          id: "morning",
+          name: "Morning",
+          icon: "ri-sun-fill",
+          iconColor: "yellow-500",
+          activities: []
+        },
+        {
+          id: "afternoon",
+          name: "Afternoon",
+          icon: "ri-sun-foggy-fill",
+          iconColor: "orange-500",
+          activities: []
+        },
+        {
+          id: "evening",
+          name: "Evening",
+          icon: "ri-moon-fill",
+          iconColor: "indigo-500",
+          activities: []
+        }
+      ];
+    }
   });
   
   // UI state
