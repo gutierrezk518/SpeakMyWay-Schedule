@@ -336,8 +336,12 @@ export default function Admin() {
   
   // Send test email mutation
   const sendTestEmail = useMutation({
-    mutationFn: async (email: string) => {
-      const response = await apiRequest("POST", '/api/admin/test-email', { recipientEmail: email });
+    mutationFn: async (data: string | { recipientEmail: string, provider?: string }) => {
+      const emailData = typeof data === 'string' 
+        ? { recipientEmail: data } 
+        : data;
+      
+      const response = await apiRequest("POST", '/api/admin/test-email', emailData);
       return await response.json();
     },
     onSuccess: (data) => {
@@ -1993,30 +1997,58 @@ export default function Admin() {
               <CardContent>
                 <div className="mb-5">
                   <Label htmlFor="test-email">Test Email Address</Label>
-                  <div className="flex gap-2 mt-1.5">
-                    <Input 
-                      id="test-email" 
-                      placeholder="Enter email address" 
-                      value={testEmail}
-                      onChange={(e) => setTestEmail(e.target.value)}
-                    />
-                    <Button 
-                      onClick={() => {
-                        if (!testEmail || !testEmail.includes('@')) {
-                          toast({
-                            title: "Invalid Email",
-                            description: "Please enter a valid email address",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        setSendingTestEmail(true);
-                        sendTestEmail.mutate(testEmail);
-                      }}
-                      disabled={sendingTestEmail || !testEmail}
-                    >
-                      {sendingTestEmail ? 'Sending...' : 'Send Test'}
-                    </Button>
+                  <div className="flex flex-col gap-2 mt-1.5">
+                    <div className="flex gap-2">
+                      <Input 
+                        id="test-email" 
+                        placeholder="Enter email address" 
+                        value={testEmail}
+                        onChange={(e) => setTestEmail(e.target.value)}
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={() => {
+                            if (!testEmail || !testEmail.includes('@')) {
+                              toast({
+                                title: "Invalid Email",
+                                description: "Please enter a valid email address",
+                                variant: "destructive"
+                              });
+                              return;
+                            }
+                            setSendingTestEmail(true);
+                            sendTestEmail.mutate(testEmail);
+                          }}
+                          disabled={sendingTestEmail || !testEmail}
+                        >
+                          {sendingTestEmail ? 'Sending...' : 'Send Test'}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (!testEmail || !testEmail.includes('@')) {
+                            toast({
+                              title: "Invalid Email",
+                              description: "Please enter a valid email address",
+                              variant: "destructive"
+                            });
+                            return;
+                          }
+                          setSendingTestEmail(true);
+                          sendTestEmail.mutate({ recipientEmail: testEmail, provider: 'sendgrid' });
+                        }}
+                        disabled={sendingTestEmail || !testEmail}
+                      >
+                        Try with SendGrid
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        (Alternative provider, requires API key)
+                      </span>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
                     Send a test email to verify your email configuration

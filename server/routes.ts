@@ -946,73 +946,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Special endpoint for testing emails with custom recipient address
   app.post("/api/admin/test-email", isAdmin, async (req: Request, res: Response) => {
     try {
-      const { recipientEmail } = req.body;
+      const { recipientEmail, provider } = req.body;
       
       if (!recipientEmail) {
         return res.status(400).json({ message: "Recipient email is required" });
       }
       
-      // Import email service
-      const { sendEmail } = await import('./utils/email-service');
+      // Import our email test utilities 
+      const { sendTestEmail } = await import('./utils/email-tests');
       
-      // Create a test template
-      const testHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background-color: #4F46E5; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; }
-            .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>SpeakMyWay Email Test</h1>
-            </div>
-            <div class="content">
-              <p>This is a test email from SpeakMyWay.</p>
-              <p>If you're receiving this email, it means our email delivery system is working correctly!</p>
-              <p>Server time: ${new Date().toLocaleString()}</p>
-              <p>Sent from: ${process.env.NODE_ENV || 'development'} environment</p>
-            </div>
-            <div class="footer">
-              <p>© ${new Date().getFullYear()} SpeakMyWay. All rights reserved.</p>
-              <p>This is a test email and can be safely ignored.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
-      
-      const testText = `
-        SpeakMyWay Email Test
-        
-        This is a test email from SpeakMyWay.
-        
-        If you're receiving this email, it means our email delivery system is working correctly!
-        
-        Server time: ${new Date().toLocaleString()}
-        Sent from: ${process.env.NODE_ENV || 'development'} environment
-        
-        © ${new Date().getFullYear()} SpeakMyWay. All rights reserved.
-        This is a test email and can be safely ignored.
-      `;
-      
-      // Send the test email
-      const emailResult = await sendEmail({
-        to: recipientEmail,
-        subject: `SpeakMyWay Email Test - ${new Date().toLocaleTimeString()}`,
-        htmlBody: testHtml,
-        textBody: testText
-      });
+      // Send the test email with the specified provider or default
+      const emailResult = await sendTestEmail(
+        recipientEmail, 
+        provider === 'sendgrid' ? 'sendgrid' : undefined
+      );
       
       if (emailResult) {
         return res.status(200).json({ 
-          message: `Test email sent to ${recipientEmail}`,
+          message: `Test email sent to ${recipientEmail}${provider ? ` via ${provider}` : ''}`,
           success: true
         });
       } else {
