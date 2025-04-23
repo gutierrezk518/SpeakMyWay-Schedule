@@ -28,7 +28,9 @@ const sesClient = AWS_CREDENTIALS_EXIST ? new SESClient({
 const FROM_EMAIL = process.env.VERIFIED_EMAIL || 'info@speakmyway.com';
 
 // Development mode will log emails instead of sending them if true
-const DEV_MODE = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
+// Force development mode with FORCE_DEV_EMAIL=true environment variable
+const DEV_MODE = process.env.FORCE_DEV_EMAIL === 'true' || 
+                (process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL);
 
 // Check if SendGrid is available as a fallback option
 const SENDGRID_AVAILABLE = !!process.env.SENDGRID_API_KEY;
