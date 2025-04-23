@@ -2080,13 +2080,28 @@ export default function Admin() {
                   <div className="flex items-start">
                     <Info className="h-4 w-4 text-amber-500 mr-2 mt-0.5" />
                     <div>
-                      <h3 className="text-sm font-medium text-amber-800">AWS SES Verification Required</h3>
+                      <h3 className="text-sm font-medium text-amber-800">AWS SES Verification Required (us-east-2 Region)</h3>
                       <p className="text-xs text-amber-700 mt-1">
                         In AWS SES sandbox mode, both sender and recipient email addresses must be verified in the AWS SES console before sending emails.
                       </p>
                       <p className="text-xs text-amber-700 mt-1">
-                        Current sender: <code className="bg-amber-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
+                        <span className="font-medium">Current sender:</span> <code className="bg-amber-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
                       </p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        <span className="font-medium">AWS Region:</span> <code className="bg-amber-100 px-1 py-0.5 rounded">us-east-2</code> (Ohio)
+                      </p>
+
+                      <div className="mt-2 border-t border-amber-200 pt-2">
+                        <p className="text-xs font-medium text-amber-800">How to verify emails in AWS SES:</p>
+                        <ol className="text-xs text-amber-700 list-decimal pl-5 mt-1 space-y-1">
+                          <li>Sign in to the <a href="https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/verified-identities" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">AWS SES Console</a> for the us-east-2 region</li>
+                          <li>Click "Create identity"</li>
+                          <li>Select "Email address" and enter your email</li>
+                          <li>Check your inbox for a verification email from AWS</li>
+                          <li>Click the verification link in the email</li>
+                          <li>Repeat for any recipient email addresses you want to send to</li>
+                        </ol>
+                      </div>
                       
                       <div className="mt-2">
                         <Button 
@@ -2118,6 +2133,19 @@ export default function Admin() {
                               Verification is region-specific. Make sure to verify your emails in the same region
                               as specified in the AWS_REGION environment variable.
                             </p>
+                            <div className="mt-2 border-t border-amber-200 pt-2">
+                              <a 
+                                href="https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/verified-identities" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline text-xs flex items-center"
+                              >
+                                Open AWS SES Console (us-east-2) 
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                              </a>
+                            </div>
                           </div>
                         )}
                       </div>

@@ -960,7 +960,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       return res.status(200).json({ 
         verification: verificationStatus,
-        region: process.env.AWS_REGION || 'us-east-1'
+        region: process.env.AWS_REGION || 'us-east-2',
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
       console.error('Error checking email verification:', error);
