@@ -52,6 +52,8 @@ export default function Admin() {
   // Email test state
   const [testEmail, setTestEmail] = useState('');
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<any>(null);
+  const [checkingVerification, setCheckingVerification] = useState(false);
   const [selectedTab, setSelectedTab] = useState("users");
   
   // ==== Users Tab ====
@@ -334,6 +336,24 @@ export default function Admin() {
     }
   });
   
+  // Check email verification status
+  const checkEmailVerification = useMutation({
+    mutationFn: async (emails: string[]) => {
+      const response = await apiRequest("POST", '/api/admin/check-email-verification', { emails });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      setVerificationStatus(data);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Checking Verification",
+        description: error.message || "Failed to check email verification status.",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Send test email mutation
   const sendTestEmail = useMutation({
     mutationFn: async (data: string | { recipientEmail: string, provider?: string }) => {
@@ -2067,6 +2087,40 @@ export default function Admin() {
                       <p className="text-xs text-amber-700 mt-1">
                         Current sender: <code className="bg-amber-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
                       </p>
+                      
+                      <div className="mt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setCheckingVerification(true);
+                            checkEmailVerification.mutate(['info@speakmyway.com', testEmail || 'gutierrezk518@gmail.com']);
+                          }}
+                          disabled={checkEmailVerification.isPending}
+                          className="text-xs"
+                        >
+                          {checkEmailVerification.isPending ? 'Checking...' : 'Check Verification Status'}
+                        </Button>
+                        
+                        {verificationStatus && (
+                          <div className="mt-3 text-xs space-y-1 border-t border-amber-200 pt-3">
+                            <p className="font-semibold">Verification Status ({verificationStatus.region} region):</p>
+                            {Object.entries(verificationStatus.verification || {}).map(([email, verified]: [string, any]) => (
+                              <div key={email} className="flex items-center gap-1">
+                                <span className={`inline-block w-4 h-4 rounded-full ${verified ? 'bg-green-500' : 'bg-red-500'}`}>
+                                  {verified ? <Check className="h-3 w-3 text-white" /> : ''}
+                                </span>
+                                <code className="bg-amber-100 px-1 py-0.5 rounded">{email}</code>
+                                <span>{verified ? 'Verified' : 'Not Verified'}</span>
+                              </div>
+                            ))}
+                            <p className="text-xs text-amber-700 mt-2 italic">
+                              Verification is region-specific. Make sure to verify your emails in the same region
+                              as specified in the AWS_REGION environment variable.
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

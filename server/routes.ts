@@ -943,6 +943,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Endpoint to check AWS SES email verification status
+  app.post("/api/admin/check-email-verification", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { emails } = req.body;
+      
+      if (!emails || !Array.isArray(emails) || emails.length === 0) {
+        return res.status(400).json({ message: "Please provide an array of email addresses to check" });
+      }
+      
+      // Import verification check utility
+      const { checkEmailVerificationStatus } = await import('./utils/check-ses-verification');
+      
+      // Check verification status
+      const verificationStatus = await checkEmailVerificationStatus(emails);
+      
+      return res.status(200).json({ 
+        verification: verificationStatus,
+        region: process.env.AWS_REGION || 'us-east-1'
+      });
+    } catch (error) {
+      console.error('Error checking email verification:', error);
+      return res.status(500).json({ 
+        message: "Failed to check email verification status",
+        error: (error as Error).message 
+      });
+    }
+  });
+  
   // Special endpoint for testing emails with custom recipient address
   app.post("/api/admin/test-email", isAdmin, async (req: Request, res: Response) => {
     try {

@@ -16,7 +16,7 @@ if (!AWS_CREDENTIALS_EXIST) {
 
 // Only create SES client if credentials exist
 const sesClient = AWS_CREDENTIALS_EXIST ? new SESClient({
-  region: process.env.AWS_REGION || 'us-east-1', // AWS SES region
+  region: process.env.AWS_REGION || 'us-east-2', // AWS SES region (Ohio)
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
@@ -81,6 +81,15 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOption
           },
         },
       };
+
+      // Debug SES configuration
+      console.log('=== AWS SES Configuration ===');
+      console.log(`AWS Region: ${process.env.AWS_REGION || 'us-east-1'}`);
+      console.log(`From Email: ${FROM_EMAIL}`);
+      console.log(`Access Key ID: ${process.env.AWS_ACCESS_KEY_ID ? 'Set (first 4 chars: ' + process.env.AWS_ACCESS_KEY_ID.substring(0, 4) + '...)' : 'Not set'}`);
+      console.log(`Secret Key: ${process.env.AWS_SECRET_ACCESS_KEY ? 'Set (length: ' + process.env.AWS_SECRET_ACCESS_KEY.length + ')' : 'Not set'}`);
+      console.log(`Verified Email Env Var: ${process.env.VERIFIED_EMAIL || 'Not set'}`);
+      console.log('=== End AWS SES Configuration ===');
 
       const result = await sesClient.send(new SendEmailCommand(params));
       console.log(`Email sent successfully via AWS SES to ${toAddresses.join(', ')}`);
