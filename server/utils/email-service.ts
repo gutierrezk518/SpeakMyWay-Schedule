@@ -3,20 +3,25 @@ import {
   SendEmailCommand, 
   SendEmailCommandInput 
 } from "@aws-sdk/client-ses";
+import { sendEmailWithSendGrid } from "./sendgrid-service";
 
-if (!process.env.AWS_ACCESS_KEY_ID || 
-    !process.env.AWS_SECRET_ACCESS_KEY || 
-    !process.env.AWS_REGION) {
-  console.warn('AWS SES credentials missing. Email functionality will not work.');
+// Check if AWS credentials exist
+const AWS_CREDENTIALS_EXIST = !!(process.env.AWS_ACCESS_KEY_ID && 
+                               process.env.AWS_SECRET_ACCESS_KEY && 
+                               process.env.AWS_REGION);
+
+if (!AWS_CREDENTIALS_EXIST) {
+  console.warn('AWS SES credentials missing. Using SendGrid or fallback to development mode.');
 }
 
-const sesClient = new SESClient({
-  region: process.env.AWS_REGION || 'us-east-2', // AWS SES region
+// Only create SES client if credentials exist
+const sesClient = AWS_CREDENTIALS_EXIST ? new SESClient({
+  region: process.env.AWS_REGION || 'us-east-1', // AWS SES region
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   },
-});
+}) : null;
 
 // In AWS SES sandbox mode, both sender and recipient must be verified
 // Use a plain email format without the friendly name to avoid potential parsing issues
@@ -24,6 +29,9 @@ const FROM_EMAIL = process.env.VERIFIED_EMAIL || 'info@speakmyway.com';
 
 // Development mode will log emails instead of sending them if true
 const DEV_MODE = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
+
+// Check if SendGrid is available as a fallback option
+const SENDGRID_AVAILABLE = !!process.env.SENDGRID_API_KEY;
 
 interface EmailOptions {
   to: string | string[];
@@ -46,48 +54,66 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOption
     return true;
   }
   
-  // Proceed with actual email sending
-  try {
-    // Check if FROM_EMAIL is verified in AWS SES
-    // We're now using info@speakmyway.com as the default sender
-    
-    const params: SendEmailCommandInput = {
-      Source: FROM_EMAIL,
-      Destination: {
-        ToAddresses: toAddresses,
-      },
-      Message: {
-        Subject: {
-          Data: subject,
-          Charset: 'UTF-8',
+  // Try AWS SES first if available
+  if (AWS_CREDENTIALS_EXIST && sesClient) {
+    try {
+      const params: SendEmailCommandInput = {
+        Source: FROM_EMAIL,
+        Destination: {
+          ToAddresses: toAddresses,
         },
-        Body: {
-          Html: {
-            Data: htmlBody,
+        Message: {
+          Subject: {
+            Data: subject,
             Charset: 'UTF-8',
           },
-          Text: {
-            Data: textBody,
-            Charset: 'UTF-8',
+          Body: {
+            Html: {
+              Data: htmlBody,
+              Charset: 'UTF-8',
+            },
+            Text: {
+              Data: textBody,
+              Charset: 'UTF-8',
+            },
           },
         },
-      },
-    };
+      };
 
-    const result = await sesClient.send(new SendEmailCommand(params));
-    console.log(`Email sent successfully to ${toAddresses.join(', ')}`);
-    return true;
-  } catch (error: any) {
-    // Check for AWS SES verification errors
-    if (error.message && error.message.includes('not verified')) {
-      console.error('EMAIL VERIFICATION ERROR:', error.message);
-      console.error('To fix this:');
-      console.error('1. Go to AWS SES console and verify both sender and recipient email addresses');
-      console.error('2. Once verified, set the VERIFIED_EMAIL environment variable to your verified sender email');
-      console.error('3. For testing, use a recipient email that you can verify in AWS SES console');
-    } else {
-      console.error('Failed to send email:', error);
+      const result = await sesClient.send(new SendEmailCommand(params));
+      console.log(`Email sent successfully via AWS SES to ${toAddresses.join(', ')}`);
+      return true;
+    } catch (error: any) {
+      // Check for AWS SES verification errors
+      if (error.message && error.message.includes('not verified')) {
+        console.error('AWS SES EMAIL VERIFICATION ERROR:', error.message);
+        console.error('To fix this:');
+        console.error('1. Go to AWS SES console and verify both sender and recipient email addresses');
+        console.error('2. Once verified, set the VERIFIED_EMAIL environment variable to your verified sender email');
+        console.error('3. For testing, use a recipient email that you can verify in AWS SES console');
+        
+        // Try SendGrid as fallback if available
+        if (SENDGRID_AVAILABLE) {
+          console.log('Attempting to send email via SendGrid instead...');
+          return await sendEmailWithSendGrid({ to, subject, htmlBody, textBody });
+        }
+      } else {
+        console.error('Failed to send email via AWS SES:', error);
+        
+        // Try SendGrid as fallback if available
+        if (SENDGRID_AVAILABLE) {
+          console.log('Attempting to send email via SendGrid instead...');
+          return await sendEmailWithSendGrid({ to, subject, htmlBody, textBody });
+        }
+      }
+      return false;
     }
+  } else if (SENDGRID_AVAILABLE) {
+    // If AWS SES is not available but SendGrid is, use SendGrid
+    console.log('AWS SES not configured, attempting to send via SendGrid...');
+    return await sendEmailWithSendGrid({ to, subject, htmlBody, textBody });
+  } else {
+    console.error('No email provider configured. Cannot send email.');
     return false;
   }
 }
