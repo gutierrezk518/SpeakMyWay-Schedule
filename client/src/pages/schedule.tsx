@@ -801,9 +801,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '300px' : '100%',
-                      minHeight: isPortrait ? '300px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '300px' : '100%'
+                      height: isPortrait ? '180px' : '100%',
+                      minHeight: isPortrait ? '180px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '180px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
@@ -820,7 +820,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-32 xs:space-x-36 sm:space-x-40 md:space-x-44' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-16 xs:space-x-20 sm:space-x-24 md:space-x-28' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
@@ -837,7 +837,7 @@ export default function Schedule() {
                                 // Portrait mode: Show larger, more visible remove button below card
                                 <div className="mt-2 w-full text-center">
                                   <button 
-                                    className="px-3 py-2 bg-red-500 text-white hover:bg-red-600 rounded text-sm font-bold shadow-md w-full"
+                                    className="px-3 py-1 bg-red-500 text-white hover:bg-red-600 rounded text-xs font-bold shadow-md"
                                     onClick={() => removeActivity(index)}
                                     aria-label="Remove activity"
                                   >
@@ -1177,9 +1177,9 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - positioned at the bottom of the page */}
+              {/* Pagination controls - now better positioned for portrait and landscape modes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="fixed bottom-14 left-0 right-0 mx-auto p-2 border-t border-gray-200 flex justify-center space-x-2 bg-white shadow-md w-full z-30">
+                <div className="fixed bottom-2 left-0 right-0 mx-auto p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg z-50">
                   <button
                     className={`px-4 py-2 rounded-md text-base ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
