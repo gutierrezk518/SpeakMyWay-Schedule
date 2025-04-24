@@ -91,6 +91,7 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
       <li>Choose from different voice options to match preferences</li>
       <li>Switch between languages for multilingual support</li>
       <li>Track progress and usage patterns over time</li>
+      <li>Access your account securely across multiple devices</li>
     </ul>
     
     <p>If you didn't create this account, you can safely ignore this email.</p>
@@ -114,9 +115,9 @@ export function welcomeEmailText(name: string, verificationUrl: string): string 
 
 Hello${name ? ' ' + name : ''},
 
-We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!
+Thank you for joining SpeakMyWay - the premier AAC (Augmentative and Alternative Communication) application custom-designed for children with unique communication needs!
 
-Before you can start using all features of SpeakMyWay, please verify your email address by visiting this link:
+To activate your account and access all our great features, please verify your email address by visiting this link:
 ${verificationUrl}
 
 This link will expire in 24 hours for security reasons.
@@ -127,6 +128,7 @@ WITH SPEAKMYWAY, YOU CAN:
 - Choose from different voice options to match preferences
 - Switch between languages for multilingual support
 - Track progress and usage patterns over time
+- Access your account securely across multiple devices
 
 If you didn't create this account, you can safely ignore this email.
 
