@@ -11,10 +11,6 @@ import Customize from "@/pages/customize";
 import Admin from "@/pages/admin";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
-import CalmPage from "@/pages/calm-page";
-import ColoringPage from "@/pages/coloring-page";
-import AquariumPage from "@/pages/aquarium-page";
-import BubblesPage from "@/pages/bubbles-page";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -33,11 +29,6 @@ function Router() {
       <ProtectedRoute path="/admin" component={Admin} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
-      {/* Calm Mode Routes */}
-      <Route path="/calm" component={CalmPage} />
-      <Route path="/calm/coloring" component={ColoringPage} />
-      <Route path="/calm/aquarium" component={AquariumPage} />
-      <Route path="/calm/bubbles" component={BubblesPage} />
       <Route component={NotFound} />
     </Switch>
   );
