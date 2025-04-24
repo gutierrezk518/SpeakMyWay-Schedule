@@ -1177,11 +1177,11 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - positioned at the bottom of activity cards section */}
+              {/* Pagination controls - always visible for all screen sizes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="mt-4 mb-2 p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg mx-auto">
+                <div className="sticky bottom-0 mt-4 mb-1 p-1 border border-gray-200 flex justify-center space-x-2 bg-white shadow-md w-full max-w-full rounded-lg mx-auto">
                   <button
-                    className={`px-3 py-1 rounded-md text-sm ${
+                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
@@ -1189,11 +1189,11 @@ export default function Schedule() {
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-3 py-1 bg-white rounded-md text-sm font-medium border border-blue-200 min-w-[80px] text-center">
+                  <span className="px-2 py-1 bg-white rounded-md text-xs sm:text-sm font-medium border border-blue-200 min-w-[60px] text-center">
                     {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-3 py-1 rounded-md text-sm ${
+                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
                       activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
