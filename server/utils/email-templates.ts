@@ -69,9 +69,9 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
   <div class="container">
     <h1>Welcome to SpeakMyWay!</h1>
     
-    <p>Hello,</p>
+    <p>Hello${name ? ' ' + name : ''},</p>
     
-    <p>We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun!</p>
+    <p>We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!</p>
     
     <p>Before you can start using all features of SpeakMyWay, please verify your email address by clicking the button below:</p>
     
@@ -84,13 +84,22 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
     
     <p>This link will expire in 24 hours for security reasons.</p>
     
+    <p>With SpeakMyWay, you can:</p>
+    <ul style="margin-left: 20px; padding-left: 0;">
+      <li>Create custom communication cards with personalized images and text</li>
+      <li>Set up and organize daily routines for better predictability</li>
+      <li>Choose from different voice options to match preferences</li>
+      <li>Switch between languages for multilingual support</li>
+      <li>Track progress and usage patterns over time</li>
+    </ul>
+    
     <p>If you didn't create this account, you can safely ignore this email.</p>
     
     <p>Thank you,<br>The SpeakMyWay Team</p>
   </div>
   
   <div class="footer">
-    <p>This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.com</p>
+    <p>This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.app</p>
     <p>&copy; ${new Date().getFullYear()} SpeakMyWay. All rights reserved.</p>
   </div>
 </body>
@@ -101,16 +110,23 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
  * Plain text version of welcome email for email clients that don't support HTML
  */
 export function welcomeEmailText(name: string, verificationUrl: string): string {
-  return `Welcome to SpeakMyWay!
+  return `WELCOME TO SPEAKMYWAY!
 
-Hello,
+Hello${name ? ' ' + name : ''},
 
-We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun! Click the authorization link in the below section to get started in the SpeakMyWay application.
+We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!
 
 Before you can start using all features of SpeakMyWay, please verify your email address by visiting this link:
 ${verificationUrl}
 
 This link will expire in 24 hours for security reasons.
+
+WITH SPEAKMYWAY, YOU CAN:
+- Create custom communication cards with personalized images and text
+- Set up and organize daily routines for better predictability
+- Choose from different voice options to match preferences
+- Switch between languages for multilingual support
+- Track progress and usage patterns over time
 
 If you didn't create this account, you can safely ignore this email.
 
@@ -118,6 +134,6 @@ Thank you,
 The SpeakMyWay Team
 
 ---
-This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.com
+This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.app
 © ${new Date().getFullYear()} SpeakMyWay. All rights reserved.`;
 }

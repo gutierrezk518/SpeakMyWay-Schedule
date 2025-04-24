@@ -19,7 +19,7 @@ import { setupAuth } from "./auth";
 import { isAdmin } from "./middleware/admin";
 import { createVerificationToken, verifyEmailToken, generateVerificationUrl } from "./utils/email-verification";
 import { sendEmail } from "./utils/email-service";
-import { welcomeEmail } from "./utils/email-templates";
+import { welcomeEmail, welcomeEmailText } from "./utils/email-templates";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes and middleware
@@ -1049,7 +1049,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         to: email,
         subject: "Verify your SpeakMyWay email address",
         htmlBody: welcomeEmail(name, verificationUrl),
-        textBody: `Hello ${name}! Please verify your email by clicking this link: ${verificationUrl}`,
+        textBody: welcomeEmailText(name, verificationUrl),
       });
       
       if (emailSent) {
