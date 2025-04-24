@@ -1177,29 +1177,29 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - now better positioned for portrait and landscape modes */}
+              {/* Pagination controls - positioned at the bottom of activity cards section */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="fixed bottom-2 left-0 right-0 mx-auto p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg z-50">
+                <div className="mt-4 mb-2 p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg mx-auto">
                   <button
-                    className={`px-4 py-2 rounded-md text-base ${
+                    className={`px-3 py-1 rounded-md text-sm ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
                     disabled={activitiesPage === 1}
                   >
-                    <i className="ri-arrow-left-s-line text-lg"></i>
+                    <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-3 py-2 bg-white rounded-md text-base font-medium border border-blue-200 min-w-[100px] text-center">
-                    Page {activitiesPage} of {totalPages}
+                  <span className="px-3 py-1 bg-white rounded-md text-sm font-medium border border-blue-200 min-w-[80px] text-center">
+                    {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-4 py-2 rounded-md text-base ${
+                    className={`px-3 py-1 rounded-md text-sm ${
                       activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
                     disabled={activitiesPage === totalPages}
                   >
-                    <i className="ri-arrow-right-s-line text-lg"></i>
+                    <i className="ri-arrow-right-s-line"></i>
                   </button>
                 </div>
               )}
