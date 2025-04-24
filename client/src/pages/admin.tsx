@@ -2085,7 +2085,7 @@ export default function Admin() {
                         Emails are now sent using Resend, a modern email delivery service that doesn't require recipient verification.
                       </p>
                       <p className="text-xs text-green-700 mt-1">
-                        <span className="font-medium">Default sender:</span> <code className="bg-green-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
+                        <span className="font-medium">Default sender:</span> <code className="bg-green-100 px-1 py-0.5 rounded">onboarding@resend.dev</code>
                       </p>
                       <p className="text-xs text-green-700 mt-1">
                         <span className="font-medium">Status:</span> <span className="text-green-600 font-medium">Active</span>
@@ -2195,7 +2195,7 @@ export default function Admin() {
                       <span className="text-xs font-medium block mb-1">Preview:</span>
                       <div className="text-xs">
                         <p><strong>Subject:</strong> Welcome to SpeakMyWay, [username]!</p>
-                        <p className="mt-1"><strong>From:</strong> info@speakmyway.com</p>
+                        <p className="mt-1"><strong>From:</strong> SpeakMyWay &lt;onboarding@resend.dev&gt;</p>
                         <p className="mt-1"><strong>To:</strong> [user's email address]</p>
                         <p className="mt-2 text-muted-foreground italic">Enhanced with HTML formatting, responsive design, and plain text fallback</p>
                       </div>
