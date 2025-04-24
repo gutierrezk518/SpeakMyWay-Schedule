@@ -691,52 +691,52 @@ export default function Schedule() {
           <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
-              <div className="flex bg-gray-100 px-2 py-1 border-b border-gray-200 items-center justify-center space-x-3">
+              <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
                 {/* Undo button */}
                 <button 
-                  className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
                     canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleUndo}
                   disabled={!canUndo}
                   title="Undo"
                 >
-                  <i className="ri-arrow-go-back-line text-xs"></i>
+                  <i className="ri-arrow-go-back-line text-base"></i>
                 </button>
                 
                 {/* Redo button */}
                 <button 
-                  className={`w-7 h-7 rounded-md flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
                     canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleRedo}
                   disabled={!canRedo}
                   title="Redo"
                 >
-                  <i className="ri-arrow-go-forward-line text-xs"></i>
+                  <i className="ri-arrow-go-forward-line text-base"></i>
                 </button>
                 
                 {/* Play button */}
                 <button 
-                  className="w-7 h-7 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                  className="w-12 h-12 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
                   onClick={playSchedule}
                   title="Play schedule"
                 >
-                  <i className="ri-play-line text-xs"></i>
+                  <i className="ri-play-line text-xl"></i>
                 </button>
                 
                 {/* Timer toggle button */}
                 <button 
-                  className={`w-7 h-7 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                  className={`w-10 h-10 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
                   onClick={() => setShowTimer(!showTimer)}
                   title={showTimer ? "Hide timer" : "Show timer"}
                 >
-                  <i className="ri-timer-line text-xs"></i>
+                  <i className="ri-timer-line text-base"></i>
                 </button>
                 
                 {/* Favorites button - now just navigates to favorites category */}
                 <button 
-                  className={`w-7 h-7 rounded-md ${
+                  className={`w-10 h-10 rounded-lg ${
                     selectedCategory === 'favorites'
                       ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
                       : 'bg-yellow-400 text-white'
@@ -744,16 +744,16 @@ export default function Schedule() {
                   onClick={() => setSelectedCategory('favorites')}
                   title="Show favorites"
                 >
-                  <i className="ri-star-fill text-xs"></i>
+                  <i className="ri-star-fill text-base"></i>
                 </button>
                 
                 {/* Save button */}
                 <button 
-                  className="w-7 h-7 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                  className="w-10 h-10 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
                   onClick={() => setShowSaveModal(true)}
                   title="Save schedule"
                 >
-                  <i className="ri-save-line text-xs"></i>
+                  <i className="ri-save-line text-base"></i>
                 </button>
               </div>
             )}
