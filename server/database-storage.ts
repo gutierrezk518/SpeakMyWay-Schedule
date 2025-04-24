@@ -629,4 +629,55 @@ export class DatabaseStorage implements IStorage {
     
     return result;
   }
+  
+  // Email verification token operations
+  async createEmailVerificationToken(insertToken: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
+    const [token] = await db
+      .insert(emailVerificationTokens)
+      .values(insertToken)
+      .returning();
+    
+    return token;
+  }
+
+  async getEmailVerificationToken(token: string): Promise<EmailVerificationToken | undefined> {
+    const [verificationToken] = await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(eq(emailVerificationTokens.token, token));
+    
+    return verificationToken;
+  }
+
+  async markEmailVerificationTokenUsed(token: string, clickedAt?: Date): Promise<boolean> {
+    const updateData: any = { used: true };
+    
+    if (clickedAt) {
+      updateData.clickedAt = clickedAt;
+    } else {
+      updateData.clickedAt = new Date();
+    }
+    
+    const result = await db
+      .update(emailVerificationTokens)
+      .set(updateData)
+      .where(eq(emailVerificationTokens.token, token));
+    
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async getActiveEmailVerificationTokensByUser(userId: number): Promise<EmailVerificationToken[]> {
+    const now = new Date();
+    
+    return await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(
+        and(
+          eq(emailVerificationTokens.userId, userId),
+          eq(emailVerificationTokens.used, false),
+          gte(emailVerificationTokens.expires, now)
+        )
+      );
+  }
 }

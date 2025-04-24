@@ -79,6 +79,12 @@ export interface IStorage {
   createRoutine(routine: InsertRoutine): Promise<Routine>;
   updateRoutine(id: number, routine: Partial<InsertRoutine>): Promise<Routine>;
   deleteRoutine(id: number): Promise<boolean>;
+  
+  // Email verification operations
+  createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken>;
+  getEmailVerificationToken(token: string): Promise<EmailVerificationToken | undefined>;
+  markEmailVerificationTokenUsed(token: string, clickedAt?: Date): Promise<boolean>;
+  getActiveEmailVerificationTokensByUser(userId: number): Promise<EmailVerificationToken[]>;
 }
 
 // In-memory storage implementation
@@ -261,6 +267,128 @@ export class MemStorage implements IStorage {
     }
     
     return this.routines.delete(id);
+  }
+  
+  // Category operations (stubs to satisfy interface)
+  async getCategories(_type?: string): Promise<Category[]> {
+    return [];
+  }
+  
+  async getCategory(_id: number): Promise<Category | undefined> {
+    return undefined;
+  }
+  
+  async createCategory(category: InsertCategory): Promise<Category> {
+    return { ...category, id: 1 };
+  }
+  
+  async updateCategory(_id: number, category: Partial<InsertCategory>): Promise<Category> {
+    return { ...category as any, id: 1 };
+  }
+  
+  async deleteCategory(_id: number): Promise<boolean> {
+    return true;
+  }
+  
+  // Subcategory operations (stubs to satisfy interface)
+  async getSubcategories(_categoryId: number): Promise<Subcategory[]> {
+    return [];
+  }
+  
+  async getSubcategory(_id: number): Promise<Subcategory | undefined> {
+    return undefined;
+  }
+  
+  async createSubcategory(subcategory: InsertSubcategory): Promise<Subcategory> {
+    return { ...subcategory, id: 1 };
+  }
+  
+  async updateSubcategory(_id: number, subcategory: Partial<InsertSubcategory>): Promise<Subcategory> {
+    return { ...subcategory as any, id: 1 };
+  }
+  
+  async deleteSubcategory(_id: number): Promise<boolean> {
+    return true;
+  }
+  
+  // Core Words operations (stubs to satisfy interface)
+  async getCoreWords(): Promise<CoreWord[]> {
+    return [];
+  }
+  
+  async getCoreWord(_id: number): Promise<CoreWord | undefined> {
+    return undefined;
+  }
+  
+  async createCoreWord(coreWord: InsertCoreWord): Promise<CoreWord> {
+    return { ...coreWord, id: 1 };
+  }
+  
+  async updateCoreWord(_id: number, coreWord: Partial<InsertCoreWord>): Promise<CoreWord> {
+    return { ...coreWord as any, id: 1 };
+  }
+  
+  async deleteCoreWord(_id: number): Promise<boolean> {
+    return true;
+  }
+  
+  // Card additional operations (stubs to satisfy interface)
+  async getScheduleCards(userId: number, language: string): Promise<Card[]> {
+    return this.getCards(userId, language).then(cards => 
+      cards.filter(card => card.isScheduleCard)
+    );
+  }
+  
+  async getCommunicationCards(userId: number, language: string): Promise<Card[]> {
+    return this.getCards(userId, language).then(cards => 
+      cards.filter(card => card.isCommunicationCard)
+    );
+  }
+  
+  async getCard(id: number): Promise<Card | undefined> {
+    return this.cards.get(id);
+  }
+  
+  async updateCard(id: number, updatedCard: Partial<InsertCard>): Promise<Card> {
+    const card = this.cards.get(id);
+    if (!card) {
+      throw new Error(`Card with id ${id} not found`);
+    }
+    
+    const newCard = { ...card, ...updatedCard };
+    this.cards.set(id, newCard);
+    return newCard;
+  }
+  
+  async deleteCard(id: number): Promise<boolean> {
+    if (!this.cards.has(id)) {
+      return false;
+    }
+    
+    return this.cards.delete(id);
+  }
+  
+  // Email verification operations (stubs to satisfy interface)
+  async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
+    return {
+      ...token,
+      id: 1,
+      used: false,
+      createdAt: new Date().toISOString(),
+      clickedAt: null
+    };
+  }
+  
+  async getEmailVerificationToken(_token: string): Promise<EmailVerificationToken | undefined> {
+    return undefined;
+  }
+  
+  async markEmailVerificationTokenUsed(_token: string, clickedAt?: Date): Promise<boolean> {
+    return true;
+  }
+  
+  async getActiveEmailVerificationTokensByUser(_userId: number): Promise<EmailVerificationToken[]> {
+    return [];
   }
 }
 
