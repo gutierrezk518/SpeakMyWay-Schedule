@@ -1188,29 +1188,29 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - positioned at bottom right on medium screens to avoid overlap */}
+              {/* Pagination controls - now better positioned for portrait and landscape modes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky md:fixed bottom-0 left-0 md:left-auto md:right-4 md:bottom-4 p-2 border-t md:border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-full md:w-auto md:rounded-lg z-40">
+                <div className="fixed bottom-2 left-0 right-0 mx-auto p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg z-50">
                   <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
+                    className={`px-4 py-2 rounded-md text-base ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
                     disabled={activitiesPage === 1}
                   >
-                    <i className="ri-arrow-left-s-line"></i>
+                    <i className="ri-arrow-left-s-line text-lg"></i>
                   </button>
-                  <span className="px-2 py-1 md:px-3 md:py-1.5 bg-white rounded-md text-sm font-medium border border-blue-200">
+                  <span className="px-3 py-2 bg-white rounded-md text-base font-medium border border-blue-200 min-w-[100px] text-center">
                     Page {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-sm ${
+                    className={`px-4 py-2 rounded-md text-base ${
                       activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
                     disabled={activitiesPage === totalPages}
                   >
-                    <i className="ri-arrow-right-s-line"></i>
+                    <i className="ri-arrow-right-s-line text-lg"></i>
                   </button>
                 </div>
               )}
