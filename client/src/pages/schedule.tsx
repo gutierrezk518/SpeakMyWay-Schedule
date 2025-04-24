@@ -801,9 +801,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '180px' : '100%',
-                      minHeight: isPortrait ? '180px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '180px' : '100%'
+                      height: isPortrait ? '200px' : '100%',
+                      minHeight: isPortrait ? '200px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '200px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
@@ -1101,7 +1101,7 @@ export default function Schedule() {
               )}
               
               {/* Activity cards - main area with extra padding at bottom on all screens */}
-              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'pb-20' : 'pb-2 md:pb-16'}`}>
+              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'pb-32' : 'pb-2 md:pb-16'}`}>
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
@@ -1177,9 +1177,9 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - now better positioned for portrait and landscape modes */}
+              {/* Pagination controls - positioned at the bottom of the page */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="fixed bottom-2 left-0 right-0 mx-auto p-2 border border-gray-200 flex justify-center space-x-2 bg-gray-50 shadow-md w-auto max-w-xs rounded-lg z-50">
+                <div className="sticky bottom-0 left-0 right-0 mx-auto p-2 border-t border-gray-200 flex justify-center space-x-2 bg-white shadow-md w-full z-30">
                   <button
                     className={`px-4 py-2 rounded-md text-base ${
                       activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
