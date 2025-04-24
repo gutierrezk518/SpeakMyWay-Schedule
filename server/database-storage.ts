@@ -23,10 +23,13 @@ import {
   routines,
   userLoginHistory,
   passwordResetTokens,
+  emailVerificationTokens,
   LoginHistory,
   InsertLoginHistory,
   PasswordResetToken,
-  InsertPasswordResetToken
+  InsertPasswordResetToken,
+  EmailVerificationToken,
+  InsertEmailVerificationToken
 } from '@shared/schema';
 import { db } from './db';
 import { eq, and, isNull, desc, or, count, gte, lte, sql } from 'drizzle-orm';

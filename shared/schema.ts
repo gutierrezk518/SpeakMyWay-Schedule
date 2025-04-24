@@ -24,10 +24,30 @@ export const users = pgTable("users", {
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
+// Email verification tokens
+export const emailVerificationTokens = pgTable("email_verification_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  token: text("token").notNull().unique(),
+  expires: timestamp("expires").notNull(),
+  used: boolean("used").default(false),
+  clickedAt: timestamp("clicked_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Define user relations
 export const usersRelations = relations(users, ({ many }) => ({
   loginHistory: many(userLoginHistory),
-  passwordResets: many(passwordResetTokens)
+  passwordResets: many(passwordResetTokens),
+  verificationTokens: many(emailVerificationTokens)
+}));
+
+// Email verification token relations
+export const emailVerificationTokensRelations = relations(emailVerificationTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [emailVerificationTokens.userId],
+    references: [users.id],
+  }),
 }));
 
 // User login history for analytics and security
@@ -229,6 +249,12 @@ export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTo
   expires: true
 });
 
+export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).pick({
+  userId: true,
+  token: true,
+  expires: true
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -257,3 +283,6 @@ export type LoginHistory = typeof userLoginHistory.$inferSelect;
 
 export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+
+export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificationTokenSchema>;
+export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;

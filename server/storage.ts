@@ -12,7 +12,13 @@ import {
   Subcategory,
   InsertSubcategory,
   CoreWord,
-  InsertCoreWord
+  InsertCoreWord,
+  EmailVerificationToken,
+  InsertEmailVerificationToken,
+  PasswordResetToken,
+  InsertPasswordResetToken,
+  LoginHistory,
+  InsertLoginHistory
 } from "@shared/schema";
 
 import session from "express-session";
