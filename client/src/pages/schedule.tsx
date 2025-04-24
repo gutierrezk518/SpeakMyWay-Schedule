@@ -688,7 +688,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto min-h-[180px]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
@@ -747,7 +747,7 @@ export default function Schedule() {
               </div>
             )}
             
-            <div className="p-3 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
+            <div className="p-3 bg-blue-200 border-b border-blue-300 flex items-center justify-between">
               <div className="font-bold text-base md:text-lg mr-auto">My Schedule</div>
               
               <div className="flex space-x-1 ml-auto">
@@ -801,9 +801,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '180px' : '100%',
-                      minHeight: isPortrait ? '180px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '180px' : '100%'
+                      height: isPortrait ? '220px' : '100%',
+                      minHeight: isPortrait ? '220px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '220px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-3 flex flex-nowrap items-center'
@@ -869,6 +869,11 @@ export default function Schedule() {
                 )}
               </Droppable>
             </div>
+            
+            {/* Visual separator in portrait mode */}
+            {isPortrait && (
+              <div className="border-b-4 border-blue-300 w-full my-4 rounded"></div>
+            )}
             
             {/* Extra padding at the bottom to prevent content from being too close to the edge and ensure nav is visible on mobile */}
             <div className={`${isPortrait ? 'h-20' : 'h-2'}`}></div>
