@@ -17,7 +17,7 @@ import multer from "multer";
 import * as csvParser from "csv-parse/sync";
 import { setupAuth } from "./auth";
 import { isAdmin } from "./middleware/admin";
-import { createVerificationToken, verifyToken, generateVerificationUrl } from "./utils/email-verification";
+import { createVerificationToken, verifyEmailToken, generateVerificationUrl } from "./utils/email-verification";
 import { sendEmail } from "./utils/email-service";
 import { welcomeEmail } from "./utils/email-templates";
 

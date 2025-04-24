@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
@@ -8,7 +8,9 @@ import { storage } from "./storage";
 import { User as UserType } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
-import { sendEmail, generateWelcomeEmailTemplate } from "./utils/email-service";
+import { sendEmail } from "./utils/email-service";
+import { welcomeEmail, welcomeEmailText } from "./utils/email-templates";
+import { createVerificationToken, generateVerificationUrl, verifyEmailToken } from "./utils/email-verification";
 
 declare global {
   namespace Express {
@@ -97,33 +99,30 @@ export function setupAuth(app: Express) {
         password: await hashPassword(req.body.password),
       });
 
-      // Send welcome email if user has provided an email
+      // Send verification email if user has provided an email
       if (user.email) {
         try {
-          const { html, text } = generateWelcomeEmailTemplate(user.username, user.id);
+          // Create verification token
+          const token = await createVerificationToken(user.id, user.email);
           
-          const isDev = process.env.NODE_ENV === 'development' && !process.env.VERIFIED_EMAIL;
+          // Generate verification URL
+          const verificationUrl = generateVerificationUrl(token);
           
-          if (isDev) {
-            console.log('=== DEV MODE: Welcome email would be sent on registration ===');
-            console.log(`User: ${user.username} (ID: ${user.id})`);
-            console.log(`Email: ${user.email}`);
-            console.log(`Subject: Welcome to SpeakMyWay, ${user.username}!`);
-            console.log('=== Set VERIFIED_EMAIL env var to enable sending real emails ===');
-          } else {
-            // Only attempt to send email if not in dev mode
-            sendEmail({
-              to: user.email,
-              subject: `Welcome to SpeakMyWay, ${user.username}!`,
-              htmlBody: html,
-              textBody: text
-            }).catch(err => {
-              console.error('Failed to send welcome email:', err);
-              // Don't reject registration if email fails
-            });
-          }
+          // Get user's display name or username
+          const name = user.displayName || user.username;
           
-          console.log(`Welcome email queued for ${user.username} at ${user.email}`);
+          console.log(`Welcome email queued for ${name} at ${user.email}`);
+          
+          // Send verification email
+          sendEmail({
+            to: user.email,
+            subject: `Verify your SpeakMyWay email address`,
+            htmlBody: welcomeEmail(name, verificationUrl),
+            textBody: welcomeEmailText(name, verificationUrl),
+          }).catch(err => {
+            console.error('Failed to send welcome email:', err);
+            // Don't reject registration if email fails
+          });
         } catch (emailError) {
           console.error('Error preparing welcome email:', emailError);
           // Continue with registration even if email preparation fails
