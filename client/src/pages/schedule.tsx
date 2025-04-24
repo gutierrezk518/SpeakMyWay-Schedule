@@ -734,18 +734,7 @@ export default function Schedule() {
                   <i className="ri-timer-line text-base"></i>
                 </button>
                 
-                {/* Favorites button - now just navigates to favorites category */}
-                <button 
-                  className={`w-10 h-10 rounded-lg ${
-                    selectedCategory === 'favorites'
-                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
-                      : 'bg-yellow-400 text-white'
-                  } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                  onClick={() => setSelectedCategory('favorites')}
-                  title="Show favorites"
-                >
-                  <i className="ri-star-fill text-base"></i>
-                </button>
+                {/* Favorites button removed from portrait mode as requested */}
                 
                 {/* Save button */}
                 <button 
