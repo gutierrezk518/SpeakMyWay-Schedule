@@ -633,62 +633,62 @@ export default function Schedule() {
         <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`} style={{ flex: 1, overflow: 'hidden' }}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
-            <div className="w-12 sm:w-14 flex flex-col items-center py-2 bg-gray-100 border-r border-gray-200 space-y-2">
+            <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 border-r border-gray-200 space-y-4">
               {/* Undo button */}
               <button 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
                   canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleUndo}
                 disabled={!canUndo}
                 title="Undo"
               >
-                <i className="ri-arrow-go-back-line text-sm sm:text-lg"></i>
+                <i className="ri-arrow-go-back-line text-base sm:text-xl"></i>
               </button>
               
               {/* Redo button */}
               <button 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md flex items-center justify-center shadow-sm ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
                   canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleRedo}
                 disabled={!canRedo}
                 title="Redo"
               >
-                <i className="ri-arrow-go-forward-line text-sm sm:text-lg"></i>
+                <i className="ri-arrow-go-forward-line text-base sm:text-xl"></i>
               </button>
               
-              {/* Play button */}
+              {/* Play button - largest button */}
               <button 
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-purple-500 text-white flex items-center justify-center shadow-sm hover:bg-purple-600"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
                 onClick={playSchedule}
                 title="Play schedule"
               >
-                <i className="ri-play-line text-sm sm:text-lg"></i>
+                <i className="ri-play-line text-xl sm:text-2xl"></i>
               </button>
               
               {/* Timer toggle button */}
               <button 
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-md ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
                 onClick={() => setShowTimer(!showTimer)}
                 title={showTimer ? "Hide timer" : "Show timer"}
               >
-                <i className="ri-timer-line text-sm sm:text-lg"></i>
+                <i className="ri-timer-line text-base sm:text-xl"></i>
               </button>
               
               {/* Save button */}
               <button 
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-md bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                className="w-11 h-11 sm:w-14 sm:h-14 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
                 onClick={() => setShowSaveModal(true)}
                 title="Save schedule"
               >
-                <i className="ri-save-line text-sm sm:text-lg"></i>
+                <i className="ri-save-line text-base sm:text-xl"></i>
               </button>
             </div>
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[40vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
@@ -812,9 +812,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '100px' : '100%',
-                      minHeight: isPortrait ? '100px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '100px' : '100%'
+                      height: isPortrait ? '140px' : '100%',
+                      minHeight: isPortrait ? '140px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '140px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
