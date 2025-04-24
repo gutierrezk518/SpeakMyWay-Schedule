@@ -688,7 +688,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto min-h-[180px]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto min-h-[180px]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col`} style={{ flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
@@ -840,7 +840,7 @@ export default function Schedule() {
                                 // Portrait mode: Show larger, more visible remove button below card
                                 <div className="mt-2 w-full text-center">
                                   <button 
-                                    className="px-3 py-1 bg-red-500 text-white hover:bg-red-600 rounded text-xs font-bold shadow-md"
+                                    className="px-3 py-2 bg-red-500 text-white hover:bg-red-600 rounded text-sm font-bold shadow-md w-full"
                                     onClick={() => removeActivity(index)}
                                     aria-label="Remove activity"
                                   >
@@ -881,7 +881,7 @@ export default function Schedule() {
           
           {/* Activity cards section - right side */}
           {!isFullscreen && (
-            <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
+            <div className={`${isPortrait ? 'w-full mt-4' : 'w-2/3'} flex flex-col`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
                 <div className="px-3 py-1 border-b border-gray-200 bg-purple-50 flex justify-center">
@@ -1109,7 +1109,7 @@ export default function Schedule() {
               )}
               
               {/* Activity cards - main area with extra padding at bottom on all screens */}
-              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'pb-32' : 'pb-2 md:pb-16'}`}>
+              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'border-2 border-blue-200 rounded-md pb-32' : 'pb-2 md:pb-16'}`}>
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
