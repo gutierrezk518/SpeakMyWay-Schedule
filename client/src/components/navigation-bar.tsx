@@ -13,6 +13,10 @@ const pageTitles: Record<string, string> = {
   "/customize": "Customize",
   "/admin": "Admin Dashboard",
   "/privacy-policy": "Privacy Policy",
+  "/calm": "Calm Mode",
+  "/calm/coloring": "Coloring Page",
+  "/calm/aquarium": "Aquarium",
+  "/calm/bubbles": "Bubble Pop",
 };
 
 export default function NavigationBar() {
@@ -82,6 +86,11 @@ export default function NavigationBar() {
             <h1 className={`text-lg font-bold ${location === '/schedule' && isFavoritesMode ? 'opacity-30' : ''}`}>{pageTitles[location] || "SpeakMyWay"}</h1>
           </div>
           <div className="flex items-center space-x-4">
+            <Link href="/calm">
+              <button className={`p-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <i className="ri-heart-pulse-line text-xl"></i>
+              </button>
+            </Link>
             <Link href="/customize">
               <button className={`p-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                 <i className="ri-settings-3-line text-xl"></i>
