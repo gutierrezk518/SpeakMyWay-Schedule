@@ -55,7 +55,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData.createdAt = new Date().toISOString();
       }
       
+      // Create the user
       const user = await storage.createUser(userData);
+      
+      // If user has email, send a verification email
+      if (user.email) {
+        try {
+          // Create verification token
+          const token = await createVerificationToken(user.id, user.email);
+          
+          // Generate verification URL
+          const verificationUrl = generateVerificationUrl(token);
+          
+          // Get user's display name or username
+          const name = user.displayName || user.username;
+          
+          // Send welcome email with verification link
+          await sendEmail({
+            to: user.email,
+            subject: `Welcome to SpeakMyWay, ${name}!`,
+            htmlBody: welcomeEmail(name, verificationUrl),
+            textBody: welcomeEmailText(name, verificationUrl),
+          });
+          
+          // Log the success but don't wait for it to complete
+          console.log(`Welcome email sent to ${user.email} for user ${user.id}`);
+        } catch (emailError) {
+          // Log the error but don't fail registration
+          console.error("Failed to send welcome email:", emailError);
+        }
+      }
+      
       return res.status(201).json(user);
     } catch (err) {
       return handleZodError(err, res);
@@ -990,7 +1020,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send the test email with the specified provider or default
       const emailResult = await sendTestEmail(
         recipientEmail, 
-        provider === 'sendgrid' ? 'sendgrid' : undefined
+        provider === 'sendgrid' ? 'resend' : undefined // Switched to resend instead of sendgrid
       );
       
       if (emailResult) {
@@ -1008,6 +1038,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error sending test email:', error);
       return res.status(500).json({ 
         message: "Failed to send test email",
+        error: (error as Error).message 
+      });
+    }
+  });
+  
+  // Special endpoint for testing welcome emails with custom recipient address
+  app.post("/api/admin/test-welcome-email", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { recipientEmail, username } = req.body;
+      
+      if (!recipientEmail) {
+        return res.status(400).json({ message: "Recipient email is required" });
+      }
+      
+      // Import our email test utilities 
+      const { sendTestWelcomeEmail } = await import('./utils/email-tests');
+      
+      // Send the test welcome email
+      const emailResult = await sendTestWelcomeEmail(
+        recipientEmail,
+        username || 'TestUser'
+      );
+      
+      if (emailResult) {
+        return res.status(200).json({ 
+          message: `Welcome email sent to ${recipientEmail}`,
+          success: true
+        });
+      } else {
+        return res.status(500).json({ 
+          message: "Failed to send welcome email. Check server logs for details.",
+          success: false
+        });
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      return res.status(500).json({ 
+        message: "Failed to send welcome email",
         error: (error as Error).message 
       });
     }
