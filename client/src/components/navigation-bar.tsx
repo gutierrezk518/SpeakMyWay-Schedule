@@ -34,28 +34,42 @@ export default function NavigationBar() {
   const lastScrollY = useRef(0);
   const navRef = useRef<HTMLDivElement>(null);
   
-  // Function to handle scroll events
+  // Function to handle scroll events with throttling
   useEffect(() => {
+    let ticking = false;
+    let lastScrollY = window.scrollY;
+    
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
       // Show header when scrolling up or at the top of the page
       // Hide header when scrolling down and not at the top
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
         setVisible(false);
       } else {
         setVisible(true);
       }
       
-      lastScrollY.current = currentScrollY;
+      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+    
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     
     // Add scroll event listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     
     // Clean up
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', onScroll);
     };
   }, []);
   
@@ -67,11 +81,11 @@ export default function NavigationBar() {
     <>
       <div 
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
           visible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <nav className="bg-primary text-white p-4 shadow-md flex justify-between items-center">
+        <nav className="bg-primary text-white p-4 shadow-lg flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <Link href="/">
               <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
