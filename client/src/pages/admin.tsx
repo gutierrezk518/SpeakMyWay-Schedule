@@ -2076,78 +2076,88 @@ export default function Admin() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col items-start space-y-2">
-                <div className="p-4 border rounded-md bg-amber-50 border-amber-200 w-full">
+                <div className="p-4 border rounded-md bg-green-50 border-green-200 w-full">
                   <div className="flex items-start">
-                    <Info className="h-4 w-4 text-amber-500 mr-2 mt-0.5" />
+                    <Info className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
                     <div>
-                      <h3 className="text-sm font-medium text-amber-800">AWS SES Verification Required (us-east-2 Region)</h3>
-                      <p className="text-xs text-amber-700 mt-1">
-                        In AWS SES sandbox mode, both sender and recipient email addresses must be verified in the AWS SES console before sending emails.
+                      <h3 className="text-sm font-medium text-green-800">Resend Email Service Configured</h3>
+                      <p className="text-xs text-green-700 mt-1">
+                        Emails are now sent using Resend, a modern email delivery service that doesn't require recipient verification.
                       </p>
-                      <p className="text-xs text-amber-700 mt-1">
-                        <span className="font-medium">Current sender:</span> <code className="bg-amber-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
+                      <p className="text-xs text-green-700 mt-1">
+                        <span className="font-medium">Default sender:</span> <code className="bg-green-100 px-1 py-0.5 rounded">info@speakmyway.com</code>
                       </p>
-                      <p className="text-xs text-amber-700 mt-1">
-                        <span className="font-medium">AWS Region:</span> <code className="bg-amber-100 px-1 py-0.5 rounded">us-east-2</code> (Ohio)
+                      <p className="text-xs text-green-700 mt-1">
+                        <span className="font-medium">Status:</span> <span className="text-green-600 font-medium">Active</span>
                       </p>
 
-                      <div className="mt-2 border-t border-amber-200 pt-2">
-                        <p className="text-xs font-medium text-amber-800">How to verify emails in AWS SES:</p>
-                        <ol className="text-xs text-amber-700 list-decimal pl-5 mt-1 space-y-1">
-                          <li>Sign in to the <a href="https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/verified-identities" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">AWS SES Console</a> for the us-east-2 region</li>
-                          <li>Click "Create identity"</li>
-                          <li>Select "Email address" and enter your email</li>
-                          <li>Check your inbox for a verification email from AWS</li>
-                          <li>Click the verification link in the email</li>
-                          <li>Repeat for any recipient email addresses you want to send to</li>
-                        </ol>
+                      <div className="mt-2 border-t border-green-200 pt-2">
+                        <p className="text-xs font-medium text-green-800">Resend Email Service Features:</p>
+                        <ul className="text-xs text-green-700 list-disc pl-5 mt-1 space-y-1">
+                          <li>No recipient email verification required</li>
+                          <li>High deliverability rates</li>
+                          <li>Email analytics and tracking</li>
+                          <li>Simple API for easy integration</li>
+                          <li>Support for HTML and text emails</li>
+                        </ul>
                       </div>
                       
-                      <div className="mt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            setCheckingVerification(true);
-                            checkEmailVerification.mutate(['info@speakmyway.com', testEmail || 'gutierrezk518@gmail.com']);
-                          }}
-                          disabled={checkEmailVerification.isPending}
-                          className="text-xs"
-                        >
-                          {checkEmailVerification.isPending ? 'Checking...' : 'Check Verification Status'}
-                        </Button>
-                        
-                        {verificationStatus && (
-                          <div className="mt-3 text-xs space-y-1 border-t border-amber-200 pt-3">
-                            <p className="font-semibold">Verification Status ({verificationStatus.region} region):</p>
-                            {Object.entries(verificationStatus.verification || {}).map(([email, verified]: [string, any]) => (
-                              <div key={email} className="flex items-center gap-1">
-                                <span className={`inline-block w-4 h-4 rounded-full ${verified ? 'bg-green-500' : 'bg-red-500'}`}>
-                                  {verified ? <Check className="h-3 w-3 text-white" /> : ''}
-                                </span>
-                                <code className="bg-amber-100 px-1 py-0.5 rounded">{email}</code>
-                                <span>{verified ? 'Verified' : 'Not Verified'}</span>
-                              </div>
-                            ))}
-                            <p className="text-xs text-amber-700 mt-2 italic">
-                              Verification is region-specific. Make sure to verify your emails in the same region
-                              as specified in the AWS_REGION environment variable.
-                            </p>
-                            <div className="mt-2 border-t border-amber-200 pt-2">
-                              <a 
-                                href="https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/verified-identities" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline text-xs flex items-center"
-                              >
-                                Open AWS SES Console (us-east-2) 
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                              </a>
-                            </div>
-                          </div>
-                        )}
+                      <div className="mt-2 border-t border-green-200 pt-2">
+                        <div className="flex justify-between items-center mb-1">
+                          <p className="text-xs font-medium text-green-800">Test Email</p>
+                          <a 
+                            href="https://resend.com/overview" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline text-xs flex items-center"
+                          >
+                            Resend Dashboard
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        </div>
+                        <p className="text-xs text-green-700 mb-2">
+                          Send a test email to verify your email configuration is working correctly.
+                        </p>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              if (!testEmail || !testEmail.includes('@')) {
+                                toast({
+                                  title: "Invalid Email",
+                                  description: "Please enter a valid email address",
+                                  variant: "destructive"
+                                });
+                                return;
+                              }
+                              setSendingTestEmail(true);
+                              sendTestEmail.mutate({ recipientEmail: testEmail });
+                            }}
+                            disabled={sendingTestEmail || !testEmail}
+                            className="text-xs"
+                          >
+                            {sendingTestEmail ? (
+                              <>
+                                <div className="h-3 w-3 mr-1 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Mail className="h-3 w-3 mr-1" />
+                                Send Test Email
+                              </>
+                            )}
+                          </Button>
+                          <Input 
+                            placeholder="Enter test email address" 
+                            value={testEmail}
+                            onChange={(e) => setTestEmail(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
