@@ -14,9 +14,8 @@ export async function createVerificationToken(userId: number, email: string): Pr
   // Create token in database
   await storage.createEmailVerificationToken({
     userId,
-    email,
     token,
-    expires: expires.toISOString(),
+    expires, // Drizzle will handle the Date object correctly
     used: false
   });
   

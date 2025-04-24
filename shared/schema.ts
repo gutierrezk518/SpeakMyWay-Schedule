@@ -10,6 +10,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   displayName: text("display_name"),
   email: text("email"),
+  emailVerified: boolean("email_verified").default(false), // Track email verification status
   birthday: text("birthday"),
   language: text("language").default("en"),
   isPremium: boolean("is_premium").default(false),
@@ -167,6 +168,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   displayName: true,
   email: true,
+  emailVerified: true,
   birthday: true,
   language: true,
   consentGiven: true,
