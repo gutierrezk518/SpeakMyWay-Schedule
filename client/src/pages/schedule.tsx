@@ -734,18 +734,7 @@ export default function Schedule() {
                   <i className="ri-timer-line text-base"></i>
                 </button>
                 
-                {/* Favorites button - now just navigates to favorites category */}
-                <button 
-                  className={`w-10 h-10 rounded-lg ${
-                    selectedCategory === 'favorites'
-                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
-                      : 'bg-yellow-400 text-white'
-                  } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
-                  onClick={() => setSelectedCategory('favorites')}
-                  title="Show favorites"
-                >
-                  <i className="ri-star-fill text-base"></i>
-                </button>
+                {/* Favorites button removed in portrait mode */}
                 
                 {/* Save button */}
                 <button 
@@ -812,9 +801,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '100px' : '100%',
-                      minHeight: isPortrait ? '100px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '100px' : '100%'
+                      height: isPortrait ? '140px' : '100%',
+                      minHeight: isPortrait ? '140px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '140px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
@@ -831,7 +820,7 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-16 xs:space-x-20 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
@@ -845,10 +834,10 @@ export default function Schedule() {
                             {/* Only show remove buttons when not dragging */}
                             {!isDragging && (
                               isPortrait ? (
-                                // Portrait mode: Show remove button below card
-                                <div className="mt-1 w-full text-center">
+                                // Portrait mode: Show larger, more visible remove button below card
+                                <div className="mt-2 w-full text-center">
                                   <button 
-                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                    className="px-3 py-1 bg-red-500 text-white hover:bg-red-600 rounded text-xs font-bold shadow-md"
                                     onClick={() => removeActivity(index)}
                                     aria-label="Remove activity"
                                   >
