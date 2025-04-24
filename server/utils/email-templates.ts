@@ -69,9 +69,9 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
   <div class="container">
     <h1>Welcome to SpeakMyWay!</h1>
     
-    <p>Hello ${name},</p>
+    <p>Hello,</p>
     
-    <p>Thank you for creating a SpeakMyWay account! We're excited to have you join our community.</p>
+    <p>We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun!</p>
     
     <p>Before you can start using all features of SpeakMyWay, please verify your email address by clicking the button below:</p>
     
@@ -103,9 +103,9 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
 export function welcomeEmailText(name: string, verificationUrl: string): string {
   return `Welcome to SpeakMyWay!
 
-Hello ${name},
+Hello,
 
-Thank you for creating a SpeakMyWay account! We're excited to have you join our community.
+We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun! Click the authorization link in the below section to get started in the SpeakMyWay application.
 
 Before you can start using all features of SpeakMyWay, please verify your email address by visiting this link:
 ${verificationUrl}
