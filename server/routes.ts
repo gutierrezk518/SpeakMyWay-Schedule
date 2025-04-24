@@ -17,7 +17,7 @@ import multer from "multer";
 import * as csvParser from "csv-parse/sync";
 import { setupAuth } from "./auth";
 import { isAdmin } from "./middleware/admin";
-import { createVerificationToken, verifyToken } from "./utils/email-verification";
+import { createVerificationToken, verifyToken, generateVerificationUrl } from "./utils/email-verification";
 import { sendEmail } from "./utils/email-service";
 import { welcomeEmail } from "./utils/email-templates";
 
@@ -1010,6 +1010,138 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Failed to send test email",
         error: (error as Error).message 
       });
+    }
+  });
+  
+  // Email verification endpoints
+  
+  // Send verification email
+  app.post("/api/send-verification", async (req: Request, res: Response) => {
+    const { email, userId } = req.body;
+    
+    if (!email || !userId) {
+      return res.status(400).json({ message: "Email and userId are required" });
+    }
+    
+    try {
+      // Get user info
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Check if user is already verified
+      if (user.emailVerified) {
+        return res.status(400).json({ message: "Email is already verified" });
+      }
+      
+      // Create verification token
+      const token = await createVerificationToken(userId, email);
+      
+      // Generate verification URL
+      const verificationUrl = generateVerificationUrl(token);
+      
+      // Get user's display name or username
+      const name = user.displayName || user.username;
+      
+      // Send verification email
+      const emailSent = await sendEmail({
+        to: email,
+        subject: "Verify your SpeakMyWay email address",
+        htmlBody: welcomeEmail(name, verificationUrl),
+        textBody: `Hello ${name}! Please verify your email by clicking this link: ${verificationUrl}`,
+      });
+      
+      if (emailSent) {
+        return res.status(200).json({ message: "Verification email sent successfully" });
+      } else {
+        return res.status(500).json({ message: "Failed to send verification email" });
+      }
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+      return res.status(500).json({ message: "Failed to send verification email" });
+    }
+  });
+  
+  // Verify email with token
+  app.get("/verify-email", async (req: Request, res: Response) => {
+    const token = req.query.token as string;
+    
+    if (!token) {
+      return res.status(400).send(`
+        <html>
+          <head>
+            <title>Email Verification Failed</title>
+            <style>
+              body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+              .error { color: #d32f2f; }
+            </style>
+          </head>
+          <body>
+            <h1 class="error">Verification Failed</h1>
+            <p>The verification link is invalid. Please request a new verification email.</p>
+            <a href="/">Go to Homepage</a>
+          </body>
+        </html>
+      `);
+    }
+    
+    try {
+      const verified = await verifyToken(token);
+      
+      if (verified) {
+        return res.status(200).send(`
+          <html>
+            <head>
+              <title>Email Verified</title>
+              <style>
+                body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+                .success { color: #2e7d32; }
+              </style>
+            </head>
+            <body>
+              <h1 class="success">Email Verified Successfully!</h1>
+              <p>Your email has been verified. You can now use all features of SpeakMyWay.</p>
+              <a href="/">Go to Homepage</a>
+            </body>
+          </html>
+        `);
+      } else {
+        return res.status(400).send(`
+          <html>
+            <head>
+              <title>Email Verification Failed</title>
+              <style>
+                body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+                .error { color: #d32f2f; }
+              </style>
+            </head>
+            <body>
+              <h1 class="error">Verification Failed</h1>
+              <p>The verification link is expired or has already been used. Please request a new verification email.</p>
+              <a href="/">Go to Homepage</a>
+            </body>
+          </html>
+        `);
+      }
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      return res.status(500).send(`
+        <html>
+          <head>
+            <title>Error</title>
+            <style>
+              body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+              .error { color: #d32f2f; }
+            </style>
+          </head>
+          <body>
+            <h1 class="error">Something went wrong</h1>
+            <p>There was an error processing your verification. Please try again later.</p>
+            <a href="/">Go to Homepage</a>
+          </body>
+        </html>
+      `);
     }
   });
 

@@ -254,7 +254,9 @@ export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTo
 export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).pick({
   userId: true,
   token: true,
-  expires: true
+  expires: true,
+  used: true,
+  clickedAt: true
 });
 
 // Types
