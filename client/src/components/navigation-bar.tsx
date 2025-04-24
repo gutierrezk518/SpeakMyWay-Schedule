@@ -34,41 +34,29 @@ export default function NavigationBar() {
   const lastScrollY = useRef(0);
   const navRef = useRef<HTMLDivElement>(null);
   
-  // Function to handle scroll events with throttling
+  // Function to handle scroll events
   useEffect(() => {
-    let ticking = false;
-    let lastScrollY = window.scrollY;
+    let prevScrollPos = window.scrollY;
     
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollPos = window.scrollY;
       
-      // Hide header when scrolling down more than 20px
-      // Show header when scrolling up or at the top
-      if (currentScrollY > lastScrollY && currentScrollY > 20) {
+      // Simple logic: if scrolling down, hide; if scrolling up, show
+      if (prevScrollPos < currentScrollPos && currentScrollPos > 10) {
         setVisible(false);
-      } else if (currentScrollY < lastScrollY || currentScrollY < 20) {
+      } else {
         setVisible(true);
       }
       
-      lastScrollY = currentScrollY;
-      ticking = false;
-    };
-    
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-        });
-        ticking = true;
-      }
+      prevScrollPos = currentScrollPos;
     };
     
     // Add scroll event listener
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     
     // Clean up
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   
@@ -80,7 +68,7 @@ export default function NavigationBar() {
     <>
       <div 
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-200 ${
           visible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
