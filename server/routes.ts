@@ -1081,6 +1081,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Temporary public endpoint for testing welcome email
+  app.post("/api/public-test-welcome-email", async (req: Request, res: Response) => {
+    try {
+      const { recipientEmail, username = "TestUser" } = req.body;
+      
+      if (!recipientEmail) {
+        return res.status(400).json({ message: "Recipient email is required" });
+      }
+      
+      // Import our email test utilities 
+      const { sendTestWelcomeEmail } = await import('./utils/email-tests');
+      
+      // Send the test welcome email
+      const emailResult = await sendTestWelcomeEmail(
+        recipientEmail,
+        username || 'TestUser'
+      );
+      
+      if (emailResult) {
+        return res.status(200).json({ 
+          message: `Welcome email sent to ${recipientEmail}`,
+          success: true
+        });
+      } else {
+        return res.status(500).json({ 
+          message: "Failed to send welcome email. Check server logs for details.",
+          success: false
+        });
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      return res.status(500).json({ 
+        message: "Failed to send welcome email",
+        error: (error as Error).message 
+      });
+    }
+  });
+  
   // Email verification endpoints
   
   // Send verification email
