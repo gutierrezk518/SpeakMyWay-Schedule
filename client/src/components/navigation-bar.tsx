@@ -42,11 +42,11 @@ export default function NavigationBar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show header when scrolling up or at the top of the page
-      // Hide header when scrolling down and not at the top
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+      // Hide header when scrolling down more than 20px
+      // Show header when scrolling up or at the top
+      if (currentScrollY > lastScrollY && currentScrollY > 20) {
         setVisible(false);
-      } else {
+      } else if (currentScrollY < lastScrollY || currentScrollY < 20) {
         setVisible(true);
       }
       
@@ -58,7 +58,6 @@ export default function NavigationBar() {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           handleScroll();
-          ticking = false;
         });
         ticking = true;
       }
