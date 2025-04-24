@@ -688,7 +688,7 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto min-h-[180px]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col`} style={{ flex: isPortrait ? '0 0 auto' : '1' }}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[30vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
@@ -734,7 +734,18 @@ export default function Schedule() {
                   <i className="ri-timer-line text-base"></i>
                 </button>
                 
-                {/* Favorites button removed in portrait mode */}
+                {/* Favorites button - now just navigates to favorites category */}
+                <button 
+                  className={`w-10 h-10 rounded-lg ${
+                    selectedCategory === 'favorites'
+                      ? 'bg-yellow-500 text-white ring-1 ring-yellow-300'
+                      : 'bg-yellow-400 text-white'
+                  } flex items-center justify-center shadow-sm hover:bg-yellow-500`}
+                  onClick={() => setSelectedCategory('favorites')}
+                  title="Show favorites"
+                >
+                  <i className="ri-star-fill text-base"></i>
+                </button>
                 
                 {/* Save button */}
                 <button 
@@ -747,8 +758,8 @@ export default function Schedule() {
               </div>
             )}
             
-            <div className="p-3 bg-blue-200 border-b border-blue-300 flex items-center justify-between">
-              <div className="font-bold text-base md:text-lg mr-auto">My Schedule</div>
+            <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
+              <div className="font-bold mr-auto">My Schedule</div>
               
               <div className="flex space-x-1 ml-auto">
                 <button 
@@ -771,14 +782,14 @@ export default function Schedule() {
             </div>
             
             {/* Time section tabs - moved to top */}
-            <div className="p-3 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
-              <div className="flex justify-center space-x-2 md:space-x-3">
+            <div className="p-1 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
+              <div className="flex justify-center space-x-1 md:space-x-2">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
                     key={section.id}
-                    className={`px-3 py-2 md:px-4 md:py-2 rounded-md text-sm sm:text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedTimeSection === section.id 
-                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-md' 
+                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                     onClick={() => setSelectedTimeSection(section.id)}
@@ -791,7 +802,7 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full mt-4 mb-2`}>
+            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
               <Droppable 
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
@@ -801,29 +812,26 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '220px' : '100%',
-                      minHeight: isPortrait ? '220px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '220px' : '100%'
+                      height: isPortrait ? '100px' : '100%',
+                      minHeight: isPortrait ? '100px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '100px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-md p-3 flex flex-nowrap items-center'
-                      : 'overflow-y-auto rounded-md p-3 flex flex-col items-center'
+                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
+                      : 'overflow-y-auto rounded-md p-2 flex flex-col items-center'
                     } ${
-                      snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-blue-50'
+                      snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
                     } w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-3 text-gray-600 h-full flex flex-col justify-center w-full">
-                        <div className="text-2xl mb-1">👋</div>
-                        <p className="text-xs font-medium">Drag activity cards here to create your schedule!</p>
-                        <div className="mt-2 text-blue-500">
-                          <i className="ri-arrow-down-line text-lg animate-bounce"></i>
-                        </div>
+                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
+                        <div className="text-lg mb-0.5">👋</div>
+                        <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-20 xs:space-x-24 sm:space-x-28 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
@@ -837,10 +845,10 @@ export default function Schedule() {
                             {/* Only show remove buttons when not dragging */}
                             {!isDragging && (
                               isPortrait ? (
-                                // Portrait mode: Show larger, more visible remove button below card
-                                <div className="mt-2 w-full text-center">
+                                // Portrait mode: Show remove button below card
+                                <div className="mt-1 w-full text-center">
                                   <button 
-                                    className="px-3 py-2 bg-red-500 text-white hover:bg-red-600 rounded text-sm font-bold shadow-md w-full"
+                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
                                     onClick={() => removeActivity(index)}
                                     aria-label="Remove activity"
                                   >
@@ -870,18 +878,13 @@ export default function Schedule() {
               </Droppable>
             </div>
             
-            {/* Visual separator in portrait mode */}
-            {isPortrait && (
-              <div className="border-b-4 border-blue-300 w-full my-4 rounded"></div>
-            )}
-            
-            {/* Extra padding at the bottom to prevent content from being too close to the edge and ensure nav is visible on mobile */}
-            <div className={`${isPortrait ? 'h-20' : 'h-2'}`}></div>
+            {/* Extra padding at the bottom to prevent content from being too close to the edge */}
+            <div className="h-2"></div>
           </div>
           
           {/* Activity cards section - right side */}
           {!isFullscreen && (
-            <div className={`${isPortrait ? 'w-full mt-4' : 'w-2/3'} flex flex-col`}>
+            <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
                 <div className="px-3 py-1 border-b border-gray-200 bg-purple-50 flex justify-center">
@@ -1108,8 +1111,8 @@ export default function Schedule() {
                 </div>
               )}
               
-              {/* Activity cards - main area with extra padding at bottom on all screens */}
-              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'border-2 border-blue-200 rounded-md pb-32' : 'pb-2 md:pb-16'}`}>
+              {/* Activity cards - main area with extra padding at bottom on larger screens */}
+              <div className="flex-grow overflow-auto bg-white p-2 pb-2 md:pb-16">
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
