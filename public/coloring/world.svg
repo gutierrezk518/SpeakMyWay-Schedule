@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Earth Background Circle -->
+  <circle cx="200" cy="200" r="160" fill="white" stroke="black" stroke-width="3" class="colorable" data-name="earth" />
+  
+  <!-- Continental Shapes -->
+  <path d="M 100,150 Q 150,100 200,120 T 280,150 Q 310,180 290,220 T 200,260 Q 150,240 120,200 T 100,150 Z" 
+    fill="white" stroke="black" stroke-width="2" class="colorable" data-name="continent1" />
+  
+  <path d="M 150,90 Q 180,70 220,80 T 260,110 Q 270,130 250,150 T 200,160 Q 170,150 150,130 T 150,90 Z" 
+    fill="white" stroke="black" stroke-width="2" class="colorable" data-name="continent2" />
+  
+  <path d="M 120,240 Q 140,220 170,230 T 210,250 Q 220,270 200,290 T 150,300 Q 130,290 120,270 T 120,240 Z" 
+    fill="white" stroke="black" stroke-width="2" class="colorable" data-name="continent3" />
+  
+  <path d="M 270,170 Q 290,160 310,170 T 330,200 Q 335,220 320,240 T 280,250 Q 260,240 250,220 T 270,170 Z" 
+    fill="white" stroke="black" stroke-width="2" class="colorable" data-name="continent4" />
+  
+  <!-- Ocean Features -->
+  <path d="M 180,170 Q 190,180 200,170 T 220,180" 
+    fill="none" stroke="black" stroke-width="1.5" class="colorable" data-name="ocean1" />
+  
+  <path d="M 240,200 Q 250,210 260,200 T 280,210" 
+    fill="none" stroke="black" stroke-width="1.5" class="colorable" data-name="ocean2" />
+  
+  <path d="M 140,200 Q 150,210 160,200 T 180,210" 
+    fill="none" stroke="black" stroke-width="1.5" class="colorable" data-name="ocean3" />
+</svg>
