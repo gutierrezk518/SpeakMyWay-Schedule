@@ -121,7 +121,7 @@ export default function ActivityCard({
   const cardClassNames = `rounded-lg ${
     // For cards in schedule section:
     isInSchedule 
-      ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 
+      ? 'w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 border-2 border-blue-300' 
       // For cards in activity selection:
       // Use smaller size on phones, larger on tablets & computers
       : 'w-[56px] h-[56px] xs:w-[64px] xs:h-[64px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'

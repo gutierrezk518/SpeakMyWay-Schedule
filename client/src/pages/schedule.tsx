@@ -806,21 +806,24 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '180px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
-                      : 'overflow-y-auto rounded-md p-2 flex flex-col items-center'
+                      ? 'overflow-x-auto rounded-md p-3 flex flex-nowrap items-center'
+                      : 'overflow-y-auto rounded-md p-3 flex flex-col items-center'
                     } ${
-                      snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
+                      snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-blue-50'
                     } border ${
                       snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
                     } w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
-                        <div className="text-lg mb-0.5">👋</div>
-                        <p className="text-[8px] font-medium">Drag activities here</p>
+                      <div className="text-center p-3 text-gray-600 h-full flex flex-col justify-center w-full">
+                        <div className="text-2xl mb-1">👋</div>
+                        <p className="text-xs font-medium">Drag activity cards here to create your schedule!</p>
+                        <div className="mt-2 text-blue-500">
+                          <i className="ri-arrow-down-line text-lg animate-bounce"></i>
+                        </div>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-16 xs:space-x-20 sm:space-x-24 md:space-x-28' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-20 xs:space-x-24 sm:space-x-28 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
                             <ActivityCard 
