@@ -10,8 +10,9 @@ if (!RESEND_API_KEY_EXISTS) {
 // Initialize Resend only if API key exists
 const resend = RESEND_API_KEY_EXISTS ? new Resend(process.env.RESEND_API_KEY) : null;
 
-// Use a reliable sender email from Resend's verified domains (onresend.com)
-const FROM_EMAIL = 'onboarding@resend.dev';
+// Use a reliable sender email from Resend's verified domains
+// In development/testing, use the default test email that Resend provides
+const FROM_EMAIL = process.env.VERIFIED_EMAIL || 'onboarding@resend.dev';
 const FROM_NAME = 'SpeakMyWay';
 
 // Development mode will log emails instead of sending them
