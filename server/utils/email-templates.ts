@@ -71,9 +71,9 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
     
     <p>Hello${name ? ' ' + name : ''},</p>
     
-    <p>We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!</p>
+    <p>Thank you for joining SpeakMyWay - the premier AAC (Augmentative and Alternative Communication) application custom-designed for children with unique communication needs!</p>
     
-    <p>Before you can start using all features of SpeakMyWay, please verify your email address by clicking the button below:</p>
+    <p>To activate your account and access all our great features, please verify your email address by clicking the button below:</p>
     
     <div style="text-align: center;">
       <a href="${verificationUrl}" class="button">Verify My Email</a>
