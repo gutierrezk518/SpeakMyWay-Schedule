@@ -1087,7 +1087,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const verified = await verifyToken(token);
+      const verified = await verifyEmailToken(token);
       
       if (verified) {
         return res.status(200).send(`

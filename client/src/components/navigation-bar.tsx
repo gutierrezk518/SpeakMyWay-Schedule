@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAppContext } from "@/contexts/app-context";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -30,41 +30,76 @@ export default function NavigationBar() {
   } = useAppContext();
   
   const [userProfileOpen, setUserProfileOpen] = useState(false);
-
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const navRef = useRef<HTMLDivElement>(null);
+  
+  // Function to handle scroll events
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show header when scrolling up or at the top of the page
+      // Hide header when scrolling down and not at the top
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setVisible(false);
+      } else {
+        setVisible(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  
   const toggleLanguage = () => {
     setLanguage(language === "en" ? "es" : "en");
   };
 
   return (
     <>
-      <nav className="bg-primary text-white p-4 shadow-md flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <Link href="/">
-            <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
-              <i className="ri-home-4-line text-2xl"></i>
-            </button>
-          </Link>
-          <h1 className={`text-2xl font-bold ${location === '/schedule' && isFavoritesMode ? 'opacity-30' : ''}`}>{pageTitles[location] || "SpeakMyWay"}</h1>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Link href="/customize">
-            <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
-              <i className="ri-settings-3-line text-2xl"></i>
-            </button>
-          </Link>
-          
-          {/* User Profile Icon - Only show if we have a username */}
-          {userName && (
-            <button 
-              onClick={() => setUserProfileOpen(true)}
-              className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
-            >
-              <i className="ri-user-line text-2xl"></i>
-              <span className="hidden md:inline ml-1 font-medium">{userName.split(' ')[0]}</span>
-            </button>
-          )}
-        </div>
-      </nav>
+      <div 
+        ref={navRef}
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+          visible ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <nav className="bg-primary text-white p-4 shadow-md flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <Link href="/">
+              <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <i className="ri-home-4-line text-2xl"></i>
+              </button>
+            </Link>
+            <h1 className={`text-2xl font-bold ${location === '/schedule' && isFavoritesMode ? 'opacity-30' : ''}`}>{pageTitles[location] || "SpeakMyWay"}</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link href="/customize">
+              <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <i className="ri-settings-3-line text-2xl"></i>
+              </button>
+            </Link>
+            
+            {/* User Profile Icon - Only show if we have a username */}
+            {userName && (
+              <button 
+                onClick={() => setUserProfileOpen(true)}
+                className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
+              >
+                <i className="ri-user-line text-2xl"></i>
+                <span className="hidden md:inline ml-1 font-medium">{userName.split(' ')[0]}</span>
+              </button>
+            )}
+          </div>
+        </nav>
+      </div>
       
       {/* User Profile Dialog */}
       <Dialog open={userProfileOpen} onOpenChange={setUserProfileOpen}>

@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Eye, EyeOff, AlertCircle, Lock, User, Mail, Calendar } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Lock, User, Mail, Calendar, CheckCircle } from "lucide-react";
 
 // Login form schema
 const loginSchema = z.object({
@@ -126,6 +126,57 @@ export default function AuthPage() {
     });
   };
 
+  // State for showing verification message
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  
+  // Show verification message after successful registration
+  useEffect(() => {
+    if (registerMutation.isSuccess) {
+      setShowVerificationMessage(true);
+    }
+  }, [registerMutation.isSuccess]);
+  
+  // If verification message is shown
+  if (showVerificationMessage) {
+    return (
+      <div className="container flex items-center justify-center min-h-screen py-8">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl">Thank You for Signing Up!</CardTitle>
+            <CardDescription>
+              We've sent a verification link to your email address.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-center">
+            <div className="flex justify-center my-6">
+              <div className="rounded-full bg-primary/10 p-6">
+                <CheckCircle className="h-12 w-12 text-primary" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Please check your inbox and click the verification link to activate your account.
+              If you don't see the email, please check your spam folder.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              The verification link will expire in 24 hours.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              className="w-full" 
+              onClick={() => {
+                setShowVerificationMessage(false);
+                setLocation("/");
+              }}
+            >
+              Continue to Homepage
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+  
   // If user is logged in, redirect to home page
   if (user) {
     return <Redirect to="/" />;
