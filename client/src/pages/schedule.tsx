@@ -747,8 +747,8 @@ export default function Schedule() {
               </div>
             )}
             
-            <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
-              <div className="font-bold mr-auto">My Schedule</div>
+            <div className="p-3 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
+              <div className="font-bold text-base md:text-lg mr-auto">My Schedule</div>
               
               <div className="flex space-x-1 ml-auto">
                 <button 
@@ -771,14 +771,14 @@ export default function Schedule() {
             </div>
             
             {/* Time section tabs - moved to top */}
-            <div className="p-1 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
-              <div className="flex justify-center space-x-1 md:space-x-2">
+            <div className="p-3 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
+              <div className="flex justify-center space-x-2 md:space-x-3">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
                     key={section.id}
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                    className={`px-3 py-2 md:px-4 md:py-2 rounded-md text-sm sm:text-sm ${
                       selectedTimeSection === section.id 
-                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                        ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-md' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                     onClick={() => setSelectedTimeSection(section.id)}
@@ -791,7 +791,7 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
+            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full mt-4 mb-2`}>
               <Droppable 
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
@@ -801,9 +801,9 @@ export default function Schedule() {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                     style={{ 
-                      height: isPortrait ? '140px' : '100%',
-                      minHeight: isPortrait ? '140px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '140px' : '100%'
+                      height: isPortrait ? '180px' : '100%',
+                      minHeight: isPortrait ? '180px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '180px' : '100%'
                     }}
                     className={`${isPortrait 
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
@@ -867,8 +867,8 @@ export default function Schedule() {
               </Droppable>
             </div>
             
-            {/* Extra padding at the bottom to prevent content from being too close to the edge */}
-            <div className="h-2"></div>
+            {/* Extra padding at the bottom to prevent content from being too close to the edge and ensure nav is visible on mobile */}
+            <div className={`${isPortrait ? 'h-20' : 'h-2'}`}></div>
           </div>
           
           {/* Activity cards section - right side */}
@@ -1100,8 +1100,8 @@ export default function Schedule() {
                 </div>
               )}
               
-              {/* Activity cards - main area with extra padding at bottom on larger screens */}
-              <div className="flex-grow overflow-auto bg-white p-2 pb-2 md:pb-16">
+              {/* Activity cards - main area with extra padding at bottom on all screens */}
+              <div className={`flex-grow overflow-auto bg-white p-2 ${isPortrait ? 'pb-20' : 'pb-2 md:pb-16'}`}>
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
