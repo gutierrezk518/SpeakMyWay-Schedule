@@ -80,7 +80,7 @@ function AppContent() {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavigationBar />
-      <main className="flex-grow overflow-y-auto pt-16 pb-4">
+      <main className="flex-grow overflow-y-auto pt-12 pb-4">
         <Router />
       </main>
     </div>

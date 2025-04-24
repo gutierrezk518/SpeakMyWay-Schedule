@@ -72,19 +72,19 @@ export default function NavigationBar() {
           visible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <nav className="bg-primary text-white p-4 shadow-lg flex justify-between items-center">
+        <nav className="bg-primary text-white py-2 px-3 shadow-lg flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <Link href="/">
-              <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
-                <i className="ri-home-4-line text-2xl"></i>
+              <button className={`p-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <i className="ri-home-4-line text-xl"></i>
               </button>
             </Link>
-            <h1 className={`text-2xl font-bold ${location === '/schedule' && isFavoritesMode ? 'opacity-30' : ''}`}>{pageTitles[location] || "SpeakMyWay"}</h1>
+            <h1 className={`text-lg font-bold ${location === '/schedule' && isFavoritesMode ? 'opacity-30' : ''}`}>{pageTitles[location] || "SpeakMyWay"}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/customize">
-              <button className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
-                <i className="ri-settings-3-line text-2xl"></i>
+              <button className={`p-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                <i className="ri-settings-3-line text-xl"></i>
               </button>
             </Link>
             
@@ -92,10 +92,10 @@ export default function NavigationBar() {
             {userName && (
               <button 
                 onClick={() => setUserProfileOpen(true)}
-                className={`p-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
+                className={`p-2 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
               >
-                <i className="ri-user-line text-2xl"></i>
-                <span className="hidden md:inline ml-1 font-medium">{userName.split(' ')[0]}</span>
+                <i className="ri-user-line text-xl"></i>
+                <span className="hidden md:inline ml-1 text-sm font-medium">{userName.split(' ')[0]}</span>
               </button>
             )}
           </div>
