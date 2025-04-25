@@ -1196,8 +1196,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid or expired reset token" });
       }
       
+      // Hash the new password
+      const { hashPassword } = await import('./auth');
+      const hashedPassword = await hashPassword(newPassword);
+      
       // Update user's password
-      await storage.updateUser(userId, { password: newPassword });
+      await storage.updateUser(userId, { password: hashedPassword });
       
       // Mark token as used
       await usePasswordResetToken(token);
