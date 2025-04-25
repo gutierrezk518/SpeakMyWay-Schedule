@@ -6,10 +6,10 @@ import { relations } from "drizzle-orm";
 // User table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
+  username: text("username").notNull().unique(), // This will store the email address
   password: text("password").notNull(),
   displayName: text("display_name"),
-  email: text("email"),
+  email: text("email"), // Keeping for backward compatibility, should be same as username
   emailVerified: boolean("email_verified").default(false), // Track email verification status
   birthday: text("birthday"),
   language: text("language").default("en"),
@@ -23,6 +23,7 @@ export const users = pgTable("users", {
   lastLogin: timestamp("last_login"), // Track user's last login time
   lastLoginIp: text("last_login_ip"), // Store IP for security purposes
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  isGuest: boolean("is_guest").default(false), // Flag to identify guest users
 });
 
 // Email verification tokens
@@ -176,6 +177,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   marketingConsent: true,
   dataRetentionConsent: true,
   createdAt: true,
+  isGuest: true,
 });
 
 export const insertCategorySchema = createInsertSchema(categories).pick({
