@@ -19,7 +19,7 @@ import { setupAuth } from "./auth";
 import { isAdmin } from "./middleware/admin";
 import { createVerificationToken, verifyEmailToken, generateVerificationUrl } from "./utils/email-verification";
 import { sendEmail, sendPasswordResetEmail } from "./utils/email-service";
-import { welcomeEmail, welcomeEmailText } from "./utils/email-templates";
+import { welcomeEmail, welcomeEmailText, passwordResetEmail, passwordResetEmailText } from "./utils/email-templates";
 import { createPasswordResetToken, verifyPasswordResetToken, usePasswordResetToken, generatePasswordResetUrl } from "./utils/password-reset";
 
 export async function registerRoutes(app: Express): Promise<Server> {

@@ -17,7 +17,7 @@ export async function createPasswordResetToken(userId: number): Promise<string> 
   await storage.createPasswordResetToken({
     userId,
     token,
-    expires: expires.toISOString()
+    expires
   });
   
   return token;

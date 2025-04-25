@@ -251,6 +251,15 @@ export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTo
   userId: true,
   token: true,
   expires: true
+}).transform((data) => {
+  // Convert ISO string date to actual Date object if needed
+  if (typeof data.expires === 'string') {
+    return {
+      ...data,
+      expires: new Date(data.expires)
+    };
+  }
+  return data;
 });
 
 export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).pick({
@@ -259,6 +268,19 @@ export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerifi
   expires: true,
   used: true,
   clickedAt: true
+}).transform((data) => {
+  // Convert ISO string dates to actual Date objects if needed
+  const result = { ...data };
+  
+  if (typeof data.expires === 'string') {
+    result.expires = new Date(data.expires);
+  }
+  
+  if (data.clickedAt && typeof data.clickedAt === 'string') {
+    result.clickedAt = new Date(data.clickedAt);
+  }
+  
+  return result;
 });
 
 // Types

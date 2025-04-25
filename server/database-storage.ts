@@ -680,4 +680,32 @@ export class DatabaseStorage implements IStorage {
         )
       );
   }
+  
+  // Password reset token operations
+  async createPasswordResetToken(insertToken: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    const [token] = await db
+      .insert(passwordResetTokens)
+      .values(insertToken)
+      .returning();
+    
+    return token;
+  }
+
+  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+    const [resetToken] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(eq(passwordResetTokens.token, token));
+    
+    return resetToken;
+  }
+
+  async markPasswordResetTokenUsed(token: string): Promise<boolean> {
+    const result = await db
+      .update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.token, token));
+    
+    return (result.rowCount ?? 0) > 0;
+  }
 }
