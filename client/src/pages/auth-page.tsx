@@ -5,6 +5,9 @@ import { z } from "zod";
 import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalStorage } from "../hooks/use-local-storage";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 // UI Components
 import { Button } from "@/components/ui/button";
@@ -13,20 +16,19 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Eye, EyeOff, AlertCircle, Lock, User, Mail, Calendar, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Lock, User, Mail, Calendar, CheckCircle, ArrowLeft } from "lucide-react";
 
 // Login form schema
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 // Registration form schema with GDPR/COPPA compliance
 const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   displayName: z.string().optional(),
-  email: z.string().email("Please enter a valid email").optional(),
   birthday: z.string().optional(),
   consentGiven: z.literal(true, {
     errorMap: () => ({ message: "You must provide consent to use this application" }),
@@ -106,7 +108,6 @@ export default function AuthPage() {
       username: "",
       password: "",
       displayName: "",
-      email: "",
       birthday: "",
       consentGiven: true,
       marketingConsent: false,
@@ -203,6 +204,8 @@ export default function AuthPage() {
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
+            
+            {/* We don't show the reset-password tab in the tab list, but it can be activated programmatically */}
 
             {/* Login Form */}
             <TabsContent value="login">
@@ -214,14 +217,15 @@ export default function AuthPage() {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Email</FormLabel>
                           <div className="relative">
-                            <User className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                             <FormControl>
                               <Input 
-                                placeholder="Enter your username" 
+                                placeholder="Enter your email address" 
+                                type="email"
                                 className="pl-9" 
-                                aria-label="Username"
+                                aria-label="Email"
                                 {...field} 
                               />
                             </FormControl>
@@ -273,6 +277,12 @@ export default function AuthPage() {
                     >
                       {loginMutation.isPending ? "Logging in..." : "Login"}
                     </Button>
+                    
+                    <div className="text-center mt-2">
+                      <Button variant="link" className="text-sm" onClick={() => setActiveTab("reset-password")} type="button">
+                        Forgot your password?
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               </CardContent>
@@ -298,13 +308,14 @@ export default function AuthPage() {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel htmlFor="register-username">Username <span className="text-destructive">*</span></FormLabel>
+                              <FormLabel htmlFor="register-username">Email <span className="text-destructive">*</span></FormLabel>
                               <div className="relative">
-                                <User className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <FormControl>
                                   <Input 
                                     id="register-username"
-                                    placeholder="Choose a username" 
+                                    type="email"
+                                    placeholder="Enter your email address" 
                                     className="pl-9" 
                                     aria-required="true"
                                     {...field} 
@@ -418,29 +429,7 @@ export default function AuthPage() {
                           )}
                         />
 
-                        <FormField
-                          control={registerForm.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel htmlFor="register-email">Email <span className="text-muted-foreground text-xs">(Optional)</span></FormLabel>
-                              <div className="relative">
-                                <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <FormControl>
-                                  <Input 
-                                    id="register-email"
-                                    type="email" 
-                                    placeholder="Enter your email" 
-                                    className="pl-9" 
-                                    aria-required="false"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+
 
                         <FormField
                           control={registerForm.control}
