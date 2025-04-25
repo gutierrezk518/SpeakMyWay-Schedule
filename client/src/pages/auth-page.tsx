@@ -24,6 +24,11 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+// Password reset request schema
+const resetPasswordSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
 // Registration form schema with GDPR/COPPA compliance
 const registerSchema = z.object({
   username: z.string().email("Please enter a valid email address"),
@@ -55,9 +60,11 @@ export default function AuthPage() {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [registrationStep, setRegistrationStep] = useState(1);
   const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
+  const [resetPasswordSent, setResetPasswordSent] = useState(false);
   const [_, setLocation] = useLocation();
   const [anonymousUser, setAnonymousUser] = useLocalStorage<AnonymousUser | null>("anonymousUser", null);
   const { user, loginMutation, registerMutation } = useAuth();
+  const { toast } = useToast();
 
   // Nickname form for anonymous users
   const nicknameForm = useForm<z.infer<typeof nicknameSchema>>({
@@ -100,6 +107,42 @@ export default function AuthPage() {
       password: "",
     },
   });
+  
+  // Form setup for password reset
+  const resetPasswordForm = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+  
+  // Password reset request mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof resetPasswordSchema>) => {
+      const res = await apiRequest("POST", "/api/reset-password", data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      setResetPasswordSent(true);
+      toast({
+        title: "Password reset link sent",
+        description: "Please check your email for instructions to reset your password.",
+        variant: "default",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send password reset link. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Password reset submit handler
+  const onResetPasswordSubmit = (data: z.infer<typeof resetPasswordSchema>) => {
+    resetPasswordMutation.mutate(data);
+  };
 
   // Form setup for registration
   const registerForm = useForm<z.infer<typeof registerSchema>>({
@@ -190,12 +233,18 @@ export default function AuthPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
-              {activeTab === "login" ? "Login to SpeakMyWay" : "Create an Account"}
+              {activeTab === "login" 
+                ? "Login to SpeakMyWay" 
+                : activeTab === "register" 
+                  ? "Create an Account" 
+                  : "Reset Password"}
             </CardTitle>
             <CardDescription className="text-center">
               {activeTab === "login" 
                 ? "Sign in to access your personalized communication tools" 
-                : "Join SpeakMyWay to create your personalized communication experience"}
+                : activeTab === "register"
+                  ? "Join SpeakMyWay to create your personalized communication experience"
+                  : "We'll send you instructions to reset your password"}
             </CardDescription>
           </CardHeader>
 
@@ -206,6 +255,77 @@ export default function AuthPage() {
             </TabsList>
             
             {/* We don't show the reset-password tab in the tab list, but it can be activated programmatically */}
+
+            {/* Password Reset Form */}
+            <TabsContent value="reset-password">
+              <CardContent>
+                <div className="mb-4">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="flex items-center gap-1 text-muted-foreground" 
+                    onClick={() => setActiveTab("login")}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to login
+                  </Button>
+                </div>
+
+                {resetPasswordSent ? (
+                  <div className="space-y-4 text-center">
+                    <div className="flex justify-center my-6">
+                      <div className="rounded-full bg-primary/10 p-6">
+                        <CheckCircle className="h-12 w-12 text-primary" />
+                      </div>
+                    </div>
+                    <p>
+                      A password reset link has been sent to your email address. Please check your inbox and follow the instructions.
+                    </p>
+                    <Button 
+                      className="w-full mt-4" 
+                      onClick={() => setActiveTab("login")}
+                    >
+                      Return to Login
+                    </Button>
+                  </div>
+                ) : (
+                  <Form {...resetPasswordForm}>
+                    <form onSubmit={resetPasswordForm.handleSubmit(onResetPasswordSubmit)} className="space-y-4">
+                      <FormField
+                        control={resetPasswordForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address</FormLabel>
+                            <div className="relative">
+                              <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <FormControl>
+                                <Input 
+                                  type="email" 
+                                  placeholder="Enter your email address" 
+                                  className="pl-9" 
+                                  aria-label="Email address"
+                                  {...field} 
+                                />
+                              </FormControl>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button 
+                        type="submit" 
+                        className="w-full" 
+                        disabled={resetPasswordMutation.isPending}
+                      >
+                        {resetPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
+                      </Button>
+                    </form>
+                  </Form>
+                )}
+              </CardContent>
+            </TabsContent>
 
             {/* Login Form */}
             <TabsContent value="login">
