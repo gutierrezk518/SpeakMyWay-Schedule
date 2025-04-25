@@ -43,6 +43,24 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: EmailOption
   }
 }
 
+/**
+ * Send a password reset email to a user
+ * @param to Email address to send to
+ * @param name User's name (if available)
+ * @param resetUrl URL for password reset
+ * @returns Boolean indicating success or failure
+ */
+export async function sendPasswordResetEmail(to: string, name: string = '', resetUrl: string): Promise<boolean> {
+  const { passwordResetEmail, passwordResetEmailText } = await import('./email-templates');
+  
+  return sendEmail({
+    to,
+    subject: 'Reset Your SpeakMyWay Password',
+    htmlBody: passwordResetEmail(name, resetUrl),
+    textBody: passwordResetEmailText(name, resetUrl)
+  });
+}
+
 // Template for welcome emails
 export function generateWelcomeEmailTemplate(username: string, userId: number): { html: string; text: string } {
   const appUrl = process.env.APP_URL || 'https://speakmyway.app';

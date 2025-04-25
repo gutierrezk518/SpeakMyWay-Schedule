@@ -15,7 +15,7 @@ async function migrateDb() {
     
     const columnExists = await db.execute(checkColumnQuery);
     
-    if (columnExists.length === 0) {
+    if (!columnExists.rows || columnExists.rows.length === 0) {
       console.log('Adding is_guest column to users table...');
       
       // Add the is_guest column
