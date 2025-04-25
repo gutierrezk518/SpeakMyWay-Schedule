@@ -9,18 +9,66 @@ export async function createPasswordResetToken(userId: number): Promise<string> 
   // Generate a secure random token
   const token = randomBytes(32).toString('hex');
   
-  // Set expiration date (24 hours from now)
+  // Set expiration date (1 hour from now)
   const expires = new Date();
-  expires.setHours(expires.getHours() + 24);
+  expires.setHours(expires.getHours() + 1);
   
   // Store token in database
   await storage.createPasswordResetToken({
     userId,
     token,
-    expires
+    expires: expires.toISOString(),
+    used: false
   });
   
   return token;
+}
+
+/**
+ * Verify a password reset token
+ * Returns userId if token is valid, or null if token is invalid or expired
+ */
+export async function verifyPasswordResetToken(token: string): Promise<number | null> {
+  try {
+    // Find the token in the database
+    const tokenRecord = await storage.getPasswordResetToken(token);
+    
+    // If token doesn't exist, verification fails
+    if (!tokenRecord) {
+      return null;
+    }
+    
+    // Check if token has already been used
+    if (tokenRecord.used) {
+      return null;
+    }
+    
+    // Check if token is expired
+    const now = new Date();
+    const expires = new Date(tokenRecord.expires);
+    if (now > expires) {
+      return null;
+    }
+    
+    // Return the user ID
+    return tokenRecord.userId;
+  } catch (error) {
+    console.error('Error verifying password reset token:', error);
+    return null;
+  }
+}
+
+/**
+ * Mark a password reset token as used
+ */
+export async function usePasswordResetToken(token: string): Promise<boolean> {
+  try {
+    await storage.markPasswordResetTokenUsed(token);
+    return true;
+  } catch (error) {
+    console.error('Error marking password reset token as used:', error);
+    return false;
+  }
 }
 
 /**
@@ -34,44 +82,4 @@ export function generatePasswordResetUrl(token: string): string {
                   : 'http://localhost:5000');
   
   return `${baseUrl}/reset-password?token=${token}`;
-}
-
-/**
- * Verify a password reset token
- */
-export async function verifyPasswordResetToken(token: string): Promise<number | false> {
-  try {
-    // Find the token in the database
-    const tokenRecord = await storage.getPasswordResetToken(token);
-    
-    // If token doesn't exist, verification fails
-    if (!tokenRecord) {
-      return false;
-    }
-    
-    // Check if token is expired
-    const now = new Date();
-    const expires = new Date(tokenRecord.expires);
-    if (now > expires) {
-      return false;
-    }
-    
-    // Return the userId associated with the token
-    return tokenRecord.userId;
-  } catch (error) {
-    console.error('Error verifying password reset token:', error);
-    return false;
-  }
-}
-
-/**
- * Use a password reset token (mark as used)
- */
-export async function usePasswordResetToken(token: string): Promise<boolean> {
-  try {
-    return await storage.usePasswordResetToken(token);
-  } catch (error) {
-    console.error('Error marking password reset token as used:', error);
-    return false;
-  }
 }

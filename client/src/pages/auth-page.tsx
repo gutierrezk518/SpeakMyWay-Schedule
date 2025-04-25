@@ -119,7 +119,7 @@ export default function AuthPage() {
   // Password reset request mutation
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: z.infer<typeof resetPasswordSchema>) => {
-      const res = await apiRequest("POST", "/api/reset-password", data);
+      const res = await apiRequest("POST", "/api/forgot-password", data);
       return await res.json();
     },
     onSuccess: () => {

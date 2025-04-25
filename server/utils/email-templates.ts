@@ -1,261 +1,295 @@
 /**
- * Generate a welcome email with verification link
- * @param name - User's name
- * @param verificationUrl - URL for email verification
- * @returns HTML content for the email
+ * Email templates for the application
+ */
+
+/**
+ * Welcome email template (HTML)
  */
 export function welcomeEmail(name: string, verificationUrl: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Your SpeakMyWay Email</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-      color: #333333;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .logo {
-      max-width: 150px;
-      margin: 20px 0;
-    }
-    .container {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 30px;
-      background-color: #ffffff;
-    }
-    h1 {
-      color: #4A6FA5;
-      font-size: 24px;
-      margin-top: 0;
-    }
-    .button {
-      display: inline-block;
-      background-color: #4A6FA5;
-      color: #ffffff !important;
-      font-weight: bold;
-      text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 4px;
-      margin: 20px 0;
-    }
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #777777;
-      text-align: center;
-    }
-    a {
-      color: #4A6FA5;
-      text-decoration: underline;
-    }
-    @media only screen and (max-width: 480px) {
-      .container {
-        padding: 20px;
-      }
-      h1 {
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Welcome to SpeakMyWay!</h1>
-    
-    <p>Hello${name ? ' ' + name : ''},</p>
-    
-    <p>Thank you for joining SpeakMyWay - the premier AAC (Augmentative and Alternative Communication) application custom-designed for children with unique communication needs!</p>
-    
-    <p>To activate your account and access all our great features, please verify your email address by clicking the button below:</p>
-    
-    <div style="text-align: center;">
-      <a href="${verificationUrl}" class="button">Verify My Email</a>
-    </div>
-    
-    <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
-    <p><a href="${verificationUrl}">${verificationUrl}</a></p>
-    
-    <p>This link will expire in 24 hours for security reasons.</p>
-    
-    <p>With SpeakMyWay, you can:</p>
-    <ul style="margin-left: 20px; padding-left: 0;">
-      <li>Create custom communication cards with personalized images and text</li>
-      <li>Set up and organize daily routines for better predictability</li>
-      <li>Choose from different voice options to match preferences</li>
-      <li>Switch between languages for multilingual support</li>
-      <li>Track progress and usage patterns over time</li>
-      <li>Access your account securely across multiple devices</li>
-    </ul>
-    
-    <p>If you didn't create this account, you can safely ignore this email.</p>
-    
-    <p>Thank you,<br>The SpeakMyWay Team</p>
-  </div>
+  const currentYear = new Date().getFullYear();
   
-  <div class="footer">
-    <p>This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.app</p>
-    <p>&copy; ${new Date().getFullYear()} SpeakMyWay. All rights reserved.</p>
-  </div>
-</body>
-</html>`;
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
+      <title>Verify Your Email - SpeakMyWay</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333333;
+          background-color: #f9f9f9;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          text-align: center;
+          padding: 20px 0;
+          background-color: #4F46E5;
+          color: white;
+          border-radius: 5px 5px 0 0;
+          margin: -20px -20px 20px;
+        }
+        .content {
+          padding: 20px;
+        }
+        .button {
+          display: inline-block;
+          background-color: #4F46E5;
+          color: white;
+          text-decoration: none;
+          padding: 12px 20px;
+          border-radius: 4px;
+          margin-top: 20px;
+          font-weight: bold;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 20px;
+          padding-top: 20px;
+          border-top: 1px solid #eeeeee;
+          color: #777777;
+          font-size: 12px;
+        }
+        @media only screen and (max-width: 600px) {
+          .container {
+            width: 100%;
+            padding: 10px;
+          }
+          .header {
+            margin: -10px -10px 10px;
+          }
+          .content {
+            padding: 10px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Welcome to SpeakMyWay</h1>
+        </div>
+        <div class="content">
+          <p>Hello ${name || 'there'},</p>
+          
+          <p>Thank you for registering with SpeakMyWay! We're excited to have you join our community.</p>
+          
+          <p>To complete your registration and verify your email address, please click the button below:</p>
+          
+          <div style="text-align: center;">
+            <a href="${verificationUrl}" class="button">Verify My Email</a>
+          </div>
+          
+          <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
+          
+          <p style="word-break: break-all;"><a href="${verificationUrl}">${verificationUrl}</a></p>
+          
+          <p>This verification link will expire in 24 hours.</p>
+          
+          <p>Welcome aboard!</p>
+          
+          <p>Best regards,<br>
+          The SpeakMyWay Team</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${currentYear} SpeakMyWay. All rights reserved.</p>
+          <p>If you did not create an account with SpeakMyWay, please ignore this email.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 }
 
 /**
- * Plain text version of welcome email for email clients that don't support HTML
+ * Welcome email template (plain text)
  */
 export function welcomeEmailText(name: string, verificationUrl: string): string {
-  return `WELCOME TO SPEAKMYWAY!
+  const currentYear = new Date().getFullYear();
+  
+  return `
+Welcome to SpeakMyWay
 
-Hello${name ? ' ' + name : ''},
+Hello ${name || 'there'},
 
-Thank you for joining SpeakMyWay - the premier AAC (Augmentative and Alternative Communication) application custom-designed for children with unique communication needs!
+Thank you for registering with SpeakMyWay! We're excited to have you join our community.
 
-To activate your account and access all our great features, please verify your email address by visiting this link:
+To complete your registration and verify your email address, please click the link below:
+
 ${verificationUrl}
 
-This link will expire in 24 hours for security reasons.
+This verification link will expire in 24 hours.
 
-WITH SPEAKMYWAY, YOU CAN:
-- Create custom communication cards with personalized images and text
-- Set up and organize daily routines for better predictability
-- Choose from different voice options to match preferences
-- Switch between languages for multilingual support
-- Track progress and usage patterns over time
-- Access your account securely across multiple devices
+Welcome aboard!
 
-If you didn't create this account, you can safely ignore this email.
-
-Thank you,
+Best regards,
 The SpeakMyWay Team
 
----
-This email was sent to verify your account. If you have questions or need support, please contact us at support@speakmyway.app
-© ${new Date().getFullYear()} SpeakMyWay. All rights reserved.`;
+© ${currentYear} SpeakMyWay. All rights reserved.
+
+If you did not create an account with SpeakMyWay, please ignore this email.
+  `;
 }
 
 /**
- * Generate a password reset email with a reset link
- * @param name - User's name
- * @param resetUrl - URL for password reset
- * @returns HTML content for the email
+ * Password reset email template (HTML)
  */
 export function passwordResetEmail(name: string, resetUrl: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reset Your SpeakMyWay Password</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-      color: #333333;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .logo {
-      max-width: 150px;
-      margin: 20px 0;
-    }
-    .container {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 30px;
-      background-color: #ffffff;
-    }
-    h1 {
-      color: #4A6FA5;
-      font-size: 24px;
-      margin-top: 0;
-    }
-    .button {
-      display: inline-block;
-      background-color: #4A6FA5;
-      color: #ffffff !important;
-      font-weight: bold;
-      text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 4px;
-      margin: 20px 0;
-    }
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #777777;
-      text-align: center;
-    }
-    a {
-      color: #4A6FA5;
-      text-decoration: underline;
-    }
-    @media only screen and (max-width: 480px) {
-      .container {
-        padding: 20px;
-      }
-      h1 {
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Password Reset Request</h1>
-    
-    <p>Hello${name ? ' ' + name : ''},</p>
-    
-    <p>We received a request to reset your password for your SpeakMyWay account. To complete the process and set a new password, please click the button below:</p>
-    
-    <div style="text-align: center;">
-      <a href="${resetUrl}" class="button">Reset My Password</a>
-    </div>
-    
-    <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
-    <p><a href="${resetUrl}">${resetUrl}</a></p>
-    
-    <p>This link will expire in 24 hours for security reasons.</p>
-    
-    <p><strong>Important:</strong> If you did not request a password reset, please disregard this email. Your account remains secure, and no changes have been made.</p>
-    
-    <p>Thank you,<br>The SpeakMyWay Team</p>
-  </div>
+  const currentYear = new Date().getFullYear();
   
-  <div class="footer">
-    <p>If you need any assistance, please contact us at support@speakmyway.app</p>
-    <p>&copy; ${new Date().getFullYear()} SpeakMyWay. All rights reserved.</p>
-  </div>
-</body>
-</html>`;
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
+      <title>Reset Your Password - SpeakMyWay</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333333;
+          background-color: #f9f9f9;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          text-align: center;
+          padding: 20px 0;
+          background-color: #4F46E5;
+          color: white;
+          border-radius: 5px 5px 0 0;
+          margin: -20px -20px 20px;
+        }
+        .content {
+          padding: 20px;
+        }
+        .button {
+          display: inline-block;
+          background-color: #4F46E5;
+          color: white;
+          text-decoration: none;
+          padding: 12px 20px;
+          border-radius: 4px;
+          margin-top: 20px;
+          font-weight: bold;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 20px;
+          padding-top: 20px;
+          border-top: 1px solid #eeeeee;
+          color: #777777;
+          font-size: 12px;
+        }
+        .info {
+          background-color: #f8f9fa;
+          padding: 15px;
+          border-left: 4px solid #4F46E5;
+          margin: 20px 0;
+        }
+        @media only screen and (max-width: 600px) {
+          .container {
+            width: 100%;
+            padding: 10px;
+          }
+          .header {
+            margin: -10px -10px 10px;
+          }
+          .content {
+            padding: 10px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Reset Your Password</h1>
+        </div>
+        <div class="content">
+          <p>Hello ${name || 'there'},</p>
+          
+          <p>We received a request to reset your password for your SpeakMyWay account. If you didn't make this request, you can ignore this email.</p>
+          
+          <p>To reset your password, please click the button below:</p>
+          
+          <div style="text-align: center;">
+            <a href="${resetUrl}" class="button">Reset My Password</a>
+          </div>
+          
+          <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
+          
+          <p style="word-break: break-all;"><a href="${resetUrl}">${resetUrl}</a></p>
+          
+          <div class="info">
+            <p><strong>Important:</strong> This password reset link will expire in 1 hour for security reasons.</p>
+          </div>
+          
+          <p>If you didn't request a password reset, please contact our support team immediately.</p>
+          
+          <p>Best regards,<br>
+          The SpeakMyWay Team</p>
+        </div>
+        <div class="footer">
+          <p>&copy; ${currentYear} SpeakMyWay. All rights reserved.</p>
+          <p>For security reasons, this email was sent to the email address associated with your SpeakMyWay account.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 }
 
 /**
- * Plain text version of password reset email for email clients that don't support HTML
+ * Password reset email template (plain text)
  */
 export function passwordResetEmailText(name: string, resetUrl: string): string {
-  return `PASSWORD RESET REQUEST
+  const currentYear = new Date().getFullYear();
+  
+  return `
+Reset Your Password - SpeakMyWay
 
-Hello${name ? ' ' + name : ''},
+Hello ${name || 'there'},
 
-We received a request to reset your password for your SpeakMyWay account. To complete the process and set a new password, please visit the following link:
+We received a request to reset your password for your SpeakMyWay account. If you didn't make this request, you can ignore this email.
+
+To reset your password, please click the link below:
+
 ${resetUrl}
 
-This link will expire in 24 hours for security reasons.
+Important: This password reset link will expire in 1 hour for security reasons.
 
-Important: If you did not request a password reset, please disregard this email. Your account remains secure, and no changes have been made.
+If you didn't request a password reset, please contact our support team immediately.
 
-Thank you,
+Best regards,
 The SpeakMyWay Team
 
----
-If you need any assistance, please contact us at support@speakmyway.app
-© ${new Date().getFullYear()} SpeakMyWay. All rights reserved.`;
+© ${currentYear} SpeakMyWay. All rights reserved.
+
+For security reasons, this email was sent to the email address associated with your SpeakMyWay account.
+  `;
 }
