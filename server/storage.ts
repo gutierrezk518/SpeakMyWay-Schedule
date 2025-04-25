@@ -85,6 +85,11 @@ export interface IStorage {
   getEmailVerificationToken(token: string): Promise<EmailVerificationToken | undefined>;
   markEmailVerificationTokenUsed(token: string, clickedAt?: Date): Promise<boolean>;
   getActiveEmailVerificationTokensByUser(userId: number): Promise<EmailVerificationToken[]>;
+  
+  // Password reset operations
+  createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
+  getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined>;
+  markPasswordResetTokenUsed(token: string): Promise<boolean>;
 }
 
 // In-memory storage implementation
@@ -389,6 +394,24 @@ export class MemStorage implements IStorage {
   
   async getActiveEmailVerificationTokensByUser(_userId: number): Promise<EmailVerificationToken[]> {
     return [];
+  }
+  
+  // Password reset operations (stubs to satisfy interface)
+  async createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    return {
+      ...token,
+      id: 1,
+      used: false,
+      createdAt: new Date().toISOString()
+    };
+  }
+  
+  async getPasswordResetToken(_token: string): Promise<PasswordResetToken | undefined> {
+    return undefined;
+  }
+  
+  async markPasswordResetTokenUsed(_token: string): Promise<boolean> {
+    return true;
   }
 }
 

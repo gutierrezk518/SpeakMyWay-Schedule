@@ -17,8 +17,7 @@ export async function createPasswordResetToken(userId: number): Promise<string> 
   await storage.createPasswordResetToken({
     userId,
     token,
-    expires: expires.toISOString(),
-    used: false
+    expires: expires.toISOString()
   });
   
   return token;
@@ -63,8 +62,7 @@ export async function verifyPasswordResetToken(token: string): Promise<number | 
  */
 export async function usePasswordResetToken(token: string): Promise<boolean> {
   try {
-    await storage.markPasswordResetTokenUsed(token);
-    return true;
+    return await storage.markPasswordResetTokenUsed(token);
   } catch (error) {
     console.error('Error marking password reset token as used:', error);
     return false;
