@@ -33,6 +33,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
+  deleteUser(id: number): Promise<boolean>;
   
   // Category operations
   getCategories(type?: string): Promise<Category[]>;
@@ -157,6 +158,14 @@ export class MemStorage implements IStorage {
     const updatedUser: User = { ...existingUser, ...updateData };
     this.users.set(id, updatedUser);
     return updatedUser;
+  }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    if (!this.users.has(id)) {
+      return false;
+    }
+    
+    return this.users.delete(id);
   }
 
   // Card operations

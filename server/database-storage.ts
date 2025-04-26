@@ -83,6 +83,48 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
   
+  async deleteUser(id: number): Promise<boolean> {
+    // First, delete any related data (routines, settings, etc.)
+    // We need to delete these before the user to maintain referential integrity
+    
+    // Delete user routines
+    await db
+      .delete(routines)
+      .where(eq(routines.userId, id));
+    
+    // Delete user settings
+    await db
+      .delete(settings)
+      .where(eq(settings.userId, id));
+    
+    // Delete user cards (only user-specific ones, not shared cards)
+    await db
+      .delete(cards)
+      .where(eq(cards.userId, id));
+    
+    // Delete user login history
+    await db
+      .delete(userLoginHistory)
+      .where(eq(userLoginHistory.userId, id));
+    
+    // Delete password reset tokens
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.userId, id));
+    
+    // Delete email verification tokens
+    await db
+      .delete(emailVerificationTokens)
+      .where(eq(emailVerificationTokens.userId, id));
+    
+    // Finally, delete the user
+    const result = await db
+      .delete(users)
+      .where(eq(users.id, id));
+    
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+  
   // Card operations
   async getCards(userId: number, language: string): Promise<Card[]> {
     return await db
