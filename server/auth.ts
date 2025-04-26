@@ -94,10 +94,14 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Username already exists" });
       }
 
-      const user = await storage.createUser({
+      // Ensure email field is populated with username value (email address)
+      const userData = {
         ...req.body,
+        email: req.body.username, // Always set email to be the same as username
         password: await hashPassword(req.body.password),
-      });
+      };
+      
+      const user = await storage.createUser(userData);
 
       // Send verification email if user has provided an email
       if (user.email) {

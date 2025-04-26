@@ -164,8 +164,10 @@ export default function AuthPage() {
   };
 
   const onRegisterSubmit = (data: z.infer<typeof registerSchema>) => {
+    // Make sure email field is also set to the same value as username
     registerMutation.mutate({
       ...data,
+      email: data.username, // Explicitly set email to be the same as username
       consentDate: new Date().toISOString(),
     });
   };

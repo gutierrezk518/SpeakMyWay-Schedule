@@ -56,6 +56,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData.createdAt = new Date().toISOString();
       }
       
+      // Ensure email field is always set to be the same as username
+      if (!userData.email) {
+        userData.email = userData.username;
+      }
+      
       // Create the user
       const user = await storage.createUser(userData);
       
