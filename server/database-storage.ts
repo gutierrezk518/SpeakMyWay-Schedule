@@ -529,39 +529,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(userLoginHistory.loginTime));
   }
   
-  // Password reset tokens
-  async createPasswordResetToken(insertToken: InsertPasswordResetToken): Promise<PasswordResetToken> {
-    const [token] = await db
-      .insert(passwordResetTokens)
-      .values(insertToken)
-      .returning();
-    
-    return token;
-  }
-  
-  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
-    const [resetToken] = await db
-      .select()
-      .from(passwordResetTokens)
-      .where(
-        and(
-          eq(passwordResetTokens.token, token),
-          eq(passwordResetTokens.used, false)
-        )
-      );
-    
-    return resetToken;
-  }
-  
-  async usePasswordResetToken(token: string): Promise<boolean> {
-    const result = await db
-      .update(passwordResetTokens)
-      .set({ used: true })
-      .where(eq(passwordResetTokens.token, token))
-      .returning();
-    
-    return result.length > 0;
-  }
+  // This section was moved to the dedicated password reset token operations section below
   
   // Admin operations
   async updateUserLoginInfo(userId: number, ip: string): Promise<User> {

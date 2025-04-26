@@ -879,6 +879,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // DELETE endpoint for admins to delete a user
+  app.delete("/api/admin/users/:id", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      // Check if user exists first
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Don't allow deleting your own account while logged in as admin
+      if (req.user && req.user.id === userId) {
+        return res.status(400).json({ message: "Cannot delete your own account while logged in" });
+      }
+      
+      // Delete the user and all associated data
+      const deleted = await storage.deleteUser(userId);
+      
+      if (deleted) {
+        return res.status(200).json({ message: "User deleted successfully" });
+      } else {
+        return res.status(500).json({ message: "Failed to delete user" });
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return res.status(500).json({ 
+        message: "Failed to delete user", 
+        error: (error as Error).message 
+      });
+    }
+  });
+  
+  // POST endpoint for admins to send password reset email to a user
+  app.post("/api/admin/users/:id/send-password-reset", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      // Check if user exists first
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Check if user has an email address
+      if (!user.email) {
+        return res.status(400).json({ message: "User does not have an email address" });
+      }
+      
+      // Import password reset utilities to avoid circular dependencies
+      const { createPasswordResetToken, generatePasswordResetUrl } = await import('./utils/password-reset');
+      
+      // Generate password reset token
+      const token = await createPasswordResetToken(userId);
+      
+      // Generate reset URL
+      const resetUrl = generatePasswordResetUrl(token);
+      
+      // Send password reset email
+      const displayName = user.displayName || '';
+      const emailSent = await sendPasswordResetEmail(user.email, displayName, resetUrl);
+      
+      if (emailSent) {
+        return res.status(200).json({ 
+          message: `Password reset email sent to ${user.email}`,
+          success: true
+        });
+      } else {
+        return res.status(500).json({ 
+          message: "Failed to send password reset email. Check server logs for details.",
+          success: false
+        });
+      }
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      return res.status(500).json({ 
+        message: "Failed to send password reset email",
+        error: (error as Error).message 
+      });
+    }
+  });
+  
   app.patch("/api/admin/users/:id/admin", isAdmin, async (req: Request, res: Response) => {
     try {
       const userId = parseInt(req.params.id);
