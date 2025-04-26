@@ -83,9 +83,9 @@ export function welcomeEmail(name: string, verificationUrl: string): string {
           <h1>Welcome to SpeakMyWay</h1>
         </div>
         <div class="content">
-          <p>Hello ${name || 'there'},</p>
+          <p>Hello,</p>
           
-          <p>Thank you for registering with SpeakMyWay! We're excited to have you join our community.</p>
+          <p> We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun! </p>
           
           <p>To complete your registration and verify your email address, please click the button below:</p>
           
@@ -123,9 +123,9 @@ export function welcomeEmailText(name: string, verificationUrl: string): string 
   return `
 Welcome to SpeakMyWay
 
-Hello ${name || 'there'},
+Hello,
 
-Thank you for registering with SpeakMyWay! We're excited to have you join our community.
+We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun!
 
 To complete your registration and verify your email address, please click the link below:
 
@@ -273,7 +273,7 @@ export function passwordResetEmailText(name: string, resetUrl: string): string {
   return `
 Reset Your Password - SpeakMyWay
 
-Hello ${name || 'there'},
+Hello,
 
 We received a request to reset your password for your SpeakMyWay account. If you didn't make this request, you can ignore this email.
 

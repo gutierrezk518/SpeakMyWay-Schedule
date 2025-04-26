@@ -194,23 +194,20 @@ export function generateWelcomeEmailTemplate(username: string, userId: number): 
         </div>
         
         <div class="content">
-          <p class="welcome-text">Hello <strong>${username}</strong>,</p>
+          <p class="welcome-text">Hello, </p>
           
-          <p>We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!</p>
+          <p>We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun! </p>
           
           <div class="feature-box">
             <p><strong>Your account info:</strong></p>
             <p>Username: <strong>${username}</strong></p>
-            <p>User ID: <span class="info-badge">${userId}</span></p>
           </div>
           
           <p><strong>With SpeakMyWay, you can:</strong></p>
           <ul class="feature-list">
-            <li>Create custom communication cards with personalized images and text</li>
-            <li>Set up and organize daily routines for better predictability</li>
-            <li>Choose from different voice options to match preferences</li>
+            <li>Set up and organize daily routines</li>
+            <li>Choose from different voice options to match your preferences</li>
             <li>Switch between languages for multilingual support</li>
-            <li>Track progress and usage patterns over time</li>
           </ul>
           
           <div class="button-container">
@@ -252,22 +249,19 @@ export function generateWelcomeEmailTemplate(username: string, userId: number): 
   const text = `
 WELCOME TO SPEAKMYWAY!
 
-Hello ${username},
+Hello,
 
-We're thrilled to welcome you to SpeakMyWay - your personalized AAC (Augmentative and Alternative Communication) application designed for neurodivergent children!
+We're thrilled to welcome you to SpeakMyWay - your suite of personalized tools for both speech development and fun! Click the authorization link in the below section to get started in the SpeakMyWay application.
 
 YOUR ACCOUNT INFO:
 Username: ${username}
-User ID: ${userId}
 
 WITH SPEAKMYWAY, YOU CAN:
-- Create custom communication cards with personalized images and text
-- Set up and organize daily routines for better predictability
+- Set up and organize daily routines
 - Choose from different voice options to match preferences
-- Switch between languages for multilingual support
-- Track progress and usage patterns over time
+- Switch between languages for mutilingual support
 
-GET STARTED NOW: ${appUrl}/schedule
+GET STARTED NOW: schedule.speakmyway.com
 
 NEED HELP GETTING STARTED?
 Check out our quick start guide at ${appUrl}/help or contact our support team at ${supportEmail} if you have any questions.
