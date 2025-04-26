@@ -61,6 +61,7 @@ export default function Admin() {
   const [userDetailDialogOpen, setUserDetailDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [userLoginHistoryDialogOpen, setUserLoginHistoryDialogOpen] = useState(false);
+  const [deleteUserDialogOpen, setDeleteUserDialogOpen] = useState(false);
   
   // User metrics
   const usersQuery = useQuery({
@@ -898,12 +899,7 @@ export default function Admin() {
                                     className="text-destructive"
                                     onClick={() => {
                                       setSelectedUser(user);
-                                      const confirmDelete = window.confirm(
-                                        `Are you sure you want to delete ${user.username}? This action cannot be undone and will delete all of the user's data.`
-                                      );
-                                      if (confirmDelete) {
-                                        deleteUserMutation.mutate(user.id);
-                                      }
+                                      setDeleteUserDialogOpen(true);
                                     }}
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
@@ -994,6 +990,50 @@ export default function Admin() {
                         View Login History
                       </Button>
                     </div>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+          
+          {/* Delete User Confirmation Dialog */}
+          <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
+            <DialogContent className="sm:max-w-[450px]">
+              <DialogHeader>
+                <DialogTitle>Confirm User Deletion</DialogTitle>
+                <DialogDescription>
+                  {selectedUser && `Are you sure you want to delete the user ${selectedUser.username}?`}
+                </DialogDescription>
+              </DialogHeader>
+              {selectedUser && (
+                <div className="space-y-4 py-4">
+                  <div className="bg-amber-50 border border-amber-200 rounded-md p-4 text-amber-800">
+                    <p className="text-sm font-medium">Warning: This action cannot be undone.</p>
+                    <p className="text-sm mt-2">Deleting this user will permanently remove:</p>
+                    <ul className="text-sm list-disc list-inside mt-1 space-y-1">
+                      <li>All user account information</li>
+                      <li>Custom cards and settings</li>
+                      <li>Usage history and routines</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="flex justify-end space-x-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setDeleteUserDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      variant="destructive"
+                      onClick={() => {
+                        deleteUserMutation.mutate(selectedUser.id);
+                        setDeleteUserDialogOpen(false);
+                      }}
+                      disabled={deleteUserMutation.isPending}
+                    >
+                      {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
+                    </Button>
                   </div>
                 </div>
               )}
