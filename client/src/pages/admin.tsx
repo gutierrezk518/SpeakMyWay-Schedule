@@ -26,6 +26,7 @@ import {
   Mail,
   MoreHorizontal,
   Search, 
+  Trash2,
   Users 
 } from "lucide-react";
 import { 
@@ -98,6 +99,51 @@ export default function Admin() {
     enabled: !!selectedUser?.id && userLoginHistoryDialogOpen,
     retry: 1,
     refetchOnWindowFocus: false
+  });
+  
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await apiRequest("DELETE", `/api/admin/users/${userId}`);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users/count'] });
+      toast({
+        title: "User Deleted",
+        description: "The user has been successfully deleted from the system.",
+      });
+      setUserDetailDialogOpen(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Deleting User",
+        description: error.message || "Failed to delete user. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Send password reset email mutation
+  const sendPasswordResetMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await apiRequest("POST", `/api/admin/users/${userId}/send-password-reset`, {});
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password Reset Email Sent",
+        description: "The password reset email has been sent successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Sending Password Reset Email",
+        description: error.message || "Failed to send password reset email. Please try again.",
+        variant: "destructive"
+      });
+    }
   });
   
   // Toggle admin status
@@ -836,6 +882,33 @@ export default function Admin() {
                                       Send Welcome Email
                                     </DropdownMenuItem>
                                   )}
+                                  
+                                  {user.email && (
+                                    <DropdownMenuItem
+                                      onClick={() => sendPasswordResetMutation.mutate(user.id)}
+                                    >
+                                      <Lock className="h-4 w-4 mr-2" />
+                                      Send Password Reset
+                                    </DropdownMenuItem>
+                                  )}
+                                  
+                                  <DropdownMenuSeparator />
+                                  
+                                  <DropdownMenuItem
+                                    className="text-destructive"
+                                    onClick={() => {
+                                      setSelectedUser(user);
+                                      const confirmDelete = window.confirm(
+                                        `Are you sure you want to delete ${user.username}? This action cannot be undone and will delete all of the user's data.`
+                                      );
+                                      if (confirmDelete) {
+                                        deleteUserMutation.mutate(user.id);
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete User
+                                  </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>
