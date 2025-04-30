@@ -2,6 +2,7 @@ import { ScheduleActivity } from "@/data/scheduleData";
 import { Draggable } from "react-beautiful-dnd";
 import { speak } from "@/lib/tts";
 import { useAppContext } from "@/contexts/app-context";
+import { useEffect } from "react";
 
 interface ActivityCardProps {
   activity: ScheduleActivity;
@@ -95,7 +96,7 @@ export default function ActivityCard({
   // Apply translations immediately when the component renders
   useEffect(() => {
     applySpanishTranslations();
-  }, [language]);
+  }, [language, activity.title]);
   
   // Handle card click to add to schedule
   const handleCardClick = () => {

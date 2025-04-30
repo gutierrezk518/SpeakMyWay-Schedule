@@ -7,7 +7,7 @@ interface ActivityTimerProps {
 }
 
 export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
-  const { userName } = useAppContext();
+  const { userName, language } = useAppContext();
   const [timerMinutes, setTimerMinutes] = useState(5);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -42,7 +42,12 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
         setIsRunning(false);
         
         // Announce time is up
-        const message = `${userName || 'Hey there'}, time for our next activity!`;
+        let message = "";
+        if (language === "es") {
+          message = `${userName || '¡Hola!'}, ¡es hora de nuestra próxima actividad!`;
+        } else {
+          message = `${userName || 'Hey there'}, time for our next activity!`;
+        }
         speak(message);
         
         if (onTimeComplete) {
@@ -84,7 +89,7 @@ export default function ActivityTimer({ onTimeComplete }: ActivityTimerProps) {
   return (
     <div className="py-2 px-3 bg-white rounded shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">Timer</span>
+        <span className="text-sm font-medium">{language === "es" ? "Temporizador" : "Timer"}</span>
         
         <div className="flex items-center space-x-2">
           {isRunning ? (

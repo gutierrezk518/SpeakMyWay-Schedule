@@ -388,7 +388,7 @@ export default function Schedule() {
         }
         
         // Speak confirmation
-        speak("Added to favorites");
+        speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
       } catch (error) {
         console.error("Error adding to favorites:", error);
       }
@@ -404,7 +404,7 @@ export default function Schedule() {
         removeFromFavorites(activityToRemove.id);
         
         // Speak confirmation
-        speak("Removed from favorites");
+        speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
       } catch (error) {
         console.error("Error removing from favorites:", error);
       }
