@@ -20,11 +20,12 @@ export default function ActivityCard({
   onRemove,
   categoryId
 }: ActivityCardProps): JSX.Element {
-  // Get favorites functionality from context - simplified
+  // Get favorites functionality and language from context
   const { 
     isFavorite, 
     toggleFavorite,
-    addToFavorites
+    addToFavorites,
+    language
   } = useAppContext();
   
   // Determine if this activity is a favorite
@@ -85,7 +86,7 @@ export default function ActivityCard({
           </div>
           <div className="w-full flex justify-center items-center">
             <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-              {activity.title}
+              {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
             </span>
           </div>
         </div>
@@ -110,7 +111,9 @@ export default function ActivityCard({
           
           {/* Text container - more accessible */}
           <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
-            <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">{activity.title}</span>
+            <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">
+              {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
+            </span>
           </div>
         </>
       )}

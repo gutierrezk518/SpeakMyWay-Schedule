@@ -169,6 +169,45 @@ export default function Customize() {
                   placeholder="What should we call you?"
                 />
               </div>
+              
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium">Language / Idioma</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${language === "en" ? 'bg-blue-100 border-blue-500' : ''}`}>
+                    <input
+                      type="radio"
+                      name="language"
+                      value="en"
+                      className="absolute opacity-0"
+                      checked={language === "en"}
+                      onChange={() => {
+                        handleLanguageChange({ target: { value: "en" } } as React.ChangeEvent<HTMLSelectElement>);
+                      }}
+                    />
+                    <div className="flex flex-col items-center">
+                      <span className="text-xl mb-1">🇺🇸</span>
+                      <span className="font-medium">English</span>
+                    </div>
+                  </label>
+                  
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-red-50 ${language === "es" ? 'bg-red-100 border-red-500' : ''}`}>
+                    <input
+                      type="radio"
+                      name="language"
+                      value="es"
+                      className="absolute opacity-0"
+                      checked={language === "es"}
+                      onChange={() => {
+                        handleLanguageChange({ target: { value: "es" } } as React.ChangeEvent<HTMLSelectElement>);
+                      }}
+                    />
+                    <div className="flex flex-col items-center">
+                      <span className="text-xl mb-1">🇪🇸</span>
+                      <span className="font-medium">Español</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
           
