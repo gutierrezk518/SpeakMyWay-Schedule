@@ -39,11 +39,10 @@ export default function ActivityCard({
   
   // Only click functionality, no long press as per user request
   
-  // Handle card click to add to schedule
-  const handleCardClick = () => {
-    // Add the Spanish title and speech text to the activity if language is Spanish
+  // Apply Spanish translations when needed
+  const applySpanishTranslations = () => {
     if (language === "es" && !activity.titleEs) {
-      // Create temporary Spanish translations if none exist
+      // Create Spanish translations if none exist
       // These would typically come from the database
       const translations: Record<string, { title: string, speech?: string }> = {
         "Breakfast": { title: "Desayuno", speech: "Desayuno" },
@@ -60,7 +59,30 @@ export default function ActivityCard({
         "Go to Sleep": { title: "Dormir", speech: "Ir a dormir" },
         "Play Outside": { title: "Jugar afuera", speech: "Jugar afuera" },
         "Color": { title: "Colorear", speech: "Colorear" },
-        "Book": { title: "Libro", speech: "Leer un libro" }
+        "Book": { title: "Libro", speech: "Leer un libro" },
+        "Play": { title: "Jugar", speech: "Jugar" },
+        "Outdoor Play": { title: "Juego al aire libre", speech: "Jugar al aire libre" },
+        "YouTube": { title: "YouTube", speech: "YouTube" },
+        "TV": { title: "Televisión", speech: "Ver televisión" },
+        "Movie": { title: "Película", speech: "Ver una película" },
+        "Tablet": { title: "Tableta", speech: "Usar la tableta" },
+        "Phone": { title: "Teléfono", speech: "Usar el teléfono" },
+        "Cook": { title: "Cocinar", speech: "Cocinar" },
+        "Shower": { title: "Ducha", speech: "Tomar una ducha" },
+        "Bathroom": { title: "Baño", speech: "Ir al baño" },
+        "Get Dressed": { title: "Vestirse", speech: "Vestirse" },
+        "Shoes": { title: "Zapatos", speech: "Ponerse los zapatos" },
+        "School": { title: "Escuela", speech: "Ir a la escuela" },
+        "Home": { title: "Casa", speech: "Ir a casa" },
+        "Park": { title: "Parque", speech: "Ir al parque" },
+        "Swimming": { title: "Nadar", speech: "Ir a nadar" },
+        "Doctor": { title: "Doctor", speech: "Ir al doctor" },
+        "Grocery Store": { title: "Supermercado", speech: "Ir al supermercado" },
+        "Library": { title: "Biblioteca", speech: "Ir a la biblioteca" },
+        "Car": { title: "Coche", speech: "Ir en coche" },
+        "Bus": { title: "Autobús", speech: "Ir en autobús" },
+        "Walk": { title: "Caminar", speech: "Caminar" },
+        "Bike": { title: "Bicicleta", speech: "Montar en bicicleta" }
       };
       
       if (translations[activity.title]) {
@@ -68,6 +90,17 @@ export default function ActivityCard({
         activity.speechTextEs = translations[activity.title].speech;
       }
     }
+  };
+  
+  // Apply translations immediately when the component renders
+  useEffect(() => {
+    applySpanishTranslations();
+  }, [language]);
+  
+  // Handle card click to add to schedule
+  const handleCardClick = () => {
+    // Apply Spanish translations again just in case
+    applySpanishTranslations();
     
     // Determine the source area based on where the card is
     const sourceArea = isInSchedule ? "schedule" : 

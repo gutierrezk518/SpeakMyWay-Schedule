@@ -361,8 +361,12 @@ export default function Schedule() {
         setScheduleData(newSchedule);
         
         // Speak the activity's full speech text when it's added to the schedule
-        speak(newActivity.speechText || newActivity.title);
-        console.log("Added activity to schedule:", newActivity.title, "Speech:", newActivity.speechText);
+        if (language === 'es' && newActivity.speechTextEs) {
+          speak(newActivity.speechTextEs);
+        } else {
+          speak(newActivity.speechText || newActivity.title);
+        }
+        console.log("Added activity to schedule:", newActivity.title, "Speech:", language === 'es' ? newActivity.speechTextEs : newActivity.speechText);
       } catch (error) {
         console.error("Error adding activity to schedule:", error);
       }
