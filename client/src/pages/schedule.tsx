@@ -15,8 +15,8 @@ const TimerComponent = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   
-  // Get the user name from context
-  const { userName } = useAppContext();
+  // Get the user name and language from context
+  const { userName, language } = useAppContext();
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -37,8 +37,13 @@ const TimerComponent = () => {
           
           // Add a small delay before speaking
           setTimeout(() => {
-            // Custom message with user's name
-            const message = `OK ${userName || 'friend'}, time for our next activity`;
+            // Custom message with user's name, translated based on language setting
+            let message = '';
+            if (language === 'es') {
+              message = `Vale ${userName || 'amigo'}, es hora de nuestra próxima actividad`;
+            } else {
+              message = `OK ${userName || 'friend'}, time for our next activity`;
+            }
             speak(message);
           }, 800);
           
@@ -53,7 +58,7 @@ const TimerComponent = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, minutes, seconds, userName]);
+  }, [isActive, minutes, seconds, userName, language]);
   
   const handleToggleTimer = () => {
     if (minutes === 0 && seconds === 0 && !isActive) return;
@@ -100,14 +105,16 @@ const TimerComponent = () => {
           }`}
           disabled={minutes === 0 && seconds === 0 && !isActive}
         >
-          {isActive ? "Pause" : "Start"}
+          {language === 'es' 
+            ? (isActive ? "Pausa" : "Iniciar") 
+            : (isActive ? "Pause" : "Start")}
         </button>
         
         <button 
           onClick={handleReset}
           className="px-2 py-0.5 bg-red-500 text-white rounded text-xs hover:bg-red-600 mx-1"
         >
-          Reset
+          {language === 'es' ? "Reiniciar" : "Reset"}
         </button>
       </div>
     </div>
@@ -132,7 +139,8 @@ export default function Schedule() {
     toggleFavorite,
     isFavorite,
     addToFavorites,
-    removeFromFavorites
+    removeFromFavorites,
+    language
   } = useAppContext();
   
   // Schedule state
