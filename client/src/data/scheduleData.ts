@@ -1,11 +1,13 @@
 export interface ScheduleActivity {
   id: string;
   title: string;
+  titleEs?: string;    // Spanish title
   icon: string;
   bgColor: string;
   time?: string;
   imageSrc?: string;   // Path to custom image
   speechText?: string; // Text to speak with TTS that may differ from display text
+  speechTextEs?: string; // Spanish text to speak with TTS
 }
 
 export interface ScheduleTimeSection {

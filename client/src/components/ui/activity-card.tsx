@@ -41,6 +41,34 @@ export default function ActivityCard({
   
   // Handle card click to add to schedule
   const handleCardClick = () => {
+    // Add the Spanish title and speech text to the activity if language is Spanish
+    if (language === "es" && !activity.titleEs) {
+      // Create temporary Spanish translations if none exist
+      // These would typically come from the database
+      const translations: Record<string, { title: string, speech?: string }> = {
+        "Breakfast": { title: "Desayuno", speech: "Desayuno" },
+        "Lunch": { title: "Almuerzo", speech: "Almuerzo" },
+        "Dinner": { title: "Cena", speech: "Cena" },
+        "Snack": { title: "Merienda", speech: "Merienda" },
+        "Water": { title: "Agua", speech: "Agua" },
+        "Juice": { title: "Jugo", speech: "Jugo" },
+        "Milk": { title: "Leche", speech: "Leche" },
+        "Toilet": { title: "Baño", speech: "Ir al baño" },
+        "Brush Teeth": { title: "Cepillar dientes", speech: "Cepillar los dientes" },
+        "Bath": { title: "Baño", speech: "Tomar un baño" },
+        "Wake Up": { title: "Despertar", speech: "Despertar" },
+        "Go to Sleep": { title: "Dormir", speech: "Ir a dormir" },
+        "Play Outside": { title: "Jugar afuera", speech: "Jugar afuera" },
+        "Color": { title: "Colorear", speech: "Colorear" },
+        "Book": { title: "Libro", speech: "Leer un libro" }
+      };
+      
+      if (translations[activity.title]) {
+        activity.titleEs = translations[activity.title].title;
+        activity.speechTextEs = translations[activity.title].speech;
+      }
+    }
+    
     // Determine the source area based on where the card is
     const sourceArea = isInSchedule ? "schedule" : 
                       isInFavorites ? "favorites" : "activity-cards";

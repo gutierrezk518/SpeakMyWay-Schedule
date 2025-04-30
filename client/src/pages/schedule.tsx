@@ -505,7 +505,11 @@ export default function Schedule() {
   // Play through the schedule as a complete sentence with ordinal words
   const playSchedule = () => {
     if (currentSchedule.length === 0) {
-      speak("Your schedule is empty. Add some activities first.");
+      if (language === "es") {
+        speak("Tu horario está vacío. Agrega algunas actividades primero.");
+      } else {
+        speak("Your schedule is empty. Add some activities first.");
+      }
       return;
     }
     
@@ -515,30 +519,59 @@ export default function Schedule() {
     currentSchedule.forEach((activity, index) => {
       let ordinalPrefix = "";
       
-      // Assign ordinal word based on position
-      if (index === 0) {
-        ordinalPrefix = "First we will ";
-      } else if (index === 1) {
-        ordinalPrefix = "Second we will ";
-      } else if (index === 2) {
-        ordinalPrefix = "Third we will ";
-      } else if (index === currentSchedule.length - 1) {
-        ordinalPrefix = "And last we will ";
+      if (language === "es") {
+        // Spanish ordinal words
+        if (index === 0) {
+          ordinalPrefix = "Primero vamos a ";
+        } else if (index === 1) {
+          ordinalPrefix = "Segundo vamos a ";
+        } else if (index === 2) {
+          ordinalPrefix = "Tercero vamos a ";
+        } else if (index === currentSchedule.length - 1) {
+          ordinalPrefix = "Y por último vamos a ";
+        } else {
+          // For positions 4th and beyond
+          ordinalPrefix = "Después vamos a ";
+        }
+        
+        // Use Spanish speech text if available
+        const textToSpeak = activity.speechTextEs ? 
+          activity.speechTextEs.toLowerCase() : 
+          (activity.titleEs ? activity.titleEs.toLowerCase() : 
+           (activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase()));
+           
+        scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
       } else {
-        // For positions 4th and beyond
-        ordinalPrefix = `Next we will `;
+        // English ordinal words
+        if (index === 0) {
+          ordinalPrefix = "First we will ";
+        } else if (index === 1) {
+          ordinalPrefix = "Second we will ";
+        } else if (index === 2) {
+          ordinalPrefix = "Third we will ";
+        } else if (index === currentSchedule.length - 1) {
+          ordinalPrefix = "And last we will ";
+        } else {
+          // For positions 4th and beyond
+          ordinalPrefix = `Next we will `;
+        }
+        
+        // Use speechText if available, otherwise use title
+        const textToSpeak = activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase();
+        scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
       }
-      
-      // Use speechText if available, otherwise use title
-      const textToSpeak = activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase();
-      scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
     });
     
     // Create a single complete sentence from all schedule items
     let fullText = scheduleTexts.join(", ");
     
     // Use userName from the context that we already extracted at the top of the component
-    const namePrefix = userName ? `Ok ${userName}. ` : "";
+    let namePrefix = "";
+    if (language === "es") {
+      namePrefix = userName ? `Vale ${userName}. ` : "";
+    } else {
+      namePrefix = userName ? `Ok ${userName}. ` : "";
+    }
     
     // Speak the complete schedule
     speak(namePrefix + fullText);
@@ -589,7 +622,11 @@ export default function Schedule() {
       if (sourceArea === "schedule") {
         // Speak the activity text without adding it again
         // This is necessary since we removed the speak call from the ActivityCard component
-        speak(activity.speechText || activity.title);
+        if (language === "es" && (activity.speechTextEs || activity.titleEs)) {
+          speak(activity.speechTextEs || activity.titleEs || activity.speechText || activity.title);
+        } else {
+          speak(activity.speechText || activity.title);
+        }
         return;
       }
       
@@ -614,7 +651,11 @@ export default function Schedule() {
       setScheduleData(newSchedule);
       
       // Speak the activity's full speech text when it's added to the schedule
-      speak(newActivity.speechText || newActivity.title);
+      if (language === "es" && (newActivity.speechTextEs || newActivity.titleEs)) {
+        speak(newActivity.speechTextEs || newActivity.titleEs || newActivity.speechText || newActivity.title);
+      } else {
+        speak(newActivity.speechText || newActivity.title);
+      }
       console.log("Added activity to schedule via click:", newActivity.title);
     };
     
