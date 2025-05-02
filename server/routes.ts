@@ -1407,25 +1407,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API endpoint for email verification (JSON response for frontend app)
+  // API endpoint for email verification (redirects to frontend after verification)
   app.get("/api/verify-email", async (req: Request, res: Response) => {
     const token = req.query.token as string;
     
     if (!token) {
-      return res.status(400).json({ message: "Invalid token. Please check your verification link." });
+      return res.redirect("/?error=invalid_token");
     }
     
     try {
       const verified = await verifyEmailToken(token);
       
       if (verified) {
-        return res.status(200).json({ message: "Email successfully verified! You can now access your account." });
+        // Redirect to the frontend with success message
+        return res.redirect("/?verified=true");
       } else {
-        return res.status(400).json({ message: "Invalid or expired verification link. Please request a new one." });
+        // Redirect with error message
+        return res.redirect("/?error=expired_token");
       }
     } catch (error) {
       console.error("Error verifying email:", error);
-      return res.status(500).json({ message: "Server error verifying email. Please try again later." });
+      return res.redirect("/?error=server_error");
     }
   });
   

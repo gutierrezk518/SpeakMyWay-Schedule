@@ -34,7 +34,9 @@ export function generateVerificationUrl(token: string): string {
                   ? 'https://speakmyway.replit.app' 
                   : 'http://localhost:5000');
   
-  return `${baseUrl}/verify-email?token=${token}`;
+  // For Replit environment, use the /api/ endpoint directly since the client-side
+  // route won't be available when clicking the email link directly
+  return `${baseUrl}/api/verify-email?token=${token}`;
 }
 
 /**

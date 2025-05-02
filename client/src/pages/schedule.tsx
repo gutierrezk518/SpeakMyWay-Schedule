@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "wouter";
 
 import ActivityCard from "@/components/ui/activity-card";
 import { speak } from "@/lib/tts";
 import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
+import { useToast } from "@/hooks/use-toast";
 import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
+import { useAuth } from "@/hooks/use-auth";
 
 // Compact Timer Component
 const TimerComponent = () => {
@@ -142,6 +145,46 @@ export default function Schedule() {
     removeFromFavorites,
     language
   } = useAppContext();
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const [location] = useLocation();
+  
+  // Check for email verification URL parameters when page loads
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const verified = urlParams.get('verified');
+    const error = urlParams.get('error');
+    
+    if (verified === 'true') {
+      toast({
+        title: "Email Verification Successful",
+        description: "Your email has been verified. You now have full access to the application.",
+        variant: "default",
+      });
+      
+      // Clear the URL parameters after showing the toast
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error) {
+      let errorMessage = "There was a problem verifying your email.";
+      
+      if (error === 'invalid_token') {
+        errorMessage = "The verification link was invalid. Please request a new one.";
+      } else if (error === 'expired_token') {
+        errorMessage = "The verification link has expired. Please request a new one.";
+      } else if (error === 'server_error') {
+        errorMessage = "A server error occurred. Please try again later.";
+      }
+      
+      toast({
+        title: "Verification Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      // Clear the URL parameters after showing the toast
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast, location]);
   
   // Schedule state
   const [scheduleData, setScheduleData] = useState<ScheduleSection[]>(() => {
