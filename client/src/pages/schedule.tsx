@@ -686,7 +686,7 @@ export default function Schedule() {
         <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`} style={{ flex: 1, overflow: 'hidden' }}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
-            <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 border-r border-gray-200 space-y-4">
+            <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 space-y-4">
               {/* Undo button */}
               <button 
                 className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
@@ -744,7 +744,7 @@ export default function Schedule() {
           <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[40vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
-              <div className="flex bg-gray-100 px-2 py-2 border-b border-gray-200 items-center justify-center space-x-4 mt-4">
+              <div className="flex bg-gray-100 dark:bg-gray-800 px-2 py-2 border-b border-gray-200 dark:border-gray-700 items-center justify-center space-x-4 mt-4">
                 {/* Undo button */}
                 <button 
                   className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
@@ -800,7 +800,7 @@ export default function Schedule() {
               </div>
             )}
             
-            <div className="p-2 bg-blue-100 border-b border-gray-200 flex items-center justify-between">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div className="font-bold mr-auto">My Schedule</div>
               
               <div className="flex space-x-1 ml-auto">
@@ -824,7 +824,7 @@ export default function Schedule() {
             </div>
             
             {/* Time section tabs - moved to top */}
-            <div className="p-1 md:p-2 bg-gray-50 border-b border-gray-200 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
+            <div className="p-1 md:p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
               <div className="flex justify-center space-x-1 md:space-x-2">
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
@@ -868,7 +868,7 @@ export default function Schedule() {
                     } w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-1 text-gray-500 h-full flex flex-col justify-center w-full">
+                      <div className="text-center p-1 text-gray-500 dark:text-gray-400 h-full flex flex-col justify-center w-full">
                         <div className="text-lg mb-0.5">👋</div>
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>

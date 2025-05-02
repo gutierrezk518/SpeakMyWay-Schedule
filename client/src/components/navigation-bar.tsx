@@ -120,14 +120,14 @@ export default function NavigationBar() {
                 
                 {userEmail && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Email:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Email:</span>
                     <span className="font-medium">{userEmail}</span>
                   </div>
                 )}
                 
                 {userBirthday && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Birthday:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Birthday:</span>
                     <span className="font-medium">{new Date(userBirthday).toLocaleDateString()}</span>
                   </div>
                 )}
@@ -140,17 +140,17 @@ export default function NavigationBar() {
               <h3 className="font-medium text-lg">Privacy Settings</h3>
               <div className="mt-2 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Data consent given:</span>
+                  <span className="text-gray-500 dark:text-gray-400">Data consent given:</span>
                   <span className="font-medium">{userConsentGiven ? 'Yes' : 'No'}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Marketing emails:</span>
+                  <span className="text-gray-500 dark:text-gray-400">Marketing emails:</span>
                   <span className="font-medium">{userMarketingConsent ? 'Subscribed' : 'Not subscribed'}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Analytics consent:</span>
+                  <span className="text-gray-500 dark:text-gray-400">Analytics consent:</span>
                   <span className="font-medium">{userDataRetentionConsent ? 'Granted' : 'Not granted'}</span>
                 </div>
               </div>
