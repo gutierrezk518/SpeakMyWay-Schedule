@@ -114,7 +114,7 @@ export default function NavigationBar() {
               <h3 className="font-medium text-lg">Your Information</h3>
               <div className="mt-2 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Name:</span>
+                  <span className="text-gray-500 dark:text-gray-400">Name:</span>
                   <span className="font-medium">{userName}</span>
                 </div>
                 

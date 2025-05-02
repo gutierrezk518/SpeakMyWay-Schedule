@@ -143,11 +143,11 @@ export default function ActivityCard({
                 />
               </div>
             ) : (
-              <i className={`${activity.icon} text-base sm:text-2xl text-gray-800`}></i>
+              <i className={`${activity.icon} text-base sm:text-2xl text-gray-800 dark:text-gray-100`}></i>
             )}
           </div>
           <div className="w-full flex justify-center items-center">
-            <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 bg-white bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
               {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
             </span>
           </div>
@@ -167,13 +167,13 @@ export default function ActivityCard({
                 />
               </div>
             ) : (
-              <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800`}></i>
+              <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800 dark:text-gray-100`}></i>
             )}
           </div>
           
           {/* Text container - more accessible */}
-          <div className="w-full bg-white bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
-            <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block">
+          <div className="w-full bg-white dark:bg-gray-800 bg-opacity-80 rounded-b-lg py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
+            <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block dark:text-gray-100">
               {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
             </span>
           </div>
@@ -200,7 +200,7 @@ export default function ActivityCard({
       activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
       activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
       activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
-    text-gray-800`;
+    text-gray-800 dark:text-gray-100`;
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
   if (isDraggable) {

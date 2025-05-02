@@ -182,7 +182,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Watch for display settings changes
   useEffect(() => {
+    // Set data-theme attribute for component styling
     document.documentElement.setAttribute('data-theme', displaySettings.darkMode ? 'dark' : 'light');
+    
+    // Apply proper dark mode class to HTML element for tailwind dark mode
+    if (displaySettings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
   }, [displaySettings]);
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
