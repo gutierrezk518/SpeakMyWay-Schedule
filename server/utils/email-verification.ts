@@ -17,7 +17,7 @@ export async function createVerificationToken(userId: number, email: string): Pr
   await storage.createEmailVerificationToken({
     userId,
     token,
-    expires: expires.toISOString(),
+    expires: expires, // Pass Date object directly, transformation handles conversion
     used: false
   });
   
