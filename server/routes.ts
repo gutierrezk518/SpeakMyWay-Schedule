@@ -65,28 +65,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create the user
       const user = await storage.createUser(userData);
       
-      // If user has email, send a verification email
+      // TEMPORARILY MODIFIED: Automatically mark user as verified for testing
+      // Set the user as verified by default to avoid login issues
       if (user.email) {
         try {
-          // Create verification token
-          const token = await createVerificationToken(user.id, user.email);
-          
-          // Generate verification URL
-          const verificationUrl = generateVerificationUrl(token);
+          // Update user to be verified directly
+          await storage.updateUser(user.id, { emailVerified: true });
           
           // Get user's display name or username
           const name = user.displayName || user.username;
           
-          // Send welcome email with verification link
+          // Still send welcome email but without verification link
           await sendEmail({
             to: user.email,
             subject: `Welcome to SpeakMyWay, ${name}!`,
-            htmlBody: welcomeEmail(name, verificationUrl),
-            textBody: welcomeEmailText(name, verificationUrl),
+            htmlBody: welcomeEmail(name, ""),
+            textBody: welcomeEmailText(name, ""),
           });
           
-          // Log the success but don't wait for it to complete
-          console.log(`Welcome email sent to ${user.email} for user ${user.id}`);
+          console.log(`Welcome email sent to ${user.email} for user ${user.id} (auto-verified)`);
         } catch (emailError) {
           // Log the error but don't fail registration
           console.error("Failed to send welcome email:", emailError);

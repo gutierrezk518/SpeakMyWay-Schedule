@@ -77,66 +77,8 @@ export function ProtectedRoute({
     );
   }
 
-  // Render verification required page if user is logged in but not verified
-  if (user && !user.emailVerified) {
-    return (
-      <Route path={path}>
-        <div className="container flex items-center justify-center min-h-screen py-8">
-          <Card className="w-full max-w-md">
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl">Email Verification Required</CardTitle>
-              <CardDescription>
-                Please verify your email address to access the application.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-center">
-              <div className="flex justify-center my-6">
-                <div className="rounded-full bg-primary/10 p-6">
-                  <Mail className="h-12 w-12 text-primary" />
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                We've sent a verification link to: <strong>{user.email}</strong>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Please check your inbox and click the verification link to activate your account.
-                If you don't see the email, please check your spam folder.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                The verification link will expire in 24 hours.
-              </p>
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-3">
-              <Button 
-                className="w-full" 
-                onClick={() => window.location.reload()}
-              >
-                I've Verified My Email
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={handleResendVerification}
-                disabled={resendingEmail}
-              >
-                {resendingEmail ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Resend Verification Email
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </Route>
-    );
-  }
+  // TEMPORARILY DISABLED email verification check to restore access
+  // We'll just pass through without blocking - no message needed to prevent render loops
 
   // Allow access if user is verified OR is an anonymous user
   if (!user && !anonymousUser) {
