@@ -145,42 +145,42 @@ export default function Customize() {
 
   return (
     <section className="h-full flex flex-col">
-      <div className="p-6 bg-white border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-        <h2 className="text-2xl font-bold text-center mb-2">My Settings</h2>
-        <p className="text-center text-gray-600 mb-2">Make SpeakMyWay work just right for you!</p>
+      <div className="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
+        <h2 className="text-2xl font-bold text-center mb-2 dark:text-white">My Settings</h2>
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-2">Make SpeakMyWay work just right for you!</p>
         <div className="flex justify-center">
-          <div className="flex space-x-2 items-center text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+          <div className="flex space-x-2 items-center text-sm bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full">
             <i className="ri-information-line"></i>
             <span>Parents can help with these settings</span>
           </div>
         </div>
       </div>
 
-      <div className="flex-grow overflow-y-auto p-4 bg-gray-50">
+      <div className="flex-grow overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
         <div className="space-y-6">
           {/* Profile Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border-2 border-purple-200 dark:border-purple-900">
             <div className="flex items-center mb-4">
-              <i className="ri-user-smile-line text-2xl mr-2 text-purple-500"></i>
-              <h3 className="font-bold text-lg">About Me</h3>
+              <i className="ri-user-smile-line text-2xl mr-2 text-purple-500 dark:text-purple-400"></i>
+              <h3 className="font-bold text-lg dark:text-white">About Me</h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">My Name</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">My Name</label>
                 <input 
                   type="text" 
                   value={userName} 
                   onChange={handleUserNameChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                   placeholder="What should we call you?"
                 />
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Language / Idioma</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Language / Idioma</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${language === "en" ? 'bg-blue-100 border-blue-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 ${language === "en" ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 dark:border-blue-600 dark:text-blue-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="language"
@@ -197,7 +197,7 @@ export default function Customize() {
                     </div>
                   </label>
 
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-red-50 ${language === "es" ? 'bg-red-100 border-red-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-red-50 dark:hover:bg-red-900 ${language === "es" ? 'bg-red-100 dark:bg-red-900 border-red-500 dark:border-red-600 dark:text-red-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="language"
@@ -219,17 +219,17 @@ export default function Customize() {
           </div>
 
           {/* Voice Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-green-200">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border-2 border-green-200 dark:border-green-900">
             <div className="flex items-center mb-4">
-              <i className="ri-volume-up-line text-2xl mr-2 text-green-500"></i>
-              <h3 className="font-bold text-lg">My Voice Helper</h3>
+              <i className="ri-volume-up-line text-2xl mr-2 text-green-500 dark:text-green-400"></i>
+              <h3 className="font-bold text-lg dark:text-white">My Voice Helper</h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Voice Type</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Voice Type</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-green-50 ${(voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default") ? 'bg-green-100 border-green-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 ${(voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default") ? 'bg-green-100 dark:bg-green-900 border-green-500 dark:border-green-600 dark:text-green-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="voiceType"
@@ -241,13 +241,13 @@ export default function Customize() {
                       }}
                     />
                     <div className="flex flex-col items-center">
-                      <i className="ri-user-voice-line text-3xl text-green-500 mb-2"></i>
+                      <i className="ri-user-voice-line text-3xl text-green-500 dark:text-green-400 mb-2"></i>
                       <span className="font-medium">Female Voice</span>
-                      <span className="text-xs text-gray-500">(Default)</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">(Default)</span>
                     </div>
                   </label>
 
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm" ? 'bg-blue-100 border-blue-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 ${voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm" ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 dark:border-blue-600 dark:text-blue-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="voiceType"
@@ -259,7 +259,7 @@ export default function Customize() {
                       }}
                     />
                     <div className="flex flex-col items-center">
-                      <i className="ri-user-voice-line text-3xl text-blue-500 mb-2"></i>
+                      <i className="ri-user-voice-line text-3xl text-blue-500 dark:text-blue-400 mb-2"></i>
                       <span className="font-medium">Male Voice</span>
                     </div>
                   </label>
@@ -267,20 +267,20 @@ export default function Customize() {
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2">Test Voice</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Test Voice</label>
                 <div className="flex flex-col space-y-2">
                   <input 
                     type="text" 
                     value={testPhrase}
                     onChange={(e) => setTestPhrase(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                     placeholder="Try: Hello, today we're going to the park"
                   />
                   <button 
                     className={`w-full py-2 px-4 rounded-md ${
                       isTestingVoice 
-                        ? 'bg-gray-400 text-white cursor-not-allowed' 
-                        : 'bg-primary text-white hover:bg-primary-dark'
+                        ? 'bg-gray-400 dark:bg-gray-600 text-white cursor-not-allowed' 
+                        : 'bg-primary text-white hover:bg-primary-dark dark:hover:bg-primary-light'
                     }`}
                     onClick={handleTestVoice}
                     disabled={isTestingVoice}
@@ -288,15 +288,15 @@ export default function Customize() {
                     {isTestingVoice ? 'Playing...' : 'Test Voice'}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Click the "Test Voice" button to hear how the selected voice sounds
                 </p>
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2">Speaking Rate</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Rate</label>
                 <div className="flex items-center">
-                  <span className="mr-2">Slow</span>
+                  <span className="mr-2 dark:text-gray-300">Slow</span>
                   <input 
                     type="range" 
                     min="0.5" 
@@ -306,17 +306,17 @@ export default function Customize() {
                     onChange={handleRateChange}
                     className="flex-grow"
                   />
-                  <span className="ml-2">Fast</span>
+                  <span className="ml-2 dark:text-gray-300">Fast</span>
                 </div>
-                <div className="text-center text-sm mt-1 text-gray-500">
+                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
                   {voiceSettings.rate}x
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2">Speaking Volume</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Volume</label>
                 <div className="flex items-center">
-                  <span className="mr-2">Quiet</span>
+                  <span className="mr-2 dark:text-gray-300">Quiet</span>
                   <input 
                     type="range" 
                     min="0" 
@@ -326,9 +326,9 @@ export default function Customize() {
                     onChange={handleVolumeChange}
                     className="flex-grow"
                   />
-                  <span className="ml-2">Loud</span>
+                  <span className="ml-2 dark:text-gray-300">Loud</span>
                 </div>
-                <div className="text-center text-sm mt-1 text-gray-500">
+                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
                   {Math.round(voiceSettings.volume * 100)}%
                 </div>
               </div>
@@ -336,16 +336,16 @@ export default function Customize() {
           </div>
 
           {/* Display Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-blue-200">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border-2 border-blue-200 dark:border-blue-900">
             <div className="flex items-center mb-4">
-              <i className="ri-settings-2-line text-2xl mr-2 text-blue-500"></i>
-              <h3 className="font-bold text-lg">Display Settings</h3>
+              <i className="ri-settings-2-line text-2xl mr-2 text-blue-500 dark:text-blue-400"></i>
+              <h3 className="font-bold text-lg dark:text-white">Display Settings</h3>
             </div>
             <div className="space-y-6">
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Theme Mode</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Theme Mode</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${!displaySettings.darkMode ? 'bg-blue-100 border-blue-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 ${!displaySettings.darkMode ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 dark:border-blue-600 dark:text-blue-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="themeMode"
@@ -355,12 +355,12 @@ export default function Customize() {
                       onChange={() => handleDarkModeChange({ target: { checked: false } } as React.ChangeEvent<HTMLInputElement>)}
                     />
                     <div className="flex flex-col items-center">
-                      <i className="ri-sun-line text-3xl text-yellow-500 mb-2"></i>
+                      <i className="ri-sun-line text-3xl text-yellow-500 dark:text-yellow-400 mb-2"></i>
                       <span className="font-medium">Light Mode</span>
                     </div>
                   </label>
 
-                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${displaySettings.darkMode ? 'bg-blue-100 border-blue-500' : ''}`}>
+                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 ${displaySettings.darkMode ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 dark:border-blue-600 dark:text-blue-300' : 'dark:text-gray-300'}`}>
                     <input
                       type="radio"
                       name="themeMode"
@@ -370,7 +370,7 @@ export default function Customize() {
                       onChange={() => handleDarkModeChange({ target: { checked: true } } as React.ChangeEvent<HTMLInputElement>)}
                     />
                     <div className="flex flex-col items-center">
-                      <i className="ri-moon-line text-3xl text-blue-500 mb-2"></i>
+                      <i className="ri-moon-line text-3xl text-blue-500 dark:text-blue-400 mb-2"></i>
                       <span className="font-medium">Dark Mode</span>
                     </div>
                   </label>
@@ -378,9 +378,9 @@ export default function Customize() {
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Text Size</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Text Size</label>
                 <div className="flex items-center">
-                  <span className="mr-2">Small</span>
+                  <span className="mr-2 dark:text-gray-300">Small</span>
                   <input
                     type="range"
                     min="1"
@@ -390,9 +390,9 @@ export default function Customize() {
                     onChange={handleTextSizeChange}
                     className="flex-grow"
                   />
-                  <span className="ml-2">Large</span>
+                  <span className="ml-2 dark:text-gray-300">Large</span>
                 </div>
-                <div className="text-center text-sm mt-1 text-gray-500">
+                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
                   {Math.round(displaySettings.textSize * 100)}%
                 </div>
               </div>
@@ -400,35 +400,35 @@ export default function Customize() {
           </div>
 
           {/* Help & Support */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border-2 border-purple-200 dark:border-purple-900">
             <div className="flex items-center mb-4">
-              <i className="ri-question-answer-line text-2xl mr-2 text-purple-500"></i>
-              <h3 className="font-bold text-lg">Help Center</h3>
+              <i className="ri-question-answer-line text-2xl mr-2 text-purple-500 dark:text-purple-400"></i>
+              <h3 className="font-bold text-lg dark:text-white">Help Center</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <button className="p-4 text-left flex flex-col items-center justify-center bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-                <i className="ri-video-line text-2xl text-purple-500 mb-2"></i>
-                <span className="font-medium">Watch How-To Videos</span>
-                <p className="text-xs text-gray-500 mt-1">Learn with fun videos</p>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-purple-50 dark:bg-purple-900 hover:bg-purple-100 dark:hover:bg-purple-800 rounded-lg transition-colors">
+                <i className="ri-video-line text-2xl text-purple-500 dark:text-purple-400 mb-2"></i>
+                <span className="font-medium dark:text-purple-200">Watch How-To Videos</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Learn with fun videos</p>
               </button>
 
-              <button className="p-4 text-left flex flex-col items-center justify-center bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                <i className="ri-question-line text-2xl text-green-500 mb-2"></i>
-                <span className="font-medium">Questions & Answers</span>
-                <p className="text-xs text-gray-500 mt-1">Find solutions fast</p>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-green-50 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-800 rounded-lg transition-colors">
+                <i className="ri-question-line text-2xl text-green-500 dark:text-green-400 mb-2"></i>
+                <span className="font-medium dark:text-green-200">Questions & Answers</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Find solutions fast</p>
               </button>
 
-              <button className="p-4 text-left flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                <i className="ri-shield-line text-2xl text-blue-500 mb-2"></i>
-                <span className="font-medium">Privacy Rules</span>
-                <p className="text-xs text-gray-500 mt-1">How we protect you</p>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors">
+                <i className="ri-shield-line text-2xl text-blue-500 dark:text-blue-400 mb-2"></i>
+                <span className="font-medium dark:text-blue-200">Privacy Rules</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">How we protect you</p>
               </button>
 
-              <button className="p-4 text-left flex flex-col items-center justify-center bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
-                <i className="ri-mail-line text-2xl text-yellow-500 mb-2"></i>
-                <span className="font-medium">Talk to a Helper</span>
-                <p className="text-xs text-gray-500 mt-1">Get extra help when needed</p>
+              <button className="p-4 text-left flex flex-col items-center justify-center bg-yellow-50 dark:bg-yellow-900 hover:bg-yellow-100 dark:hover:bg-yellow-800 rounded-lg transition-colors">
+                <i className="ri-mail-line text-2xl text-yellow-500 dark:text-yellow-400 mb-2"></i>
+                <span className="font-medium dark:text-yellow-200">Talk to a Helper</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Get extra help when needed</p>
               </button>
             </div>
           </div>
