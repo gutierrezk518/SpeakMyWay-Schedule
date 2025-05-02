@@ -34,13 +34,11 @@ interface AppContextType {
   setVoiceSettings: React.Dispatch<React.SetStateAction<VoiceSettingsType>>;
   displaySettings: {
     textSize: number;
-    highContrast: boolean;
-    reduceAnimations: boolean;
+    darkMode: boolean;
   };
   setDisplaySettings: React.Dispatch<React.SetStateAction<{
     textSize: number;
-    highContrast: boolean;
-    reduceAnimations: boolean;
+    darkMode: boolean;
   }>>;
   messageWords: { id: string; word: string }[];
   addMessageWord: (word: string) => void;
