@@ -59,10 +59,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (userData: User) => {
       queryClient.setQueryData(["/api/user"], userData);
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${userData.displayName || userData.username}!`,
-      });
+      
+      // Don't show welcome toast if email is not verified
+      // The ProtectedRoute component will show the verification required screen
+      if (userData.emailVerified) {
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${userData.displayName || userData.username}!`,
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -84,10 +89,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (userData: User) => {
       queryClient.setQueryData(["/api/user"], userData);
-      toast({
-        title: "Registration successful",
-        description: `Welcome, ${userData.displayName || userData.username}!`,
-      });
+      
+      // Don't show success toast since we'll be showing the verification screen
+      // The verification UI will be shown in auth-page.tsx
     },
     onError: (error: Error) => {
       toast({

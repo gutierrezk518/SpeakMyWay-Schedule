@@ -1,10 +1,12 @@
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { Redirect, Route } from "wouter";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 // Interface for anonymous user data
 interface AnonymousUser {
@@ -21,7 +23,9 @@ export function ProtectedRoute({
   component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
+  const { toast } = useToast();
   const [anonymousUser, setAnonymousUser] = useState<AnonymousUser | null>(null);
+  const [resendingEmail, setResendingEmail] = useState(false);
   
   // Check for anonymous user in localStorage
   useEffect(() => {
@@ -34,6 +38,34 @@ export function ProtectedRoute({
       console.error("Error reading anonymous user from localStorage:", error);
     }
   }, []);
+  
+  // Function to resend verification email
+  const handleResendVerification = async () => {
+    if (!user) return;
+    
+    setResendingEmail(true);
+    try {
+      const response = await apiRequest("POST", "/api/resend-verification");
+      
+      if (response.ok) {
+        toast({
+          title: "Email Sent",
+          description: "A new verification email has been sent to your address.",
+        });
+      } else {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to resend verification email.");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to resend verification email.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendingEmail(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -74,12 +106,30 @@ export function ProtectedRoute({
                 The verification link will expire in 24 hours.
               </p>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-3">
               <Button 
                 className="w-full" 
                 onClick={() => window.location.reload()}
               >
                 I've Verified My Email
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleResendVerification}
+                disabled={resendingEmail}
+              >
+                {resendingEmail ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Resend Verification Email
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
