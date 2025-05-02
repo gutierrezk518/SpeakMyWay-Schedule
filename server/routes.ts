@@ -1431,85 +1431,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Legacy HTML email verification route (for direct email link access)
+  // Email verification route for direct email link access
   app.get("/verify-email", async (req: Request, res: Response) => {
     const token = req.query.token as string;
     
     if (!token) {
-      return res.status(400).send(`
-        <html>
-          <head>
-            <title>Email Verification Failed</title>
-            <style>
-              body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-              .error { color: #d32f2f; }
-            </style>
-          </head>
-          <body>
-            <h1 class="error">Verification Failed</h1>
-            <p>The verification link is invalid. Please request a new verification email.</p>
-            <a href="/">Go to Homepage</a>
-          </body>
-        </html>
-      `);
+      return res.redirect("/?error=invalid_token");
     }
     
     try {
       const verified = await verifyEmailToken(token);
       
       if (verified) {
-        return res.status(200).send(`
-          <html>
-            <head>
-              <title>Email Verified</title>
-              <style>
-                body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-                .success { color: #2e7d32; }
-              </style>
-            </head>
-            <body>
-              <h1 class="success">Email Verified Successfully!</h1>
-              <p>Your email has been verified. You can now use all features of SpeakMyWay.</p>
-              <a href="/">Go to Homepage</a>
-            </body>
-          </html>
-        `);
+        // Success - redirect to the app with success parameter
+        return res.redirect("/?verified=true");
       } else {
-        return res.status(400).send(`
-          <html>
-            <head>
-              <title>Email Verification Failed</title>
-              <style>
-                body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-                .error { color: #d32f2f; }
-              </style>
-            </head>
-            <body>
-              <h1 class="error">Verification Failed</h1>
-              <p>The verification link is expired or has already been used. Please request a new verification email.</p>
-              <a href="/">Go to Homepage</a>
-            </body>
-          </html>
-        `);
+        // Failed - redirect with error parameter
+        return res.redirect("/?error=expired_token");
       }
     } catch (error) {
       console.error("Error verifying email:", error);
-      return res.status(500).send(`
-        <html>
-          <head>
-            <title>Error</title>
-            <style>
-              body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-              .error { color: #d32f2f; }
-            </style>
-          </head>
-          <body>
-            <h1 class="error">Something went wrong</h1>
-            <p>There was an error processing your verification. Please try again later.</p>
-            <a href="/">Go to Homepage</a>
-          </body>
-        </html>
-      `);
+      // Error - redirect with error parameter
+      return res.redirect("/?error=server_error");
     }
   });
 

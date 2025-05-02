@@ -28,15 +28,21 @@ export async function createVerificationToken(userId: number, email: string): Pr
  * Generate a verification URL for a token
  */
 export function generateVerificationUrl(token: string): string {
-  // Use the app's base URL from environment or default to localhost in development
-  const baseUrl = process.env.APP_URL || 
-                 (process.env.NODE_ENV === 'production' 
-                  ? 'https://speakmyway.replit.app' 
-                  : 'http://localhost:5000');
+  // Get the app URL from environment or construct it from REPL_SLUG
+  let baseUrl = process.env.APP_URL;
   
-  // For Replit environment, use the /api/ endpoint directly since the client-side
-  // route won't be available when clicking the email link directly
-  return `${baseUrl}/api/verify-email?token=${token}`;
+  // If no APP_URL, try to use REPL_SLUG for replit.app domain
+  if (!baseUrl && process.env.REPL_SLUG) {
+    baseUrl = 'https://' + process.env.REPL_SLUG + '.replit.app';
+  }
+  
+  // Fall back to localhost in development for local testing
+  if (!baseUrl) {
+    baseUrl = 'http://localhost:5000';
+  }
+  
+  // Use the verification endpoint 
+  return `${baseUrl}/verify-email?token=${token}`;
 }
 
 /**
