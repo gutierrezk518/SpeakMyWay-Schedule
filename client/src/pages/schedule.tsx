@@ -933,11 +933,11 @@ export default function Schedule() {
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
-                <div className="px-3 py-1 border-b border-gray-200 bg-purple-50 flex justify-center">
-                  <div className="flex items-center justify-between bg-purple-100 rounded-md w-full px-3 py-1.5 max-w-md">
+                <div className="px-3 py-1 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-purple-950 flex justify-center">
+                  <div className="flex items-center justify-between bg-purple-100 dark:bg-purple-900 rounded-md w-full px-3 py-1.5 max-w-md">
                     <div className="flex items-center">
-                      <i className="ri-timer-line text-lg text-purple-700 mr-2"></i>
-                      <span className="text-sm text-purple-800 font-medium">Timer:</span>
+                      <i className="ri-timer-line text-lg text-purple-700 dark:text-purple-400 mr-2"></i>
+                      <span className="text-sm text-purple-800 dark:text-purple-300 font-medium">Timer:</span>
                     </div>
                     <TimerComponent />
                   </div>
@@ -1128,7 +1128,7 @@ export default function Schedule() {
                     <div className="relative w-full max-w-md">
                       <input 
                         type="text" 
-                        className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
                         placeholder="Search for activities..."
                         value={searchQuery}
                         onChange={(e) => {
@@ -1236,22 +1236,26 @@ export default function Schedule() {
               
               {/* Pagination controls - always visible for all screen sizes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky bottom-0 mt-4 mb-1 p-1 border border-gray-200 flex justify-center space-x-2 bg-white shadow-md w-full max-w-full rounded-lg mx-auto">
+                <div className="sticky bottom-0 mt-4 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-lg mx-auto">
                   <button
                     className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
-                      activitiesPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                      activitiesPage === 1 
+                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
+                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
                     }`}
                     onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
                     disabled={activitiesPage === 1}
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-2 py-1 bg-white rounded-md text-xs sm:text-sm font-medium border border-blue-200 min-w-[60px] text-center">
+                  <span className="px-2 py-1 bg-white dark:bg-gray-700 rounded-md text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-800 min-w-[60px] text-center dark:text-gray-200">
                     {activitiesPage} of {totalPages}
                   </span>
                   <button
                     className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
-                      activitiesPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                      activitiesPage === totalPages 
+                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
+                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
                     }`}
                     onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
                     disabled={activitiesPage === totalPages}
@@ -1268,7 +1272,7 @@ export default function Schedule() {
       {/* Save modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md dark:text-gray-100">
             <h2 className="text-lg font-bold mb-4">Save Schedule</h2>
             <p className="mb-4">Choose a time period to save this schedule to:</p>
             
@@ -1279,7 +1283,7 @@ export default function Schedule() {
                   className={`p-2 rounded ${
                     section.id === selectedTimeSection
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 dark:text-gray-200'
                   }`}
                   onClick={() => saveToTimeSection(section.id)}
                 >
@@ -1291,7 +1295,7 @@ export default function Schedule() {
             
             <div className="flex justify-end space-x-2">
               <button
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded dark:text-gray-200"
                 onClick={() => setShowSaveModal(false)}
               >
                 Cancel
