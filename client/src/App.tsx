@@ -11,6 +11,7 @@ import Customize from "@/pages/customize";
 import Admin from "@/pages/admin";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
+import VerifyEmailPage from "@/pages/verify-email";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -28,6 +29,7 @@ function Router() {
       <ProtectedRoute path="/customize" component={Customize} />
       <ProtectedRoute path="/admin" component={Admin} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route component={NotFound} />
     </Switch>
