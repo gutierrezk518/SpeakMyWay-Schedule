@@ -844,7 +844,7 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
+            <div className={`flex-grow p-1 bg-blue-50 dark:bg-blue-950 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
               <Droppable 
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
@@ -862,9 +862,13 @@ export default function Schedule() {
                       ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
                       : 'overflow-y-auto rounded-md p-2 flex flex-col items-center'
                     } ${
-                      snapshot.isDraggingOver ? 'bg-blue-100' : 'bg-white'
+                      snapshot.isDraggingOver 
+                        ? 'bg-blue-100 dark:bg-blue-900' 
+                        : 'bg-white dark:bg-gray-800'
                     } border ${
-                      snapshot.isDraggingOver ? 'border-blue-300' : 'border-blue-200'
+                      snapshot.isDraggingOver 
+                        ? 'border-blue-300 dark:border-blue-700' 
+                        : 'border-blue-200 dark:border-gray-700'
                     } w-full h-full`}
                   >
                     {currentSchedule.length === 0 ? (
@@ -941,7 +945,7 @@ export default function Schedule() {
               )}
               
               {/* Categories tabs at the top of the activities section */}
-              <div className="p-2 border-b border-gray-200 bg-blue-50">
+              <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
                 <div className="flex flex-wrap gap-1 justify-center">
                   {/* Search button */}
                   <button
@@ -1119,7 +1123,7 @@ export default function Schedule() {
               
               {/* Search bar below categories - conditionally shown */}
               {showSearchBar && (
-                <div className="p-2 border-b border-gray-200 bg-blue-50">
+                <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
                   <div className="flex items-center justify-center">
                     <div className="relative w-full max-w-md">
                       <input 
@@ -1154,7 +1158,7 @@ export default function Schedule() {
               )}
               
               {/* Activity cards - main area with extra padding at bottom on larger screens */}
-              <div className="flex-grow overflow-auto bg-white p-2 pb-2 md:pb-16">
+              <div className="flex-grow overflow-auto bg-white dark:bg-gray-800 p-2 pb-2 md:pb-16">
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
@@ -1163,13 +1167,13 @@ export default function Schedule() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-md min-h-[200px] ${
-                          snapshot.isDraggingOver ? 'bg-yellow-100' : 'bg-white'
+                          snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
                         } border ${
-                          snapshot.isDraggingOver ? 'border-yellow-300' : 'border-gray-200'
+                          snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
                         }`}
                       >
                         {favoriteActivities.length === 0 ? (
-                          <div className="col-span-full flex flex-col items-center justify-center text-center p-4 text-gray-500">
+                          <div className="col-span-full flex flex-col items-center justify-center text-center p-4 text-gray-500 dark:text-gray-400">
                             <div className="text-3xl mb-2">⭐</div>
                             <h3 className="font-bold mb-1">No favorites yet</h3>
                             <p className="text-sm">Drag activities here to add them to your favorites.</p>
@@ -1210,7 +1214,7 @@ export default function Schedule() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 ${
-                          snapshot.isDraggingOver ? 'bg-blue-50' : 'bg-white'
+                          snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900' : 'bg-white dark:bg-gray-800'
                         }`}
                       >
                         {visibleActivities.map((activity: ScheduleActivity, index: number) => (
