@@ -952,7 +952,7 @@ export default function Schedule() {
                     className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       showSearchBar
                       ? 'bg-cyan-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'
+                      : 'bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-800'
                     }`}
                     onClick={() => {
                       const newState = !showSearchBar;
@@ -977,7 +977,7 @@ export default function Schedule() {
                     className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'all' 
                       ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
                     }`}
                     onClick={() => handleCategoryChange('all')}
                   >
@@ -997,7 +997,7 @@ export default function Schedule() {
                           className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                             selectedCategory === 'favorites' 
                             ? 'bg-yellow-500 text-white font-medium md:font-semibold shadow-sm' 
-                            : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                            : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800'
                           } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
                           ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
                           onClick={() => handleCategoryChange('favorites')}
@@ -1020,7 +1020,7 @@ export default function Schedule() {
                     className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
                       selectedCategory === 'dressing' 
                       ? 'bg-rose-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                      : 'bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800'
                     }`}
                     onClick={() => handleCategoryChange('dressing')}
                   >
@@ -1141,11 +1141,11 @@ export default function Schedule() {
                         autoFocus
                       />
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <i className="ri-search-line text-gray-400"></i>
+                        <i className="ri-search-line text-gray-400 dark:text-gray-500"></i>
                       </div>
                       {searchQuery && (
                         <button 
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                           onClick={() => setSearchQuery('')}
                           title="Clear search"
                         >
@@ -1191,7 +1191,7 @@ export default function Schedule() {
                               {!isDragging && (
                                 <div className="mt-1 w-full flex justify-center">
                                   <button 
-                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                    className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700"
                                     onClick={() => toggleFavorite(activity)}
                                     aria-label="Remove from favorites"
                                   >
