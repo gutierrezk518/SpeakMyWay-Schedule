@@ -168,10 +168,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     volume: 0.8,
     language: "en-US",
   });
-  const [displaySettings, setDisplaySettings] = useState({
-    textSize: 1.5,
-    highContrast: false,
-    reduceAnimations: false,
+  const [displaySettings, setDisplaySettings] = useState(() => {
+    const savedSettings = localStorage.getItem('displaySettings');
+    return savedSettings ? JSON.parse(savedSettings) : {
+      textSize: 1.5,
+      highContrast: false,
+      reduceAnimations: false,
+      darkMode: false,
+    };
   });
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
   

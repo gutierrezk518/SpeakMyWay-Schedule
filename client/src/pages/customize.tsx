@@ -14,7 +14,7 @@ export default function Customize() {
     displaySettings,
     setDisplaySettings
   } = useAppContext();
-  
+
   // State for the test phrase
   const [testPhrase, setTestPhrase] = useState("Hello, this is a test of the voice settings.");
   // State to track whether we're testing a voice or not
@@ -22,7 +22,7 @@ export default function Customize() {
 
   useEffect(() => {
     setCurrentPage("/customize");
-    
+
     // Apply current voice settings on component load
     tts.setVoicePreferences(voiceSettings);
   }, [setCurrentPage, voiceSettings]);
@@ -36,7 +36,7 @@ export default function Customize() {
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value;
     setLanguage(newLanguage);
-    
+
     // Also update the language in voice settings
     let newVoiceLanguage = "en-US";
     if (newLanguage === 'en') {
@@ -53,7 +53,7 @@ export default function Customize() {
         ...prev,
         language: newVoiceLanguage
       };
-      
+
       // Apply settings to TTS system
       tts.setVoicePreferences(newSettings);
       return newSettings;
@@ -67,7 +67,7 @@ export default function Customize() {
         ...prev,
         voiceType: newVoiceType
       };
-      
+
       // Apply settings to TTS system
       tts.setVoicePreferences(newSettings);
       return newSettings;
@@ -81,7 +81,7 @@ export default function Customize() {
         ...prev,
         rate: newRate
       };
-      
+
       // Apply settings to TTS system
       tts.setVoicePreferences(newSettings);
       return newSettings;
@@ -95,7 +95,7 @@ export default function Customize() {
         ...prev,
         volume: newVolume
       };
-      
+
       // Apply settings to TTS system
       tts.setVoicePreferences(newSettings);
       return newSettings;
@@ -104,13 +104,13 @@ export default function Customize() {
 
   const handleTestVoice = () => {
     setIsTestingVoice(true);
-    
+
     // Ensure the current voice settings are applied before testing
     tts.setVoicePreferences(voiceSettings);
-    
+
     // Speak the test phrase
     tts.speak(testPhrase);
-    
+
     // Reset testing state after a delay
     setTimeout(() => setIsTestingVoice(false), 3000);
   };
@@ -136,6 +136,13 @@ export default function Customize() {
     }));
   };
 
+  const handleDarkModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDisplaySettings(prev => ({
+      ...prev,
+      darkMode: e.target.checked
+    }));
+  };
+
   return (
     <section className="h-full flex flex-col">
       <div className="p-6 bg-white border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
@@ -148,7 +155,7 @@ export default function Customize() {
           </div>
         </div>
       </div>
-      
+
       <div className="flex-grow overflow-y-auto p-4 bg-gray-50">
         <div className="space-y-6">
           {/* Profile Settings */}
@@ -157,7 +164,7 @@ export default function Customize() {
               <i className="ri-user-smile-line text-2xl mr-2 text-purple-500"></i>
               <h3 className="font-bold text-lg">About Me</h3>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-gray-700 mb-2 font-medium">My Name</label>
@@ -169,7 +176,7 @@ export default function Customize() {
                   placeholder="What should we call you?"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-2 font-medium">Language / Idioma</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -189,7 +196,7 @@ export default function Customize() {
                       <span className="font-medium">English</span>
                     </div>
                   </label>
-                  
+
                   <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-red-50 ${language === "es" ? 'bg-red-100 border-red-500' : ''}`}>
                     <input
                       type="radio"
@@ -210,14 +217,14 @@ export default function Customize() {
               </div>
             </div>
           </div>
-          
+
           {/* Voice Settings */}
           <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-green-200">
             <div className="flex items-center mb-4">
               <i className="ri-volume-up-line text-2xl mr-2 text-green-500"></i>
               <h3 className="font-bold text-lg">My Voice Helper</h3>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-gray-700 mb-2 font-medium">Voice Type</label>
@@ -239,7 +246,7 @@ export default function Customize() {
                       <span className="text-xs text-gray-500">(Default)</span>
                     </div>
                   </label>
-                  
+
                   <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm" ? 'bg-blue-100 border-blue-500' : ''}`}>
                     <input
                       type="radio"
@@ -258,7 +265,7 @@ export default function Customize() {
                   </label>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-2">Test Voice</label>
                 <div className="flex flex-col space-y-2">
@@ -285,7 +292,7 @@ export default function Customize() {
                   Click the "Test Voice" button to hear how the selected voice sounds
                 </p>
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-2">Speaking Rate</label>
                 <div className="flex items-center">
@@ -305,7 +312,7 @@ export default function Customize() {
                   {voiceSettings.rate}x
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-2">Speaking Volume</label>
                 <div className="flex items-center">
@@ -327,33 +334,86 @@ export default function Customize() {
               </div>
             </div>
           </div>
-          
+
+          {/* Display Settings */}
+          <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-blue-200">
+            <div className="flex items-center mb-4">
+              <i className="ri-settings-2-line text-2xl mr-2 text-blue-500"></i>
+              <h3 className="font-bold text-lg">Display Settings</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-gray-700 font-medium">Dark Mode</label>
+                <div className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={displaySettings.darkMode}
+                    onChange={handleDarkModeChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-2">Text Size</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="2"
+                  step="0.1"
+                  value={displaySettings.textSize}
+                  onChange={handleTextSizeChange}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">High Contrast</label>
+                <input
+                  type="checkbox"
+                  checked={displaySettings.highContrast}
+                  onChange={handleHighContrastChange}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">Reduce Animations</label>
+                <input
+                  type="checkbox"
+                  checked={displaySettings.reduceAnimations}
+                  onChange={handleReduceAnimationsChange}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Help & Support */}
           <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
             <div className="flex items-center mb-4">
               <i className="ri-question-answer-line text-2xl mr-2 text-purple-500"></i>
               <h3 className="font-bold text-lg">Help Center</h3>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <button className="p-4 text-left flex flex-col items-center justify-center bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
                 <i className="ri-video-line text-2xl text-purple-500 mb-2"></i>
                 <span className="font-medium">Watch How-To Videos</span>
                 <p className="text-xs text-gray-500 mt-1">Learn with fun videos</p>
               </button>
-              
+
               <button className="p-4 text-left flex flex-col items-center justify-center bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
                 <i className="ri-question-line text-2xl text-green-500 mb-2"></i>
                 <span className="font-medium">Questions & Answers</span>
                 <p className="text-xs text-gray-500 mt-1">Find solutions fast</p>
               </button>
-              
+
               <button className="p-4 text-left flex flex-col items-center justify-center bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                 <i className="ri-shield-line text-2xl text-blue-500 mb-2"></i>
                 <span className="font-medium">Privacy Rules</span>
                 <p className="text-xs text-gray-500 mt-1">How we protect you</p>
               </button>
-              
+
               <button className="p-4 text-left flex flex-col items-center justify-center bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
                 <i className="ri-mail-line text-2xl text-yellow-500 mb-2"></i>
                 <span className="font-medium">Talk to a Helper</span>
