@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, SetStateAction } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, SetStateAction } from "react";
 import { speak } from "@/lib/tts";
 import { ScheduleActivity } from "@/data/scheduleData";
 import { toast } from "react-hot-toast";
