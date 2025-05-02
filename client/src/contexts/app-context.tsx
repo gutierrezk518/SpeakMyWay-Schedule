@@ -172,8 +172,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const savedSettings = localStorage.getItem('displaySettings');
     return savedSettings ? JSON.parse(savedSettings) : {
       textSize: 1.5,
-      highContrast: false,
-      reduceAnimations: false,
       darkMode: false,
     };
   });

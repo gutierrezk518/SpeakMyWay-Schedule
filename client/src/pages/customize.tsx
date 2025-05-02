@@ -341,49 +341,60 @@ export default function Customize() {
               <i className="ri-settings-2-line text-2xl mr-2 text-blue-500"></i>
               <h3 className="font-bold text-lg">Display Settings</h3>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <label className="text-gray-700 font-medium">Dark Mode</label>
-                <div className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={displaySettings.darkMode}
-                    onChange={handleDarkModeChange}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium">Theme Mode</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${!displaySettings.darkMode ? 'bg-blue-100 border-blue-500' : ''}`}>
+                    <input
+                      type="radio"
+                      name="themeMode"
+                      value="light"
+                      className="absolute opacity-0"
+                      checked={!displaySettings.darkMode}
+                      onChange={() => handleDarkModeChange({ target: { checked: false } } as React.ChangeEvent<HTMLInputElement>)}
+                    />
+                    <div className="flex flex-col items-center">
+                      <i className="ri-sun-line text-3xl text-yellow-500 mb-2"></i>
+                      <span className="font-medium">Light Mode</span>
+                    </div>
+                  </label>
+
+                  <label className={`relative flex items-center justify-center p-4 border rounded-lg cursor-pointer hover:bg-blue-50 ${displaySettings.darkMode ? 'bg-blue-100 border-blue-500' : ''}`}>
+                    <input
+                      type="radio"
+                      name="themeMode"
+                      value="dark"
+                      className="absolute opacity-0"
+                      checked={displaySettings.darkMode}
+                      onChange={() => handleDarkModeChange({ target: { checked: true } } as React.ChangeEvent<HTMLInputElement>)}
+                    />
+                    <div className="flex flex-col items-center">
+                      <i className="ri-moon-line text-3xl text-blue-500 mb-2"></i>
+                      <span className="font-medium">Dark Mode</span>
+                    </div>
+                  </label>
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-700 mb-2">Text Size</label>
-                <input
-                  type="range"
-                  min="1"
-                  max="2"
-                  step="0.1"
-                  value={displaySettings.textSize}
-                  onChange={handleTextSizeChange}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">High Contrast</label>
-                <input
-                  type="checkbox"
-                  checked={displaySettings.highContrast}
-                  onChange={handleHighContrastChange}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Reduce Animations</label>
-                <input
-                  type="checkbox"
-                  checked={displaySettings.reduceAnimations}
-                  onChange={handleReduceAnimationsChange}
-                  className="w-full"
-                />
+                <label className="block text-gray-700 mb-2 font-medium">Text Size</label>
+                <div className="flex items-center">
+                  <span className="mr-2">Small</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="2"
+                    step="0.1"
+                    value={displaySettings.textSize}
+                    onChange={handleTextSizeChange}
+                    className="flex-grow"
+                  />
+                  <span className="ml-2">Large</span>
+                </div>
+                <div className="text-center text-sm mt-1 text-gray-500">
+                  {Math.round(displaySettings.textSize * 100)}%
+                </div>
               </div>
             </div>
           </div>
