@@ -170,11 +170,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   });
   const [displaySettings, setDisplaySettings] = useState(() => {
     const savedSettings = localStorage.getItem('displaySettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
+    const settings = savedSettings ? JSON.parse(savedSettings) : {
       textSize: 1.5,
       darkMode: false,
     };
+    
+    // Apply theme on initial load
+    document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
+    return settings;
   });
+
+  // Watch for display settings changes
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', displaySettings.darkMode ? 'dark' : 'light');
+    localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
+  }, [displaySettings]);
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
   
   // Undo/Redo state
