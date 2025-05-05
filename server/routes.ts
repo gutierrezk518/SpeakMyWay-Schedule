@@ -28,6 +28,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes and middleware
   await setupAuth(app);
   
+  // Route to provide Supabase configuration
+  app.get("/api/supabase-config", (req, res) => {
+    res.json({
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_ANON_KEY
+    });
+  });
+  
   // Auth routes are set up in replitAuth.ts
   
   // Error handling middleware for Zod validation errors
