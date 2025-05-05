@@ -104,26 +104,26 @@ export default function AuthPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="rounded-md border p-4 mb-4">
-                    <h3 className="font-medium mb-2">Sign in with Replit</h3>
+                    <h3 className="font-medium mb-2">Sign in to your account</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Use your Replit account to sign in. If you don't have one yet, you'll be able to create one.
+                      Securely access your SpeakMyWay account.
                     </p>
                     <Button 
                       className="w-full"
                       onClick={() => loginMutation.mutate({} as any)}
                       disabled={loginMutation.isPending}
                     >
-                      {loginMutation.isPending ? "Redirecting..." : "Continue with Replit"}
+                      {loginMutation.isPending ? "Redirecting..." : "Sign in to your account"}
                     </Button>
                   </div>
                   
-                  {/* Info text explaining the authentication change */}
+                  {/* Info text explaining the benefits */}
                   <div className="text-sm text-muted-foreground">
                     <p className="mb-2">
-                      We've simplified our login process to use Replit's secure authentication system.
+                      Our secure sign-in process protects your information with industry-standard security.
                     </p>
                     <p>
-                      This provides enhanced security and simplifies account management.
+                      You'll be briefly redirected to our authentication service to verify your identity.
                     </p>
                   </div>
                 </div>
@@ -135,22 +135,22 @@ export default function AuthPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="rounded-md border p-4 mb-4">
-                    <h3 className="font-medium mb-2">Create an account with Replit</h3>
+                    <h3 className="font-medium mb-2">Create a new account</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      You'll be redirected to Replit's secure registration page to create your account.
+                      Join SpeakMyWay to access all features and save your progress.
                     </p>
                     <Button 
                       className="w-full"
                       onClick={() => registerMutation.mutate({} as any)}
                       disabled={registerMutation.isPending}
                     >
-                      {registerMutation.isPending ? "Redirecting..." : "Register with Replit"}
+                      {registerMutation.isPending ? "Redirecting..." : "Create your account"}
                     </Button>
                   </div>
                   
                   <div className="text-sm text-muted-foreground">
                     <p className="mb-2">
-                      With Replit authentication, your account will be securely managed with modern security standards.
+                      Your account will be securely managed with modern security standards.
                     </p>
                     <p>
                       By registering, you agree to our Terms of Service and Privacy Policy.
