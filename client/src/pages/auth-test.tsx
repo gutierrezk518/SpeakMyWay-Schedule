@@ -1,10 +1,10 @@
-import { useAuth } from "@/hooks/use-auth";
+import { useLocalAuth } from "@/hooks/use-local-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Redirect, Link } from "wouter";
 
 export default function AuthTestPage() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useLocalAuth();
 
   // If user is not logged in, redirect to auth page
   if (!user) {

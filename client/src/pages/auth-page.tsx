@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Redirect } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
+import { useLocalAuth } from "@/hooks/use-local-auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,7 +40,7 @@ const registerSchema = z.object({
 });
 
 export default function AuthPage() {
-  const { user, signIn, signUp, isLoading } = useAuth();
+  const { user, login, register, isLoading } = useLocalAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
 
   // If user is already logged in, redirect to home page
@@ -71,12 +71,8 @@ export default function AuthPage() {
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     console.log("Login attempt with:", values.email);
     try {
-      const response = await signIn(values.email, values.password);
-      console.log("Login response:", response);
-      
-      if (response.error) {
-        console.error("Login error:", response.error);
-      }
+      const success = await login(values.email, values.password);
+      console.log("Login success:", success);
     } catch (error) {
       console.error("Login exception:", error);
     }
@@ -86,14 +82,8 @@ export default function AuthPage() {
   const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
     console.log("Registration attempt with:", values.email);
     try {
-      const response = await signUp(values.email, values.password, {
-        username: values.username,
-      });
-      console.log("Registration response:", response);
-      
-      if (response.error) {
-        console.error("Registration error:", response.error);
-      }
+      const success = await register(values.email, values.username, values.password);
+      console.log("Registration success:", success);
     } catch (error) {
       console.error("Registration exception:", error);
     }
