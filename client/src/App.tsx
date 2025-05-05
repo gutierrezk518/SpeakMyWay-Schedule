@@ -12,6 +12,7 @@ import Admin from "@/pages/admin";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
 import VerifyEmailPage from "@/pages/verify-email";
+import AuthTestPage from "@/pages/auth-test";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <ProtectedRoute path="/auth-test" component={AuthTestPage} />
       <Route component={NotFound} />
     </Switch>
   );
