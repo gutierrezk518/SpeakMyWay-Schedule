@@ -48,26 +48,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
+  // Modified for Replit Auth
   const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginData) => {
-      const res = await apiRequest("POST", "/api/login", credentials);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-      return await res.json();
+    mutationFn: async (_credentials: LoginData) => {
+      // Replit Auth is handled by redirecting to their login page
+      // We'll just redirect the user to the login endpoint
+      window.location.href = "/api/login";
+      // Return a dummy object to satisfy the typing
+      return {} as User;
     },
-    onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/user"], userData);
-      
-      // Don't show welcome toast if email is not verified
-      // The ProtectedRoute component will show the verification required screen
-      if (userData.emailVerified) {
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${userData.displayName || userData.username}!`,
-        });
-      }
+    onSuccess: () => {
+      // We won't actually get here in Replit Auth flow as it involves redirects
+      // But we keep it for API consistency
     },
     onError: (error: Error) => {
       toast({
@@ -78,20 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Modified for Replit Auth - registration is handled the same way as login
   const registerMutation = useMutation({
-    mutationFn: async (userData: RegisterData) => {
-      const res = await apiRequest("POST", "/api/register", userData);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
-      return await res.json();
+    mutationFn: async (_userData: RegisterData) => {
+      // With Replit Auth, registration is handled by Replit
+      // We'll redirect to the login page which will handle both login and registration
+      window.location.href = "/api/login";
+      // Return a dummy object to satisfy the typing
+      return {} as User;
     },
-    onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/user"], userData);
-      
-      // Don't show success toast since we'll be showing the verification screen
-      // The verification UI will be shown in auth-page.tsx
+    onSuccess: () => {
+      // We won't actually get here in Replit Auth flow as it involves redirects
+      // But we keep it for API consistency
     },
     onError: (error: Error) => {
       toast({
@@ -102,16 +92,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Modified for Replit Auth
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", "/api/logout");
+      // Instead of making an AJAX request, redirect to the logout endpoint
+      window.location.href = "/api/logout";
+      // This won't actually reach the server before the redirect
     },
     onSuccess: () => {
+      // We won't get here due to page redirect
       queryClient.setQueryData(["/api/user"], null);
-      toast({
-        title: "Logged out",
-        description: "You have been logged out successfully",
-      });
     },
     onError: (error: Error) => {
       toast({
