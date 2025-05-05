@@ -30,7 +30,9 @@ export interface IStorage {
 
   // User operations
   getUser(id: number): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>; // Required for Replit Auth
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail?(email: string): Promise<User | undefined>; // Optional helper for Replit Auth
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
   deleteUser(id: number): Promise<boolean>;
@@ -126,10 +128,23 @@ export class MemStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
     return this.users.get(id);
   }
+  
+  // Support for Replit Auth - alias for getUser
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.getUser(id);
+  }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
       (user) => user.username.toLowerCase() === username.toLowerCase(),
+    );
+  }
+  
+  // Support for Replit Auth - get user by email
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!email) return undefined;
+    return Array.from(this.users.values()).find(
+      (user) => user.email?.toLowerCase() === email.toLowerCase(),
     );
   }
 

@@ -55,6 +55,18 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
+  
+  // Support for Replit Auth - same as getUser but with name that matches Replit Auth requirement
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.getUser(id);
+  }
+  
+  // Support for Replit Auth - get user by email
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!email) return undefined;
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
