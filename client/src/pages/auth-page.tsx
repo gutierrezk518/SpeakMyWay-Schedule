@@ -69,14 +69,34 @@ export default function AuthPage() {
 
   // Submit handler for login
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await signIn(values.email, values.password);
+    console.log("Login attempt with:", values.email);
+    try {
+      const response = await signIn(values.email, values.password);
+      console.log("Login response:", response);
+      
+      if (response.error) {
+        console.error("Login error:", response.error);
+      }
+    } catch (error) {
+      console.error("Login exception:", error);
+    }
   };
 
   // Submit handler for registration
   const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
-    await signUp(values.email, values.password, {
-      username: values.username,
-    });
+    console.log("Registration attempt with:", values.email);
+    try {
+      const response = await signUp(values.email, values.password, {
+        username: values.username,
+      });
+      console.log("Registration response:", response);
+      
+      if (response.error) {
+        console.error("Registration error:", response.error);
+      }
+    } catch (error) {
+      console.error("Registration exception:", error);
+    }
   };
 
   return (

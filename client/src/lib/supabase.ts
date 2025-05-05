@@ -5,8 +5,14 @@ import { createClient } from '@supabase/supabase-js';
 const fallbackUrl = 'https://placeholder.supabase.co';
 const fallbackKey = 'placeholder_key';
 
-// Create client with fallback values initially
-export const supabase = createClient(fallbackUrl, fallbackKey);
+// Create client with fallback values initially and additional options
+export const supabase = createClient(fallbackUrl, fallbackKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 // Load actual configuration from server
 (async function loadSupabaseConfig() {
@@ -20,9 +26,15 @@ export const supabase = createClient(fallbackUrl, fallbackKey);
     
     if (config.supabaseUrl && config.supabaseKey) {
       // Create a new client with proper configuration
-      const newClient = createClient(config.supabaseUrl, config.supabaseKey);
+      const newClient = createClient(config.supabaseUrl, config.supabaseKey, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true
+        }
+      });
       
-      // Copy all methods and properties from the new client to the exported one
+      // Replace the existing client with the new one
       Object.assign(supabase, newClient);
       
       console.log('Supabase client initialized successfully with server config');
