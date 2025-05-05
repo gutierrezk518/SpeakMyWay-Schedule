@@ -28,24 +28,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes and middleware
   await setupAuth(app);
   
-  // Auth user route
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      res.json({
-        id: userId,
-        username: req.user.claims.username,
-        email: req.user.claims.email,
-        firstName: req.user.claims.first_name,
-        lastName: req.user.claims.last_name,
-        bio: req.user.claims.bio,
-        profileImageUrl: req.user.claims.profile_image_url
-      });
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Auth routes are set up in replitAuth.ts
   
   // Error handling middleware for Zod validation errors
   const handleZodError = (err: unknown, res: Response) => {

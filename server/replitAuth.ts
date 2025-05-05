@@ -38,7 +38,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: "auto",
+      secure: false, // Set to false to work in development
       maxAge: sessionTtl,
     },
   });
@@ -206,7 +206,7 @@ export async function setupAuth(app: Express) {
     });
   });
 
-  // User info endpoint
+  // User info endpoints - supporting both paths
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -214,6 +214,26 @@ export async function setupAuth(app: Express) {
     
     // Just return the user directly, as we've combined the DB user with auth info
     return res.json(req.user);
+  });
+
+  // Alternative path for user info - this is what our frontend is looking for
+  app.get("/api/auth/user", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const user = req.user as any;
+    
+    // Return a formatted user object that matches our frontend expectations
+    return res.json({
+      id: user.id.toString(),
+      username: user.username,
+      email: user.email,
+      firstName: user.auth?.claims?.first_name,
+      lastName: user.auth?.claims?.last_name,
+      bio: user.auth?.claims?.bio,
+      profileImageUrl: user.auth?.claims?.profile_image_url
+    });
   });
 }
 
