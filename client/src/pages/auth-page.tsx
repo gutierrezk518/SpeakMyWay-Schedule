@@ -5,8 +5,6 @@ import { z } from "zod";
 import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalStorage } from "../hooks/use-local-storage";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 // UI Components
@@ -14,33 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Eye, EyeOff, AlertCircle, Lock, User, Mail, Calendar, CheckCircle, ArrowLeft } from "lucide-react";
-
-// Login form schema
-const loginSchema = z.object({
-  username: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-// Password reset request schema
-const resetPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-
-// Registration form schema with GDPR/COPPA compliance
-const registerSchema = z.object({
-  username: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  displayName: z.string().optional(),
-  birthday: z.string().optional(),
-  consentGiven: z.literal(true, {
-    errorMap: () => ({ message: "You must provide consent to use this application" }),
-  }),
-  marketingConsent: z.boolean().optional(),
-  dataRetentionConsent: z.boolean().optional(),
-});
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CheckCircle, User } from "lucide-react";
 
 // Anonymous user nickname prompt schema
 const nicknameSchema = z.object({
@@ -56,11 +29,7 @@ interface AnonymousUser {
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
-  const [registrationStep, setRegistrationStep] = useState(1);
   const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
-  const [resetPasswordSent, setResetPasswordSent] = useState(false);
   const [_, setLocation] = useLocation();
   const [anonymousUser, setAnonymousUser] = useLocalStorage<AnonymousUser | null>("anonymousUser", null);
   const { user, loginMutation, registerMutation } = useAuth();
@@ -78,7 +47,7 @@ export default function AuthPage() {
   useEffect(() => {
     const firstInput = document.querySelector('input:not([type="hidden"])') as HTMLInputElement;
     if (firstInput) firstInput.focus();
-  }, [activeTab, registrationStep, showNicknamePrompt]);
+  }, [activeTab, showNicknamePrompt]);
 
   // Function to handle anonymous access
   const handleAnonymousAccess = () => {
@@ -96,133 +65,6 @@ export default function AuthPage() {
     setLocation("/schedule");
   };
 
-  // Anonymous user handling without registration prompt
-  // No prompt will be shown after a time period
-
-  // Form setup for login
-  const loginForm = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-  
-  // Form setup for password reset
-  const resetPasswordForm = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-  
-  // Password reset request mutation
-  const resetPasswordMutation = useMutation({
-    mutationFn: async (data: z.infer<typeof resetPasswordSchema>) => {
-      const res = await apiRequest("POST", "/api/forgot-password", data);
-      return await res.json();
-    },
-    onSuccess: () => {
-      setResetPasswordSent(true);
-      toast({
-        title: "Password reset link sent",
-        description: "Please check your email for instructions to reset your password.",
-        variant: "default",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to send password reset link. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-  
-  // Password reset submit handler
-  const onResetPasswordSubmit = (data: z.infer<typeof resetPasswordSchema>) => {
-    resetPasswordMutation.mutate(data);
-  };
-
-  // Form setup for registration
-  const registerForm = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      displayName: "",
-      birthday: "",
-      consentGiven: true,
-      marketingConsent: false,
-      dataRetentionConsent: false,
-    },
-  });
-
-  // Submit handlers
-  const onLoginSubmit = (data: z.infer<typeof loginSchema>) => {
-    loginMutation.mutate(data);
-  };
-
-  const onRegisterSubmit = (data: z.infer<typeof registerSchema>) => {
-    // Make sure email field is also set to the same value as username
-    registerMutation.mutate({
-      ...data,
-      email: data.username, // Explicitly set email to be the same as username
-      consentDate: new Date().toISOString(),
-    });
-  };
-
-  // State for showing verification message
-  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
-  
-  // Show verification message after successful registration
-  useEffect(() => {
-    if (registerMutation.isSuccess) {
-      setShowVerificationMessage(true);
-    }
-  }, [registerMutation.isSuccess]);
-  
-  // If verification message is shown
-  if (showVerificationMessage) {
-    return (
-      <div className="container flex items-center justify-center min-h-screen py-8">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl">Thank You for Signing Up!</CardTitle>
-            <CardDescription>
-              We've sent a verification link to your email address.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 text-center">
-            <div className="flex justify-center my-6">
-              <div className="rounded-full bg-primary/10 p-6">
-                <CheckCircle className="h-12 w-12 text-primary" />
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Please check your inbox and click the verification link to activate your account.
-              If you don't see the email, please check your spam folder.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              The verification link will expire in 24 hours.
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full" 
-              onClick={() => {
-                setShowVerificationMessage(false);
-                setLocation("/");
-              }}
-            >
-              Continue to Homepage
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
-  
   // If user is logged in, redirect to home page
   if (user) {
     return <Redirect to="/" />;
@@ -239,459 +81,88 @@ export default function AuthPage() {
                 ? "Login to SpeakMyWay" 
                 : activeTab === "register" 
                   ? "Create an Account" 
-                  : "Reset Password"}
+                  : "Guest Access"}
             </CardTitle>
             <CardDescription className="text-center">
               {activeTab === "login" 
                 ? "Sign in to access your personalized communication tools" 
                 : activeTab === "register"
                   ? "Join SpeakMyWay to create your personalized communication experience"
-                  : "We'll send you instructions to reset your password"}
+                  : "Try SpeakMyWay without creating an account"}
             </CardDescription>
           </CardHeader>
 
           <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 mb-4 mx-4">
+            <TabsList className="grid grid-cols-3 mb-4 mx-4">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="guest">Guest</TabsTrigger>
             </TabsList>
             
-            {/* We don't show the reset-password tab in the tab list, but it can be activated programmatically */}
-
-            {/* Password Reset Form */}
-            <TabsContent value="reset-password">
-              <CardContent>
-                <div className="mb-4">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="flex items-center gap-1 text-muted-foreground" 
-                    onClick={() => setActiveTab("login")}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to login
-                  </Button>
-                </div>
-
-                {resetPasswordSent ? (
-                  <div className="space-y-4 text-center">
-                    <div className="flex justify-center my-6">
-                      <div className="rounded-full bg-primary/10 p-6">
-                        <CheckCircle className="h-12 w-12 text-primary" />
-                      </div>
-                    </div>
-                    <p>
-                      A password reset link has been sent to your email address. Please check your inbox and follow the instructions.
-                    </p>
-                    <Button 
-                      className="w-full mt-4" 
-                      onClick={() => setActiveTab("login")}
-                    >
-                      Return to Login
-                    </Button>
-                  </div>
-                ) : (
-                  <Form {...resetPasswordForm}>
-                    <form onSubmit={resetPasswordForm.handleSubmit(onResetPasswordSubmit)} className="space-y-4">
-                      <FormField
-                        control={resetPasswordForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <div className="relative">
-                              <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                              <FormControl>
-                                <Input 
-                                  type="email" 
-                                  placeholder="Enter your email address" 
-                                  className="pl-9" 
-                                  aria-label="Email address"
-                                  {...field} 
-                                />
-                              </FormControl>
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={resetPasswordMutation.isPending}
-                      >
-                        {resetPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
-                      </Button>
-                    </form>
-                  </Form>
-                )}
-              </CardContent>
-            </TabsContent>
-
-            {/* Login Form */}
+            {/* Login Form - Modified for Replit Auth */}
             <TabsContent value="login">
               <CardContent>
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <div className="relative">
-                            <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <FormControl>
-                              <Input 
-                                placeholder="Enter your email address" 
-                                type="email"
-                                className="pl-9" 
-                                aria-label="Email"
-                                {...field} 
-                              />
-                            </FormControl>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <Lock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <FormControl>
-                              <Input 
-                                type={showLoginPassword ? "text" : "password"} 
-                                placeholder="Enter your password" 
-                                className="pl-9" 
-                                aria-label="Password"
-                                {...field} 
-                              />
-                            </FormControl>
-                            <button 
-                              type="button"
-                              onClick={() => setShowLoginPassword(!showLoginPassword)}
-                              className="absolute right-2.5 top-2.5"
-                              aria-label={showLoginPassword ? "Hide password" : "Show password"}
-                            >
-                              {showLoginPassword ? (
-                                <EyeOff className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <Eye className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
+                <div className="space-y-4">
+                  <div className="rounded-md border p-4 mb-4">
+                    <h3 className="font-medium mb-2">Sign in with Replit</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Use your Replit account to sign in. If you don't have one yet, you'll be able to create one.
+                    </p>
                     <Button 
-                      type="submit" 
-                      className="w-full" 
+                      className="w-full"
+                      onClick={() => loginMutation.mutate({} as any)}
                       disabled={loginMutation.isPending}
                     >
-                      {loginMutation.isPending ? "Logging in..." : "Login"}
+                      {loginMutation.isPending ? "Redirecting..." : "Continue with Replit"}
                     </Button>
-                    
-                    <div className="text-center mt-2">
-                      <Button variant="link" className="text-sm" onClick={() => setActiveTab("reset-password")} type="button">
-                        Forgot your password?
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
+                  </div>
+                  
+                  {/* Info text explaining the authentication change */}
+                  <div className="text-sm text-muted-foreground">
+                    <p className="mb-2">
+                      We've simplified our login process to use Replit's secure authentication system.
+                    </p>
+                    <p>
+                      This provides enhanced security and simplifies account management.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </TabsContent>
 
-            {/* Registration Form - Progressive Disclosure */}
+            {/* Registration Form - Modified for Replit Auth */}
             <TabsContent value="register">
               <CardContent>
-                <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                    {/* Step 1: Basic account info */}
-                    {registrationStep === 1 && (
-                      <>
-                        <div className="mb-4 text-center">
-                          <h3 className="text-sm font-medium text-muted-foreground">Step 1 of 2: Create your account</h3>
-                          <div className="w-full bg-muted h-2 mt-2 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full w-1/2 rounded-full"></div>
-                          </div>
-                        </div>
-
-                        <FormField
-                          control={registerForm.control}
-                          name="username"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel htmlFor="register-username">Email <span className="text-destructive">*</span></FormLabel>
-                              <div className="relative">
-                                <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <FormControl>
-                                  <Input 
-                                    id="register-username"
-                                    type="email"
-                                    placeholder="Enter your email address" 
-                                    className="pl-9" 
-                                    aria-required="true"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={registerForm.control}
-                          name="password"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel htmlFor="register-password">Password <span className="text-destructive">*</span></FormLabel>
-                              <div className="relative">
-                                <Lock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <FormControl>
-                                  <Input 
-                                    id="register-password"
-                                    type={showRegisterPassword ? "text" : "password"} 
-                                    placeholder="Choose a password" 
-                                    className="pl-9" 
-                                    aria-required="true"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <button 
-                                  type="button"
-                                  onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                                  className="absolute right-2.5 top-2.5"
-                                  aria-label={showRegisterPassword ? "Hide password" : "Show password"}
-                                >
-                                  {showRegisterPassword ? (
-                                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                                  ) : (
-                                    <Eye className="h-4 w-4 text-muted-foreground" />
-                                  )}
-                                </button>
-                              </div>
-                              {field.value && (
-                                <div className="mt-2">
-                                  <div className="text-xs mb-1">Password strength:</div>
-                                  <div className="flex space-x-1">
-                                    <div className={`h-1 flex-1 rounded-full ${field.value.length > 0 ? 'bg-red-500' : 'bg-muted'}`}></div>
-                                    <div className={`h-1 flex-1 rounded-full ${field.value.length >= 6 ? 'bg-amber-500' : 'bg-muted'}`}></div>
-                                    <div className={`h-1 flex-1 rounded-full ${field.value.length >= 8 ? 'bg-green-500' : 'bg-muted'}`}></div>
-                                  </div>
-                                </div>
-                              )}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <Button 
-                          type="button" 
-                          className="w-full" 
-                          onClick={() => {
-                            // Validate username and password before proceeding
-                            const usernameValid = registerForm.trigger('username');
-                            const passwordValid = registerForm.trigger('password');
-
-                            // Only proceed if both fields are valid
-                            Promise.all([usernameValid, passwordValid]).then(
-                              ([isUsernameValid, isPasswordValid]) => {
-                                if (isUsernameValid && isPasswordValid) {
-                                  setRegistrationStep(2);
-                                }
-                              }
-                            );
-                          }}
-                        >
-                          Continue
-                        </Button>
-                      </>
-                    )}
-
-                    {/* Step 2: Personal info and consent */}
-                    {registrationStep === 2 && (
-                      <>
-                        <div className="mb-4 text-center">
-                          <h3 className="text-sm font-medium text-muted-foreground">Step 2 of 2: Personal information</h3>
-                          <div className="w-full bg-muted h-2 mt-2 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full w-full rounded-full"></div>
-                          </div>
-                        </div>
-
-                        <FormField
-                          control={registerForm.control}
-                          name="displayName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel htmlFor="register-displayname">Display Name <span className="text-muted-foreground text-xs">(Optional)</span></FormLabel>
-                              <div className="relative">
-                                <User className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <FormControl>
-                                  <Input 
-                                    id="register-displayname"
-                                    placeholder="SpeakMyWay will refer to you as..." 
-                                    className="pl-9" 
-                                    aria-required="false"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-
-
-                        <FormField
-                          control={registerForm.control}
-                          name="birthday"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel htmlFor="register-birthday">Date of Birth <span className="text-muted-foreground text-xs">(Optional)</span></FormLabel>
-                              <div className="relative">
-                                <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <FormControl>
-                                  <Input 
-                                    id="register-birthday"
-                                    type="date" 
-                                    className="pl-9"
-                                    aria-required="false"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Consent checkboxes */}
-                        <div className="space-y-3 border p-4 rounded-md bg-muted/20">
-                          <h3 className="font-medium flex items-center gap-2 text-sm">
-                            <AlertCircle className="h-4 w-4 text-primary" />
-                            Consent Information
-                          </h3>
-
-                          <FormField
-                            control={registerForm.control}
-                            name="consentGiven"
-                            render={({ field }) => (
-                              <FormItem className="flex items-start space-x-2 space-y-0">
-                                <FormControl>
-                                  <Checkbox 
-                                    id="consent-required"
-                                    checked={field.value} 
-                                    onCheckedChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <div className="leading-tight">
-                                  <FormLabel htmlFor="consent-required" className="text-sm font-medium">
-                                    I am over the age of 13 years old or the parent or legal guardian giving consent on behalf of a child under 13 to the <a href="#" className="text-primary underline">Terms of Service</a> and <a href="#" className="text-primary underline">Privacy Policy</a> <span className="text-destructive">*</span>
-                                  </FormLabel>
-                                  <FormMessage />
-                                </div>
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={registerForm.control}
-                            name="marketingConsent"
-                            render={({ field }) => (
-                              <FormItem className="flex items-start space-x-2 space-y-0">
-                                <FormControl>
-                                  <Checkbox 
-                                    id="marketing-consent"
-                                    checked={field.value} 
-                                    onCheckedChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <div className="leading-tight">
-                                  <FormLabel htmlFor="marketing-consent" className="text-sm font-medium">
-                                    I agree to receive marketing communications <span className="text-muted-foreground text-xs">(Optional)</span>
-                                  </FormLabel>
-                                </div>
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="flex gap-2">
-                          <Button 
-                            type="button" 
-                            variant="outline"
-                            className="w-1/3" 
-                            onClick={() => setRegistrationStep(1)}
-                          >
-                            Back
-                          </Button>
-
-                          <Button 
-                            type="submit" 
-                            className="w-2/3" 
-                            disabled={registerMutation.isPending}
-                          >
-                            {registerMutation.isPending ? "Creating Account..." : "Create Account"}
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </form>
-                </Form>
+                <div className="space-y-4">
+                  <div className="rounded-md border p-4 mb-4">
+                    <h3 className="font-medium mb-2">Create an account with Replit</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      You'll be redirected to Replit's secure registration page to create your account.
+                    </p>
+                    <Button 
+                      className="w-full"
+                      onClick={() => registerMutation.mutate({} as any)}
+                      disabled={registerMutation.isPending}
+                    >
+                      {registerMutation.isPending ? "Redirecting..." : "Register with Replit"}
+                    </Button>
+                  </div>
+                  
+                  <div className="text-sm text-muted-foreground">
+                    <p className="mb-2">
+                      With Replit authentication, your account will be securely managed with modern security standards.
+                    </p>
+                    <p>
+                      By registering, you agree to our Terms of Service and Privacy Policy.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </TabsContent>
-          </Tabs>
-
-          <CardFooter className="flex flex-col gap-3 mt-2">
-            <div className="flex justify-center text-sm text-muted-foreground">
-              {activeTab === "login" ? (
-                <p>Don't have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("register")}>Register</Button></p>
-              ) : (
-                <p>Already have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("login")}>Login</Button></p>
-              )}
-            </div>
-
-            <div className="text-center">
-              <div className="relative mb-3">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t"></span>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or</span>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={handleAnonymousAccess}
-                className="w-full"
-              >
-                Continue without an account
-              </Button>
-            </div>
-          </CardFooter>
-
-          {/* Nickname prompt modal for anonymous users */}
-          {showNicknamePrompt && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <Card className="w-[350px] max-w-[90%]">
-                <CardHeader>
-                  <CardTitle className="text-xl">Quick Start</CardTitle>
-                  <CardDescription>
-                    Enter a Name that the Text to Voice settings in this app will refer to you as. You may click continue and you will be referred to as 'Friend'.
-                  </CardDescription>
-                </CardHeader>
+            
+            {/* Guest Access tab content */}
+            <TabsContent value="guest">
+              {showNicknamePrompt ? (
                 <CardContent>
                   <Form {...nicknameForm}>
                     <form onSubmit={nicknameForm.handleSubmit(handleNicknameSubmit)} className="space-y-4">
@@ -700,85 +171,82 @@ export default function AuthPage() {
                         name="nickname"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel htmlFor="nickname">Name</FormLabel>
+                            <FormLabel>Nickname</FormLabel>
                             <FormControl>
-                              <Input 
-                                id="nickname" 
-                                placeholder="Enter a Name" 
-                                autoFocus 
-                                {...field} 
-                              />
+                              <div className="relative">
+                                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input className="pl-10" placeholder="Enter a nickname" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="w-1/2"
-                          onClick={() => setShowNicknamePrompt(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="button" 
-                          className="w-1/2"
-                          onClick={() => handleNicknameSubmit({ nickname: "Friend" })}
-                        >
-                          Continue
-                        </Button>
-                      </div>
+                      <Button type="submit" className="w-full">
+                        Continue as Guest
+                      </Button>
                     </form>
                   </Form>
                 </CardContent>
-              </Card>
-            </div>
-          )}
+              ) : (
+                <CardContent className="space-y-4">
+                  <div className="rounded-md border p-4">
+                    <h3 className="font-medium">What you should know:</h3>
+                    <ul className="mt-2 list-disc pl-5 text-sm">
+                      <li>No account or email required</li>
+                      <li>Your data will only be saved locally</li>
+                      <li>Limited features are available</li>
+                      <li>Data will be lost if you clear browser data</li>
+                    </ul>
+                  </div>
+                  <Button onClick={handleAnonymousAccess} className="w-full">
+                    Continue as Guest
+                  </Button>
+                </CardContent>
+              )}
+            </TabsContent>
+          </Tabs>
         </Card>
       </div>
-
-      {/* Hero section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary-foreground flex-col items-center justify-center p-12">
-        <div className="max-w-md text-center">
-          <h1 className="text-4xl font-bold mb-6 text-primary">SpeakMyWay</h1>
-          <p className="text-xl mb-8">An Augmentative and Alternative Communication (AAC) app designed specifically for neurodivergent children.</p>
+      
+      {/* Right side - Hero section */}
+      <div className="flex-1 hidden lg:flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg">
+        <div className="max-w-md text-center p-8">
+          <h1 className="text-3xl font-bold mb-6">SpeakMyWay</h1>
+          <div className="mb-8">
+            <p className="text-xl mb-4">Empowering Communication for Everyone</p>
+            <p className="text-muted-foreground">
+              SpeakMyWay helps children with communication challenges express themselves
+              confidently through customizable visual boards, routines, and voice output.
+            </p>
+          </div>
           <div className="grid grid-cols-2 gap-4 text-left">
             <div className="flex items-start space-x-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><path d="M12 18a3 3 0 0 1 3 3v1"></path><path d="M9 22v-1a3 3 0 0 1 6 0v1"></path></svg>
-              </div>
+              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
               <div>
-                <h3 className="font-medium">Voice Support</h3>
-                <p className="text-sm">Text-to-speech for all cards and schedules</p>
+                <h3 className="font-medium">Personalized Schedules</h3>
+                <p className="text-sm text-muted-foreground">Create visual routines</p>
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
-              </div>
+              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
               <div>
-                <h3 className="font-medium">Customizable</h3>
-                <p className="text-sm">Tailor the experience to your needs</p>
+                <h3 className="font-medium">Digital Cards</h3>
+                <p className="text-sm text-muted-foreground">Express needs easily</p>
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M3 2v4"></path><path d="M7 2v4"></path><path d="M21 10V8a2 2 0 0 0-2-2H11"></path><path d="M16 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path><path d="M16 14v1a2 2 0 0 0 2 2h1"></path><path d="M21 16v1a2 2 0 0 1-2 2h-1"></path><path d="M19 20v2"></path><path d="M15 20v2"></path><path d="M3 10v10a2 2 0 0 0 2 2h6"></path></svg>
-              </div>
+              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
               <div>
-                <h3 className="font-medium">Scheduling</h3>
-                <p className="text-sm">Create and manage visual schedules</p>
+                <h3 className="font-medium">Voice Output</h3>
+                <p className="text-sm text-muted-foreground">Hear words and phrases</p>
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 22c5.421 0 10-4.579 10-10c0-4.952-3.67-9.037-8.419-9.778C13.051 2.15 12.534 2 12 2C6.579 2 2 6.579 2 12s4.579 10 10 10Z"></path><path d="M7 10.25c1.601 0 2.1 1.025 2.1 2s-.499 2-2.1 2c-1.6 0-2.1-1.025-2.1-2s.5-2 2.1-2Z"></path><path d="M16.5 10c-.828 0-1.5.672-1.5 1.5V12"></path><path d="M17 10.5a1.5 1.5 0 0 1 0 3h-.5"></path></svg>
-              </div>
+              <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
               <div>
-                <h3 className="font-medium">Child-Friendly</h3>
-                <p className="text-sm">Designed for neurodivergent children</p>
+                <h3 className="font-medium">Multilingual</h3>
+                <p className="text-sm text-muted-foreground">English and Spanish</p>
               </div>
             </div>
           </div>

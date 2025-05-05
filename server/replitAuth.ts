@@ -93,7 +93,7 @@ async function upsertUser(
       email: userData.email,
       displayName: userData.displayName,
       emailVerified: true,
-      updatedAt: new Date().toISOString(),
+      // updatedAt is handled automatically in the database storage layer
     });
     return existingUser;
   } else {
