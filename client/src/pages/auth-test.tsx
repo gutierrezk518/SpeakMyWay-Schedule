@@ -4,21 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Redirect, Link } from "wouter";
 
 export default function AuthTestPage() {
-  const { user, logoutMutation } = useAuth();
+  const { user, logout } = useAuth();
 
   // If user is not logged in, redirect to auth page
   if (!user) {
     return <Redirect to="/auth" />;
   }
 
-  // Display user information to verify Replit Auth is working
+  // Display user information to verify auth is working
   return (
     <div className="container mx-auto p-8">
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl">Authentication Test Page</CardTitle>
           <CardDescription>
-            This page displays your user information to verify Replit Auth is working properly
+            This page displays your user information to verify authentication is working properly
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -30,7 +30,7 @@ export default function AuthTestPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button onClick={() => logoutMutation.mutate()}>
+            <Button onClick={logout}>
               Log Out
             </Button>
             <Link href="/">
