@@ -3,7 +3,6 @@ import { queryClient } from "@/lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
 import CommunicationBoard from "@/pages/communication-board";
 import QuickMode from "@/pages/quick-mode";
 import Schedule from "@/pages/schedule";
@@ -17,7 +16,6 @@ import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
 // Using local auth provider instead of Supabase for now
-import { LocalAuthProvider } from "@/hooks/use-local-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Link } from "wouter";
 
@@ -95,12 +93,9 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalAuthProvider>
-        <AppContent />
-        <Toaster />
-      </LocalAuthProvider>
+      <AppContent />
+      <Toaster />
     </QueryClientProvider>
   );
 }
-
 export default App;
