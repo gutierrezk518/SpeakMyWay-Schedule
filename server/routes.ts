@@ -16,8 +16,8 @@ import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import multer from "multer";
 import * as csvParser from "csv-parse/sync";
-// Switch to Replit Auth instead of local auth
-import { setupAuth, isAuthenticated } from "./replitAuth";
+// Auth setup only
+import { setupAuth } from "./replitAuth";
 import { isAdmin } from "./middleware/admin";
 import { createVerificationToken, verifyEmailToken, generateVerificationUrl } from "./utils/email-verification";
 import { sendEmail, sendPasswordResetEmail } from "./utils/email-service";
@@ -51,7 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public endpoints
   
   // Protected user routes
-  app.post("/api/users", isAuthenticated, async (req: Request, res: Response) => {
+  app.post("/api/users", async (req: Request, res: Response) => {
     try {
       const userData = insertUserSchema.parse(req.body);
       const existingUser = await storage.getUserByUsername(userData.username);
