@@ -15,7 +15,7 @@ import AuthTestPage from "@/pages/auth-test";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
-// Using local auth provider instead of Supabase for now
+import { AuthProvider } from "@/hooks/use-auth"; // Import our stub auth provider
 import { ProtectedRoute } from "@/components/protected-route";
 import { Link } from "wouter";
 
@@ -93,8 +93,10 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
-      <Toaster />
+      <AuthProvider>
+        <AppContent />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

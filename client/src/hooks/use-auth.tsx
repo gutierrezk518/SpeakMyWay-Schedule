@@ -1,146 +1,53 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  User, 
-  Session,
-  AuthError,
-  AuthResponse
-} from '@supabase/supabase-js';
+import { createContext, useContext, ReactNode } from 'react';
 
-type AuthContextType = {
-  user: User | null;
-  session: Session | null;
-  isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<AuthResponse>;
-  signUp: (email: string, password: string, userData?: object) => Promise<AuthResponse>;
-  logout: () => Promise<void>;
-  setUser: (user: User | null) => void;
-  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+// Simple placeholder type without Supabase dependencies
+type MockUser = {
+  id: string;
+  email?: string | null;
+  role?: string;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+type AuthContextType = {
+  user: MockUser | null;
+  session: any | null;
+  isLoading: boolean;
+  signIn: () => Promise<any>;
+  signUp: () => Promise<any>;
+  logout: () => Promise<void>;
+  setUser: (user: MockUser | null) => void;
+  resetPassword: (email: string) => Promise<{ error: null }>;
+};
 
+// Create a mock context with stub methods
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  session: null,
+  isLoading: false,
+  signIn: async () => ({ data: null, error: null }),
+  signUp: async () => ({ data: null, error: null }),
+  logout: async () => {},
+  setUser: () => {},
+  resetPassword: async () => ({ error: null }),
+});
+
+// Simple provider that doesn't do anything but render children
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user || null);
-      setIsLoading(false);
-    });
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user || null);
-      setIsLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const signIn = async (email: string, password: string) => {
-    setIsLoading(true);
-    const response = await supabase.auth.signInWithPassword({ email, password });
-    
-    if (response.error) {
-      toast({
-        title: "Login failed",
-        description: response.error.message,
-        variant: "destructive",
-      });
-    }
-    
-    setIsLoading(false);
-    return response;
+  // Create a default value that matches the context type
+  const defaultValue = {
+    user: null,
+    session: null,
+    isLoading: false,
+    signIn: async () => ({ data: null, error: null }),
+    signUp: async () => ({ data: null, error: null }),
+    logout: async () => {},
+    setUser: () => {},
+    resetPassword: async () => ({ error: null }),
   };
-
-  const signUp = async (email: string, password: string, userData?: object) => {
-    setIsLoading(true);
-    const response = await supabase.auth.signUp({ 
-      email, 
-      password,
-      options: {
-        data: userData
-      }
-    });
-    
-    if (response.error) {
-      toast({
-        title: "Registration failed",
-        description: response.error.message,
-        variant: "destructive",
-      });
-    } 
-    
-    setIsLoading(false);
-    return response;
-  };
-
-  const logout = async () => {
-    setIsLoading(true);
-    const { error } = await supabase.auth.signOut();
-    
-    if (error) {
-      toast({
-        title: "Logout failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-    
-    setIsLoading(false);
-  };
-
-  const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    
-    if (!error) {
-      toast({
-        title: "Password reset email sent",
-        description: "Check your email for the password reset link",
-      });
-    } else {
-      toast({
-        title: "Password reset failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-    
-    return { error };
-  };
-
-  const value = {
-    user,
-    session,
-    isLoading,
-    signIn,
-    signUp,
-    logout,
-    setUser,
-    resetPassword,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  
+  return <AuthContext.Provider value={defaultValue}>{children}</AuthContext.Provider>;
 }
 
+// Hook that returns the mock context
 export function useAuth() {
-  const context = useContext(AuthContext);
-  
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  
-  return context;
+  return useContext(AuthContext);
 }
