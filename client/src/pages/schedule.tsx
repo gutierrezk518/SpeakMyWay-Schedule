@@ -10,7 +10,7 @@ import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
 import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
-import { useAuth } from "@/hooks/use-auth";
+// Authentication removed
 
 // Compact Timer Component
 const TimerComponent = () => {
@@ -146,7 +146,7 @@ export default function Schedule() {
     language
   } = useAppContext();
   const { toast } = useToast();
-  const { user } = useAuth();
+  // Authentication removed - no user object
   const [location] = useLocation();
   
   // Check for email verification URL parameters when page loads
