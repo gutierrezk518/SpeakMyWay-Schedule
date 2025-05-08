@@ -90,16 +90,11 @@ function AppContent() {
   );
 }
 
-// Import LocalAuth provider
-import { LocalAuthProvider } from "@/hooks/use-local-auth";
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalAuthProvider>
-        <AppContent />
-        <Toaster />
-      </LocalAuthProvider>
+      <AppContent />
+      <Toaster />
     </QueryClientProvider>
   );
 }

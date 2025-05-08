@@ -1366,55 +1366,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Resend verification email
+  // Resend verification email - disabled during auth migration
   app.post("/api/resend-verification", async (req: Request, res: Response) => {
-    // Since authentication is now client-side, we'll rely on the userId sent in the request
-    const { userId } = req.body;
-    
-    if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-    
-    // Get user from database
-    const user = await storage.getUser(userId);
-    
-    // Check if email is already verified
-    if (user.emailVerified) {
-      return res.status(400).json({ message: "Your email is already verified" });
-    }
-    
-    try {
-      // Make sure user has an email
-      if (!user.email) {
-        return res.status(400).json({ message: "User does not have an email address" });
-      }
-      
-      // Create new verification token
-      const token = await createVerificationToken(user.id, user.email);
-      
-      // Generate verification URL
-      const verificationUrl = generateVerificationUrl(token);
-      
-      // Get user's display name or username
-      const name = user.displayName || user.username;
-      
-      // Send verification email
-      const emailSent = await sendEmail({
-        to: user.email,
-        subject: `Verify your SpeakMyWay email address`,
-        htmlBody: welcomeEmail(name, verificationUrl),
-        textBody: welcomeEmailText(name, verificationUrl),
-      });
-      
-      if (emailSent) {
-        return res.status(200).json({ message: "Verification email sent successfully" });
-      } else {
-        return res.status(500).json({ message: "Failed to send verification email" });
-      }
-    } catch (error) {
-      console.error("Error sending verification email:", error);
-      return res.status(500).json({ message: "Failed to send verification email" });
-    }
+    return res.status(503).json({ 
+      message: "Authentication features are temporarily disabled during migration to Supabase"
+    });
   });
 
   // API endpoint for email verification (redirects to frontend after verification)

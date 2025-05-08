@@ -1,6 +1,4 @@
-import { useLocalAuth } from "@/hooks/use-local-auth";
-import { Loader2 } from "lucide-react";
-import { Redirect, Route } from "wouter";
+import { Route } from "wouter";
 
 type ProtectedRouteProps = {
   path: string;
@@ -8,21 +6,10 @@ type ProtectedRouteProps = {
 };
 
 export function ProtectedRoute({ path, component: Component }: ProtectedRouteProps) {
-  const { user, isLoading } = useLocalAuth();
-
-  if (isLoading) {
-    return (
-      <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-border" />
-        </div>
-      </Route>
-    );
-  }
-
+  // Temporarily allow all access since we're removing authentication
   return (
     <Route path={path}>
-      {user ? <Component /> : <Redirect to="/auth" />}
+      <Component />
     </Route>
   );
 }
