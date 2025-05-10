@@ -1,4 +1,6 @@
-import { Route } from "wouter";
+import { Route, Redirect } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
 
 type ProtectedRouteProps = {
   path: string;
@@ -6,10 +8,19 @@ type ProtectedRouteProps = {
 };
 
 export function ProtectedRoute({ path, component: Component }: ProtectedRouteProps) {
-  // Temporarily allow all access since we're removing authentication
+  const { user, isLoading } = useAuth();
+
   return (
     <Route path={path}>
-      <Component />
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : user ? (
+        <Component />
+      ) : (
+        <Redirect to="/auth" />
+      )}
     </Route>
   );
 }
