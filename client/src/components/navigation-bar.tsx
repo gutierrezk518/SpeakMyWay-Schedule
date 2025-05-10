@@ -4,6 +4,17 @@ import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/use-auth";
+import { LogIn, LogOut, User, Settings } from "lucide-react";
 
 const pageTitles: Record<string, string> = {
   "/": "SpeakMyWay",
@@ -29,10 +40,22 @@ export default function NavigationBar() {
     userDataRetentionConsent
   } = useAppContext();
   
+  // Get authentication state
+  const { user, isLoading, logout } = useAuth();
+  
   const [userProfileOpen, setUserProfileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
   const navRef = useRef<HTMLDivElement>(null);
+  
+  // Handle logout action
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
   
   // Function to handle scroll events
   useEffect(() => {
@@ -88,8 +111,64 @@ export default function NavigationBar() {
               </button>
             </Link>
             
-            {/* User Profile Icon - Only show if we have a username */}
-            {userName && (
+            {/* Authentication Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`p-1 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+                  {isLoading ? (
+                    <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                  ) : user ? (
+                    <Avatar className="w-5 h-5">
+                      <AvatarImage src={user.profileImageUrl || ""} alt={user.email || ""} />
+                      <AvatarFallback className="text-[10px] bg-blue-600">
+                        {user.email?.substring(0, 2).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <LogIn className="w-4 h-4" />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {user ? (
+                  <>
+                    <DropdownMenuLabel>
+                      {user.email || "Authenticated User"}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setUserProfileOpen(true)}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/customize">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuLabel>Authentication</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        <span>Sign in</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Legacy User Profile Icon - Only show if we have a username */}
+            {userName && !user && (
               <button 
                 onClick={() => setUserProfileOpen(true)}
                 className={`p-1 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
