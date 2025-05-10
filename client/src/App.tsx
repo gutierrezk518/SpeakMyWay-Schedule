@@ -12,10 +12,13 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
 import VerifyEmailPage from "@/pages/verify-email";
 import AuthTestPage from "@/pages/auth-test";
+import AuthCallback from "@/pages/auth-callback";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetPassword from "@/pages/reset-password";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
-import { AuthProvider } from "@/hooks/use-auth"; // Import our stub auth provider
+import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Link } from "wouter";
 
@@ -29,6 +32,9 @@ function Router() {
       <ProtectedRoute path="/customize" component={Customize} />
       <ProtectedRoute path="/admin" component={Admin} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/auth-callback" component={AuthCallback} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <ProtectedRoute path="/auth-test" component={AuthTestPage} />
