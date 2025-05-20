@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { GoogleLoginButton } from "@/components/google-login-button";
+import { FcGoogle } from "react-icons/fc";
 
 export default function AuthPage() {
   const [location, navigate] = useLocation();
@@ -218,14 +218,17 @@ export default function AuthPage() {
                   <Button 
                     type="button" 
                     variant="outline" 
-                    className="w-full"
+                    className="w-full flex items-center justify-center gap-2"
                     onClick={handleGoogleLogin}
                     disabled={isAuthenticating}
                   >
                     {isAuthenticating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Google"
+                      <>
+                        <FcGoogle className="h-5 w-5" />
+                        <span>Sign in with Google</span>
+                      </>
                     )}
                   </Button>
                 </CardFooter>
@@ -299,14 +302,17 @@ export default function AuthPage() {
                   <Button 
                     type="button" 
                     variant="outline" 
-                    className="w-full"
+                    className="w-full flex items-center justify-center gap-2"
                     onClick={handleGoogleLogin}
                     disabled={isAuthenticating}
                   >
                     {isAuthenticating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Google"
+                      <>
+                        <FcGoogle className="h-5 w-5" />
+                        <span>Sign in with Google</span>
+                      </>
                     )}
                   </Button>
                 </CardFooter>
