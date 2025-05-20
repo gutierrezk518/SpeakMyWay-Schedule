@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
+import { GoogleLoginButton } from "@/components/google-login-button";
 
 export default function AuthPage() {
   const [location, navigate] = useLocation();
