@@ -32,13 +32,23 @@ export function ConsentCheckboxes({
             className="text-sm font-normal"
           >
             I agree to the{" "}
-            <Link href="/terms-of-service" className="text-primary hover:underline">
+            <a 
+              href="/terms-of-service" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
               Terms of Service
-            </Link>{" "}
+            </a>{" "}
             and{" "}
-            <Link href="/privacy-policy" className="text-primary hover:underline">
+            <a 
+              href="/privacy-policy" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
               Privacy Policy
-            </Link>
+            </a>
             <span className="text-destructive ml-1">*</span>
           </Label>
         </div>
