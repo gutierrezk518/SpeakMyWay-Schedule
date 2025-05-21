@@ -19,6 +19,8 @@ type AuthContextType = {
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updateUserMetadata: (metadata: object) => Promise<{ error: AuthError | null }>;
+  needsWelcomeScreen: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsWelcomeScreen, setNeedsWelcomeScreen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -48,6 +51,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+  
+  // Check if user needs welcome screen
+  useEffect(() => {
+    if (user && !isLoading) {
+      // Check if user has a name set in their metadata
+      const userName = user.user_metadata?.name;
+      setNeedsWelcomeScreen(!userName);
+    }
+  }, [user, isLoading]);
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
@@ -170,6 +182,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     return { error };
   };
+  
+  const updateUserMetadata = async (metadata: object) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: metadata
+      });
+      
+      if (error) throw error;
+      
+      // Update local user state
+      if (data?.user) {
+        setUser(data.user);
+      }
+      
+      return { error: null };
+    } catch (error) {
+      console.error("Error updating user metadata:", error);
+      return { error: error as AuthError };
+    }
+  };
 
   const value = {
     user,
@@ -181,6 +213,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     setUser,
     resetPassword,
+    updateUserMetadata,
+    needsWelcomeScreen
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

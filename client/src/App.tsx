@@ -16,9 +16,11 @@ import AuthCallback from "@/pages/auth-callback";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import NavigationBar from "@/components/navigation-bar";
-import { useEffect } from "react";
+import { WelcomeDialog } from "@/components/welcome-dialog";
+import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { AuthProvider } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Link } from "wouter";
 
@@ -44,7 +46,6 @@ function Router() {
 }
 
 function AppContent() {
-  // Simple version without welcome dialog
   const { 
     setUserName,
     setUserBirthday,
@@ -54,6 +55,16 @@ function AppContent() {
     setUserMarketingConsent,
     setUserDataRetentionConsent
   } = useAppContext();
+  
+  const { user, needsWelcomeScreen } = useAuth();
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  
+  // Show welcome dialog when a logged-in user needs to set their name
+  useEffect(() => {
+    if (user && needsWelcomeScreen) {
+      setShowWelcomeDialog(true);
+    }
+  }, [user, needsWelcomeScreen]);
 
   useEffect(() => {
     // Load any existing user data from localStorage if available
@@ -76,7 +87,14 @@ function AppContent() {
       if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
       if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
     }
+    
+    // If the user is authenticated and has a name in metadata, use that name
+    if (user && user.user_metadata?.name) {
+      setUserName(user.user_metadata.name);
+      localStorage.setItem("speakMyWayUser", user.user_metadata.name);
+    }
   }, [
+    user,
     setUserName, 
     setUserBirthday, 
     setUserEmail, 
@@ -85,6 +103,11 @@ function AppContent() {
     setUserMarketingConsent, 
     setUserDataRetentionConsent
   ]);
+  
+  // Handle closing the welcome dialog
+  const handleCloseWelcomeDialog = () => {
+    setShowWelcomeDialog(false);
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -92,6 +115,12 @@ function AppContent() {
       <main className="flex-grow overflow-y-auto pt-9 pb-4">
         <Router />
       </main>
+      
+      {/* Welcome Dialog - shows after first login */}
+      <WelcomeDialog 
+        isOpen={showWelcomeDialog}
+        onClose={handleCloseWelcomeDialog}
+      />
     </div>
   );
 }
