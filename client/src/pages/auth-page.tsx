@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useAppContext } from "@/contexts/app-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,17 +10,42 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { PasswordStrengthIndicator } from "@/components/password-strength-indicator";
+import { ConsentCheckboxes } from "@/components/consent-checkboxes";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 
 export default function AuthPage() {
   const [location, navigate] = useLocation();
   const { user, isLoading, signIn, signUp, signInWithGoogle } = useAuth();
   const { toast } = useToast();
+  const { 
+    setUserConsentGiven,
+    setUserConsentDate,
+    setUserMarketingConsent
+  } = useAppContext();
   
   // Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  
+  // Consent state
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  
+  // Google consent dialog state
+  const [showGoogleConsentDialog, setShowGoogleConsentDialog] = useState(false);
+  const [googleConsentPrivacy, setGoogleConsentPrivacy] = useState(false);
+  const [googleConsentMarketing, setGoogleConsentMarketing] = useState(false);
+  const [pendingGoogleAuth, setPendingGoogleAuth] = useState(false);
   
   // If user is already logged in, redirect to home
   useEffect(() => {
@@ -83,21 +109,40 @@ export default function AuthPage() {
       return;
     }
     
+    if (!privacyConsent) {
+      toast({
+        title: "Privacy Policy Consent Required",
+        description: "You must agree to the Privacy Policy to create an account",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsAuthenticating(true);
     
     try {
-      // Add any additional user metadata as needed
+      // Save consent information
+      const consentDate = new Date().toISOString();
+      
+      // Add user metadata including consent information
       const userData = {
         app_metadata: { role: 'user' },
         user_metadata: { 
-          dateJoined: new Date().toISOString() 
+          dateJoined: consentDate,
+          privacyPolicyConsent: privacyConsent,
+          privacyPolicyConsentDate: consentDate,
+          marketingConsent: marketingConsent,
+          marketingConsentDate: marketingConsent ? consentDate : null
         }
       };
       
       const { error } = await signUp(email, password, userData);
       
       if (!error) {
-        // Toast notification shown by the auth provider
+        // Update app context with consent information
+        setUserConsentGiven(privacyConsent);
+        setUserConsentDate(consentDate);
+        setUserMarketingConsent(marketingConsent);
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -111,13 +156,40 @@ export default function AuthPage() {
     }
   };
 
-  // Handle Google login
-  const handleGoogleLogin = async () => {
+  // Handle Google login initiation
+  const handleGoogleLogin = () => {
+    setShowGoogleConsentDialog(true);
+    setPendingGoogleAuth(true);
+  };
+  
+  // Handle Google login after consent
+  const handleGoogleLoginAfterConsent = async () => {
+    if (!googleConsentPrivacy) {
+      toast({
+        title: "Privacy Policy Consent Required",
+        description: "You must agree to the Privacy Policy to sign in with Google",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setShowGoogleConsentDialog(false);
     setIsAuthenticating(true);
     
     try {
+      // Save consent information to use after successful auth
+      const consentDate = new Date().toISOString();
+      localStorage.setItem('pendingPrivacyConsent', 'true');
+      localStorage.setItem('pendingPrivacyConsentDate', consentDate);
+      localStorage.setItem('pendingMarketingConsent', googleConsentMarketing.toString());
+      
       await signInWithGoogle();
       // Auth state will be managed by the callback URL
+      
+      // Update app context with consent information - this will happen after redirect
+      setUserConsentGiven(googleConsentPrivacy);
+      setUserConsentDate(consentDate);
+      setUserMarketingConsent(googleConsentMarketing);
     } catch (error) {
       console.error("Google login error:", error);
       toast({
@@ -126,7 +198,18 @@ export default function AuthPage() {
         variant: "destructive",
       });
       setIsAuthenticating(false);
+    } finally {
+      setPendingGoogleAuth(false);
     }
+  };
+  
+  // Cancel Google login flow
+  const handleCancelGoogleLogin = () => {
+    setShowGoogleConsentDialog(false);
+    setPendingGoogleAuth(false);
+    // Reset consent values for next attempt
+    setGoogleConsentPrivacy(false);
+    setGoogleConsentMarketing(false);
   };
 
   // If checking authentication status or authentication in progress
@@ -220,7 +303,7 @@ export default function AuthPage() {
                     variant="outline" 
                     className="w-full flex items-center justify-center gap-2"
                     onClick={handleGoogleLogin}
-                    disabled={isAuthenticating}
+                    disabled={isAuthenticating || pendingGoogleAuth}
                   >
                     {isAuthenticating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -260,6 +343,9 @@ export default function AuthPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
+                    
+                    {/* Password strength indicator */}
+                    <PasswordStrengthIndicator password={password} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -272,6 +358,14 @@ export default function AuthPage() {
                       required
                     />
                   </div>
+                  
+                  {/* Consent checkboxes */}
+                  <ConsentCheckboxes
+                    privacyConsent={privacyConsent}
+                    setPrivacyConsent={setPrivacyConsent}
+                    marketingConsent={marketingConsent}
+                    setMarketingConsent={setMarketingConsent}
+                  />
                 </CardContent>
                 
                 <CardFooter className="flex flex-col gap-2">
@@ -304,7 +398,7 @@ export default function AuthPage() {
                     variant="outline" 
                     className="w-full flex items-center justify-center gap-2"
                     onClick={handleGoogleLogin}
-                    disabled={isAuthenticating}
+                    disabled={isAuthenticating || pendingGoogleAuth}
                   >
                     {isAuthenticating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -321,6 +415,49 @@ export default function AuthPage() {
           </Tabs>
         </Card>
       </div>
+      
+      {/* Google Consent Dialog */}
+      <Dialog open={showGoogleConsentDialog} onOpenChange={setShowGoogleConsentDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Privacy Consent</DialogTitle>
+            <DialogDescription>
+              Before signing in with Google, please review and agree to our terms.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <ConsentCheckboxes
+              privacyConsent={googleConsentPrivacy}
+              setPrivacyConsent={setGoogleConsentPrivacy}
+              marketingConsent={googleConsentMarketing}
+              setMarketingConsent={setGoogleConsentMarketing}
+            />
+          </div>
+          
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={handleCancelGoogleLogin}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleGoogleLoginAfterConsent}
+              disabled={!googleConsentPrivacy || isAuthenticating}
+            >
+              {isAuthenticating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Continue with Google"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
