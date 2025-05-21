@@ -10,38 +10,67 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleRedirect = async () => {
-      // Get the hash fragment from the URL
-      const hash = window.location.hash;
-      
-      if (hash && hash.includes('access_token')) {
-        try {
-          // Supabase client will handle parsing the hash and storing the session
-          const { data, error } = await supabase.auth.getSession();
-          
-          if (error) {
-            throw error;
-          }
-          
-          if (data?.session) {
-            // Successfully logged in with OAuth
-            toast({
-              title: "Login successful",
-              description: "You have been logged in",
-              duration: 3000,
-            });
-            navigate('/');
-          }
-        } catch (error) {
-          console.error('Error handling OAuth callback:', error);
-          toast({
-            title: "Login failed",
-            description: "There was a problem with the authentication",
-            variant: "destructive",
-          });
-          navigate('/auth');
+      try {
+        // Check if we have auth data in the URL
+        const hash = window.location.hash;
+        const query = window.location.search;
+        
+        console.log("Auth callback - URL hash:", hash);
+        console.log("Auth callback - URL search:", query);
+        
+        // Supabase client should automatically detect the auth response
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Auth session error:", error);
+          throw error;
         }
-      } else {
-        // No authentication data found, redirect to auth page
+        
+        if (data?.session) {
+          console.log("Session retrieved successfully");
+          // Successfully logged in with OAuth
+          toast({
+            title: "Login successful",
+            description: "You have been logged in",
+            duration: 3000,
+          });
+          navigate('/');
+        } else {
+          console.log("No session data found");
+          // We have auth parameters but no session - might be an error or processing delay
+          toast({
+            title: "Authentication in progress",
+            description: "Finalizing your login...",
+            duration: 3000,
+          });
+          
+          // Try once more after a short delay
+          setTimeout(async () => {
+            const { data: retryData, error: retryError } = await supabase.auth.getSession();
+            if (retryError) {
+              throw retryError;
+            }
+            
+            if (retryData?.session) {
+              toast({
+                title: "Login successful",
+                description: "You have been logged in",
+                duration: 3000,
+              });
+              navigate('/');
+            } else {
+              // Still no session, redirect to auth page
+              navigate('/auth');
+            }
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error handling OAuth callback:', error);
+        toast({
+          title: "Login failed",
+          description: "There was a problem with the authentication",
+          variant: "destructive",
+        });
         navigate('/auth');
       }
     };
