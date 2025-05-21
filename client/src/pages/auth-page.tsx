@@ -158,8 +158,36 @@ export default function AuthPage() {
 
   // Handle Google login initiation
   const handleGoogleLogin = () => {
-    setShowGoogleConsentDialog(true);
-    setPendingGoogleAuth(true);
+    // Check if the user has already consented
+    const hasConsented = localStorage.getItem('hasGivenConsent');
+    
+    if (hasConsented) {
+      // If they've already consented, proceed directly to Google auth
+      handleDirectGoogleLogin();
+    } else {
+      // Otherwise show the consent dialog
+      setShowGoogleConsentDialog(true);
+      setPendingGoogleAuth(true);
+    }
+  };
+  
+  // Direct Google login without consent dialog
+  const handleDirectGoogleLogin = async () => {
+    setIsAuthenticating(true);
+    
+    try {
+      await signInWithGoogle();
+      // Auth state will be managed by the callback URL
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        title: "Google login failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+      setIsAuthenticating(false);
+      setPendingGoogleAuth(false);
+    }
   };
   
   // Handle Google login after consent
@@ -182,6 +210,9 @@ export default function AuthPage() {
       localStorage.setItem('pendingPrivacyConsent', 'true');
       localStorage.setItem('pendingPrivacyConsentDate', consentDate);
       localStorage.setItem('pendingMarketingConsent', googleConsentMarketing.toString());
+      
+      // Remember that this user has consented so we don't ask again
+      localStorage.setItem('hasGivenConsent', 'true');
       
       await signInWithGoogle();
       // Auth state will be managed by the callback URL
