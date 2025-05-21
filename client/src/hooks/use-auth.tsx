@@ -51,13 +51,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
+    console.log("Attempting to sign in with email:", email);
+    
     const response = await supabase.auth.signInWithPassword({ email, password });
     
     if (response.error) {
+      console.error("Sign in error:", response.error);
       toast({
         title: "Login failed",
         description: response.error.message,
         variant: "destructive",
+      });
+    } else {
+      console.log("Sign in successful, session:", response.data.session);
+      console.log("User data:", response.data.user);
+      
+      // Set user and session immediately
+      setUser(response.data.user);
+      setSession(response.data.session);
+      
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
       });
     }
     
@@ -94,19 +109,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     setIsLoading(true);
+    // Use current origin for redirects to make it work in any environment
+    const redirectUrl = `${window.location.origin}/auth-callback`;
+    console.log("Using redirect URL for Google auth:", redirectUrl);
+    
     const response = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `https://schedule.speakmyway.com/auth-callback`
+        redirectTo: redirectUrl
       }
     });
     
     if (response.error) {
+      console.error("Google login error:", response.error);
       toast({
         title: "Google login failed",
         description: response.error.message,
         variant: "destructive",
       });
+    } else {
+      console.log("Google login initiated successfully");
     }
     
     setIsLoading(false);
