@@ -55,9 +55,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check if user needs welcome screen
   useEffect(() => {
     if (user && !isLoading) {
-      // Check if user has a name set in their metadata
-      const userName = user.user_metadata?.name;
-      setNeedsWelcomeScreen(!userName);
+      // Check if the user has already seen the welcome screen
+      const hasSeenWelcomeScreen = localStorage.getItem(`hasSeenWelcomeScreen-${user.id}`);
+      
+      // Show welcome screen for all new users regardless of whether they have a name
+      if (!hasSeenWelcomeScreen) {
+        setNeedsWelcomeScreen(true);
+      } else {
+        setNeedsWelcomeScreen(false);
+      }
     }
   }, [user, isLoading]);
 

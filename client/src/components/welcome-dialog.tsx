@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,15 @@ export function WelcomeDialog({ isOpen, onClose }: WelcomeDialogProps) {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Initialize the name input with user's name from Google profile if available
+  useEffect(() => {
+    if (user?.user_metadata?.name && isOpen) {
+      setName(user.user_metadata.name);
+    } else if (user?.user_metadata?.full_name && isOpen) {
+      setName(user.user_metadata.full_name);
+    }
+  }, [user, isOpen]);
+  
   const handleSubmit = async () => {
     if (!name.trim()) {
       toast({
@@ -46,6 +55,11 @@ export function WelcomeDialog({ isOpen, onClose }: WelcomeDialogProps) {
       
       // Update local app context
       setUserName(name);
+      
+      // Mark that this user has seen the welcome screen
+      if (user) {
+        localStorage.setItem(`hasSeenWelcomeScreen-${user.id}`, 'true');
+      }
       
       toast({
         title: "Welcome to Speak My Way!",
@@ -89,6 +103,8 @@ export function WelcomeDialog({ isOpen, onClose }: WelcomeDialogProps) {
             />
             <p className="text-sm text-muted-foreground">
               This name will be used throughout the app, including in voice interactions.
+              {user?.user_metadata?.name || user?.user_metadata?.full_name ? 
+               " We've pre-filled your name from your profile, but you can change it if you prefer." : ""}
             </p>
           </div>
         </div>
