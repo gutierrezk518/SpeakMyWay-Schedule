@@ -3,10 +3,19 @@ import { useLocation } from 'wouter';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { useAppContext } from '@/contexts/app-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function AuthCallback() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { updateUserMetadata } = useAuth();
+  const { 
+    setUserName,
+    setUserConsentGiven,
+    setUserConsentDate,
+    setUserMarketingConsent
+  } = useAppContext();
 
   useEffect(() => {
     const handleRedirect = async () => {
@@ -18,6 +27,11 @@ export default function AuthCallback() {
         console.log("Auth callback - URL hash:", hash);
         console.log("Auth callback - URL search:", query);
         
+        // Process any pending consent data from Google sign-in
+        const pendingPrivacyConsent = localStorage.getItem('pendingPrivacyConsent');
+        const pendingPrivacyConsentDate = localStorage.getItem('pendingPrivacyConsentDate');
+        const pendingMarketingConsent = localStorage.getItem('pendingMarketingConsent');
+        
         // Supabase client should automatically detect the auth response
         const { data, error } = await supabase.auth.getSession();
         
@@ -28,6 +42,41 @@ export default function AuthCallback() {
         
         if (data?.session) {
           console.log("Session retrieved successfully");
+          
+          // If we have pending consent data, save it to user metadata
+          if (pendingPrivacyConsent && pendingPrivacyConsentDate) {
+            try {
+              // Save consent information to user metadata
+              await updateUserMetadata({
+                privacyPolicyConsent: pendingPrivacyConsent === 'true',
+                privacyPolicyConsentDate: pendingPrivacyConsentDate,
+                marketingConsent: pendingMarketingConsent === 'true',
+                marketingConsentDate: pendingMarketingConsent === 'true' ? pendingPrivacyConsentDate : null
+              });
+              
+              // Update app context with consent information
+              setUserConsentGiven(pendingPrivacyConsent === 'true');
+              setUserConsentDate(pendingPrivacyConsentDate);
+              setUserMarketingConsent(pendingMarketingConsent === 'true');
+              
+              // Clean up localStorage
+              localStorage.removeItem('pendingPrivacyConsent');
+              localStorage.removeItem('pendingPrivacyConsentDate');
+              localStorage.removeItem('pendingMarketingConsent');
+            } catch (metadataError) {
+              console.error("Error saving consent metadata:", metadataError);
+            }
+          }
+          
+          // Get user profile from session
+          const user = data.session.user;
+          
+          // If user has a name in their metadata, save it to app context
+          if (user?.user_metadata?.name) {
+            setUserName(user.user_metadata.name);
+            localStorage.setItem("speakMyWayUser", user.user_metadata.name);
+          }
+          
           // Successfully logged in with OAuth
           toast({
             title: "Login successful",
@@ -52,6 +101,15 @@ export default function AuthCallback() {
             }
             
             if (retryData?.session) {
+              // Get user profile from session
+              const user = retryData.session.user;
+              
+              // If user has a name in their metadata, save it to app context
+              if (user?.user_metadata?.name) {
+                setUserName(user.user_metadata.name);
+                localStorage.setItem("speakMyWayUser", user.user_metadata.name);
+              }
+              
               toast({
                 title: "Login successful",
                 description: "You have been logged in",
@@ -60,6 +118,11 @@ export default function AuthCallback() {
               navigate('/');
             } else {
               // Still no session, redirect to auth page
+              toast({
+                title: "Login failed",
+                description: "Unable to complete authentication",
+                variant: "destructive",
+              });
               navigate('/auth');
             }
           }, 2000);
@@ -76,7 +139,7 @@ export default function AuthCallback() {
     };
 
     handleRedirect();
-  }, [navigate, toast]);
+  }, [navigate, toast, updateUserMetadata, setUserName, setUserConsentGiven, setUserConsentDate, setUserMarketingConsent]);
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
