@@ -21,7 +21,7 @@ interface WelcomeDialogProps {
 }
 
 export function WelcomeDialog({ isOpen, onClose }: WelcomeDialogProps) {
-  const { user, updateUserMetadata } = useAuth();
+  const { user, updateUserMetadata, completeWelcomeScreen } = useAuth();
   const { setUserName } = useAppContext();
   const { toast } = useToast();
   

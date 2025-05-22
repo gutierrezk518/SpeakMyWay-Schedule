@@ -21,6 +21,7 @@ type AuthContextType = {
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   updateUserMetadata: (metadata: object) => Promise<{ error: AuthError | null }>;
   needsWelcomeScreen: boolean;
+  completeWelcomeScreen: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -209,6 +210,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const completeWelcomeScreen = () => {
+    if (user) {
+      localStorage.setItem(`hasSeenWelcomeScreen-${user.id}`, 'true');
+      setNeedsWelcomeScreen(false);
+    }
+  };
+
   const value = {
     user,
     session,
@@ -220,7 +228,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser,
     resetPassword,
     updateUserMetadata,
-    needsWelcomeScreen
+    needsWelcomeScreen,
+    completeWelcomeScreen
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
