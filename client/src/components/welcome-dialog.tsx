@@ -56,10 +56,8 @@ export function WelcomeDialog({ isOpen, onClose }: WelcomeDialogProps) {
       // Update local app context
       setUserName(name);
       
-      // Mark that this user has seen the welcome screen
-      if (user) {
-        localStorage.setItem(`hasSeenWelcomeScreen-${user.id}`, 'true');
-      }
+      // Mark that this user has seen the welcome screen using the auth hook function
+      completeWelcomeScreen();
       
       toast({
         title: "Welcome to Speak My Way!",
