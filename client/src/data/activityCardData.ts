@@ -1,4 +1,13 @@
- 
+import { ScheduleActivity } from './scheduleData';
+
+// Helper function to generate image paths
+const imagePath = (name: string): string => `/activity-cards/${name}.png`;
+
+// Custom activity cards organized by category
+export const customActivityCards: Record<string, ScheduleActivity[]> = {
+  "hygiene": [
+    { 
+      id: "washface", 
       title: "Wash Face", 
       icon: "ri-emotion-happy-fill", 
       bgColor: "green-400", 
