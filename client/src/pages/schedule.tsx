@@ -342,7 +342,7 @@ export default function Schedule() {
   const visibleActivities = filteredActivities.slice(startIndex, startIndex + itemsPerPage);
   
   // Handle drag end event
-  const onDragEnd = useCallback((result: DropResult) => {
+  const onDragEnd = useCallback(async (result: DropResult) => {
     const { source, destination } = result;
     setDraggedItem(null);
     setIsDragging(false); // Set dragging state to false
@@ -422,7 +422,7 @@ export default function Schedule() {
         if (!activityToAdd || !user) return;
         
         // Add to user favorites in Supabase
-        await addFavorite.mutateAsync(parseInt(activityToAdd.id));
+        addFavorite.mutate(parseInt(activityToAdd.id));
         
         // Automatically switch to favorites category to show the result
         if (destination.droppableId === "favorites-button") {
@@ -449,7 +449,7 @@ export default function Schedule() {
         if (!activityToRemove || !user) return;
         
         // Remove from user favorites in Supabase
-        await removeFavorite.mutateAsync(parseInt(activityToRemove.id));
+        removeFavorite.mutate(parseInt(activityToRemove.id));
         
         // Speak confirmation
         speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
