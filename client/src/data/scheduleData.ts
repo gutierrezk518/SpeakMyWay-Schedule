@@ -43,8 +43,8 @@ export const timeSections: ScheduleTimeSection[] = [
 // This static data is no longer used
 
 // Activities are now loaded from Supabase schedule_vocabulary_cards table
-// This static data is no longer used
-export const availableActivitiesLegacy: Record<string, ScheduleActivity[]> = {
+// This static data is no longer used and should not be imported anywhere
+const availableActivitiesLegacy: Record<string, ScheduleActivity[]> = {
   "meals": [
     { id: "breakfast", title: "Breakfast", icon: "ri-cup-fill", bgColor: "purple-300" },
     { id: "lunch", title: "Lunch", icon: "ri-sandwich-line", bgColor: "purple-300" },

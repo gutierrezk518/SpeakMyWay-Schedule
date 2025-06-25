@@ -295,10 +295,12 @@ export default function Schedule() {
   // Get the current time section's activities
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
-  // Get the available activities for the selected category - using Supabase data
-  const categoryActivities = !supabaseActivityData ? [] : selectedCategory === 'all'
-    ? supabaseActivityData.allCards // Use all cards from Supabase
-    : supabaseActivityData.organizedData[selectedCategory] || [];
+  // Get activities for selected category from Supabase data only
+  const categoryActivities = supabaseActivityData?.organizedData 
+    ? (selectedCategory === "all" 
+        ? supabaseActivityData.allCards 
+        : supabaseActivityData.organizedData[selectedCategory] || [])
+    : [];
 
   // Debug individual data sources
   const { data: rawCategories, isLoading: rawCategoriesLoading } = useSupabaseCategories();
