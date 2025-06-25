@@ -154,7 +154,8 @@ export default function Schedule() {
   // Fetch Supabase data with user context for favorites
   const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id);
   const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
-  const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
+  // Temporarily disable favorites to fix card loading issue
+  // const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
   
   // Check for email verification URL parameters when page loads
   useEffect(() => {

@@ -192,7 +192,9 @@ export function convertToScheduleActivity(
 export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: string | null) {
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useSupabaseCategories();
   const { data: cards, isLoading: cardsLoading, error: cardsError } = useSupabaseVocabularyCards();
-  const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
+  // Temporarily disable favorites to fix card loading issue
+  // const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
+  const userFavorites = null;
 
   return useQuery({
     queryKey: ['organized-activity-data', language, userId],
@@ -234,13 +236,15 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
-        console.log(`Processing card ${index + 1}:`, {
-          id: card.id,
-          categoryname_en: card.categoryname_en,
-          text_en: card.text_en,
-          categoryExists: !!organizedData[card.categoryname_en],
-          activity: activity
-        });
+        if (index < 5) { // Only log first 5 cards to reduce noise
+          console.log(`Processing card ${index + 1}:`, {
+            id: card.id,
+            categoryname_en: card.categoryname_en,
+            text_en: card.text_en,
+            categoryExists: !!organizedData[card.categoryname_en],
+            activity: activity
+          });
+        }
         
         // Add to main category
         if (organizedData[card.categoryname_en]) {
