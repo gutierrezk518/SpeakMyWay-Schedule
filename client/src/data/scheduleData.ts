@@ -39,15 +39,11 @@ export const timeSections: ScheduleTimeSection[] = [
   },
 ];
 
-// Categories for the activity cards - using colors from the wireframe
+// Categories for the activity cards - now loaded from Supabase
+// This is kept for fallback but should be replaced by Supabase data
 export const activityCategories = [
   { id: "all", name: "All", color: "gray-300" },
   { id: "favorites", name: "Favorites", color: "yellow-300" },
-  { id: "media", name: "Media", color: "blue-400" },
-  { id: "meals", name: "Meals", color: "purple-300" },
-  { id: "arts", name: "Arts", color: "blue-300" },
-  { id: "social", name: "Social", color: "purple-200" },
-  { id: "holiday", name: "Holiday", color: "orange-100" },
   { id: "vacation", name: "Vacation", color: "orange-200" }, 
   { id: "outdoors", name: "Outdoors", color: "orange-300" },
   { id: "indoors", name: "Indoors", color: "blue-400" },
