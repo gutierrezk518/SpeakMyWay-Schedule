@@ -197,7 +197,14 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
   return useQuery({
     queryKey: ['organized-activity-data', language, userId],
     queryFn: () => {
+      console.log('=== ORGANIZING ACTIVITY DATA ===');
+      console.log('Categories count:', categories?.length);
+      console.log('Cards count:', cards?.length);
+      console.log('Categories:', categories);
+      console.log('Sample cards (first 3):', cards?.slice(0, 3));
+
       if (!categories || !cards) {
+        console.log('Missing data - categories:', !!categories, 'cards:', !!cards);
         throw new Error('Categories or cards data not available');
       }
 
@@ -206,6 +213,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         map[cat.categoryname_en] = cat.color;
         return map;
       }, {} as Record<string, string>);
+      console.log('Category color map:', categoryColorMap);
 
       // Create set of favorite card IDs for quick lookup
       const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
@@ -220,19 +228,36 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       // Add favorites category
       organizedData['favorites'] = [];
 
-      cards.forEach(card => {
+      console.log('Initial organized data structure:', Object.keys(organizedData));
+
+      cards.forEach((card, index) => {
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
+        
+        console.log(`Processing card ${index + 1}:`, {
+          id: card.id,
+          categoryname_en: card.categoryname_en,
+          text_en: card.text_en,
+          categoryExists: !!organizedData[card.categoryname_en],
+          activity: activity
+        });
         
         // Add to main category
         if (organizedData[card.categoryname_en]) {
           organizedData[card.categoryname_en].push(activity);
+        } else {
+          console.warn('Category not found in organizedData:', card.categoryname_en);
         }
 
         // Add to favorites if user has favorited this card
         if (favoriteCardIds.has(card.id)) {
           organizedData['favorites'].push(activity);
         }
+      });
+
+      console.log('Final organized data counts by category:');
+      Object.keys(organizedData).forEach(categoryName => {
+        console.log(`  ${categoryName}: ${organizedData[categoryName].length} cards`);
       });
 
       // Sort each category's cards by sort_order, with fallback for zero values
@@ -264,15 +289,25 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         });
       });
 
-      return {
+      const result = {
         organizedData,
         categories,
         categoryColorMap,
         allCards: Object.values(organizedData).flat(),
         favoriteCardIds,
       };
+
+      console.log('Final result summary:');
+      console.log('  Total allCards:', result.allCards.length);
+      console.log('  Available categories:', Object.keys(result.organizedData));
+      console.log('  Sample organized data for "Places & Transportation":', result.organizedData['Places & Transportation']?.slice(0, 2));
+      console.log('=== END ORGANIZING ACTIVITY DATA ===');
+
+      return result;
     },
     enabled: !categoriesLoading && !cardsLoading && !!categories && !!cards,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 }
 

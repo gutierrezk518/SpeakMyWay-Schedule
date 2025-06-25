@@ -276,6 +276,22 @@ export default function Schedule() {
   const categoryActivities = !supabaseActivityData ? [] : selectedCategory === 'all'
     ? supabaseActivityData.allCards // Use all cards from Supabase
     : supabaseActivityData.organizedData[selectedCategory] || [];
+
+  // Debug logging for UI rendering
+  console.log('=== SCHEDULE PAGE DEBUG ===');
+  console.log('supabaseActivityData exists:', !!supabaseActivityData);
+  console.log('supabaseActivityData object:', supabaseActivityData);
+  console.log('dataLoading:', dataLoading);
+  console.log('dataError:', dataError);
+  console.log('selectedCategory:', selectedCategory);
+  console.log('categoryActivities count:', categoryActivities.length);
+  console.log('Available categories:', supabaseActivityData ? Object.keys(supabaseActivityData.organizedData) : 'none');
+  if (supabaseActivityData) {
+    console.log('Total allCards:', supabaseActivityData.allCards.length);
+    console.log('organizedData keys:', Object.keys(supabaseActivityData.organizedData));
+    console.log('Selected category data:', supabaseActivityData.organizedData[selectedCategory]);
+  }
+  console.log('=== END SCHEDULE PAGE DEBUG ===');
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
