@@ -9,7 +9,8 @@ import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
-import { useOrganizedActivityData, useActivityCategories } from "@/hooks/use-supabase-data";
+import { useOrganizedActivityData, useActivityCategories, useUserFavoritesManager } from "@/hooks/use-supabase-data";
+import { useAuth } from "@/hooks/use-auth";
 // Authentication removed
 
 // Compact Timer Component
@@ -148,10 +149,12 @@ export default function Schedule() {
   const { toast } = useToast();
   // Authentication removed - no user object
   const [location] = useLocation();
+  const { user } = useAuth();
   
-  // Fetch Supabase data
-  const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language);
+  // Fetch Supabase data with user context for favorites
+  const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id);
   const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
+  const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
   
   // Check for email verification URL parameters when page loads
   useEffect(() => {
@@ -272,9 +275,7 @@ export default function Schedule() {
   // Get the available activities for the selected category - using Supabase data
   const categoryActivities = !supabaseActivityData ? [] : selectedCategory === 'all'
     ? supabaseActivityData.allCards // Use all cards from Supabase
-    : selectedCategory === 'favorites'
-      ? favoriteActivities // Show user's favorite activities
-      : supabaseActivityData.organizedData[selectedCategory] || [];
+    : supabaseActivityData.organizedData[selectedCategory] || [];
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
@@ -418,10 +419,10 @@ export default function Schedule() {
         (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
       try {
         const activityToAdd = visibleActivities[source.index];
-        if (!activityToAdd) return;
+        if (!activityToAdd || !user) return;
         
-        // Add to favorites - this will avoid duplicates by checking isFavorite
-        addToFavorites(activityToAdd);
+        // Add to user favorites in Supabase
+        await addFavorite.mutateAsync(parseInt(activityToAdd.id));
         
         // Automatically switch to favorites category to show the result
         if (destination.droppableId === "favorites-button") {
@@ -432,25 +433,36 @@ export default function Schedule() {
         speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
       } catch (error) {
         console.error("Error adding to favorites:", error);
+        toast({
+          title: "Error",
+          description: "Failed to add to favorites",
+          variant: "destructive",
+        });
       }
     }
     
     // NEW: If removing from favorites by dragging out
     if (source.droppableId === "favorites" && destination.droppableId === "activity-cards") {
       try {
-        const activityToRemove = favoriteActivities[source.index];
-        if (!activityToRemove) return;
+        const favoriteCards = supabaseActivityData?.organizedData['favorites'] || [];
+        const activityToRemove = favoriteCards[source.index];
+        if (!activityToRemove || !user) return;
         
-        // Remove from favorites
-        removeFromFavorites(activityToRemove.id);
+        // Remove from user favorites in Supabase
+        await removeFavorite.mutateAsync(parseInt(activityToRemove.id));
         
         // Speak confirmation
         speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
       } catch (error) {
         console.error("Error removing from favorites:", error);
+        toast({
+          title: "Error", 
+          description: "Failed to remove from favorites",
+          variant: "destructive",
+        });
       }
     }
-  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, favoriteActivities, addToFavorites, removeFromFavorites]);
+  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, supabaseActivityData, addFavorite, removeFavorite, user, toast]);
   
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
@@ -464,10 +476,11 @@ export default function Schedule() {
       const draggedActivity = currentSchedule[source.index];
       setDraggedItem(draggedActivity);
     } else if (source.droppableId === "favorites") {
-      const draggedActivity = favoriteActivities[source.index];
+      const favoriteCards = supabaseActivityData?.organizedData['favorites'] || [];
+      const draggedActivity = favoriteCards[source.index];
       setDraggedItem(draggedActivity);
     }
-  }, [visibleActivities, currentSchedule, favoriteActivities]);
+  }, [visibleActivities, currentSchedule, supabaseActivityData]);
   
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
@@ -1097,14 +1110,14 @@ export default function Schedule() {
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
                         }`}
                       >
-                        {favoriteActivities.length === 0 ? (
+                        {(supabaseActivityData?.organizedData['favorites']?.length || 0) === 0 ? (
                           <div className="col-span-full flex flex-col items-center justify-center text-center p-4 text-gray-500 dark:text-gray-400">
                             <div className="text-3xl mb-2">⭐</div>
                             <h3 className="font-bold mb-1">No favorites yet</h3>
                             <p className="text-sm">Drag activities here to add them to your favorites.</p>
                           </div>
                         ) : (
-                          favoriteActivities.map((activity: ScheduleActivity, index: number) => (
+                          (supabaseActivityData?.organizedData['favorites'] || []).map((activity: ScheduleActivity, index: number) => (
                             <div key={activity.id} className="relative flex flex-col items-center rounded p-1">
                               <ActivityCard
                                 activity={activity}
@@ -1117,10 +1130,19 @@ export default function Schedule() {
                                 <div className="mt-1 w-full flex justify-center">
                                   <button 
                                     className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700"
-                                    onClick={() => toggleFavorite(activity)}
+                                    onClick={async () => {
+                                      if (user) {
+                                        try {
+                                          await removeFavorite.mutateAsync(parseInt(activity.id));
+                                        } catch (error) {
+                                          console.error("Error removing favorite:", error);
+                                        }
+                                      }
+                                    }}
                                     aria-label="Remove from favorites"
+                                    disabled={isRemovingFavorite}
                                   >
-                                    Remove
+                                    {isRemovingFavorite ? "..." : "Remove"}
                                   </button>
                                 </div>
                               )}

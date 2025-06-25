@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { ScheduleActivity } from '@/data/scheduleData';
 
@@ -27,6 +27,104 @@ export interface SupabaseUserFavorite {
   user_id: string;
   vocabulary_card_id: number;
   created_at: string;
+}
+
+// Hook to fetch user favorites from Supabase
+export function useUserFavorites(userId: string | null) {
+  return useQuery({
+    queryKey: ['user-favorites', userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      
+      console.log('Fetching user favorites for user:', userId);
+      const { data, error } = await supabase
+        .from('schedule_user_favorites')
+        .select(`
+          id,
+          vocabulary_card_id,
+          created_at,
+          schedule_vocabulary_cards (
+            id,
+            categoryname_en,
+            text_en,
+            text_es,
+            spoken_word_en,
+            spoken_word_es,
+            icon_url,
+            sort_order
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching user favorites:', error);
+        throw new Error(`Failed to fetch user favorites: ${error.message}`);
+      }
+      
+      console.log('User favorites fetched:', data);
+      return data as (SupabaseUserFavorite & { schedule_vocabulary_cards: SupabaseVocabularyCard })[];
+    },
+    enabled: !!userId,
+  });
+}
+
+// Hook to manage user favorites (add/remove)
+export function useUserFavoritesManager(userId: string | null) {
+  const queryClient = useQueryClient();
+  
+  const addFavorite = useMutation({
+    mutationFn: async (vocabularyCardId: number) => {
+      if (!userId) throw new Error('User not authenticated');
+      
+      const { data, error } = await supabase
+        .from('schedule_user_favorites')
+        .insert({
+          user_id: userId,
+          vocabulary_card_id: vocabularyCardId
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          throw new Error('This item is already in your favorites');
+        }
+        throw new Error(`Failed to add favorite: ${error.message}`);
+      }
+      
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-favorites', userId] });
+    },
+  });
+  
+  const removeFavorite = useMutation({
+    mutationFn: async (vocabularyCardId: number) => {
+      if (!userId) throw new Error('User not authenticated');
+      
+      const { error } = await supabase
+        .from('schedule_user_favorites')
+        .delete()
+        .eq('user_id', userId)
+        .eq('vocabulary_card_id', vocabularyCardId);
+      
+      if (error) {
+        throw new Error(`Failed to remove favorite: ${error.message}`);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-favorites', userId] });
+    },
+  });
+  
+  return {
+    addFavorite,
+    removeFavorite,
+    isAddingFavorite: addFavorite.isPending,
+    isRemovingFavorite: removeFavorite.isPending,
+  };
 }
 
 // Hook to fetch categories from Supabase
@@ -91,12 +189,13 @@ export function convertToScheduleActivity(
 }
 
 // Hook to get organized activity data (categories with their cards)
-export function useOrganizedActivityData(language: 'en' | 'es' = 'en') {
+export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: string | null) {
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useSupabaseCategories();
   const { data: cards, isLoading: cardsLoading, error: cardsError } = useSupabaseVocabularyCards();
+  const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
 
   return useQuery({
-    queryKey: ['organized-activity-data', language],
+    queryKey: ['organized-activity-data', language, userId],
     queryFn: () => {
       if (!categories || !cards) {
         throw new Error('Categories or cards data not available');
@@ -108,6 +207,9 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en') {
         return map;
       }, {} as Record<string, string>);
 
+      // Create set of favorite card IDs for quick lookup
+      const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
+
       // Group cards by category
       const organizedData: Record<string, ScheduleActivity[]> = {};
       
@@ -115,18 +217,36 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en') {
         organizedData[category.categoryname_en] = [];
       });
 
+      // Add favorites category
+      organizedData['favorites'] = [];
+
       cards.forEach(card => {
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
+        // Add to main category
         if (organizedData[card.categoryname_en]) {
           organizedData[card.categoryname_en].push(activity);
+        }
+
+        // Add to favorites if user has favorited this card
+        if (favoriteCardIds.has(card.id)) {
+          organizedData['favorites'].push(activity);
         }
       });
 
       // Sort each category's cards by sort_order, with fallback for zero values
       Object.keys(organizedData).forEach(categoryName => {
         organizedData[categoryName].sort((a, b) => {
+          if (categoryName === 'favorites') {
+            // Sort favorites by when they were added (most recent first)
+            const favA = userFavorites?.find(fav => fav.vocabulary_card_id.toString() === a.id);
+            const favB = userFavorites?.find(fav => fav.vocabulary_card_id.toString() === b.id);
+            if (favA && favB) {
+              return new Date(favB.created_at).getTime() - new Date(favA.created_at).getTime();
+            }
+          }
+
           const cardA = cards.find(c => c.id.toString() === a.id);
           const cardB = cards.find(c => c.id.toString() === b.id);
           
@@ -149,6 +269,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en') {
         categories,
         categoryColorMap,
         allCards: Object.values(organizedData).flat(),
+        favoriteCardIds,
       };
     },
     enabled: !categoriesLoading && !cardsLoading && !!categories && !!cards,
