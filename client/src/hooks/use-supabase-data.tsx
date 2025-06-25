@@ -244,26 +244,36 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
 
       console.log('Processing', cards.length, 'cards...');
       
+      let validCardsProcessed = 0;
+      let invalidCardsSkipped = 0;
+      
       cards.forEach((card, index) => {
-        // Use the card's category directly (no mapping needed)
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
+        
+        console.log(`Processing card ${index + 1}:`, {
+          id: card.id,
+          text_en: card.text_en,
+          categoryname_en: card.categoryname_en,
+          categoryColor,
+          categoryExists: !!organizedData[card.categoryname_en]
+        });
+        
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
-        // Skip invalid cards
         if (!activity) {
-          console.warn('Skipping invalid card at index', index);
+          console.warn(`Failed to convert card: "${card.text_en}"`);
+          invalidCardsSkipped++;
           return;
-        }
-        
-        if (index < 3) {
-          console.log(`Card ${index + 1}: "${card.text_en}" in category "${card.categoryname_en}" with color ${categoryColor}`);
         }
         
         // Add to main category - only add if category exists in schedulecategories
         if (organizedData[card.categoryname_en]) {
           organizedData[card.categoryname_en].push(activity);
+          validCardsProcessed++;
+          console.log(`✓ Added "${card.text_en}" to "${card.categoryname_en}"`);
         } else {
           console.warn(`Card "${card.text_en}" has category "${card.categoryname_en}" which doesn't exist in schedulecategories table`);
+          invalidCardsSkipped++;
         }
 
         // Add to favorites if user has favorited this card
@@ -271,6 +281,8 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
           organizedData['favorites'].push(activity);
         }
       });
+      
+      console.log(`Cards processed: ${validCardsProcessed} valid, ${invalidCardsSkipped} skipped`);
       
       console.log('All cards processed successfully');
 
