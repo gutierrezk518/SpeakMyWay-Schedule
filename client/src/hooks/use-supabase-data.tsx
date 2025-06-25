@@ -330,7 +330,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
   });
 }
 
-// Hook to get activity categories for the category selector
+// Hook to get activity categories for the category selector - purely from Supabase
 export function useActivityCategories(language: 'en' | 'es' = 'en') {
   const { data: supabaseCategories } = useSupabaseCategories();
   const { data: organizedActivities } = useOrganizedActivityData(language);
@@ -340,40 +340,37 @@ export function useActivityCategories(language: 'en' | 'es' = 'en') {
     queryFn: () => {
       if (!supabaseCategories || !organizedActivities) return [];
       
-      // Add special categories first
+      console.log('Building categories from schedulecategories table only');
+      
+      // Start with special categories
       const activityCategories = [
         { 
           id: "all", 
           name: language === 'es' ? "Todos" : "All", 
           color: "gray-300",
-          count: Object.values(organizedActivities).flat().length
+          count: Object.values(organizedActivities.organizedData).flat().length
         },
         { 
           id: "favorites", 
           name: language === 'es' ? "Favoritos" : "Favorites", 
           color: "yellow-300",
-          count: organizedActivities.favorites?.length || 0
+          count: organizedActivities.organizedData.favorites?.length || 0
         },
       ];
       
-      // Get categories that actually have cards
-      const categoriesWithCards = Object.keys(organizedActivities).filter(cat => 
-        cat !== 'favorites' && organizedActivities[cat]?.length > 0
-      );
-      
-      // Add categories that have cards, using Supabase data for colors and names
-      categoriesWithCards.forEach(categoryName => {
-        const supabaseCategory = supabaseCategories.find(cat => cat.categoryname_en === categoryName);
+      // Add all categories from schedulecategories table, showing count of cards
+      supabaseCategories.forEach(category => {
+        const cardCount = organizedActivities.organizedData[category.categoryname_en]?.length || 0;
         
         activityCategories.push({
-          id: categoryName.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'),
-          name: language === 'es' && supabaseCategory?.name_es ? supabaseCategory.name_es : categoryName,
-          color: supabaseCategory?.color || 'gray-400',
-          count: organizedActivities[categoryName]?.length || 0
+          id: category.categoryname_en.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'),
+          name: language === 'es' ? category.name_es : category.categoryname_en,
+          color: category.color,
+          count: cardCount
         });
       });
       
-      console.log('Final activity categories:', activityCategories.map(c => `${c.name} (${c.count || 'no count'})`));
+      console.log('Categories from schedulecategories:', activityCategories.map(c => `${c.name} (${c.count})`));
       
       return activityCategories;
     },

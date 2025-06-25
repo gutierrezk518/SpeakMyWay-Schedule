@@ -39,25 +39,12 @@ export const timeSections: ScheduleTimeSection[] = [
   },
 ];
 
-// Categories for the activity cards - now loaded from Supabase
-// This is kept for fallback but should be replaced by Supabase data
-export const activityCategories = [
-  { id: "all", name: "All", color: "gray-300" },
-  { id: "favorites", name: "Favorites", color: "yellow-300" },
-  { id: "vacation", name: "Vacation", color: "orange-200" }, 
-  { id: "outdoors", name: "Outdoors", color: "orange-300" },
-  { id: "indoors", name: "Indoors", color: "blue-400" },
-  { id: "hygiene", name: "Hygiene", color: "green-400" },
-  { id: "chores", name: "Chores", color: "green-200" },
-  { id: "dressing", name: "Dressing", color: "green-400" },
-  { id: "appointments", name: "Appointments", color: "purple-300" },
-  { id: "transportation", name: "Transportation", color: "blue-500" },
-  { id: "places", name: "Places", color: "orange-300" },
-];
+// Categories are now loaded from Supabase schedulecategories table
+// This static data is no longer used
 
-// All available activities grouped by category - using clear, high-contrast colors
-// and simplified icons for neurodivergent accessibility
-export const availableActivities: Record<string, ScheduleActivity[]> = {
+// Activities are now loaded from Supabase schedule_vocabulary_cards table
+// This static data is no longer used
+export const availableActivitiesLegacy: Record<string, ScheduleActivity[]> = {
   "meals": [
     { id: "breakfast", title: "Breakfast", icon: "ri-cup-fill", bgColor: "purple-300" },
     { id: "lunch", title: "Lunch", icon: "ri-sandwich-line", bgColor: "purple-300" },

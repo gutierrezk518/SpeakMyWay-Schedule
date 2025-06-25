@@ -8,7 +8,7 @@ import { speak } from "@/lib/tts";
 import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
-import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
+import { ScheduleActivity, ScheduleTimeSection } from "@/data/scheduleData";
 import { useOrganizedActivityData, useActivityCategories, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards } from "@/hooks/use-supabase-data";
 import { useAuth } from "@/hooks/use-auth";
 // Authentication removed
@@ -208,7 +208,29 @@ export default function Schedule() {
     } else if (!hasVisitedBefore) {
       // First-time user - set the flag and return initial data
       localStorage.setItem('hasVisitedBefore', 'true');
-      return initialScheduleData;
+      return [
+        {
+          id: "morning",
+          name: "Morning",
+          icon: "ri-sun-fill",
+          iconColor: "yellow-500",
+          activities: []
+        },
+        {
+          id: "afternoon",
+          name: "Afternoon",
+          icon: "ri-sun-foggy-fill",
+          iconColor: "orange-500",
+          activities: []
+        },
+        {
+          id: "evening",
+          name: "Evening",
+          icon: "ri-moon-fill",
+          iconColor: "indigo-500",
+          activities: []
+        }
+      ];
     } else {
       // User has visited before but has no schedule - return empty schedule
       return [
