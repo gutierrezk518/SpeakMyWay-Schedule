@@ -8,8 +8,8 @@ import { speak } from "@/lib/tts";
 import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
-import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
+import { useOrganizedActivityData, useActivityCategories } from "@/hooks/use-supabase-data";
 // Authentication removed
 
 // Compact Timer Component
@@ -20,6 +20,10 @@ const TimerComponent = () => {
   
   // Get the user name and language from context
   const { userName, language } = useAppContext();
+  
+  // Fetch Supabase data
+  const { data: activityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language);
+  const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -265,18 +269,12 @@ export default function Schedule() {
   // Get the current time section's activities
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
-  // Get the available activities for the selected category - using custom activities with images
-  const categoryActivities = selectedCategory === 'all'
-    ? allCustomActivityCards // Use our custom activities with images
+  // Get the available activities for the selected category - using Supabase data
+  const categoryActivities = !activityData ? [] : selectedCategory === 'all'
+    ? activityData.allCards // Use all cards from Supabase
     : selectedCategory === 'favorites'
       ? favoriteActivities // Show user's favorite activities
-      : selectedCategory === 'indoors-chores' 
-        ? [...(customActivityCards['media'] || []), ...(customActivityCards['arts'] || []), ...(customActivityCards['indoors'] || []), ...(customActivityCards['chores'] || [])]
-        : selectedCategory === 'outdoors-social'
-          ? [...(customActivityCards['outdoors'] || []), ...(customActivityCards['social'] || [])]
-          : selectedCategory === 'vacation'
-            ? [...(customActivityCards['vacation'] || [])]
-            : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
+      : activityData.organizedData[selectedCategory] || [];
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
