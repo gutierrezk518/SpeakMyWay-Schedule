@@ -288,7 +288,10 @@ export default function Schedule() {
   if (supabaseActivityData) {
     console.log('SUCCESS: Data loaded with', supabaseActivityData.allCards.length, 'total cards');
   } else if (dataError) {
-    console.error('Data error:', dataError);
+    console.error('Data error details:', dataError);
+    console.error('Data error message:', dataError?.message);
+  } else {
+    console.log('No data yet, still loading or failed silently');
   }
             
   // Filter activities by search query if one exists

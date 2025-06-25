@@ -157,7 +157,10 @@ export function useSupabaseVocabularyCards() {
       console.log('Fetching vocabulary cards from Supabase...');
       const { data, error } = await supabase
         .from('schedule_vocabulary_cards')
-        .select('*')
+        .select(`
+          *,
+          id
+        `)
         .order('sort_order, text_en');
       
       if (error) {
@@ -165,7 +168,8 @@ export function useSupabaseVocabularyCards() {
         throw new Error(`Failed to fetch vocabulary cards: ${error.message}`);
       }
       
-      console.log('Vocabulary cards fetched:', data);
+      console.log('Vocabulary cards fetched (first card):', data?.[0]);
+      console.log('Total cards:', data?.length);
       return data as SupabaseVocabularyCard[];
     },
   });
@@ -176,17 +180,25 @@ export function convertToScheduleActivity(
   card: SupabaseVocabularyCard, 
   categoryColor: string,
   language: 'en' | 'es' = 'en'
-): ScheduleActivity {
-  return {
-    id: card.id.toString(),
-    title: language === 'es' ? card.text_es : card.text_en,
-    titleEs: card.text_es,
+): ScheduleActivity | null {
+  // Handle missing or invalid data
+  if (!card || !card.id) {
+    console.warn('Skipping card with missing ID:', card);
+    return null;
+  }
+
+  const result = {
+    id: String(card.id), // Safe conversion
+    title: language === 'es' ? (card.text_es || card.text_en) : card.text_en,
+    titleEs: card.text_es || card.text_en,
     icon: card.icon_url || 'ri-bookmark-fill',
-    bgColor: categoryColor,
-    speechText: language === 'es' ? card.spoken_word_es : card.spoken_word_en,
-    speechTextEs: card.spoken_word_es,
+    bgColor: categoryColor || 'gray-300',
+    speechText: language === 'es' ? (card.spoken_word_es || card.spoken_word_en) : card.spoken_word_en,
+    speechTextEs: card.spoken_word_es || card.spoken_word_en,
     time: undefined,
   };
+  
+  return result;
 }
 
 // Hook to get organized activity data (categories with their cards)
@@ -228,9 +240,21 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       // Add favorites category
       organizedData['favorites'] = [];
 
+      console.log('Processing', cards.length, 'cards...');
+      
       cards.forEach((card, index) => {
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
+        
+        // Skip invalid cards
+        if (!activity) {
+          console.warn('Skipping invalid card at index', index);
+          return;
+        }
+        
+        if (index === 0) {
+          console.log('First card conversion result:', activity);
+        }
         
         // Add to main category
         if (organizedData[card.categoryname_en]) {
@@ -244,6 +268,8 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
           organizedData['favorites'].push(activity);
         }
       });
+      
+      console.log('All cards processed successfully');
 
       console.log('Final organized data counts by category:');
       Object.keys(organizedData).forEach(categoryName => {
@@ -289,6 +315,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
 
       console.log('RESULT: Total cards organized:', result.allCards.length);
       console.log('RESULT: Categories with cards:', Object.keys(result.organizedData).filter(k => result.organizedData[k].length > 0));
+      console.log('RESULT: Sample result object keys:', Object.keys(result));
       console.log('=== END ORGANIZING ACTIVITY DATA ===');
 
       return result;
