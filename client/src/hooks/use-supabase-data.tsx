@@ -332,30 +332,51 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
 
 // Hook to get activity categories for the category selector
 export function useActivityCategories(language: 'en' | 'es' = 'en') {
-  const { data: categories } = useSupabaseCategories();
+  const { data: supabaseCategories } = useSupabaseCategories();
+  const { data: organizedActivities } = useOrganizedActivityData(language);
   
   return useQuery({
-    queryKey: ['activity-categories', language],
+    queryKey: ['activity-categories', language, supabaseCategories?.length, organizedActivities ? Object.keys(organizedActivities).length : 0],
     queryFn: () => {
-      if (!categories) return [];
+      if (!supabaseCategories || !organizedActivities) return [];
       
-      // Add special categories
+      // Add special categories first
       const activityCategories = [
-        { id: "all", name: language === 'es' ? "Todos" : "All", color: "gray-300" },
-        { id: "favorites", name: language === 'es' ? "Favoritos" : "Favorites", color: "yellow-300" },
+        { 
+          id: "all", 
+          name: language === 'es' ? "Todos" : "All", 
+          color: "gray-300",
+          count: Object.values(organizedActivities).flat().length
+        },
+        { 
+          id: "favorites", 
+          name: language === 'es' ? "Favoritos" : "Favorites", 
+          color: "yellow-300",
+          count: organizedActivities.favorites?.length || 0
+        },
       ];
       
-      // Add categories from database
-      categories.forEach(cat => {
+      // Get categories that actually have cards
+      const categoriesWithCards = Object.keys(organizedActivities).filter(cat => 
+        cat !== 'favorites' && organizedActivities[cat]?.length > 0
+      );
+      
+      // Add categories that have cards, using Supabase data for colors and names
+      categoriesWithCards.forEach(categoryName => {
+        const supabaseCategory = supabaseCategories.find(cat => cat.categoryname_en === categoryName);
+        
         activityCategories.push({
-          id: cat.categoryname_en,
-          name: language === 'es' ? cat.name_es : cat.categoryname_en,
-          color: cat.color,
+          id: categoryName.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'),
+          name: language === 'es' && supabaseCategory?.name_es ? supabaseCategory.name_es : categoryName,
+          color: supabaseCategory?.color || 'gray-400',
+          count: organizedActivities[categoryName]?.length || 0
         });
       });
       
+      console.log('Final activity categories:', activityCategories.map(c => `${c.name} (${c.count || 'no count'})`));
+      
       return activityCategories;
     },
-    enabled: !!categories,
+    enabled: !!supabaseCategories && !!organizedActivities,
   });
 }
