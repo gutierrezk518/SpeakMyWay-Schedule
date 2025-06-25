@@ -1013,152 +1013,36 @@ export default function Schedule() {
                     {showSearchBar ? 'Close' : 'Search'}
                   </button>
                 
-                  {/* All category button */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'all' 
-                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    }`}
-                    onClick={() => handleCategoryChange('all')}
-                  >
-                    <i className="ri-apps-line mr-1"></i>
-                    All
-                  </button>
-                  
-                  {/* Make the favorites button a droppable target */}
-                  <Droppable droppableId="favorites-button" direction="horizontal" isDropDisabled={false}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className={`${snapshot.isDraggingOver ? 'scale-110 transition-transform' : ''}`}
+                  {/* Loading state for categories */}
+                  {(categoriesLoading || dataLoading) ? (
+                    <div className="px-3 py-1.5 text-xs text-gray-500">Loading categories...</div>
+                  ) : categories ? (
+                    categories.map((category) => (
+                      <button
+                        key={category.id}
+                        className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                          selectedCategory === category.id 
+                          ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                          : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                        onClick={() => handleCategoryChange(category.id)}
                       >
-                        <button
-                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                            selectedCategory === 'favorites' 
-                            ? 'bg-yellow-500 text-white font-medium md:font-semibold shadow-sm' 
-                            : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800'
-                          } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
-                          ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
-                          onClick={() => handleCategoryChange('favorites')}
-                        >
-                          <i className="ri-star-fill mr-1"></i>
-                          Favorites
-                          {snapshot.isDraggingOver && (
-                            <div className="absolute inset-0 bg-yellow-300 bg-opacity-30 rounded-md flex items-center justify-center">
-                              <span className="text-[9px] font-bold text-yellow-800">DROP TO ADD</span>
-                            </div>
-                          )}
-                        </button>
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                  
-                  {/* Dressing Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'dressing' 
-                      ? 'bg-rose-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800'
-                    }`}
-                    onClick={() => handleCategoryChange('dressing')}
-                  >
-                    <i className="ri-shirt-line mr-1"></i>
-                    Dressing
-                  </button>
-                  
-                  {/* Holiday Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'holiday' 
-                      ? 'bg-orange-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                    }`}
-                    onClick={() => handleCategoryChange('holiday')}
-                  >
-                    <i className="ri-calendar-event-line mr-1"></i>
-                    Holiday
-                  </button>
-                  
-                  {/* Hygiene Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'hygiene' 
-                      ? 'bg-teal-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
-                    }`}
-                    onClick={() => handleCategoryChange('hygiene')}
-                  >
-                    <i className="ri-hand-sanitizer-line mr-1"></i>
-                    Hygiene
-                  </button>
-                  
-                  {/* Indoors & Chores Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'indoors-chores' 
-                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                    }`}
-                    onClick={() => handleCategoryChange('indoors-chores')}
-                  >
-                    <i className="ri-home-line mr-1"></i>
-                    Indoors & Chores
-                  </button>
-                  
-                  {/* Meals Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'meals' 
-                      ? 'bg-green-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                    onClick={() => handleCategoryChange('meals')}
-                  >
-                    <i className="ri-restaurant-line mr-1"></i>
-                    Meals
-                  </button>
-                  
-                  {/* Outdoors & Social Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'outdoors-social' 
-                      ? 'bg-sky-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
-                    }`}
-                    onClick={() => handleCategoryChange('outdoors-social')}
-                  >
-                    <i className="ri-sun-line mr-1"></i>
-                    Outdoors & Social
-                  </button>
-                  
-                  {/* Places & Transportation Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'places' 
-                      ? 'bg-purple-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                    onClick={() => handleCategoryChange('places')}
-                  >
-                    <i className="ri-map-pin-line mr-1"></i>
-                    Places & Transport
-                  </button>
-                  
-                  {/* Vacation Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'vacation' 
-                      ? 'bg-indigo-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
-                    }`}
-                    onClick={() => handleCategoryChange('vacation')}
-                  >
-                    <i className="ri-suitcase-line mr-1"></i>
-                    Vacation
-                  </button>
+                        {category.id === 'all' && <i className="ri-apps-line mr-1"></i>}
+                        {category.id === 'favorites' && <i className="ri-star-fill mr-1"></i>}
+                        {category.id === 'hygiene' && <i className="ri-hand-sanitizer-line mr-1"></i>}
+                        {category.id === 'meals' && <i className="ri-restaurant-line mr-1"></i>}
+                        {category.id === 'dressing' && <i className="ri-shirt-line mr-1"></i>}
+                        {category.id === 'places' && <i className="ri-map-pin-line mr-1"></i>}
+                        {category.id === 'transportation' && <i className="ri-car-line mr-1"></i>}
+                        {category.id === 'appointments' && <i className="ri-calendar-event-line mr-1"></i>}
+                        {category.id === 'vacation' && <i className="ri-suitcase-line mr-1"></i>}
+                        {category.id === 'chores' && <i className="ri-broom-line mr-1"></i>}
+                        {category.name}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-1.5 text-xs text-red-500">Error loading categories</div>
+                  )}
                 </div>
               </div>
               
