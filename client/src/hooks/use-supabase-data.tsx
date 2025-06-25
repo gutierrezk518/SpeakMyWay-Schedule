@@ -238,8 +238,9 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       // Add favorites category
       organizedData['favorites'] = [];
       
-      console.log('Categories created:', Object.keys(organizedData));
-      console.log('Card categories found:', [...new Set(cards.map(c => c.categoryname_en))]);
+      console.log('Categories from schedulecategories table:', Object.keys(organizedData));
+      console.log('Card categories from schedule_vocabulary_cards:', [...new Set(cards.map(c => c.categoryname_en))]);
+      console.log('Category color mapping:', categoryColorMap);
 
       console.log('Processing', cards.length, 'cards...');
       
@@ -258,12 +259,11 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
           console.log(`Card ${index + 1}: "${card.text_en}" in category "${card.categoryname_en}" with color ${categoryColor}`);
         }
         
-        // Add to main category - check if category exists in our display categories
+        // Add to main category - only add if category exists in schedulecategories
         if (organizedData[card.categoryname_en]) {
           organizedData[card.categoryname_en].push(activity);
         } else {
-          console.warn('Category not found in schedulecategories:', card.categoryname_en);
-          console.log('Available categories:', Object.keys(organizedData));
+          console.warn(`Card "${card.text_en}" has category "${card.categoryname_en}" which doesn't exist in schedulecategories table`);
         }
 
         // Add to favorites if user has favorited this card
