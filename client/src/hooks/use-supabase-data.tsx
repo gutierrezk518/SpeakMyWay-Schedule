@@ -157,10 +157,7 @@ export function useSupabaseVocabularyCards() {
       console.log('Fetching vocabulary cards from Supabase...');
       const { data, error } = await supabase
         .from('schedule_vocabulary_cards')
-        .select(`
-          *,
-          id
-        `)
+        .select('id, categoryname_en, text_en, text_es, spoken_word_en, spoken_word_es, icon_url, sort_order, created_at')
         .order('sort_order, text_en');
       
       if (error) {
@@ -170,6 +167,7 @@ export function useSupabaseVocabularyCards() {
       
       console.log('Vocabulary cards fetched (first card):', data?.[0]);
       console.log('Total cards:', data?.length);
+      console.log('Sample card categories:', data?.slice(0, 5)?.map(c => c.categoryname_en));
       return data as SupabaseVocabularyCard[];
     },
   });
@@ -227,6 +225,24 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         return map;
       }, {} as Record<string, string>);
       
+      // Create mapping from vocabulary card categories to display categories
+      const categoryMapping: Record<string, string> = {
+        'hygiene': 'Hygiene',
+        'chores': 'Indoors & Chores', 
+        'dressing': 'Getting Ready',
+        'meals': 'Meals',
+        'places': 'Places & Transportation',
+        'transportation': 'Places & Transportation',
+        'vacation': 'Vacation',
+        'appointments': 'Holiday',
+        'arts': 'Indoors & Chores',
+        'holiday': 'Holiday',
+        'media': 'Indoors & Chores',
+        'social': 'Outdoors & Social'
+      };
+      
+      console.log('Category mapping created:', categoryMapping);
+      
       // Create set of favorite card IDs for quick lookup
       const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
 
@@ -243,7 +259,9 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       console.log('Processing', cards.length, 'cards...');
       
       cards.forEach((card, index) => {
-        const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
+        // Map the card category to the display category
+        const displayCategory = categoryMapping[card.categoryname_en] || card.categoryname_en;
+        const categoryColor = categoryColorMap[displayCategory] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
         // Skip invalid cards
@@ -254,13 +272,14 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         
         if (index === 0) {
           console.log('First card conversion result:', activity);
+          console.log('Card category mapping:', card.categoryname_en, '->', displayCategory);
         }
         
-        // Add to main category
-        if (organizedData[card.categoryname_en]) {
-          organizedData[card.categoryname_en].push(activity);
+        // Add to main category using the mapped display category
+        if (organizedData[displayCategory]) {
+          organizedData[displayCategory].push(activity);
         } else {
-          console.warn('Category not found in organizedData:', card.categoryname_en);
+          console.warn('Display category not found in organizedData:', displayCategory, 'from card category:', card.categoryname_en);
         }
 
         // Add to favorites if user has favorited this card
