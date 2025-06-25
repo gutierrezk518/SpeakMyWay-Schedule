@@ -22,20 +22,30 @@ export interface SupabaseVocabularyCard {
   created_at: string;
 }
 
+export interface SupabaseUserFavorite {
+  id: number;
+  user_id: string;
+  vocabulary_card_id: number;
+  created_at: string;
+}
+
 // Hook to fetch categories from Supabase
 export function useSupabaseCategories() {
   return useQuery({
     queryKey: ['supabase-categories'],
     queryFn: async () => {
+      console.log('Fetching categories from Supabase...');
       const { data, error } = await supabase
         .from('schedulecategories')
         .select('*')
         .order('categoryname_en');
       
       if (error) {
+        console.error('Error fetching categories:', error);
         throw new Error(`Failed to fetch categories: ${error.message}`);
       }
       
+      console.log('Categories fetched:', data);
       return data as SupabaseCategory[];
     },
   });
@@ -46,15 +56,18 @@ export function useSupabaseVocabularyCards() {
   return useQuery({
     queryKey: ['supabase-vocabulary-cards'],
     queryFn: async () => {
+      console.log('Fetching vocabulary cards from Supabase...');
       const { data, error } = await supabase
         .from('schedule_vocabulary_cards')
         .select('*')
         .order('sort_order, text_en');
       
       if (error) {
+        console.error('Error fetching vocabulary cards:', error);
         throw new Error(`Failed to fetch vocabulary cards: ${error.message}`);
       }
       
+      console.log('Vocabulary cards fetched:', data);
       return data as SupabaseVocabularyCard[];
     },
   });
