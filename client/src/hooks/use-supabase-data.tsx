@@ -157,7 +157,7 @@ export function useSupabaseVocabularyCards() {
       console.log('Fetching vocabulary cards from Supabase...');
       const { data, error } = await supabase
         .from('schedule_vocabulary_cards')
-        .select('id, categoryname_en, text_en, text_es, spoken_word_en, spoken_word_es, icon_url, sort_order, created_at')
+        .select('*')
         .order('sort_order, text_en');
       
       if (error) {
@@ -165,9 +165,10 @@ export function useSupabaseVocabularyCards() {
         throw new Error(`Failed to fetch vocabulary cards: ${error.message}`);
       }
       
-      console.log('Vocabulary cards fetched (first card):', data?.[0]);
+      console.log('Raw Supabase response:', { data, error });
+      console.log('Vocabulary cards fetched (first card full):', JSON.stringify(data?.[0], null, 2));
       console.log('Total cards:', data?.length);
-      console.log('Sample card categories:', data?.slice(0, 5)?.map(c => c.categoryname_en));
+      console.log('Card IDs check:', data?.slice(0, 5)?.map(c => ({ id: c.id, text: c.text_en })));
       return data as SupabaseVocabularyCard[];
     },
   });
