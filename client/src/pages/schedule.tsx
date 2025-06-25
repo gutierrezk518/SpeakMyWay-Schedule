@@ -282,20 +282,8 @@ export default function Schedule() {
   const { data: rawCategories, isLoading: rawCategoriesLoading } = useSupabaseCategories();
   const { data: rawCards, isLoading: rawCardsLoading } = useSupabaseVocabularyCards();
   
-  console.log('=== INDIVIDUAL DATA DEBUG ===');
-  console.log('rawCategories:', rawCategories?.length, 'loading:', rawCategoriesLoading);
-  console.log('rawCards:', rawCards?.length, 'loading:', rawCardsLoading);
-  console.log('=== ORGANIZED DATA DEBUG ===');
-  console.log('supabaseActivityData exists:', !!supabaseActivityData);
-  console.log('dataLoading:', dataLoading);
-  console.log('dataError:', dataError);
-  console.log('selectedCategory:', selectedCategory);
-  console.log('categoryActivities count:', categoryActivities.length);
-  if (supabaseActivityData) {
-    console.log('Total allCards:', supabaseActivityData.allCards.length);
-    console.log('organizedData keys:', Object.keys(supabaseActivityData.organizedData));
-  }
-  console.log('=== END DEBUG ===');
+  // Simplified debug logging
+  console.log('Cards loaded:', !!supabaseActivityData, 'Loading:', dataLoading, 'Category:', selectedCategory, 'Count:', categoryActivities.length);
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
