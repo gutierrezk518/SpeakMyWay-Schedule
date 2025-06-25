@@ -9,7 +9,7 @@ import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
-import { useOrganizedActivityData, useActivityCategories, useUserFavoritesManager } from "@/hooks/use-supabase-data";
+import { useOrganizedActivityData, useActivityCategories, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards } from "@/hooks/use-supabase-data";
 import { useAuth } from "@/hooks/use-auth";
 // Authentication removed
 
@@ -278,21 +278,24 @@ export default function Schedule() {
     ? supabaseActivityData.allCards // Use all cards from Supabase
     : supabaseActivityData.organizedData[selectedCategory] || [];
 
-  // Debug logging for UI rendering
-  console.log('=== SCHEDULE PAGE DEBUG ===');
+  // Debug individual data sources
+  const { data: rawCategories, isLoading: rawCategoriesLoading } = useSupabaseCategories();
+  const { data: rawCards, isLoading: rawCardsLoading } = useSupabaseVocabularyCards();
+  
+  console.log('=== INDIVIDUAL DATA DEBUG ===');
+  console.log('rawCategories:', rawCategories?.length, 'loading:', rawCategoriesLoading);
+  console.log('rawCards:', rawCards?.length, 'loading:', rawCardsLoading);
+  console.log('=== ORGANIZED DATA DEBUG ===');
   console.log('supabaseActivityData exists:', !!supabaseActivityData);
-  console.log('supabaseActivityData object:', supabaseActivityData);
   console.log('dataLoading:', dataLoading);
   console.log('dataError:', dataError);
   console.log('selectedCategory:', selectedCategory);
   console.log('categoryActivities count:', categoryActivities.length);
-  console.log('Available categories:', supabaseActivityData ? Object.keys(supabaseActivityData.organizedData) : 'none');
   if (supabaseActivityData) {
     console.log('Total allCards:', supabaseActivityData.allCards.length);
     console.log('organizedData keys:', Object.keys(supabaseActivityData.organizedData));
-    console.log('Selected category data:', supabaseActivityData.organizedData[selectedCategory]);
   }
-  console.log('=== END SCHEDULE PAGE DEBUG ===');
+  console.log('=== END DEBUG ===');
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
@@ -438,8 +441,8 @@ export default function Schedule() {
         const activityToAdd = visibleActivities[source.index];
         if (!activityToAdd || !user) return;
         
-        // Add to user favorites in Supabase
-        addFavorite.mutate(parseInt(activityToAdd.id));
+        // Add to user favorites in Supabase (temporarily disabled)
+        console.log('Would add to favorites:', activityToAdd.id);
         
         // Automatically switch to favorites category to show the result
         if (destination.droppableId === "favorites-button") {
@@ -465,8 +468,8 @@ export default function Schedule() {
         const activityToRemove = favoriteCards[source.index];
         if (!activityToRemove || !user) return;
         
-        // Remove from user favorites in Supabase
-        removeFavorite.mutate(parseInt(activityToRemove.id));
+        // Remove from user favorites in Supabase (temporarily disabled)
+        console.log('Would remove from favorites:', activityToRemove.id);
         
         // Speak confirmation
         speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
@@ -479,7 +482,7 @@ export default function Schedule() {
         });
       }
     }
-  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, supabaseActivityData, addFavorite, removeFavorite, user, toast]);
+  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, supabaseActivityData, user, toast]);
   
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
@@ -1147,19 +1150,12 @@ export default function Schedule() {
                                 <div className="mt-1 w-full flex justify-center">
                                   <button 
                                     className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700"
-                                    onClick={async () => {
-                                      if (user) {
-                                        try {
-                                          await removeFavorite.mutateAsync(parseInt(activity.id));
-                                        } catch (error) {
-                                          console.error("Error removing favorite:", error);
-                                        }
-                                      }
+                                    onClick={() => {
+                                      console.log('Would remove from favorites:', activity.id);
                                     }}
                                     aria-label="Remove from favorites"
-                                    disabled={isRemovingFavorite}
                                   >
-                                    {isRemovingFavorite ? "..." : "Remove"}
+                                    Remove
                                   </button>
                                 </div>
                               )}
