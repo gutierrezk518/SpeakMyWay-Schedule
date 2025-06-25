@@ -214,6 +214,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         map[cat.categoryname_en] = cat.color;
         return map;
       }, {} as Record<string, string>);
+      
       // Create set of favorite card IDs for quick lookup
       const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
 
@@ -231,8 +232,6 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
-
-        
         // Add to main category
         if (organizedData[card.categoryname_en]) {
           organizedData[card.categoryname_en].push(activity);
@@ -249,9 +248,6 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       console.log('Final organized data counts by category:');
       Object.keys(organizedData).forEach(categoryName => {
         console.log(`  ${categoryName}: ${organizedData[categoryName].length} cards`);
-        if (organizedData[categoryName].length > 0) {
-          console.log(`    Sample card:`, organizedData[categoryName][0]);
-        }
       });
 
       // Sort each category's cards by sort_order, with fallback for zero values
@@ -292,6 +288,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       };
 
       console.log('RESULT: Total cards organized:', result.allCards.length);
+      console.log('RESULT: Categories with cards:', Object.keys(result.organizedData).filter(k => result.organizedData[k].length > 0));
       console.log('=== END ORGANIZING ACTIVITY DATA ===');
 
       return result;
@@ -299,6 +296,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
     enabled: !categoriesLoading && !cardsLoading && !!categories && !!cards,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: false, // Disable retries to see errors faster
   });
 }
 

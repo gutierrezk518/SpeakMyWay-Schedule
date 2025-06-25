@@ -284,6 +284,12 @@ export default function Schedule() {
   
   // Simplified debug logging
   console.log('Cards loaded:', !!supabaseActivityData, 'Loading:', dataLoading, 'Category:', selectedCategory, 'Count:', categoryActivities.length);
+  
+  if (supabaseActivityData) {
+    console.log('SUCCESS: Data loaded with', supabaseActivityData.allCards.length, 'total cards');
+  } else if (dataError) {
+    console.error('Data error:', dataError);
+  }
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
