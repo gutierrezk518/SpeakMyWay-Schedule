@@ -225,13 +225,10 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
         return map;
       }, {} as Record<string, string>);
       
-      console.log('Available categories from schedulecategories:', categories.map(c => c.categoryname_en));
-      console.log('Card categories from vocabulary cards:', [...new Set(cards.map(c => c.categoryname_en))]);
-      
       // Create set of favorite card IDs for quick lookup
       const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
 
-      // Group cards by category
+      // Group cards by category - use ALL categories from schedulecategories table
       const organizedData: Record<string, ScheduleActivity[]> = {};
       
       categories.forEach(category => {
@@ -240,6 +237,9 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
 
       // Add favorites category
       organizedData['favorites'] = [];
+      
+      console.log('Categories created:', Object.keys(organizedData));
+      console.log('Card categories found:', [...new Set(cards.map(c => c.categoryname_en))]);
 
       console.log('Processing', cards.length, 'cards...');
       
@@ -254,9 +254,8 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
           return;
         }
         
-        if (index === 0) {
-          console.log('First card conversion result:', activity);
-          console.log('Card category:', card.categoryname_en, 'Color:', categoryColor);
+        if (index < 3) {
+          console.log(`Card ${index + 1}: "${card.text_en}" in category "${card.categoryname_en}" with color ${categoryColor}`);
         }
         
         // Add to main category - check if category exists in our display categories
