@@ -21,10 +21,6 @@ const TimerComponent = () => {
   // Get the user name and language from context
   const { userName, language } = useAppContext();
   
-  // Fetch Supabase data
-  const { data: activityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language);
-  const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
-  
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
@@ -153,6 +149,10 @@ export default function Schedule() {
   // Authentication removed - no user object
   const [location] = useLocation();
   
+  // Fetch Supabase data
+  const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language);
+  const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
+  
   // Check for email verification URL parameters when page loads
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -270,11 +270,11 @@ export default function Schedule() {
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
   // Get the available activities for the selected category - using Supabase data
-  const categoryActivities = !activityData ? [] : selectedCategory === 'all'
-    ? activityData.allCards // Use all cards from Supabase
+  const categoryActivities = !supabaseActivityData ? [] : selectedCategory === 'all'
+    ? supabaseActivityData.allCards // Use all cards from Supabase
     : selectedCategory === 'favorites'
       ? favoriteActivities // Show user's favorite activities
-      : activityData.organizedData[selectedCategory] || [];
+      : supabaseActivityData.organizedData[selectedCategory] || [];
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
