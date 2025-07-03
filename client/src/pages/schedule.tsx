@@ -296,18 +296,31 @@ export default function Schedule() {
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
   // Get activities for selected category from Supabase data only
+  // Map kebab-case category keys to actual database category names
+  const categoryKeyMap: Record<string, string> = {
+    'getting-ready': 'Getting Ready',
+    'holiday': 'Holiday', 
+    'hygiene': 'Hygiene',
+    'indoors-and-chores': 'Indoors & Chores',
+    'meals': 'Meals',
+    'outdoors-and-social': 'Outdoors & Social', 
+    'places-and-transportation': 'Places & Transportation',
+    'vacation': 'Vacation',
+    'favorites': 'favorites'
+  };
+  
+  const actualCategoryName = categoryKeyMap[selectedCategory] || selectedCategory;
+  
   const categoryActivities = supabaseActivityData?.organizedData 
     ? (selectedCategory === "all" 
         ? supabaseActivityData.allCards 
-        : supabaseActivityData.organizedData[selectedCategory] || [])
+        : supabaseActivityData.organizedData[actualCategoryName] || [])
     : [];
     
   // Debug category mapping
   if (supabaseActivityData?.organizedData && selectedCategory !== "all") {
-    const availableCategories = Object.keys(supabaseActivityData.organizedData);
-    console.log('Available category keys:', availableCategories);
-    console.log('Selected category key:', selectedCategory);
-    console.log('Cards in selected category:', supabaseActivityData.organizedData[selectedCategory]?.length || 0);
+    console.log('Selected category key:', selectedCategory, '→ Mapped to:', actualCategoryName);
+    console.log('Cards in selected category:', categoryActivities.length);
   }
 
   // Debug individual data sources
