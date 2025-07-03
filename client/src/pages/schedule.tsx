@@ -279,19 +279,7 @@ export default function Schedule() {
     setActivitiesPage(1); // Reset to page 1 when changing categories
   };
 
-  // Handle refresh data from Supabase
-  const handleRefreshData = () => {
-    console.log('Refreshing data from Supabase...');
-    queryClient.invalidateQueries({ queryKey: ['supabase-vocabulary-cards'] });
-    queryClient.invalidateQueries({ queryKey: ['supabase-categories'] });
-    queryClient.invalidateQueries({ queryKey: ['organized-activity-data'] });
-    queryClient.invalidateQueries({ queryKey: ['activity-categories'] });
-    toast({
-      title: "Refreshing data",
-      description: "Loading latest vocabulary cards from database...",
-      variant: "default",
-    });
-  };
+
   
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
@@ -1079,16 +1067,6 @@ export default function Schedule() {
               {/* Categories tabs at the top of the activities section */}
               <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
                 <div className="flex flex-wrap gap-1 justify-center">
-                  {/* Refresh button */}
-                  <button
-                    className="px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800"
-                    onClick={handleRefreshData}
-                    title="Refresh data from database"
-                  >
-                    <i className="ri-refresh-line mr-1"></i>
-                    Refresh
-                  </button>
-                
                   {/* Search button */}
                   <button
                     className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
