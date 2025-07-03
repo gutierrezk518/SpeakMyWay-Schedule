@@ -181,13 +181,16 @@ export function convertToScheduleActivity(
   language: 'en' | 'es' = 'en'
 ): ScheduleActivity | null {
   // Handle missing or invalid data
-  if (!card || !card.id) {
-    console.warn('Skipping card with missing ID:', card);
+  if (!card || !card.text_en) {
+    console.warn('Skipping card with missing text:', card);
     return null;
   }
 
+  // Generate a unique ID if missing - use text_en as fallback
+  const cardId = card.id ? String(card.id) : `${card.categoryname_en}-${card.text_en}`.replace(/\s+/g, '-').toLowerCase();
+
   const result = {
-    id: String(card.id), // Safe conversion
+    id: cardId,
     title: language === 'es' ? (card.text_es || card.text_en) : card.text_en,
     titleEs: card.text_es || card.text_en,
     icon: card.icon_url || 'ri-bookmark-fill',
@@ -251,13 +254,15 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       cards.forEach((card, index) => {
         const categoryColor = categoryColorMap[card.categoryname_en] || 'gray-300';
         
-        console.log(`Processing card ${index + 1}:`, {
-          id: card.id,
-          text_en: card.text_en,
-          categoryname_en: card.categoryname_en,
-          categoryColor,
-          categoryExists: !!organizedData[card.categoryname_en]
-        });
+        if (index < 5) {
+          console.log(`Processing card ${index + 1}:`, {
+            id: card.id || 'null',
+            text_en: card.text_en,
+            categoryname_en: card.categoryname_en,
+            categoryColor,
+            categoryExists: !!organizedData[card.categoryname_en]
+          });
+        }
         
         const activity = convertToScheduleActivity(card, categoryColor, language);
         
