@@ -52,13 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
-  
+
   // Check if user needs welcome screen
   useEffect(() => {
     if (user && !isLoading) {
       // Check if the user has already seen the welcome screen
       const hasSeenWelcomeScreen = localStorage.getItem(`hasSeenWelcomeScreen-${user.id}`);
-      
+
       // Show welcome screen for all new users regardless of whether they have a name
       if (!hasSeenWelcomeScreen) {
         setNeedsWelcomeScreen(true);
@@ -71,9 +71,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     console.log("Attempting to sign in with email:", email);
-    
+
     const response = await supabase.auth.signInWithPassword({ email, password });
-    
+
     if (response.error) {
       console.error("Sign in error:", response.error);
       toast({
@@ -84,17 +84,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       console.log("Sign in successful, session:", response.data.session);
       console.log("User data:", response.data.user);
-      
+
       // Set user and session immediately
       setUser(response.data.user);
       setSession(response.data.session);
-      
+
       toast({
         title: "Login successful",
         description: "Welcome back!",
       });
     }
-    
+
     setIsLoading(false);
     return response;
   };
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: userData
       }
     });
-    
+
     if (response.error) {
       toast({
         title: "Registration failed",
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Please check your email for verification instructions.",
       });
     }
-    
+
     setIsLoading(false);
     return response;
   };
@@ -131,14 +131,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Use current origin for redirects to make it work in any environment
     const redirectUrl = `${window.location.origin}/auth-callback`;
     console.log("Using redirect URL for Google auth:", redirectUrl);
-    
+
     const response = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: redirectUrl
       }
     });
-    
+
     if (response.error) {
       console.error("Google login error:", response.error);
       toast({
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       console.log("Google login initiated successfully");
     }
-    
+
     setIsLoading(false);
     return response;
   };
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     setIsLoading(true);
     const { error } = await supabase.auth.signOut();
-    
+
     if (error) {
       toast({
         title: "Logout failed",
@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     }
-    
+
     setIsLoading(false);
   };
 
@@ -173,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    
+
     if (!error) {
       toast({
         title: "Password reset email sent",
@@ -186,23 +186,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     }
-    
+
     return { error };
   };
-  
+
   const updateUserMetadata = async (metadata: object) => {
     try {
       const { data, error } = await supabase.auth.updateUser({
         data: metadata
       });
-      
+
       if (error) throw error;
-      
+
       // Update local user state
       if (data?.user) {
         setUser(data.user);
       }
-      
+
       return { error: null };
     } catch (error) {
       console.error("Error updating user metadata:", error);
@@ -237,10 +237,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 }
