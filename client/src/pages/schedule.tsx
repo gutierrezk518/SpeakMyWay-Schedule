@@ -301,6 +301,14 @@ export default function Schedule() {
         ? supabaseActivityData.allCards 
         : supabaseActivityData.organizedData[selectedCategory] || [])
     : [];
+    
+  // Debug category mapping
+  if (supabaseActivityData?.organizedData && selectedCategory !== "all") {
+    const availableCategories = Object.keys(supabaseActivityData.organizedData);
+    console.log('Available category keys:', availableCategories);
+    console.log('Selected category key:', selectedCategory);
+    console.log('Cards in selected category:', supabaseActivityData.organizedData[selectedCategory]?.length || 0);
+  }
 
   // Debug individual data sources
   const { data: rawCategories, isLoading: rawCategoriesLoading } = useSupabaseCategories();
