@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/app-context";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 import * as tts from "@/lib/tts";
 
 export default function Customize() {
@@ -14,11 +16,16 @@ export default function Customize() {
     displaySettings,
     setDisplaySettings
   } = useAppContext();
+  
+  const { user, updateUserMetadata } = useAuth();
+  const { toast } = useToast();
 
   // State for the test phrase
   const [testPhrase, setTestPhrase] = useState("Hello, this is a test of the voice settings.");
   // State to track whether we're testing a voice or not
   const [isTestingVoice, setIsTestingVoice] = useState(false);
+  // State to track debounced name saving
+  const [nameSaveTimeout, setNameSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setCurrentPage("/customize");
@@ -27,10 +34,50 @@ export default function Customize() {
     tts.setVoicePreferences(voiceSettings);
   }, [setCurrentPage, voiceSettings]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (nameSaveTimeout) {
+        clearTimeout(nameSaveTimeout);
+      }
+    };
+  }, [nameSaveTimeout]);
+
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
+    
+    // Update local state immediately for responsive UI
     setUserName(name);
-    localStorage.setItem("speakMyWayUser", name);
+    localStorage.setItem("userName", name);
+    
+    // For anonymous users, also update legacy localStorage key
+    if (!user) {
+      localStorage.setItem("speakMyWayUser", name);
+    }
+    
+    // Clear any existing timeout
+    if (nameSaveTimeout) {
+      clearTimeout(nameSaveTimeout);
+    }
+    
+    // If user is authenticated, debounce the profile update
+    if (user) {
+      const timeout = setTimeout(async () => {
+        try {
+          await updateUserMetadata({ name });
+          console.log("Name successfully synced to user profile");
+        } catch (error) {
+          console.error("Error updating user name in profile:", error);
+          toast({
+            title: "Sync failed",
+            description: "Your name was saved locally but couldn't sync to your profile. Try again later.",
+            variant: "destructive",
+          });
+        }
+      }, 1000); // Wait 1 second after user stops typing
+      
+      setNameSaveTimeout(timeout);
+    }
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

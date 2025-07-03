@@ -66,6 +66,22 @@ function AppContent() {
     }
   }, [user, needsWelcomeScreen]);
 
+  // Sync authenticated user data with app context
+  useEffect(() => {
+    if (user && !needsWelcomeScreen) {
+      // Check if user has a name in their metadata and sync it
+      const userMetadataName = user.user_metadata?.name || user.user_metadata?.full_name;
+      if (userMetadataName) {
+        setUserName(userMetadataName);
+      }
+      
+      // Sync email
+      if (user.email) {
+        setUserEmail(user.email);
+      }
+    }
+  }, [user, needsWelcomeScreen, setUserName, setUserEmail]);
+
   useEffect(() => {
     // Load any existing user data from localStorage if available
     const storedName = localStorage.getItem("speakMyWayUser");
