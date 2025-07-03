@@ -193,8 +193,9 @@ export function convertToScheduleActivity(
     id: cardId,
     title: language === 'es' ? (card.text_es || card.text_en) : card.text_en,
     titleEs: card.text_es || card.text_en,
-    icon: card.icon_url || 'ri-bookmark-fill',
+    icon: 'ri-bookmark-fill', // Default icon for fallback
     bgColor: categoryColor || 'gray-300',
+    imageSrc: card.icon_url, // Put the image URL in the correct field
     speechText: language === 'es' ? (card.spoken_word_es || card.spoken_word_en) : card.spoken_word_en,
     speechTextEs: card.spoken_word_es || card.spoken_word_en,
     time: undefined,
