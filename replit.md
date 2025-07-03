@@ -110,6 +110,12 @@ SpeakMyWay is an Augmentative and Alternative Communication (AAC) web applicatio
 
 ## Changelog
 
+- January 3, 2025: Enhanced session persistence and authentication flow
+  - Fixed session logout issues on page refresh
+  - Improved Supabase client initialization with proper auth persistence
+  - Category filtering working correctly with 100 vocabulary cards from database
+  - All data sourced from Supabase tables with no hardcoded content
+
 - June 18, 2025. Initial setup
 
 ## User Preferences
