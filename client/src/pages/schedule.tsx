@@ -156,8 +156,8 @@ export default function Schedule() {
   // Fetch Supabase data with user context for favorites
   const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id);
   const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
-  // Temporarily disable favorites to fix card loading issue
-  // const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
+  // Add favorites manager for Supabase favorites functionality
+  const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
   
   // Check for email verification URL parameters when page loads
   useEffect(() => {
@@ -485,18 +485,43 @@ export default function Schedule() {
         (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
       try {
         const activityToAdd = visibleActivities[source.index];
-        if (!activityToAdd || !user) return;
-        
-        // Add to user favorites in Supabase (temporarily disabled)
-        console.log('Would add to favorites:', activityToAdd.id);
-        
-        // Automatically switch to favorites category to show the result
-        if (destination.droppableId === "favorites-button") {
-          setSelectedCategory('favorites');
+        if (!activityToAdd || !user) {
+          console.log('Cannot add to favorites - missing activity or user:', { activity: !!activityToAdd, user: !!user });
+          return;
         }
         
-        // Speak confirmation
-        speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
+        // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
+        const originalId = activityToAdd.id.split('-')[0];
+        const vocabularyCardId = parseInt(originalId);
+        
+        if (isNaN(vocabularyCardId)) {
+          console.error('Invalid vocabulary card ID:', activityToAdd.id);
+          return;
+        }
+        
+        console.log('Adding to favorites:', { activityId: activityToAdd.id, vocabularyCardId, title: activityToAdd.title });
+        
+        // Add to user favorites in Supabase
+        addFavorite.mutate(vocabularyCardId, {
+          onSuccess: () => {
+            console.log('Successfully added to favorites');
+            // Automatically switch to favorites category to show the result
+            if (destination.droppableId === "favorites-button") {
+              setSelectedCategory('favorites');
+            }
+            // Speak confirmation
+            speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
+          },
+          onError: (error: any) => {
+            console.error('Error adding to favorites:', error);
+            toast({
+              title: "Error",
+              description: error?.message || "Failed to add to favorites",
+              variant: "destructive",
+            });
+          }
+        });
+        
       } catch (error) {
         console.error("Error adding to favorites:", error);
         toast({
@@ -512,13 +537,39 @@ export default function Schedule() {
       try {
         const favoriteCards = supabaseActivityData?.organizedData['favorites'] || [];
         const activityToRemove = favoriteCards[source.index];
-        if (!activityToRemove || !user) return;
+        if (!activityToRemove || !user) {
+          console.log('Cannot remove from favorites - missing activity or user:', { activity: !!activityToRemove, user: !!user });
+          return;
+        }
         
-        // Remove from user favorites in Supabase (temporarily disabled)
-        console.log('Would remove from favorites:', activityToRemove.id);
+        // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
+        const originalId = activityToRemove.id.split('-')[0];
+        const vocabularyCardId = parseInt(originalId);
         
-        // Speak confirmation
-        speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
+        if (isNaN(vocabularyCardId)) {
+          console.error('Invalid vocabulary card ID for removal:', activityToRemove.id);
+          return;
+        }
+        
+        console.log('Removing from favorites:', { activityId: activityToRemove.id, vocabularyCardId, title: activityToRemove.title });
+        
+        // Remove from user favorites in Supabase
+        removeFavorite.mutate(vocabularyCardId, {
+          onSuccess: () => {
+            console.log('Successfully removed from favorites');
+            // Speak confirmation
+            speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
+          },
+          onError: (error: any) => {
+            console.error('Error removing from favorites:', error);
+            toast({
+              title: "Error", 
+              description: error?.message || "Failed to remove from favorites",
+              variant: "destructive",
+            });
+          }
+        });
+        
       } catch (error) {
         console.error("Error removing from favorites:", error);
         toast({
@@ -1194,13 +1245,40 @@ export default function Schedule() {
                               {!isDragging && (
                                 <div className="mt-1 w-full flex justify-center">
                                   <button 
-                                    className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700"
+                                    className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700 disabled:opacity-50"
                                     onClick={() => {
-                                      console.log('Would remove from favorites:', activity.id);
+                                      if (!user) return;
+                                      
+                                      // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
+                                      const originalId = activity.id.split('-')[0];
+                                      const vocabularyCardId = parseInt(originalId);
+                                      
+                                      if (isNaN(vocabularyCardId)) {
+                                        console.error('Invalid vocabulary card ID for removal:', activity.id);
+                                        return;
+                                      }
+                                      
+                                      console.log('Removing from favorites via button:', { activityId: activity.id, vocabularyCardId, title: activity.title });
+                                      
+                                      removeFavorite.mutate(vocabularyCardId, {
+                                        onSuccess: () => {
+                                          console.log('Successfully removed from favorites');
+                                          speak(language === 'es' ? "Eliminado de favoritos" : "Removed from favorites");
+                                        },
+                                        onError: (error: any) => {
+                                          console.error('Error removing from favorites:', error);
+                                          toast({
+                                            title: "Error", 
+                                            description: error?.message || "Failed to remove from favorites",
+                                            variant: "destructive",
+                                          });
+                                        }
+                                      });
                                     }}
+                                    disabled={isRemovingFavorite}
                                     aria-label="Remove from favorites"
                                   >
-                                    Remove
+                                    {isRemovingFavorite ? "..." : "Remove"}
                                   </button>
                                 </div>
                               )}

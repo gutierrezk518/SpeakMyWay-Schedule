@@ -39,21 +39,7 @@ export function useUserFavorites(userId: string | null) {
       console.log('Fetching user favorites for user:', userId);
       const { data, error } = await supabase
         .from('schedule_user_favorites')
-        .select(`
-          id,
-          vocabulary_card_id,
-          created_at,
-          schedule_vocabulary_cards (
-            id,
-            categoryname_en,
-            text_en,
-            text_es,
-            spoken_word_en,
-            spoken_word_es,
-            icon_url,
-            sort_order
-          )
-        `)
+        .select('id, user_id, vocabulary_card_id, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
       
@@ -63,7 +49,7 @@ export function useUserFavorites(userId: string | null) {
       }
       
       console.log('User favorites fetched:', data);
-      return data as (SupabaseUserFavorite & { schedule_vocabulary_cards: SupabaseVocabularyCard })[];
+      return data as SupabaseUserFavorite[];
     },
     enabled: !!userId,
   });
@@ -195,7 +181,7 @@ export function convertToScheduleActivity(
     titleEs: card.text_es || card.text_en,
     icon: 'ri-bookmark-fill', // Default icon for fallback
     bgColor: categoryColor || 'gray-300',
-    imageSrc: card.icon_url, // Put the image URL in the correct field
+    imageSrc: card.icon_url || undefined, // Put the image URL in the correct field
     speechText: language === 'es' ? (card.spoken_word_es || card.spoken_word_en) : card.spoken_word_en,
     speechTextEs: card.spoken_word_es || card.spoken_word_en,
     time: undefined,
@@ -208,9 +194,7 @@ export function convertToScheduleActivity(
 export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: string | null) {
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useSupabaseCategories();
   const { data: cards, isLoading: cardsLoading, error: cardsError } = useSupabaseVocabularyCards();
-  // Temporarily disable favorites to fix card loading issue
-  // const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
-  const userFavorites = null;
+  const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
 
   return useQuery({
     queryKey: ['organized-activity-data', language, userId],
@@ -231,7 +215,7 @@ export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: 
       }, {} as Record<string, string>);
       
       // Create set of favorite card IDs for quick lookup
-      const favoriteCardIds = new Set(userFavorites?.map(fav => fav.vocabulary_card_id) || []);
+      const favoriteCardIds = new Set((userFavorites || []).map(fav => fav.vocabulary_card_id));
 
       // Group cards by category - use ALL categories from schedulecategories table
       const organizedData: Record<string, ScheduleActivity[]> = {};
