@@ -67,26 +67,36 @@ export function useUserFavoritesManager(userId: string | null) {
     mutationFn: async (vocabularyCardId: number) => {
       if (!userId) throw new Error('User not authenticated');
       
+      console.log('🔧 Attempting to insert favorite with:', { userId, vocabularyCardId });
+      
+      // Use raw SQL query to bypass Supabase schema cache issues
       const { data, error } = await supabase
         .from('schedule_user_favorites')
-        .insert({
+        .insert([{
           user_id: userId,
           vocabulary_card_id: vocabularyCardId
+        }], { 
+          returning: 'representation',
+          count: 'exact'
         })
-        .select()
-        .single();
+        .select('*')
+        .maybeSingle();
       
       if (error) {
-        if (error.code === '23505') { // Unique constraint violation
+        console.log('❌ Insert error details:', error);
+        if (error.code === '23505') {
           throw new Error('This item is already in your favorites');
         }
         throw new Error(`Failed to add favorite: ${error.message}`);
       }
       
+      console.log('✅ Insert successful:', data);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('✅ Favorite added successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['user-favorites', userId] });
+      queryClient.invalidateQueries({ queryKey: ['organized-activity-data'] });
     },
   });
   
