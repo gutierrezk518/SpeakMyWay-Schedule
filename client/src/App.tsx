@@ -55,10 +55,10 @@ function AppContent() {
     setUserMarketingConsent,
     setUserDataRetentionConsent
   } = useAppContext();
-  
+
   const { user, needsWelcomeScreen } = useAuth();
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
-  
+
   // Show welcome dialog when a logged-in user needs to set their name
   useEffect(() => {
     if (user && needsWelcomeScreen) {
@@ -66,51 +66,50 @@ function AppContent() {
     }
   }, [user, needsWelcomeScreen]);
 
-  // Sync authenticated user data with app context
+  // SINGLE useEffect for all user data management - no conflicts!
   useEffect(() => {
-    if (user && !needsWelcomeScreen) {
-      // Check if user has a name in their metadata and sync it
-      const userMetadataName = user.user_metadata?.name || user.user_metadata?.full_name;
-      if (userMetadataName) {
-        setUserName(userMetadataName);
-      }
-      
-      // Sync email
-      if (user.email) {
-        setUserEmail(user.email);
-      }
-    }
-  }, [user, needsWelcomeScreen, setUserName, setUserEmail]);
-
-  useEffect(() => {
-    // Load any existing user data from localStorage if available
-    const storedName = localStorage.getItem("speakMyWayUser");
+    // Load any existing user data from localStorage first
+    const storedName = localStorage.getItem("userName") || localStorage.getItem("speakMyWayUser");
     const storedBirthday = localStorage.getItem("speakMyWayBirthday");
     const storedEmail = localStorage.getItem("speakMyWayEmail");
     const storedConsentGiven = localStorage.getItem("speakMyWayConsentGiven");
     const storedConsentDate = localStorage.getItem("speakMyWayConsentDate");
     const storedMarketingConsent = localStorage.getItem("speakMyWayMarketingConsent");
     const storedDataRetentionConsent = localStorage.getItem("speakMyWayDataRetentionConsent");
-    
-    if (storedName) {
-      setUserName(storedName);
-      if (storedBirthday) setUserBirthday(storedBirthday);
-      if (storedEmail) setUserEmail(storedEmail);
-      
-      // Set consent data in context
-      if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
-      if (storedConsentDate) setUserConsentDate(storedConsentDate);
-      if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
-      if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
+
+    // Set stored data if available - handle empty strings properly
+    if (storedName !== null) {  // null check instead of truthy check
+      setUserName(storedName);  // This allows empty strings
     }
-    
-    // If the user is authenticated and has a name in metadata, use that name
-    if (user && user.user_metadata?.name) {
-      setUserName(user.user_metadata.name);
-      localStorage.setItem("speakMyWayUser", user.user_metadata.name);
+    if (storedBirthday) setUserBirthday(storedBirthday);
+    if (storedEmail) setUserEmail(storedEmail);
+
+    // Set consent data in context
+    if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
+    if (storedConsentDate) setUserConsentDate(storedConsentDate);
+    if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
+    if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
+
+    // For authenticated users - only sync metadata if no local name exists
+    if (user && !needsWelcomeScreen) {
+      // Only use metadata name if there's no stored name key at all (not even empty)
+      if (storedName === null) {
+        const userMetadataName = user.user_metadata?.name || user.user_metadata?.full_name;
+        if (userMetadataName) {
+          setUserName(userMetadataName);
+          localStorage.setItem("userName", userMetadataName);
+          localStorage.setItem("speakMyWayUser", userMetadataName);
+        }
+      }
+
+      // Always sync email if available
+      if (user.email && !storedEmail) {
+        setUserEmail(user.email);
+      }
     }
   }, [
     user,
+    needsWelcomeScreen,
     setUserName, 
     setUserBirthday, 
     setUserEmail, 
@@ -119,7 +118,7 @@ function AppContent() {
     setUserMarketingConsent, 
     setUserDataRetentionConsent
   ]);
-  
+
   // Handle closing the welcome dialog
   const handleCloseWelcomeDialog = () => {
     setShowWelcomeDialog(false);
@@ -131,7 +130,7 @@ function AppContent() {
       <main className="flex-grow overflow-y-auto pt-9 pb-4">
         <Router />
       </main>
-      
+
       {/* Welcome Dialog - shows after first login */}
       <WelcomeDialog 
         isOpen={showWelcomeDialog}

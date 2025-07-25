@@ -16,7 +16,7 @@ export default function Customize() {
     displaySettings,
     setDisplaySettings
   } = useAppContext();
-  
+
   const { user, updateUserMetadata } = useAuth();
   const { toast } = useToast();
 
@@ -29,7 +29,6 @@ export default function Customize() {
 
   useEffect(() => {
     setCurrentPage("/customize");
-
     // Apply current voice settings on component load
     tts.setVoicePreferences(voiceSettings);
   }, [setCurrentPage, voiceSettings]);
@@ -45,27 +44,28 @@ export default function Customize() {
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
-    
-    // Update local state immediately for responsive UI
+
+    // ALWAYS update immediately - even if it's an empty string
     setUserName(name);
+
+    // Save to localStorage - handle empty string properly
     localStorage.setItem("userName", name);
-    
-    // For anonymous users, also update legacy localStorage key
     if (!user) {
       localStorage.setItem("speakMyWayUser", name);
     }
-    
+
     // Clear any existing timeout
     if (nameSaveTimeout) {
       clearTimeout(nameSaveTimeout);
     }
-    
+
     // If user is authenticated, debounce the profile update
     if (user) {
       const timeout = setTimeout(async () => {
         try {
-          await updateUserMetadata({ name });
-          console.log("Name successfully synced to user profile");
+          // Allow empty string to be saved to profile
+          await updateUserMetadata({ name: name });
+          console.log("Name successfully synced to user profile:", name);
         } catch (error) {
           console.error("Error updating user name in profile:", error);
           toast({
@@ -74,8 +74,8 @@ export default function Customize() {
             variant: "destructive",
           });
         }
-      }, 1000); // Wait 1 second after user stops typing
-      
+      }, 1000);
+
       setNameSaveTimeout(timeout);
     }
   };

@@ -1047,7 +1047,6 @@ export default function Schedule() {
             {/* Extra padding at the bottom to prevent content from being too close to the edge */}
             <div className="h-2"></div>
           </div>
-          
           {/* Activity cards section - right side */}
           {!isFullscreen && (
             <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
@@ -1063,9 +1062,9 @@ export default function Schedule() {
                   </div>
                 </div>
               )}
-              
-              {/* Categories tabs at the top of the activities section */}
-              <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
+
+              {/* Categories tabs - TIGHTENED spacing */}
+              <div className="px-2 py-1.5 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950 flex-shrink-0">
                 <div className="flex flex-wrap gap-1 justify-center">
                   {/* Search button */}
                   <button
@@ -1077,12 +1076,12 @@ export default function Schedule() {
                     onClick={() => {
                       const newState = !showSearchBar;
                       setShowSearchBar(newState);
-                      
+
                       // When clicking search, always reset to 'all' to search all cards
                       if (newState) {
                         handleCategoryChange('all');
                       }
-                      
+
                       // Always reset search query when toggling the search
                       setSearchQuery('');
                     }}
@@ -1091,7 +1090,7 @@ export default function Schedule() {
                     <i className={`${showSearchBar ? 'ri-close-line' : 'ri-search-line'} mr-1`}></i>
                     {showSearchBar ? 'Close' : 'Search'}
                   </button>
-                
+
                   {/* Loading state for categories */}
                   {(categoriesLoading || dataLoading) ? (
                     <div className="px-3 py-1.5 text-xs text-gray-500">Loading categories...</div>
@@ -1124,10 +1123,10 @@ export default function Schedule() {
                   )}
                 </div>
               </div>
-              
-              {/* Search bar below categories - conditionally shown */}
+
+              {/* Search bar - TIGHTENED spacing */}
               {showSearchBar && (
-                <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
+                <div className="px-2 py-1.5 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950 flex-shrink-0">
                   <div className="flex items-center justify-center">
                     <div className="relative w-full max-w-md">
                       <input 
@@ -1160,9 +1159,9 @@ export default function Schedule() {
                   </div>
                 </div>
               )}
-              
-              {/* Activity cards - main area with extra padding at bottom on larger screens */}
-              <div className="flex-grow overflow-auto bg-white dark:bg-gray-800 p-2 pb-2 md:pb-16">
+
+              {/* Activity cards - OPTIMIZED spacing, maximal content area */}
+              <div className="flex-grow overflow-auto bg-white dark:bg-gray-800 p-1 sm:p-2">
                 {selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
@@ -1170,7 +1169,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-2 md:gap-3 lg:gap-4 p-0.5 sm:p-1 rounded-md min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
@@ -1184,7 +1183,7 @@ export default function Schedule() {
                           </div>
                         ) : (
                           (supabaseActivityData?.organizedData['favorites'] || []).map((activity: ScheduleActivity, index: number) => (
-                            <div key={activity.id} className="relative flex flex-col items-center rounded p-1">
+                            <div key={activity.id} className="relative flex flex-col items-center rounded p-0.5">
                               <ActivityCard
                                 activity={activity}
                                 index={index}
@@ -1213,13 +1212,13 @@ export default function Schedule() {
                     )}
                   </Droppable>
                 ) : (
-                  // Regular activity cards - draggable but with disabled reordering
+                  // Regular activity cards - OPTIMIZED grid spacing
                   <Droppable droppableId="activity-cards" direction="horizontal" isDropDisabled={true}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 ${
+                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-2 md:gap-3 lg:gap-4 p-0.5 sm:p-1 ${
                           snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900' : 'bg-white dark:bg-gray-800'
                         }`}
                       >
@@ -1239,35 +1238,37 @@ export default function Schedule() {
                   </Droppable>
                 )}
               </div>
-              
-              {/* Pagination controls - always visible for all screen sizes */}
+
+              {/* Pagination - TIGHTLY positioned at bottom */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky bottom-0 mt-4 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-lg mx-auto">
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
-                      activitiesPage === 1 
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
-                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
-                    }`}
-                    onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
-                    disabled={activitiesPage === 1}
-                  >
-                    <i className="ri-arrow-left-s-line"></i>
-                  </button>
-                  <span className="px-2 py-1 bg-white dark:bg-gray-700 rounded-md text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-800 min-w-[60px] text-center dark:text-gray-200">
-                    {activitiesPage} of {totalPages}
-                  </span>
-                  <button
-                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
-                      activitiesPage === totalPages 
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
-                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
-                    }`}
-                    onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
-                    disabled={activitiesPage === totalPages}
-                  >
-                    <i className="ri-arrow-right-s-line"></i>
-                  </button>
+                <div className="flex-shrink-0 px-2 py-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                        activitiesPage === 1 
+                          ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
+                          : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
+                      }`}
+                      onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
+                      disabled={activitiesPage === 1}
+                    >
+                      <i className="ri-arrow-left-s-line"></i>
+                    </button>
+                    <div className="px-4 py-1.5 bg-blue-50 dark:bg-blue-900 rounded-md text-sm font-semibold border border-blue-200 dark:border-blue-800 min-w-[80px] text-center dark:text-blue-200 flex items-center justify-center">
+                      {activitiesPage} of {totalPages}
+                    </div>
+                    <button
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                        activitiesPage === totalPages 
+                          ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
+                          : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
+                      }`}
+                      onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
+                      disabled={activitiesPage === totalPages}
+                    >
+                      <i className="ri-arrow-right-s-line"></i>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

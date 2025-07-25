@@ -192,13 +192,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUserMetadata = async (metadata: object) => {
     try {
+      // First, check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        throw new Error(`Session error: ${sessionError.message}`);
+      }
+
+      if (!session) {
+        console.error("No valid session found");
+        throw new Error("No valid session found. Please log in again.");
+      }
+
+      console.log("Valid session found, updating user metadata:", metadata);
+
+      // Now try to update the user metadata
       const { data, error } = await supabase.auth.updateUser({
         data: metadata
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Update user error:", error);
+        throw error;
+      }
 
-      // Update local user state
+      console.log("User metadata updated successfully:", data);
+
+      // Update local user state if successful
       if (data?.user) {
         setUser(data.user);
       }
@@ -206,10 +227,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: null };
     } catch (error) {
       console.error("Error updating user metadata:", error);
+
+      // If it's a session error, try to refresh the session
+      if (error.message?.includes("Auth session missing") || error.message?.includes("JWT expired")) {
+        console.log("Session expired, attempting to refresh...");
+
+        try {
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+
+          if (refreshError) {
+            console.error("Session refresh failed:", refreshError);
+            // Session refresh failed - user needs to log in again
+            toast({
+              title: "Session expired",
+              description: "Please log in again to save your changes.",
+              variant: "destructive",
+            });
+
+            // Optionally redirect to login
+            // window.location.href = '/auth';
+
+            return { error: new Error("Session expired. Please log in again.") };
+          }
+
+          if (refreshData.session) {
+            console.log("Session refreshed successfully, retrying update...");
+
+            // Retry the update with the new session
+            const { data, error } = await supabase.auth.updateUser({
+              data: metadata
+            });
+
+            if (error) {
+              throw error;
+            }
+
+            // Update local user state
+            if (data?.user) {
+              setUser(data.user);
+            }
+
+            console.log("User metadata updated after session refresh");
+            return { error: null };
+          }
+        } catch (refreshError) {
+          console.error("Failed to refresh session:", refreshError);
+          return { error: refreshError as AuthError };
+        }
+      }
+
       return { error: error as AuthError };
     }
   };
-
   const completeWelcomeScreen = () => {
     if (user) {
       localStorage.setItem(`hasSeenWelcomeScreen-${user.id}`, 'true');
