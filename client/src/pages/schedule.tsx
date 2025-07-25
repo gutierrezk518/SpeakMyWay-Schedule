@@ -508,9 +508,16 @@ export default function Schedule() {
         });
         
         // Add to user favorites in Supabase
+        console.log('🔧 Calling addFavorite mutation:', { 
+          userId: user?.id, 
+          vocabularyCardId, 
+          userExists: !!user,
+          addFavoriteExists: !!addFavorite 
+        });
+        
         addFavorite.mutate(vocabularyCardId, {
-          onSuccess: () => {
-            console.log('Successfully added to favorites');
+          onSuccess: (data) => {
+            console.log('✅ Successfully added to favorites:', data);
             // Automatically switch to favorites category to show the result
             if (destination.droppableId === "favorites-button") {
               setSelectedCategory('favorites');
@@ -519,7 +526,14 @@ export default function Schedule() {
             speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
           },
           onError: (error: any) => {
-            console.error('Error adding to favorites:', error);
+            console.error('❌ Error adding to favorites:', {
+              error,
+              message: error?.message,
+              code: error?.code,
+              details: error?.details,
+              userId: user?.id,
+              vocabularyCardId
+            });
             toast({
               title: "Error",
               description: error?.message || "Failed to add to favorites",

@@ -198,9 +198,7 @@ export function convertToScheduleActivity(
 export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: string | null) {
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useSupabaseCategories();
   const { data: cards, isLoading: cardsLoading, error: cardsError } = useSupabaseVocabularyCards();
-  // Temporarily disable favorites query to test drag-and-drop functionality
-  // const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
-  const userFavorites: SupabaseUserFavorite[] = [];
+  const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
 
   return useQuery({
     queryKey: ['organized-activity-data', language, userId],
