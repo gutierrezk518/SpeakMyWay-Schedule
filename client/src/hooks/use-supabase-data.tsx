@@ -38,24 +38,28 @@ export function useUserFavorites(userId: string | null) {
       
       console.log('Fetching user favorites for user:', userId);
       
-      // Try a more direct approach to the query
       const { data, error } = await supabase
         .from('schedule_user_favorites')
-        .select('*')
+        .select('id, user_id, activity_id, activity_data, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching user favorites:', error);
-        // Don't throw error, return empty array to allow functionality to continue
         return [];
       }
       
       console.log('User favorites fetched:', data);
-      return data as SupabaseUserFavorite[];
+      // Map to expected interface for backward compatibility
+      return data.map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        vocabulary_card_id: parseInt(item.activity_id), // Convert back to number
+        created_at: item.created_at
+      })) as SupabaseUserFavorite[];
     },
     enabled: !!userId,
-    retry: false, // Don't retry failed queries
+    retry: false,
   });
 }
 
@@ -67,20 +71,18 @@ export function useUserFavoritesManager(userId: string | null) {
     mutationFn: async (vocabularyCardId: number) => {
       if (!userId) throw new Error('User not authenticated');
       
-      console.log('🔧 Attempting to insert favorite with:', { userId, vocabularyCardId });
+      console.log('🔧 Attempting to insert favorite with correct schema:', { userId, vocabularyCardId });
       
-      // Use raw SQL query to bypass Supabase schema cache issues
+      // Use the correct column names from schema: activity_id instead of vocabulary_card_id
       const { data, error } = await supabase
         .from('schedule_user_favorites')
         .insert([{
           user_id: userId,
-          vocabulary_card_id: vocabularyCardId
-        }], { 
-          returning: 'representation',
-          count: 'exact'
-        })
+          activity_id: vocabularyCardId.toString(), // Convert to string as shown in schema
+          activity_data: null // Optional jsonb field
+        }])
         .select('*')
-        .maybeSingle();
+        .single();
       
       if (error) {
         console.log('❌ Insert error details:', error);
@@ -108,7 +110,7 @@ export function useUserFavoritesManager(userId: string | null) {
         .from('schedule_user_favorites')
         .delete()
         .eq('user_id', userId)
-        .eq('vocabulary_card_id', vocabularyCardId);
+        .eq('activity_id', vocabularyCardId.toString()); // Use correct column name
       
       if (error) {
         throw new Error(`Failed to remove favorite: ${error.message}`);
@@ -116,6 +118,7 @@ export function useUserFavoritesManager(userId: string | null) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-favorites', userId] });
+      queryClient.invalidateQueries({ queryKey: ['organized-activity-data'] });
     },
   });
   
