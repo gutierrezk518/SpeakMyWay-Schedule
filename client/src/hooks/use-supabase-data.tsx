@@ -27,6 +27,7 @@ export interface SupabaseUserFavorite {
   user_id: string;
   vocabulary_card_id: number;
   created_at: string;
+  activity_data?: any; // Optional for backward compatibility
 }
 
 // Hook to fetch user favorites from Supabase
@@ -54,8 +55,9 @@ export function useUserFavorites(userId: string | null) {
       return data.map(item => ({
         id: item.id,
         user_id: item.user_id,
-        vocabulary_card_id: parseInt(item.activity_id), // Convert back to number
-        created_at: item.created_at
+        vocabulary_card_id: parseInt(item.activity_id),
+        created_at: item.created_at,
+        activity_data: item.activity_data // Include the complete activity data
       })) as SupabaseUserFavorite[];
     },
     enabled: !!userId,
@@ -71,15 +73,39 @@ export function useUserFavoritesManager(userId: string | null) {
     mutationFn: async (vocabularyCardId: number) => {
       if (!userId) throw new Error('User not authenticated');
       
-      console.log('🔧 Attempting to insert favorite with correct schema:', { userId, vocabularyCardId });
+      console.log('🔧 Attempting to add favorite:', { userId, vocabularyCardId });
       
-      // Use the correct column names from schema: activity_id instead of vocabulary_card_id
+      // First check if this favorite already exists
+      const { data: existingFavorite } = await supabase
+        .from('schedule_user_favorites')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('activity_id', vocabularyCardId.toString())
+        .maybeSingle();
+      
+      if (existingFavorite) {
+        throw new Error('This item is already in your favorites');
+      }
+      
+      // Fetch the complete vocabulary card data
+      const { data: vocabularyCard, error: fetchError } = await supabase
+        .from('schedule_vocabulary_cards')
+        .select('*')
+        .eq('id', vocabularyCardId)
+        .single();
+      
+      if (fetchError || !vocabularyCard) {
+        console.error('Error fetching vocabulary card:', fetchError);
+        throw new Error('Could not find vocabulary card data');
+      }
+      
+      // Insert with complete activity data
       const { data, error } = await supabase
         .from('schedule_user_favorites')
         .insert([{
           user_id: userId,
-          activity_id: vocabularyCardId.toString(), // Convert to string as shown in schema
-          activity_data: null // Optional jsonb field
+          activity_id: vocabularyCardId.toString(),
+          activity_data: vocabularyCard // Store complete vocabulary card data
         }])
         .select('*')
         .single();
