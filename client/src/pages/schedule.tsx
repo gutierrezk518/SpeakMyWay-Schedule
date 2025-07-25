@@ -1166,29 +1166,58 @@ export default function Schedule() {
                   {(categoriesLoading || dataLoading) ? (
                     <div className="px-3 py-1.5 text-xs text-gray-500">Loading categories...</div>
                   ) : categories ? (
-                    categories.map((category) => (
-                      <button
-                        key={category.id}
-                        className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                          selectedCategory === category.id 
-                          ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                          : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                        }`}
-                        onClick={() => handleCategoryChange(category.id)}
-                      >
-                        {category.id === 'all' && <i className="ri-apps-line mr-1"></i>}
-                        {category.id === 'favorites' && <i className="ri-star-fill mr-1"></i>}
-                        {category.id === 'hygiene' && <i className="ri-hand-sanitizer-line mr-1"></i>}
-                        {category.id === 'meals' && <i className="ri-restaurant-line mr-1"></i>}
-                        {category.id === 'dressing' && <i className="ri-shirt-line mr-1"></i>}
-                        {category.id === 'places' && <i className="ri-map-pin-line mr-1"></i>}
-                        {category.id === 'transportation' && <i className="ri-car-line mr-1"></i>}
-                        {category.id === 'appointments' && <i className="ri-calendar-event-line mr-1"></i>}
-                        {category.id === 'vacation' && <i className="ri-suitcase-line mr-1"></i>}
-                        {category.id === 'chores' && <i className="ri-broom-line mr-1"></i>}
-                        {category.name}
-                      </button>
-                    ))
+                    categories.map((category) => {
+                      // Special handling for favorites category - make it a droppable area
+                      if (category.id === 'favorites') {
+                        return (
+                          <Droppable key={category.id} droppableId="favorites" direction="horizontal">
+                            {(provided, snapshot) => (
+                              <button
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-colors ${
+                                  selectedCategory === category.id 
+                                  ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                                  : snapshot.isDraggingOver
+                                  ? 'bg-yellow-300 dark:bg-yellow-600 text-yellow-800 dark:text-yellow-100 border-2 border-yellow-500'
+                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                                onClick={() => handleCategoryChange(category.id)}
+                              >
+                                <i className="ri-star-fill mr-1"></i>
+                                {category.name}
+                                {snapshot.isDraggingOver && <span className="ml-1">📥</span>}
+                                {provided.placeholder}
+                              </button>
+                            )}
+                          </Droppable>
+                        );
+                      }
+                      
+                      // Regular category buttons
+                      return (
+                        <button
+                          key={category.id}
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                            selectedCategory === category.id 
+                            ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                          }`}
+                          onClick={() => handleCategoryChange(category.id)}
+                        >
+                          {category.id === 'all' && <i className="ri-apps-line mr-1"></i>}
+                          {category.id === 'hygiene' && <i className="ri-hand-sanitizer-line mr-1"></i>}
+                          {category.id === 'meals' && <i className="ri-restaurant-line mr-1"></i>}
+                          {category.id === 'dressing' && <i className="ri-shirt-line mr-1"></i>}
+                          {category.id === 'places' && <i className="ri-map-pin-line mr-1"></i>}
+                          {category.id === 'transportation' && <i className="ri-car-line mr-1"></i>}
+                          {category.id === 'appointments' && <i className="ri-calendar-event-line mr-1"></i>}
+                          {category.id === 'vacation' && <i className="ri-suitcase-line mr-1"></i>}
+                          {category.id === 'chores' && <i className="ri-broom-line mr-1"></i>}
+                          {category.name}
+                        </button>
+                      );
+                    })
                   ) : (
                     <div className="px-3 py-1.5 text-xs text-red-500">Error loading categories</div>
                   )}
