@@ -499,7 +499,13 @@ export default function Schedule() {
           return;
         }
         
-        console.log('Adding to favorites:', { activityId: activityToAdd.id, vocabularyCardId, title: activityToAdd.title });
+        console.log('🎯 DRAG TO FAVORITES DETECTED:', { 
+          source: source.droppableId, 
+          destination: destination.droppableId, 
+          activityId: activityToAdd.id, 
+          vocabularyCardId, 
+          title: activityToAdd.title 
+        });
         
         // Add to user favorites in Supabase
         addFavorite.mutate(vocabularyCardId, {
@@ -1113,6 +1119,30 @@ export default function Schedule() {
                   </div>
                 </div>
               )}
+
+              {/* Favorites drop zone - always visible */}
+              <div className="px-2 py-1 border-b border-gray-200 dark:border-gray-700 bg-yellow-50 dark:bg-yellow-950 flex-shrink-0">
+                <Droppable droppableId="favorites" direction="horizontal">
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className={`w-full p-2 rounded-md min-h-[40px] flex items-center justify-center text-xs font-medium transition-colors ${
+                        snapshot.isDraggingOver 
+                          ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 border-2 border-yellow-400 dark:border-yellow-600' 
+                          : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
+                      }`}
+                    >
+                      {snapshot.isDraggingOver ? (
+                        <span>⭐ Drop here to add to favorites</span>
+                      ) : (
+                        <span>⭐ Favorites Drop Zone</span>
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </div>
 
               {/* Categories tabs - TIGHTENED spacing */}
               <div className="px-2 py-1.5 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950 flex-shrink-0">

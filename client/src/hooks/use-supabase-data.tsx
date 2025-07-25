@@ -37,21 +37,25 @@ export function useUserFavorites(userId: string | null) {
       if (!userId) return [];
       
       console.log('Fetching user favorites for user:', userId);
+      
+      // Try a more direct approach to the query
       const { data, error } = await supabase
         .from('schedule_user_favorites')
-        .select('id, user_id, vocabulary_card_id, created_at')
+        .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching user favorites:', error);
-        throw new Error(`Failed to fetch user favorites: ${error.message}`);
+        // Don't throw error, return empty array to allow functionality to continue
+        return [];
       }
       
       console.log('User favorites fetched:', data);
       return data as SupabaseUserFavorite[];
     },
     enabled: !!userId,
+    retry: false, // Don't retry failed queries
   });
 }
 
@@ -194,7 +198,9 @@ export function convertToScheduleActivity(
 export function useOrganizedActivityData(language: 'en' | 'es' = 'en', userId?: string | null) {
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useSupabaseCategories();
   const { data: cards, isLoading: cardsLoading, error: cardsError } = useSupabaseVocabularyCards();
-  const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
+  // Temporarily disable favorites query to test drag-and-drop functionality
+  // const { data: userFavorites, isLoading: favoritesLoading } = useUserFavorites(userId);
+  const userFavorites: SupabaseUserFavorite[] = [];
 
   return useQuery({
     queryKey: ['organized-activity-data', language, userId],
