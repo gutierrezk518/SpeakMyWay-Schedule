@@ -2,26 +2,7 @@
 
 ## Overview
 
-SpeakMyWay is an Augmentative and Alternative Communication (AAC) frontend web application designed to help users with communication needs. The application features a comprehensive communication board, quick mode for frequently used phrases, schedule management, and customization options. It's now a pure frontend React/TypeScript application using Supabase as the backend service for authentication and data storage.
-
-## Recent Changes (July 28, 2025)
-
-✓ **Converted to Frontend-Only Application**
-- Removed all Express.js backend code and server directory
-- Removed shared directory and database schemas
-- Removed backend dependencies (drizzle-orm, express, passport, etc.)
-- Updated to use Vite dev server (port 5173) instead of Express server
-
-✓ **Simplified Architecture**
-- Pure React frontend with Supabase backend
-- Removed admin panel functionality (now shows informational page)
-- Simplified email verification (now handled by Supabase Auth)
-- Updated queryClient to remove server-side API calls
-
-✓ **Environment Configuration**
-- Created .env.local with Supabase configuration placeholders
-- Updated package.json to use ESM modules
-- Fixed Vite configuration to work with frontend-only setup
+SpeakMyWay is an Augmentative and Alternative Communication (AAC) web application designed to help users with communication needs. The application features a comprehensive communication board, quick mode for frequently used phrases, schedule management, and customization options. It's built as a full-stack web application using modern React/TypeScript on the frontend and Express.js with PostgreSQL on the backend.
 
 ## System Architecture
 
