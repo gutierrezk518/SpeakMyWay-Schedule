@@ -10,7 +10,7 @@ import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
 import { ScheduleActivity, ScheduleTimeSection } from "@/data/scheduleData";
-import { useOrganizedActivityData, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards } from "@/hooks/use-supabase-data";
+import { useOrganizedActivityData, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards, getCategoryBgColor } from "@/hooks/use-supabase-data";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/lib/supabase";
 // Authentication removed
@@ -891,7 +891,7 @@ export default function Schedule() {
                     ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                     : snapshot.isDraggingOver
                     ? 'bg-yellow-300 dark:bg-yellow-600 text-yellow-800 dark:text-yellow-100 border-2 border-yellow-500 transform scale-105 shadow-lg'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    : 'bg-yellow-200 text-yellow-800 hover:bg-yellow-300 shadow-sm'
                 }`}
                 onClick={() => handleCategoryChange(category.id)}
               >
@@ -912,13 +912,24 @@ export default function Schedule() {
     }
 
     // Return regular button for non-favorites categories
+    // Get the category background color, with special handling for "all" category
+    let categoryBgColor;
+    let textColor = 'text-gray-800';
+    
+    if (category.id === 'all') {
+      categoryBgColor = 'gray-100';
+      textColor = 'text-gray-700';
+    } else {
+      categoryBgColor = getCategoryBgColor(category.name);
+    }
+    
     return (
       <button
         key={category.id}
         className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-colors ${
           selectedCategory === category.id 
             ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+            : `bg-${categoryBgColor} ${textColor} hover:bg-${categoryBgColor} hover:opacity-80 shadow-sm`
         }`}
         onClick={() => handleCategoryChange(category.id)}
       >

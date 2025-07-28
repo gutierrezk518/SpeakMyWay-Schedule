@@ -81,7 +81,7 @@ function getCategoryIcon(categoryName: string): string {
 }
 
 // Helper function to get category background colors
-function getCategoryBgColor(categoryName: string): string {
+export function getCategoryBgColor(categoryName: string): string {
   const colorMap: Record<string, string> = {
     'Getting Ready': 'purple-300',
     'Holiday': 'green-400',
