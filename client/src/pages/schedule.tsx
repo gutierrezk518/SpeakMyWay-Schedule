@@ -10,8 +10,9 @@ import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
 import { ScheduleActivity, ScheduleTimeSection } from "@/data/scheduleData";
-import { useOrganizedActivityData, useActivityCategories, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards } from "@/hooks/use-supabase-data";
+import { useOrganizedActivityData, useUserFavoritesManager, useSupabaseCategories, useSupabaseVocabularyCards } from "@/hooks/use-supabase-data";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/lib/supabase";
 // Authentication removed
 
 // Compact Timer Component
@@ -19,13 +20,13 @@ const TimerComponent = () => {
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  
+
   // Get the user name and language from context
   const { userName, language } = useAppContext();
-  
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    
+
     if (isActive) {
       interval = setInterval(() => {
         if (seconds > 0) {
@@ -36,10 +37,10 @@ const TimerComponent = () => {
         } else {
           // Timer finished
           setIsActive(false);
-          
+
           // Play sound effect first
           playTimerComplete();
-          
+
           // Add a small delay before speaking
           setTimeout(() => {
             // Custom message with user's name, translated based on language setting
@@ -51,7 +52,7 @@ const TimerComponent = () => {
             }
             speak(message);
           }, 800);
-          
+
           // Optional: vibration if available
           if ('vibrate' in navigator) {
             navigator.vibrate([200, 100, 200, 100, 200]);
@@ -59,23 +60,23 @@ const TimerComponent = () => {
         }
       }, 1000);
     }
-    
+
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isActive, minutes, seconds, userName, language]);
-  
+
   const handleToggleTimer = () => {
     if (minutes === 0 && seconds === 0 && !isActive) return;
     setIsActive(!isActive);
   };
-  
+
   const handleReset = () => {
     setIsActive(false);
     setMinutes(5);
     setSeconds(0);
   };
-  
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center mr-3">
@@ -101,7 +102,7 @@ const TimerComponent = () => {
           ))}
         </select>
       </div>
-      
+
       <div className="flex">
         <button 
           onClick={handleToggleTimer}
@@ -114,7 +115,7 @@ const TimerComponent = () => {
             ? (isActive ? "Pausa" : "Iniciar") 
             : (isActive ? "Pause" : "Start")}
         </button>
-        
+
         <button 
           onClick={handleReset}
           className="px-2 py-0.5 bg-red-500 text-white rounded text-xs hover:bg-red-600 mx-1"
@@ -152,31 +153,31 @@ export default function Schedule() {
   const [location] = useLocation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  
+
   // Fetch Supabase data with user context for favorites
   const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id);
-  const { data: categories, isLoading: categoriesLoading } = useActivityCategories(language);
+  const { data: categories, isLoading: categoriesLoading } = useSupabaseCategories();
   // Add favorites manager for Supabase favorites functionality
   const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
-  
+
   // Check for email verification URL parameters when page loads
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const verified = urlParams.get('verified');
     const error = urlParams.get('error');
-    
+
     if (verified === 'true') {
       toast({
         title: "Email Verification Successful",
         description: "Your email has been verified. You now have full access to the application.",
         variant: "default",
       });
-      
+
       // Clear the URL parameters after showing the toast
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (error) {
       let errorMessage = "There was a problem verifying your email.";
-      
+
       if (error === 'invalid_token') {
         errorMessage = "The verification link was invalid. Please request a new one.";
       } else if (error === 'expired_token') {
@@ -184,26 +185,26 @@ export default function Schedule() {
       } else if (error === 'server_error') {
         errorMessage = "A server error occurred. Please try again later.";
       }
-      
+
       toast({
         title: "Verification Failed",
         description: errorMessage,
         variant: "destructive",
       });
-      
+
       // Clear the URL parameters after showing the toast
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [toast, location]);
-  
+
   // Schedule state
   const [scheduleData, setScheduleData] = useState<ScheduleSection[]>(() => {
     // Try to load from localStorage first
     const savedSchedule = localStorage.getItem('userSchedule');
-    
+
     // Check if this is a first-time user by checking for a first-visit flag
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
-    
+
     if (savedSchedule) {
       // User has saved schedule data, use that
       return JSON.parse(savedSchedule);
@@ -260,7 +261,7 @@ export default function Schedule() {
       ];
     }
   });
-  
+
   // UI state
   const [selectedTimeSection, setSelectedTimeSection] = useState("morning");
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -272,7 +273,7 @@ export default function Schedule() {
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
   const [showSearchBar, setShowSearchBar] = useState(false); // Toggle search bar visibility
-  
+
   // Helper function to handle category selection and reset page number
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -280,25 +281,25 @@ export default function Schedule() {
   };
 
 
-  
+
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
-  
+
   // Set the current page in the app context
   useEffect(() => {
     setCurrentPage("/schedule");
   }, [setCurrentPage]);
-  
+
   // Save schedule to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('userSchedule', JSON.stringify(scheduleData));
   }, [scheduleData]);
-  
+
   // Get the current time section's activities
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
-  
+
   // Get activities for selected category from Supabase data only
   // Map kebab-case category keys to actual database category names
   const categoryKeyMap: Record<string, string> = {
@@ -312,28 +313,27 @@ export default function Schedule() {
     'vacation': 'Vacation',
     'favorites': 'favorites'
   };
-  
+
   const actualCategoryName = categoryKeyMap[selectedCategory] || selectedCategory;
-  
+
   const categoryActivities = supabaseActivityData?.organizedData 
     ? (selectedCategory === "all" 
         ? supabaseActivityData.allCards 
         : supabaseActivityData.organizedData[actualCategoryName] || [])
     : [];
-    
+
   // Debug category mapping
   if (supabaseActivityData?.organizedData && selectedCategory !== "all") {
     console.log('Selected category key:', selectedCategory, '→ Mapped to:', actualCategoryName);
     console.log('Cards in selected category:', categoryActivities.length);
   }
 
-  // Debug individual data sources
-  const { data: rawCategories, isLoading: rawCategoriesLoading } = useSupabaseCategories();
+  // Debug individual data sources  
   const { data: rawCards, isLoading: rawCardsLoading } = useSupabaseVocabularyCards();
-  
+
   // Simplified debug logging
   console.log('Cards loaded:', !!supabaseActivityData, 'Loading:', dataLoading, 'Category:', selectedCategory, 'Count:', categoryActivities.length);
-  
+
   if (supabaseActivityData) {
     console.log('SUCCESS: Data loaded with', supabaseActivityData.allCards.length, 'total cards');
   } else if (dataError) {
@@ -342,7 +342,7 @@ export default function Schedule() {
   } else {
     console.log('No data yet, still loading or failed silently');
   }
-            
+
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
     ? categoryActivities.filter(activity => {
@@ -353,7 +353,7 @@ export default function Schedule() {
         );
       })
     : categoryActivities;
-  
+
   // Dynamic grid layout based on screen size
   // Calculate items per page based on viewport size to prevent scrolling
   const getItemsPerPage = () => {
@@ -369,7 +369,7 @@ export default function Schedule() {
       // Account for different card sizes on different screens
       const cardHeight = window.innerWidth >= 768 ? 95 : 80; // Smaller cards on phones
       const availableRows = Math.floor(scheduleSectionHeight / cardHeight);
-      
+
       // Calculate columns based on responsive grid classes we set
       let columns = 4; // Default mobile columns
       if (window.innerWidth >= 1536) columns = 7; // 2xl screens (matches 2xl:grid-cols-7)
@@ -377,97 +377,172 @@ export default function Schedule() {
       if (window.innerWidth >= 1024 && window.innerWidth < 1280) columns = 6; // lg screens (matches lg:grid-cols-6)
       if (window.innerWidth >= 768 && window.innerWidth < 1024) columns = 5; // md screens (matches md:grid-cols-5)
       if (window.innerWidth >= 640 && window.innerWidth < 768) columns = 4; // sm screens (matches sm:grid-cols-4)
-      
+
       // Calculate exact items that fit on screen without scrolling
       const maxItems = availableRows * columns;
-      
+
       // Enforce minimum items per page for small screens where scrolling is expected
       return Math.max(maxItems, window.innerWidth < 768 ? 20 : 24);
     }
     return 24; // Default fallback
   };
-  
+
   const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
-  
+
   // Effect to adjust items per page based on window width
   useEffect(() => {
     const handleResize = () => {
       setItemsPerPage(getItemsPerPage());
     };
-    
+
     // Add event listener
     window.addEventListener('resize', handleResize);
-    
+
     // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   // Calculate pagination
   const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
   const startIndex = (activitiesPage - 1) * itemsPerPage;
   const visibleActivities = filteredActivities.slice(startIndex, startIndex + itemsPerPage);
-  
-  // Handle drag end event
+
+  // Handle drag end event - FIXED VERSION
   const onDragEnd = useCallback(async (result: DropResult) => {
     const { source, destination } = result;
     setDraggedItem(null);
     setIsDragging(false); // Set dragging state to false
-    
+
     // If dropped outside a droppable area
     if (!destination) return;
-    
+
     // If dropped in the same position
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) return;
-    
+
     // Save current state for undo history before making changes
     const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
     if (currentSection) {
       addToScheduleHistory([...currentSection.activities]);
     }
-    
+
+    // HANDLE DRAG TO FAVORITES - Fixed version
+    if (source.droppableId === "activity-cards" && 
+        (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
+      try {
+        const activityToAdd = visibleActivities[source.index];
+        if (!activityToAdd || !user) {
+          console.log('Cannot add to favorites - missing activity or user:', { 
+            activity: !!activityToAdd, 
+            user: !!user 
+          });
+          return;
+        }
+
+        // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
+        const originalId = activityToAdd.id.split('-')[0];
+        const vocabularyCardId = parseInt(originalId);
+
+        if (isNaN(vocabularyCardId)) {
+          console.error('Invalid vocabulary card ID:', activityToAdd.id);
+          return;
+        }
+
+        console.log('🎯 DRAG TO FAVORITES DETECTED:', { 
+          source: source.droppableId, 
+          destination: destination.droppableId, 
+          activityId: activityToAdd.id, 
+          vocabularyCardId, 
+          title: activityToAdd.title 
+        });
+
+        // First, fetch the complete vocabulary card data from Supabase
+        const { data: vocabularyCard, error: fetchError } = await supabase
+          .from('schedule_vocabulary_cards')
+          .select('*')
+          .eq('id', vocabularyCardId)
+          .single();
+
+        if (fetchError || !vocabularyCard) {
+          console.error('Error fetching vocabulary card:', fetchError);
+          speak(language === 'es' ? "Error al añadir a favoritos" : "Error adding to favorites");
+          return;
+        }
+
+        // Add to user favorites with complete vocabulary card data
+        addFavorite.mutate(vocabularyCard, {
+          onSuccess: (data) => {
+            console.log('✅ Successfully added to favorites:', data);
+            if (destination.droppableId === "favorites-button") {
+              setSelectedCategory('favorites');
+            }
+            speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
+          },
+          onError: (error: any) => {
+            console.error('❌ Error adding to favorites:', {
+              error,
+              message: error?.message,
+              userId: user?.id,
+              vocabularyCardId
+            });
+
+            // Provide user feedback
+            const errorMessage = error?.message?.includes('already in your favorites') 
+              ? (language === 'es' ? "Ya está en favoritos" : "Already in favorites")
+              : (language === 'es' ? "Error al añadir a favoritos" : "Error adding to favorites");
+
+            speak(errorMessage);
+          }
+        });
+      } catch (error) {
+        console.error("Error adding to favorites:", error);
+        speak(language === 'es' ? "Error al añadir a favoritos" : "Error adding to favorites");
+      }
+      return;
+    }
+
     // If moving within schedule
     if (source.droppableId === "schedule" && destination.droppableId === "schedule") {
       const newSchedule = [...scheduleData];
       const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
       if (!section) return;
-      
+
       const [movedActivity] = section.activities.splice(source.index, 1);
       section.activities.splice(destination.index, 0, movedActivity);
-      
+
       setScheduleData(newSchedule);
     }
-    
+
     // Reordering within activity cards section - prevent it
     if (source.droppableId === "activity-cards" && destination.droppableId === "activity-cards") {
       // We don't want to allow reordering within the activity cards section
       // So we do nothing here
       return;
     }
-    
+
     // If adding from activity cards to schedule
     if (source.droppableId === "activity-cards" && destination.droppableId === "schedule") {
       try {
         const activityToAdd = visibleActivities[source.index];
         if (!activityToAdd) return;
-        
+
         const newSchedule = [...scheduleData];
         const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
         if (!section) return;
-        
+
         // Create a new copy of the activity with a unique ID to ensure it stays on both sides
         const newActivity: ScheduleActivity = {
           ...activityToAdd,
           id: `${activityToAdd.id}-${uuidv4().slice(0, 8)}`
         };
-        
+
         // Add the activity to the schedule
         section.activities = [...section.activities];
         section.activities.splice(destination.index, 0, newActivity);
         setScheduleData(newSchedule);
-        
+
         // Speak the activity's full speech text when it's added to the schedule
         if (language === 'es' && newActivity.speechTextEs) {
           speak(newActivity.speechTextEs);
@@ -479,80 +554,8 @@ export default function Schedule() {
         console.error("Error adding activity to schedule:", error);
       }
     }
-    
-    // NEW: If adding to favorites category by dragging
-    if (source.droppableId === "activity-cards" && 
-        (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
-      try {
-        const activityToAdd = visibleActivities[source.index];
-        if (!activityToAdd || !user) {
-          console.log('Cannot add to favorites - missing activity or user:', { activity: !!activityToAdd, user: !!user });
-          return;
-        }
-        
-        // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
-        const originalId = activityToAdd.id.split('-')[0];
-        const vocabularyCardId = parseInt(originalId);
-        
-        if (isNaN(vocabularyCardId)) {
-          console.error('Invalid vocabulary card ID:', activityToAdd.id);
-          return;
-        }
-        
-        console.log('🎯 DRAG TO FAVORITES DETECTED:', { 
-          source: source.droppableId, 
-          destination: destination.droppableId, 
-          activityId: activityToAdd.id, 
-          vocabularyCardId, 
-          title: activityToAdd.title 
-        });
-        
-        // Add to user favorites in Supabase
-        console.log('🔧 Calling addFavorite mutation:', { 
-          userId: user?.id, 
-          vocabularyCardId, 
-          userExists: !!user,
-          addFavoriteExists: !!addFavorite 
-        });
-        
-        addFavorite.mutate(vocabularyCardId, {
-          onSuccess: (data) => {
-            console.log('✅ Successfully added to favorites:', data);
-            // Automatically switch to favorites category to show the result
-            if (destination.droppableId === "favorites-button") {
-              setSelectedCategory('favorites');
-            }
-            // Speak confirmation
-            speak(language === 'es' ? "Añadido a favoritos" : "Added to favorites");
-          },
-          onError: (error: any) => {
-            console.error('❌ Error adding to favorites:', {
-              error,
-              message: error?.message,
-              code: error?.code,
-              details: error?.details,
-              userId: user?.id,
-              vocabularyCardId
-            });
-            toast({
-              title: "Error",
-              description: error?.message || "Failed to add to favorites",
-              variant: "destructive",
-            });
-          }
-        });
-        
-      } catch (error) {
-        console.error("Error adding to favorites:", error);
-        toast({
-          title: "Error",
-          description: "Failed to add to favorites",
-          variant: "destructive",
-        });
-      }
-    }
-    
-    // NEW: If removing from favorites by dragging out
+
+    // If removing from favorites by dragging out
     if (source.droppableId === "favorites" && destination.droppableId === "activity-cards") {
       try {
         const favoriteCards = supabaseActivityData?.organizedData['favorites'] || [];
@@ -561,18 +564,18 @@ export default function Schedule() {
           console.log('Cannot remove from favorites - missing activity or user:', { activity: !!activityToRemove, user: !!user });
           return;
         }
-        
+
         // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
         const originalId = activityToRemove.id.split('-')[0];
         const vocabularyCardId = parseInt(originalId);
-        
+
         if (isNaN(vocabularyCardId)) {
           console.error('Invalid vocabulary card ID for removal:', activityToRemove.id);
           return;
         }
-        
+
         console.log('Removing from favorites:', { activityId: activityToRemove.id, vocabularyCardId, title: activityToRemove.title });
-        
+
         // Remove from user favorites in Supabase
         removeFavorite.mutate(vocabularyCardId, {
           onSuccess: () => {
@@ -589,7 +592,7 @@ export default function Schedule() {
             });
           }
         });
-        
+
       } catch (error) {
         console.error("Error removing from favorites:", error);
         toast({
@@ -599,13 +602,13 @@ export default function Schedule() {
         });
       }
     }
-  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, supabaseActivityData, user, toast]);
-  
+  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, supabaseActivityData, user, toast, addFavorite, removeFavorite, language]);
+
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
     const { source } = start;
     setIsDragging(true); // Set dragging state to true
-    
+
     if (source.droppableId === "activity-cards") {
       const draggedActivity = visibleActivities[source.index];
       setDraggedItem(draggedActivity);
@@ -618,7 +621,7 @@ export default function Schedule() {
       setDraggedItem(draggedActivity);
     }
   }, [visibleActivities, currentSchedule, supabaseActivityData]);
-  
+
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
     // Add current state to history for undo
@@ -626,15 +629,15 @@ export default function Schedule() {
     if (currentSection) {
       addToScheduleHistory([...currentSection.activities]);
     }
-    
+
     const newSchedule = [...scheduleData];
     const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
     if (!section) return;
-    
+
     section.activities.splice(index, 1);
     setScheduleData(newSchedule);
   };
-  
+
   // Clear all activities
   const clearActivities = () => {
     // Add current state to history for undo
@@ -642,7 +645,7 @@ export default function Schedule() {
     if (currentSection && currentSection.activities.length > 0) {
       addToScheduleHistory([...currentSection.activities]);
     }
-    
+
     const newSchedule = scheduleData.map((section: ScheduleSection) => {
       if (section.id === selectedTimeSection) {
         return { ...section, activities: [] };
@@ -651,7 +654,7 @@ export default function Schedule() {
     });
     setScheduleData(newSchedule);
   };
-  
+
   // Handle undo action
   const handleUndo = () => {
     const previousActivities = undoScheduleChange();
@@ -665,7 +668,7 @@ export default function Schedule() {
       setScheduleData(newSchedule);
     }
   };
-  
+
   // Handle redo action
   const handleRedo = () => {
     const nextActivities = redoScheduleChange();
@@ -679,32 +682,32 @@ export default function Schedule() {
       setScheduleData(newSchedule);
     }
   };
-  
+
   // Save the current routine
   const saveRoutine = () => {
     alert("Routine saved!");
     localStorage.setItem('userSchedule', JSON.stringify(scheduleData));
   };
-  
+
   // Save to a specific time section
   const saveToTimeSection = (sectionId: string) => {
     // Update the schedule data with the current activities saved to the selected section
     const newSchedule = [...scheduleData];
     const targetSection = newSchedule.find(s => s.id === sectionId);
     const currentSection = newSchedule.find(s => s.id === selectedTimeSection);
-    
+
     if (targetSection && currentSection) {
       // Copy activities from current section to target section
       targetSection.activities = [...currentSection.activities];
       localStorage.setItem('userSchedule', JSON.stringify(newSchedule));
       setShowSaveModal(false);
-      
+
       // Show confirmation message
       const sectionName = targetSection.name.toLowerCase();
       alert(`Schedule saved to ${sectionName}!`);
     }
   };
-  
+
   // Play through the schedule as a complete sentence with ordinal words
   const playSchedule = () => {
     if (currentSchedule.length === 0) {
@@ -715,13 +718,13 @@ export default function Schedule() {
       }
       return;
     }
-    
+
     // Create array of schedule items with ordinal words
     const scheduleTexts: string[] = [];
-    
+
     currentSchedule.forEach((activity, index) => {
       let ordinalPrefix = "";
-      
+
       if (language === "es") {
         // Spanish ordinal words
         if (index === 0) {
@@ -736,13 +739,13 @@ export default function Schedule() {
           // For positions 4th and beyond
           ordinalPrefix = "Después vamos a ";
         }
-        
+
         // Use Spanish speech text if available
         const textToSpeak = activity.speechTextEs ? 
           activity.speechTextEs.toLowerCase() : 
           (activity.titleEs ? activity.titleEs.toLowerCase() : 
            (activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase()));
-           
+
         scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
       } else {
         // English ordinal words
@@ -758,16 +761,16 @@ export default function Schedule() {
           // For positions 4th and beyond
           ordinalPrefix = `Next we will `;
         }
-        
+
         // Use speechText if available, otherwise use title
         const textToSpeak = activity.speechText ? activity.speechText.toLowerCase() : activity.title.toLowerCase();
         scheduleTexts.push(`${ordinalPrefix}${textToSpeak}`);
       }
     });
-    
+
     // Create a single complete sentence from all schedule items
     let fullText = scheduleTexts.join(", ");
-    
+
     // Use userName from the context that we already extracted at the top of the component
     let namePrefix = "";
     if (language === "es") {
@@ -775,44 +778,44 @@ export default function Schedule() {
     } else {
       namePrefix = userName ? `Ok ${userName}. ` : "";
     }
-    
+
     // Speak the complete schedule
     speak(namePrefix + fullText);
   };
 
   // Determine if we're in portrait mode (based on window.innerWidth vs innerHeight)
   const [isPortrait, setIsPortrait] = useState(false);
-  
+
   // Update orientation on resize
   useEffect(() => {
     const checkOrientation = () => {
       setIsPortrait(window.innerHeight > window.innerWidth);
     };
-    
+
     // Check initially
     checkOrientation();
-    
+
     // Add listener for resize
     window.addEventListener('resize', checkOrientation);
-    
+
     // Clean up
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
-  
+
   // Event handler for clearing search when any card is clicked
   useEffect(() => {
     const handleClearSearch = () => {
       console.log("Clearing search from card click event");
       setSearchQuery('');
     };
-    
+
     document.addEventListener('clearSearchOnCardClick', handleClearSearch);
-    
+
     return () => {
       document.removeEventListener('clearSearchOnCardClick', handleClearSearch);
     };
   }, []);
-  
+
   // Handle adding cards to schedule when clicked
   useEffect(() => {
     // Event handler for adding cards to schedule when clicked
@@ -820,7 +823,7 @@ export default function Schedule() {
       const activity = event.detail?.activity;
       const sourceArea = event.detail?.sourceArea;
       if (!activity) return;
-      
+
       // If the card was clicked from within the schedule area, don't add it again
       if (sourceArea === "schedule") {
         // Speak the activity text without adding it again
@@ -832,27 +835,27 @@ export default function Schedule() {
         }
         return;
       }
-      
+
       // Save current state for undo history
       const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
       if (currentSection) {
         addToScheduleHistory([...currentSection.activities]);
       }
-      
+
       // Create a new copy of the activity with a unique ID
       const newActivity: ScheduleActivity = {
         ...activity,
         id: `${activity.id}-${uuidv4().slice(0, 8)}`
       };
-      
+
       // Add the activity to the schedule
       const newSchedule = [...scheduleData];
       const section = newSchedule.find((s: ScheduleSection) => s.id === selectedTimeSection);
       if (!section) return;
-      
+
       section.activities = [...section.activities, newActivity]; // Add to the end
       setScheduleData(newSchedule);
-      
+
       // Speak the activity's full speech text when it's added to the schedule
       if (language === "es" && (newActivity.speechTextEs || newActivity.titleEs)) {
         speak(newActivity.speechTextEs || newActivity.titleEs || newActivity.speechText || newActivity.title);
@@ -861,15 +864,69 @@ export default function Schedule() {
       }
       console.log("Added activity to schedule via click:", newActivity.title);
     };
-    
+
     // Listen for the custom event
     document.addEventListener('addCardToSchedule', handleAddCardToSchedule as EventListener);
-    
+
     // Clean up
     return () => {
       document.removeEventListener('addCardToSchedule', handleAddCardToSchedule as EventListener);
     };
   }, [scheduleData, selectedTimeSection, addToScheduleHistory]);
+
+  // Render favorites button as droppable
+  const renderFavoritesButton = (category: any) => {
+    if (category.id === 'favorites') {
+      return (
+        <Droppable key={`${category.id}-droppable`} droppableId="favorites-button" direction="horizontal">
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="relative"
+            >
+              <button
+                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-all duration-200 ${
+                  selectedCategory === category.id 
+                    ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+                    : snapshot.isDraggingOver
+                    ? 'bg-yellow-300 dark:bg-yellow-600 text-yellow-800 dark:text-yellow-100 border-2 border-yellow-500 transform scale-105 shadow-lg'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+                onClick={() => handleCategoryChange(category.id)}
+              >
+                <i className="ri-star-fill mr-1"></i>
+                {category.name}
+                {snapshot.isDraggingOver && (
+                  <span className="ml-1 animate-bounce">📥</span>
+                )}
+              </button>
+              {/* Invisible placeholder to maintain layout */}
+              <div style={{ display: 'none' }}>
+                {provided.placeholder}
+              </div>
+            </div>
+          )}
+        </Droppable>
+      );
+    }
+
+    // Return regular button for non-favorites categories
+    return (
+      <button
+        key={category.id}
+        className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-colors ${
+          selectedCategory === category.id 
+            ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+        }`}
+        onClick={() => handleCategoryChange(category.id)}
+      >
+        {category.icon && <i className={`${category.icon} mr-1`}></i>}
+        {category.name}
+      </button>
+    );
+  };
 
   return (
     <section className="h-full flex flex-col" style={{ height: '100vh', maxHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -889,7 +946,7 @@ export default function Schedule() {
               >
                 <i className="ri-arrow-go-back-line text-base sm:text-xl"></i>
               </button>
-              
+
               {/* Redo button */}
               <button 
                 className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
@@ -901,7 +958,7 @@ export default function Schedule() {
               >
                 <i className="ri-arrow-go-forward-line text-base sm:text-xl"></i>
               </button>
-              
+
               {/* Play button - largest button */}
               <button 
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
@@ -910,7 +967,7 @@ export default function Schedule() {
               >
                 <i className="ri-play-line text-xl sm:text-2xl"></i>
               </button>
-              
+
               {/* Timer toggle button */}
               <button 
                 className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
@@ -919,7 +976,7 @@ export default function Schedule() {
               >
                 <i className="ri-timer-line text-base sm:text-xl"></i>
               </button>
-              
+
               {/* Save button */}
               <button 
                 className="w-11 h-11 sm:w-14 sm:h-14 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
@@ -930,7 +987,7 @@ export default function Schedule() {
               </button>
             </div>
           )}
-          
+
           {/* Schedule section */}
           <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[40vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
             {/* Action buttons in portrait mode - now above schedule header */}
@@ -947,7 +1004,7 @@ export default function Schedule() {
                 >
                   <i className="ri-arrow-go-back-line text-base"></i>
                 </button>
-                
+
                 {/* Redo button */}
                 <button 
                   className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
@@ -959,7 +1016,7 @@ export default function Schedule() {
                 >
                   <i className="ri-arrow-go-forward-line text-base"></i>
                 </button>
-                
+
                 {/* Play button */}
                 <button 
                   className="w-12 h-12 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
@@ -968,7 +1025,7 @@ export default function Schedule() {
                 >
                   <i className="ri-play-line text-xl"></i>
                 </button>
-                
+
                 {/* Timer toggle button */}
                 <button 
                   className={`w-10 h-10 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
@@ -977,9 +1034,9 @@ export default function Schedule() {
                 >
                   <i className="ri-timer-line text-base"></i>
                 </button>
-                
+
                 {/* Favorites button removed from portrait mode as requested */}
-                
+
                 {/* Save button */}
                 <button 
                   className="w-10 h-10 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
@@ -990,10 +1047,10 @@ export default function Schedule() {
                 </button>
               </div>
             )}
-            
+
             <div className="p-2 bg-blue-100 dark:bg-blue-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div className="font-bold mr-auto">My Schedule</div>
-              
+
               <div className="flex space-x-1 ml-auto">
                 <button 
                   className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
@@ -1013,7 +1070,7 @@ export default function Schedule() {
                 </button>
               </div>
             </div>
-            
+
             {/* Time section tabs - moved to top */}
             <div className="p-1 md:p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 flex-shrink-0 md:shadow-md">
               <div className="flex justify-center space-x-1 md:space-x-2">
@@ -1033,7 +1090,7 @@ export default function Schedule() {
                 ))}
               </div>
             </div>
-            
+
             {/* Droppable schedule area */}
             <div className={`flex-grow p-1 bg-blue-50 dark:bg-blue-950 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
               <Droppable 
@@ -1078,7 +1135,7 @@ export default function Schedule() {
                               categoryId={selectedCategory}
                               isDraggable={true}
                             />
-                            
+
                             {/* Only show remove buttons when not dragging */}
                             {!isDragging && (
                               isPortrait ? (
@@ -1114,7 +1171,7 @@ export default function Schedule() {
                 )}
               </Droppable>
             </div>
-            
+
             {/* Extra padding at the bottom to prevent content from being too close to the edge */}
             <div className="h-2"></div>
           </div>
@@ -1166,64 +1223,7 @@ export default function Schedule() {
                   {(categoriesLoading || dataLoading) ? (
                     <div className="px-3 py-1.5 text-xs text-gray-500">Loading categories...</div>
                   ) : categories ? (
-                    categories.map((category) => {
-                      // Special handling for favorites category - make it a droppable area
-                      if (category.id === 'favorites') {
-                        return (
-                          <Droppable key={category.id} droppableId="favorites" type="ACTIVITY">
-                            {(provided, snapshot) => (
-                              <div 
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className="relative"
-                              >
-                                <button
-                                  className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-all duration-200 ${
-                                    selectedCategory === category.id 
-                                    ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                                    : snapshot.isDraggingOver
-                                    ? 'bg-yellow-300 dark:bg-yellow-600 text-yellow-800 dark:text-yellow-100 border-2 border-yellow-500 transform scale-105 animate-pulse'
-                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                  }`}
-                                  onClick={() => handleCategoryChange(category.id)}
-                                >
-                                  <i className="ri-star-fill mr-1"></i>
-                                  {category.name}
-                                  {snapshot.isDraggingOver && (
-                                    <span className="ml-1 animate-bounce">📥</span>
-                                  )}
-                                </button>
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
-                        );
-                      }
-                      
-                      // Regular category buttons
-                      return (
-                        <button
-                          key={category.id}
-                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                            selectedCategory === category.id 
-                            ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                          }`}
-                          onClick={() => handleCategoryChange(category.id)}
-                        >
-                          {category.id === 'all' && <i className="ri-apps-line mr-1"></i>}
-                          {category.id === 'hygiene' && <i className="ri-hand-sanitizer-line mr-1"></i>}
-                          {category.id === 'meals' && <i className="ri-restaurant-line mr-1"></i>}
-                          {category.id === 'dressing' && <i className="ri-shirt-line mr-1"></i>}
-                          {category.id === 'places' && <i className="ri-map-pin-line mr-1"></i>}
-                          {category.id === 'transportation' && <i className="ri-car-line mr-1"></i>}
-                          {category.id === 'appointments' && <i className="ri-calendar-event-line mr-1"></i>}
-                          {category.id === 'vacation' && <i className="ri-suitcase-line mr-1"></i>}
-                          {category.id === 'chores' && <i className="ri-broom-line mr-1"></i>}
-                          {category.name}
-                        </button>
-                      );
-                    })
+                    categories.map((category) => renderFavoritesButton(category))
                   ) : (
                     <div className="px-3 py-1.5 text-xs text-red-500">Error loading categories</div>
                   )}
@@ -1276,7 +1276,7 @@ export default function Schedule() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-2 md:gap-3 lg:gap-4 p-0.5 sm:p-1 rounded-md min-h-[200px] ${
-                          snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
+                          snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900 border-2 border-dashed border-yellow-400' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
                         }`}
@@ -1286,6 +1286,14 @@ export default function Schedule() {
                             <div className="text-3xl mb-2">⭐</div>
                             <h3 className="font-bold mb-1">No favorites yet</h3>
                             <p className="text-sm">Drag activities here to add them to your favorites.</p>
+                            {snapshot.isDraggingOver && (
+                              <div className="mt-4 text-yellow-600 dark:text-yellow-400">
+                                <i className="ri-add-circle-line text-2xl"></i>
+                                <p className="font-medium">
+                                  {language === 'es' ? 'Suelta para añadir' : 'Drop to add'}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           (supabaseActivityData?.organizedData['favorites'] || []).map((activity: ScheduleActivity, index: number) => (
@@ -1303,18 +1311,18 @@ export default function Schedule() {
                                     className="px-2 py-0.5 bg-red-100 dark:bg-red-900 text-red-500 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 rounded text-xs shadow-sm border border-red-300 dark:border-red-700 disabled:opacity-50"
                                     onClick={() => {
                                       if (!user) return;
-                                      
+
                                       // Extract numeric ID from activity ID (remove any UUID suffix added for duplicates)
                                       const originalId = activity.id.split('-')[0];
                                       const vocabularyCardId = parseInt(originalId);
-                                      
+
                                       if (isNaN(vocabularyCardId)) {
                                         console.error('Invalid vocabulary card ID for removal:', activity.id);
                                         return;
                                       }
-                                      
+
                                       console.log('Removing from favorites via button:', { activityId: activity.id, vocabularyCardId, title: activity.title });
-                                      
+
                                       removeFavorite.mutate(vocabularyCardId, {
                                         onSuccess: () => {
                                           console.log('Successfully removed from favorites');
@@ -1408,14 +1416,14 @@ export default function Schedule() {
           )}
         </div>
       </DragDropContext>
-      
+
       {/* Save modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md dark:text-gray-100">
             <h2 className="text-lg font-bold mb-4">Save Schedule</h2>
             <p className="mb-4">Choose a time period to save this schedule to:</p>
-            
+
             <div className="grid grid-cols-2 gap-2 mb-4">
               {scheduleData.map((section) => (
                 <button
@@ -1432,7 +1440,7 @@ export default function Schedule() {
                 </button>
               ))}
             </div>
-            
+
             <div className="flex justify-end space-x-2">
               <button
                 className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded dark:text-gray-200"
