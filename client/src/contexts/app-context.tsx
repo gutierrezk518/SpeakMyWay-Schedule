@@ -160,11 +160,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUserDataRetentionConsentState(consent);
     localStorage.setItem('userDataRetentionConsent', consent.toString());
   };
-  const [voiceSettings, setVoiceSettings] = useState({
-    voiceType: "default",
-    rate: 1,
-    volume: 0.8,
-    language: "en-US",
+  const [voiceSettings, setVoiceSettings] = useState(() => {
+    // Initialize voice language based on user's selected language
+    const voiceLanguage = language === "es" ? "es-ES" : "en-US";
+    return {
+      voiceType: "default",
+      rate: 1,
+      volume: 0.8,
+      language: voiceLanguage,
+    };
   });
   const [displaySettings, setDisplaySettings] = useState(() => {
     const savedSettings = localStorage.getItem('displaySettings');
@@ -192,6 +196,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
   }, [displaySettings]);
+
+  // Sync voice language with app language
+  useEffect(() => {
+    const newVoiceLanguage = language === "es" ? "es-ES" : "en-US";
+    if (voiceSettings.language !== newVoiceLanguage) {
+      setVoiceSettings(prev => ({
+        ...prev,
+        language: newVoiceLanguage
+      }));
+    }
+  }, [language, voiceSettings.language]);
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
   
   // Undo/Redo state

@@ -58,8 +58,75 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   
   // Get the full voice type and language preferences
   const voiceType = voicePreferences.voiceType;
+  const currentLanguage = voicePreferences.language;
   console.log("Selected voice type:", voiceType);
+  console.log("Current language:", currentLanguage);
   
+  // Spanish language support - prioritize Spanish voices when language is "es"
+  if (currentLanguage === "es" || currentLanguage.startsWith("es-")) {
+    console.log("Spanish mode detected - looking for Spanish voices");
+    
+    // Filter for Spanish voices first
+    const spanishVoices = voices.filter(v => 
+      v.lang.startsWith("es") || 
+      v.name.toLowerCase().includes("español") ||
+      v.name.toLowerCase().includes("spanish")
+    );
+    
+    console.log("Available Spanish voices:", spanishVoices.map(v => ({ name: v.name, lang: v.lang })));
+    
+    if (spanishVoices.length > 0) {
+      // Handle female voice for Spanish
+      if (voiceType === "female" || voiceType === "default") {
+        const spanishFemaleVoices = spanishVoices.filter(v => {
+          const name = v.name.toLowerCase();
+          return name.includes("female") || 
+                 name.includes("mujer") || 
+                 name.includes("monica") ||
+                 name.includes("paulina") ||
+                 (name.includes("google") && name.includes("español") && !name.includes("male"));
+        });
+        
+        if (spanishFemaleVoices.length > 0) {
+          console.log("Selected Spanish FEMALE voice:", spanishFemaleVoices[0]);
+          return spanishFemaleVoices[0];
+        }
+        
+        // Fallback to first Spanish voice for female
+        console.log("Selected Spanish voice (female fallback):", spanishVoices[0]);
+        return spanishVoices[0];
+      }
+      
+      // Handle male voice for Spanish
+      if (voiceType === "male" || voiceType === "en-US-male-warm") {
+        const spanishMaleVoices = spanishVoices.filter(v => {
+          const name = v.name.toLowerCase();
+          return name.includes("male") || 
+                 name.includes("hombre") || 
+                 name.includes("jorge") ||
+                 name.includes("juan") ||
+                 (name.includes("google") && name.includes("español") && name.includes("male"));
+        });
+        
+        if (spanishMaleVoices.length > 0) {
+          console.log("Selected Spanish MALE voice:", spanishMaleVoices[0]);
+          return spanishMaleVoices[0];
+        }
+        
+        // Fallback to first Spanish voice for male
+        console.log("Selected Spanish voice (male fallback):", spanishVoices[0]);
+        return spanishVoices[0];
+      }
+      
+      // Default Spanish voice
+      console.log("Selected default Spanish voice:", spanishVoices[0]);
+      return spanishVoices[0];
+    } else {
+      console.log("No Spanish voices available, falling back to English voices");
+    }
+  }
+  
+  // English language support (original logic)
   // Handle simple "male" and "female" options directly
   if (voiceType === "male" || voiceType === "en-US-male-warm") {
     // For the original warm male voice, we'll use the Microsoft David voice which is warm and friendly
