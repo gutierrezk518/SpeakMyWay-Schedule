@@ -1,0 +1,107 @@
+I need you to clean up my React + Supabase project by removing all unnecessary backend code and converting it to a pure frontend app for Vercel deployment. Here are the specific steps:
+
+## STEP 1: DELETE BACKEND FILES
+Delete these entire directories and files:
+- `server/` (entire directory)
+- `shared/` (entire directory) 
+- Any `.env` files related to backend
+- Any Docker files
+- Any database migration files outside of Supabase
+
+## STEP 2: RESTRUCTURE PROJECT
+If my React app is currently in a `client/` subdirectory:
+- Move ALL contents from `client/` to the root directory
+- Move `client/src/` to `src/`
+- Move `client/public/` to `public/`
+- Move `client/index.html` to root `index.html`
+- Move `client/package.json` to root (but we'll clean it up next)
+- Move `client/vite.config.ts` to root
+- Delete the now-empty `client/` directory
+
+## STEP 3: CLEAN UP PACKAGE.JSON
+Update package.json to remove ALL backend dependencies and keep only frontend ones:
+
+REMOVE these dependencies:
+- express, passport, passport-local
+- drizzle-orm, @neondatabase/serverless
+- multer, csv-parse, connect-pg-simple
+- nodemailer, resend, @aws-sdk/*
+- bcrypt, crypto, ws
+- Any database-related packages
+- Any server-related packages
+
+KEEP these dependencies:
+- react, react-dom
+- @supabase/supabase-js
+- @tanstack/react-query
+- react-beautiful-dnd
+- Any UI libraries (tailwindcss, etc.)
+- typescript, vite, @vitejs/plugin-react
+- Any React-specific packages
+
+UPDATE scripts to:
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build", 
+    "preview": "vite preview"
+  }
+}
+```
+
+## STEP 4: UPDATE VITE.CONFIG.TS
+Replace vite.config.ts with this clean version:
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+})
+```
+
+## STEP 5: UPDATE IMPORTS
+Fix any import statements in React components that might reference:
+- Remove any imports from `../server/`
+- Remove any imports from `../shared/`
+- Keep all imports from `@/` (client-side)
+- Keep all Supabase imports
+
+## STEP 6: KEEP THESE IMPORTANT FILES
+Make sure these files are preserved and working:
+- `src/hooks/use-supabase-data.tsx` (my Supabase queries)
+- `src/lib/supabase.ts` (Supabase client)
+- `src/hooks/use-auth.tsx` (if using Supabase auth)
+- All React components in `src/components/`
+- All pages in `src/pages/`
+- `src/contexts/app-context.tsx`
+
+## STEP 7: CREATE/UPDATE ENVIRONMENT VARIABLES
+Create a `.env.local` file with only:
+```
+VITE_SUPABASE_URL=your_supabase_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+
+## STEP 8: FINAL CLEANUP
+- Remove any references to Express routes in React components
+- Remove any fetch calls to `/api/*` endpoints (should all be Supabase now)
+- Update any authentication logic to use Supabase Auth only
+- Remove any server-side rendering code
+
+## VERIFICATION
+After cleanup, the project should:
+- Have NO server directory
+- Have a clean package.json with only frontend dependencies  
+- Have React app files in the root `src/` directory
+- Build successfully with `npm run build`
+- Work as a pure frontend app with Supabase backend
+
+Please perform ALL these steps and let me know what you removed and what you kept. If you encounter any issues or need clarification on what to keep vs delete, ask me first.
