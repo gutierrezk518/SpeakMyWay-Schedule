@@ -18,7 +18,7 @@ import ResetPassword from "@/pages/reset-password";
 import NavigationBar from "@/components/navigation-bar";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useEffect, useState } from "react";
-import { useAppContext } from "@/contexts/app-context";
+import { useAppContext, AppProvider } from "@/contexts/app-context";
 import { AuthProvider } from "@/hooks/use-auth";
 import { useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
@@ -142,12 +142,14 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppContent />
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
+    <AppProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AppContent />
+          <Toaster />
+        </AuthProvider>
+      </QueryClientProvider>
+    </AppProvider>
   );
 }
 export default App;

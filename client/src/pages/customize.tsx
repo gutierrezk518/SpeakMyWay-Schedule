@@ -102,7 +102,7 @@ export default function Customize() {
       };
 
       // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings).catch(console.error);
       return newSettings;
     });
   };
@@ -116,7 +116,7 @@ export default function Customize() {
       };
 
       // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings).catch(console.error);
       return newSettings;
     });
   };
@@ -130,7 +130,7 @@ export default function Customize() {
       };
 
       // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings).catch(console.error);
       return newSettings;
     });
   };
@@ -144,19 +144,23 @@ export default function Customize() {
       };
 
       // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings);
+      tts.setVoicePreferences(newSettings).catch(console.error);
       return newSettings;
     });
   };
 
-  const handleTestVoice = () => {
+  const handleTestVoice = async () => {
     setIsTestingVoice(true);
 
-    // Ensure the current voice settings are applied before testing
-    tts.setVoicePreferences(voiceSettings);
+    try {
+      // Ensure the current voice settings are applied before testing
+      await tts.setVoicePreferences(voiceSettings);
 
-    // Speak the test phrase
-    tts.speak(testPhrase);
+      // Speak the test phrase
+      await tts.speak(testPhrase);
+    } catch (error) {
+      console.error('Error testing voice:', error);
+    }
 
     // Reset testing state after a delay
     setTimeout(() => setIsTestingVoice(false), 3000);

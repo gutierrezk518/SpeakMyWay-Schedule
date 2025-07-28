@@ -261,7 +261,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFavoriteActivities(updatedFavorites);
     localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
     
-    speak('Removed from favorites');
+    speak('Removed from favorites').catch(console.error);
     toast.success('Removed from favorites', {
       duration: 2000,
       position: 'top-center',
@@ -284,7 +284,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const addMessageWord = (word: string) => {
     const id = Math.random().toString(36).substring(2, 9);
     setMessageWords([...messageWords, { id, word }]);
-    speak(word);
+    speak(word).catch(console.error);
   };
 
   const removeMessageWord = (id: string) => {
@@ -297,7 +297,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const speakMessage = () => {
     const message = messageWords.map((mw) => mw.word).join(" ");
-    speak(message);
+    speak(message).catch(console.error);
   };
   
   // Add current schedule to history

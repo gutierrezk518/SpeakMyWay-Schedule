@@ -3,6 +3,10 @@
 // Check if browser supports speech synthesis
 const isSpeechSupported = 'speechSynthesis' in window;
 
+// Voice loading state
+let voicesLoaded = false;
+let voiceLoadPromise: Promise<void> | null = null;
+
 // Voice types with preferred voices for each type
 export const voiceTypes = {
   // English voices
@@ -35,6 +39,51 @@ let voicePreferences = {
   volume: 0.8,
   language: "en-US" // or "es-ES" for Spanish
 };
+
+// Wait for voices to be loaded
+function waitForVoices(): Promise<void> {
+  if (voiceLoadPromise) {
+    return voiceLoadPromise;
+  }
+
+  voiceLoadPromise = new Promise((resolve) => {
+    if (!isSpeechSupported) {
+      resolve();
+      return;
+    }
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      voicesLoaded = true;
+      console.log("Voices already loaded:", voices.length, "voices available");
+      resolve();
+      return;
+    }
+
+    // Listen for voiceschanged event
+    const handleVoicesChanged = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        voicesLoaded = true;
+        console.log("Voices loaded:", voices.length, "voices available");
+        window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
+        resolve();
+      }
+    };
+
+    window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
+    
+    // Fallback timeout in case voices never load
+    setTimeout(() => {
+      voicesLoaded = true;
+      console.log("Voice loading timeout reached, proceeding anyway");
+      window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
+      resolve();
+    }, 3000);
+  });
+
+  return voiceLoadPromise;
+}
 
 // Get all available voices for the current language
 export function getAvailableVoices(language: string = "en"): SpeechSynthesisVoice[] {
@@ -347,7 +396,7 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
 }
 
 // Set voice preferences
-export function setVoicePreferences(preferences: {
+export async function setVoicePreferences(preferences: {
   voiceType?: string;
   rate?: number;
   volume?: number;
@@ -357,6 +406,9 @@ export function setVoicePreferences(preferences: {
   
   // For debugging - log available voices
   if (isSpeechSupported && preferences.voiceType) {
+    // Wait for voices to load before checking preferences
+    await waitForVoices();
+    
     const voices = window.speechSynthesis.getVoices();
     console.log("Available voices:", voices.map(v => ({name: v.name, lang: v.lang})));
     console.log("Selected voice type:", preferences.voiceType);
@@ -366,11 +418,14 @@ export function setVoicePreferences(preferences: {
 }
 
 // Speak text
-export function speak(text: string): void {
+export async function speak(text: string): Promise<void> {
   if (!isSpeechSupported) {
     console.error("Speech synthesis not supported in this browser");
     return;
   }
+  
+  // Wait for voices to be loaded before proceeding
+  await waitForVoices();
   
   // Cancel any ongoing speech
   window.speechSynthesis.cancel();
@@ -379,7 +434,12 @@ export function speak(text: string): void {
   
   // Set voice if available
   const voice = getPreferredVoice();
-  if (voice) utterance.voice = voice;
+  if (voice) {
+    utterance.voice = voice;
+    console.log("Voice set for speech:", { name: voice.name, lang: voice.lang });
+  } else {
+    console.log("No preferred voice found, using default");
+  }
   
   // Set preferences
   utterance.rate = voicePreferences.rate;
@@ -391,8 +451,11 @@ export function speak(text: string): void {
 }
 
 // Speak sequence of texts with pause between each
-export function speakWithPause(texts: string[], prefix: string = "", pauseDuration: number = 400): void {
+export async function speakWithPause(texts: string[], prefix: string = "", pauseDuration: number = 400): Promise<void> {
   if (!isSpeechSupported || texts.length === 0) return;
+  
+  // Wait for voices to be loaded before proceeding
+  await waitForVoices();
   
   // Cancel any ongoing speech
   window.speechSynthesis.cancel();
@@ -407,7 +470,10 @@ export function speakWithPause(texts: string[], prefix: string = "", pauseDurati
     
     // Set voice if available
     const voice = getPreferredVoice();
-    if (voice) utterance.voice = voice;
+    if (voice) {
+      utterance.voice = voice;
+      console.log("Voice set for speech sequence:", { name: voice.name, lang: voice.lang });
+    }
     
     // Set preferences
     utterance.rate = voicePreferences.rate;
