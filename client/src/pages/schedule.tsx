@@ -1275,7 +1275,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-2 md:gap-3 lg:gap-4 p-0.5 sm:p-1 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-2 md:gap-3 lg:gap-4 p-0.5 sm:p-1 rounded-md min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900 border-2 border-dashed border-yellow-400' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
