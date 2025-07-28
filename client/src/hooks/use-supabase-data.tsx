@@ -179,25 +179,30 @@ export function useOrganizedActivityData(language: string, userId: string | null
 
       console.log('Organizing activity data for language:', language);
 
-      // Transform vocabulary cards to ScheduleActivity format
-      const allCards: ScheduleActivity[] = vocabularyCards.map(card => ({
-        id: card.id.toString(),
-        title: language === 'es' ? card.text_es || card.text_en : card.text_en,
-        titleEs: card.text_es,
-        speechText: card.spoken_word_en,
-        speechTextEs: card.spoken_word_es,
-        icon: getCategoryIcon(card.categoryname_en), // Use category icon as fallback
-        iconUrl: card.icon_url || '', // Keep for backward compatibility
-        imageSrc: card.icon_url || '', // This is what ActivityCard actually looks for
-        category: card.categoryname_en,
-        bgColor: getCategoryBgColor(card.categoryname_en), // Use category-based colors
-        textColor: 'text-gray-800'
-      }));
+      // Transform vocabulary cards to ScheduleActivity format, preserving sort order
+      const allCards: ScheduleActivity[] = vocabularyCards
+        .sort((a, b) => a.sort_order - b.sort_order) // Ensure proper sort order for all cards
+        .map(card => ({
+          id: card.id.toString(),
+          title: language === 'es' ? card.text_es || card.text_en : card.text_en,
+          titleEs: card.text_es,
+          speechText: card.spoken_word_en,
+          speechTextEs: card.spoken_word_es,
+          icon: getCategoryIcon(card.categoryname_en), // Use category icon as fallback
+          iconUrl: card.icon_url || '', // Keep for backward compatibility
+          imageSrc: card.icon_url || '', // This is what ActivityCard actually looks for
+          category: card.categoryname_en,
+          bgColor: getCategoryBgColor(card.categoryname_en), // Use category-based colors
+          textColor: 'text-gray-800'
+        }));
 
-      // Organize cards by category
+      // Organize cards by category, preserving sort order within each category
       const organizedData: Record<string, ScheduleActivity[]> = {};
 
-      vocabularyCards.forEach(card => {
+      // First sort all cards by sort_order, then organize by category
+      const sortedCards = vocabularyCards.sort((a, b) => a.sort_order - b.sort_order);
+      
+      sortedCards.forEach(card => {
         const categoryName = card.categoryname_en;
         if (!organizedData[categoryName]) {
           organizedData[categoryName] = [];
