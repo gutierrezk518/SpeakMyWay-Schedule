@@ -232,8 +232,8 @@ export function useOrganizedActivityData(language: string, userId: string | null
           iconUrl: favorite.activity_data.icon_url || '', // Keep for backward compatibility
           imageSrc: favorite.activity_data.icon_url || '', // This is what ActivityCard actually looks for
           category: favorite.activity_data.categoryname_en,
-          bgColor: 'yellow-300', // Special color for favorites
-          textColor: 'text-yellow-900'
+          bgColor: getCategoryBgColor(favorite.activity_data.categoryname_en), // Preserve original category color
+          textColor: 'text-gray-800'
         }));
       } else {
         organizedData['favorites'] = [];
