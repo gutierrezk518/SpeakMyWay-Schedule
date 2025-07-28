@@ -80,20 +80,20 @@ function getCategoryIcon(categoryName: string): string {
   return iconMap[categoryName] || 'ri-folder-line';
 }
 
-// Helper function to get category background colors
+// Helper function to get category background colors - optimized for neurodivergent users
 export function getCategoryBgColor(categoryName: string): string {
   const colorMap: Record<string, string> = {
-    'Getting Ready': 'purple-300',
-    'Holiday': 'green-400',
-    'Hygiene': 'blue-300',
-    'Indoors & Chores': 'orange-300',
-    'Meals': 'blue-400',
-    'Outdoors & Social': 'purple-200',
+    'Getting Ready': 'purple-100',
+    'Holiday': 'green-100',
+    'Hygiene': 'blue-100',
+    'Indoors & Chores': 'amber-100',
+    'Meals': 'teal-100',
+    'Outdoors & Social': 'rose-100',
     'Places & Transportation': 'orange-100',
-    'Vacation': 'orange-200'
+    'Vacation': 'yellow-100'
   };
 
-  return colorMap[categoryName] || 'gray-100';
+  return colorMap[categoryName] || 'gray-50';
 }
 
 // Hook to get categories from vocabulary cards
