@@ -121,33 +121,7 @@ export default function Customize() {
     });
   };
 
-  const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newRate = parseFloat(e.target.value);
-    setVoiceSettings(prev => {
-      const newSettings = {
-        ...prev,
-        rate: newRate
-      };
 
-      // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings).catch(console.error);
-      return newSettings;
-    });
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVoiceSettings(prev => {
-      const newSettings = {
-        ...prev,
-        volume: newVolume
-      };
-
-      // Apply settings to TTS system
-      tts.setVoicePreferences(newSettings).catch(console.error);
-      return newSettings;
-    });
-  };
 
   const handleTestVoice = async () => {
     setIsTestingVoice(true);
@@ -344,45 +318,7 @@ export default function Customize() {
                 </p>
               </div>
 
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Rate</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Slow</span>
-                  <input 
-                    type="range" 
-                    min="0.5" 
-                    max="2" 
-                    step="0.1" 
-                    value={voiceSettings.rate}
-                    onChange={handleRateChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Fast</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {voiceSettings.rate}x
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Volume</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Quiet</span>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="1" 
-                    step="0.1" 
-                    value={voiceSettings.volume}
-                    onChange={handleVolumeChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Loud</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {Math.round(voiceSettings.volume * 100)}%
-                </div>
-              </div>
             </div>
           </div>
 
