@@ -11,8 +11,5 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Update AWS region to us-east-2
-process.env.AWS_REGION = 'us-east-2';
-
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export const db = drizzle({ client: pool, schema });

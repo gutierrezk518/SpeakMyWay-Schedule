@@ -7,7 +7,7 @@ import CommunicationBoard from "@/pages/communication-board";
 import QuickMode from "@/pages/quick-mode";
 import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
-import Admin from "@/pages/admin";
+
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
 import VerifyEmailPage from "@/pages/verify-email";
@@ -32,7 +32,7 @@ function Router() {
       <ProtectedRoute path="/quick-mode" component={QuickMode} />
       <Route path="/schedule" component={Schedule} /> {/* Public route for anonymous users */}
       <ProtectedRoute path="/customize" component={Customize} />
-      <ProtectedRoute path="/admin" component={Admin} />
+
       <Route path="/auth" component={AuthPage} />
       <Route path="/auth-callback" component={AuthCallback} />
       <Route path="/forgot-password" component={ForgotPassword} />
