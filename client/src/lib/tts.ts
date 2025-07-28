@@ -78,18 +78,30 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
     if (spanishVoices.length > 0) {
       // Handle female voice for Spanish
       if (voiceType === "female" || voiceType === "default") {
+        // First try to find explicit female Spanish voices
         const spanishFemaleVoices = spanishVoices.filter(v => {
           const name = v.name.toLowerCase();
           return name.includes("female") || 
                  name.includes("mujer") || 
                  name.includes("monica") ||
-                 name.includes("paulina") ||
-                 (name.includes("google") && name.includes("español") && !name.includes("male"));
+                 name.includes("paulina");
         });
         
         if (spanishFemaleVoices.length > 0) {
           console.log("Selected Spanish FEMALE voice:", spanishFemaleVoices[0]);
           return spanishFemaleVoices[0];
+        }
+        
+        // If no explicit female voice, use the standard Google Spanish voice
+        // Google español is typically female by default
+        const googleSpanishVoice = spanishVoices.find(v => 
+          v.name.toLowerCase() === "google español" || 
+          v.name.toLowerCase().includes("google español")
+        );
+        
+        if (googleSpanishVoice) {
+          console.log("Selected Google Spanish voice (female default):", googleSpanishVoice);
+          return googleSpanishVoice;
         }
         
         // Fallback to first Spanish voice for female
@@ -99,18 +111,29 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
       
       // Handle male voice for Spanish
       if (voiceType === "male" || voiceType === "en-US-male-warm") {
+        // First try to find explicit male Spanish voices
         const spanishMaleVoices = spanishVoices.filter(v => {
           const name = v.name.toLowerCase();
           return name.includes("male") || 
                  name.includes("hombre") || 
                  name.includes("jorge") ||
-                 name.includes("juan") ||
-                 (name.includes("google") && name.includes("español") && name.includes("male"));
+                 name.includes("juan");
         });
         
         if (spanishMaleVoices.length > 0) {
           console.log("Selected Spanish MALE voice:", spanishMaleVoices[0]);
           return spanishMaleVoices[0];
+        }
+        
+        // Try for US Spanish voice which might be male
+        const usSpanishVoice = spanishVoices.find(v => 
+          v.name.toLowerCase().includes("estados unidos") ||
+          v.lang === "es-US"
+        );
+        
+        if (usSpanishVoice) {
+          console.log("Selected US Spanish voice (male option):", usSpanishVoice);
+          return usSpanishVoice;
         }
         
         // Fallback to first Spanish voice for male
