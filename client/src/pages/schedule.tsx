@@ -886,12 +886,12 @@ export default function Schedule() {
               className="relative"
             >
               <button
-                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-all duration-200 border border-opacity-30 ${
+                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-all duration-200 ${
                   selectedCategory === category.id 
-                    ? 'bg-blue-600 text-white font-medium md:font-semibold shadow-md border-blue-700' 
+                    ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                     : snapshot.isDraggingOver
-                    ? 'bg-yellow-200 text-yellow-800 border-2 border-yellow-400 transform scale-105 shadow-lg'
-                    : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 shadow-sm border-yellow-200 hover:shadow-md'
+                    ? 'bg-yellow-300 dark:bg-yellow-600 text-yellow-800 dark:text-yellow-100 border-2 border-yellow-500 transform scale-105 shadow-lg'
+                    : 'bg-yellow-200 text-yellow-800 hover:bg-yellow-300 shadow-sm'
                 }`}
                 onClick={() => handleCategoryChange(category.id)}
               >
@@ -912,28 +912,24 @@ export default function Schedule() {
     }
 
     // Return regular button for non-favorites categories
-    // Get the category background color with accessible, neurodivergent-friendly styling
+    // Get the category background color, with special handling for "all" category
     let categoryBgColor;
-    let textColor = 'text-gray-700';
-    let hoverColor;
+    let textColor = 'text-gray-800';
     
     if (category.id === 'all') {
-      categoryBgColor = 'gray-50';
-      textColor = 'text-gray-600';
-      hoverColor = 'hover:bg-gray-100';
+      categoryBgColor = 'gray-100';
+      textColor = 'text-gray-700';
     } else {
       categoryBgColor = getCategoryBgColor(category.name);
-      textColor = 'text-gray-700';
-      hoverColor = 'hover:bg-opacity-80';
     }
     
     return (
       <button
         key={category.id}
-        className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-all duration-200 border border-opacity-30 ${
+        className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm transition-colors ${
           selectedCategory === category.id 
-            ? 'bg-blue-600 text-white font-medium md:font-semibold shadow-md border-blue-700' 
-            : `bg-${categoryBgColor} ${textColor} ${hoverColor} shadow-sm border-gray-200 hover:shadow-md`
+            ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
+            : `bg-${categoryBgColor} ${textColor} hover:bg-${categoryBgColor} hover:opacity-80 shadow-sm`
         }`}
         onClick={() => handleCategoryChange(category.id)}
       >
