@@ -92,15 +92,25 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
           return spanishFemaleVoices[0];
         }
         
-        // If no explicit female voice, use the standard Google Spanish voice
-        // Google español is typically female by default
+        // For female voice, prefer the US Spanish voice which tends to be more female-sounding
+        const usSpanishVoice = spanishVoices.find(v => 
+          v.name.toLowerCase().includes("estados unidos") ||
+          v.lang === "es-US"
+        );
+        
+        if (usSpanishVoice) {
+          console.log("Selected US Spanish voice (female option):", usSpanishVoice);
+          return usSpanishVoice;
+        }
+        
+        // If no US voice, use the standard Google Spanish voice
         const googleSpanishVoice = spanishVoices.find(v => 
-          v.name.toLowerCase() === "google español" || 
-          v.name.toLowerCase().includes("google español")
+          v.name.toLowerCase() === "google español" && 
+          v.lang === "es-ES"
         );
         
         if (googleSpanishVoice) {
-          console.log("Selected Google Spanish voice (female default):", googleSpanishVoice);
+          console.log("Selected Google Spanish voice (female fallback):", googleSpanishVoice);
           return googleSpanishVoice;
         }
         
@@ -125,15 +135,16 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
           return spanishMaleVoices[0];
         }
         
-        // Try for US Spanish voice which might be male
-        const usSpanishVoice = spanishVoices.find(v => 
-          v.name.toLowerCase().includes("estados unidos") ||
-          v.lang === "es-US"
+        // For male voice, use the main Google español voice (which tends to be more neutral/male)
+        // and avoid the US one which tends to be more female
+        const mainSpanishVoice = spanishVoices.find(v => 
+          v.name.toLowerCase() === "google español" && 
+          v.lang === "es-ES"
         );
         
-        if (usSpanishVoice) {
-          console.log("Selected US Spanish voice (male option):", usSpanishVoice);
-          return usSpanishVoice;
+        if (mainSpanishVoice) {
+          console.log("Selected main Spanish voice (male option):", mainSpanishVoice);
+          return mainSpanishVoice;
         }
         
         // Fallback to first Spanish voice for male
