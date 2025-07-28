@@ -155,10 +155,10 @@ export default function Schedule() {
   const queryClient = useQueryClient();
 
   // Fetch Supabase data with user context for favorites
-  const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id);
+  const { data: supabaseActivityData, isLoading: dataLoading, error: dataError } = useOrganizedActivityData(language, user?.id || null);
   const { data: categories, isLoading: categoriesLoading } = useSupabaseCategories();
   // Add favorites manager for Supabase favorites functionality
-  const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id);
+  const { addFavorite, removeFavorite, isAddingFavorite, isRemovingFavorite } = useUserFavoritesManager(user?.id || null);
 
   // Check for email verification URL parameters when page loads
   useEffect(() => {

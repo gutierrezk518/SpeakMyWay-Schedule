@@ -80,6 +80,22 @@ function getCategoryIcon(categoryName: string): string {
   return iconMap[categoryName] || 'ri-folder-line';
 }
 
+// Helper function to get category background colors
+function getCategoryBgColor(categoryName: string): string {
+  const colorMap: Record<string, string> = {
+    'Getting Ready': 'purple-300',
+    'Holiday': 'green-400',
+    'Hygiene': 'blue-300',
+    'Indoors & Chores': 'orange-300',
+    'Meals': 'blue-400',
+    'Outdoors & Social': 'purple-200',
+    'Places & Transportation': 'orange-100',
+    'Vacation': 'orange-200'
+  };
+
+  return colorMap[categoryName] || 'gray-100';
+}
+
 // Hook to get categories from vocabulary cards
 export function useSupabaseCategories() {
   const { data: vocabularyCards, isLoading, error } = useSupabaseVocabularyCards();
@@ -170,11 +186,12 @@ export function useOrganizedActivityData(language: string, userId: string | null
         titleEs: card.text_es,
         speechText: card.spoken_word_en,
         speechTextEs: card.spoken_word_es,
-        icon: card.icon_url || '',
-        iconUrl: card.icon_url || '', // Add this in case ActivityCard expects iconUrl
+        icon: getCategoryIcon(card.categoryname_en), // Use category icon as fallback
+        iconUrl: card.icon_url || '', // Keep for backward compatibility
+        imageSrc: card.icon_url || '', // This is what ActivityCard actually looks for
         category: card.categoryname_en,
-        bgColor: 'bg-blue-100', // Default background color
-        textColor: 'text-blue-800'
+        bgColor: getCategoryBgColor(card.categoryname_en), // Use category-based colors
+        textColor: 'text-gray-800'
       }));
 
       // Organize cards by category
@@ -192,11 +209,12 @@ export function useOrganizedActivityData(language: string, userId: string | null
           titleEs: card.text_es,
           speechText: card.spoken_word_en,
           speechTextEs: card.spoken_word_es,
-          icon: card.icon_url || '',
-          iconUrl: card.icon_url || '', // Add this in case ActivityCard expects iconUrl
+          icon: getCategoryIcon(card.categoryname_en), // Use category icon as fallback
+          iconUrl: card.icon_url || '', // Keep for backward compatibility
+          imageSrc: card.icon_url || '', // This is what ActivityCard actually looks for
           category: card.categoryname_en,
-          bgColor: 'bg-blue-100',
-          textColor: 'text-blue-800'
+          bgColor: getCategoryBgColor(card.categoryname_en), // Use category-based colors
+          textColor: 'text-gray-800'
         };
 
         organizedData[categoryName].push(activity);
@@ -210,11 +228,12 @@ export function useOrganizedActivityData(language: string, userId: string | null
           titleEs: favorite.activity_data.text_es,
           speechText: favorite.activity_data.spoken_word_en,
           speechTextEs: favorite.activity_data.spoken_word_es,
-          icon: favorite.activity_data.icon_url || '',
-          iconUrl: favorite.activity_data.icon_url || '', // Add this in case ActivityCard expects iconUrl
+          icon: getCategoryIcon(favorite.activity_data.categoryname_en), // Use category icon as fallback
+          iconUrl: favorite.activity_data.icon_url || '', // Keep for backward compatibility
+          imageSrc: favorite.activity_data.icon_url || '', // This is what ActivityCard actually looks for
           category: favorite.activity_data.categoryname_en,
-          bgColor: 'bg-yellow-100',
-          textColor: 'text-yellow-800'
+          bgColor: 'yellow-300', // Special color for favorites
+          textColor: 'text-yellow-900'
         }));
       } else {
         organizedData['favorites'] = [];

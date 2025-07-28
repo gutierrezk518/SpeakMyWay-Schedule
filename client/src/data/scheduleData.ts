@@ -8,6 +8,9 @@ export interface ScheduleActivity {
   imageSrc?: string;   // Path to custom image
   speechText?: string; // Text to speak with TTS that may differ from display text
   speechTextEs?: string; // Spanish text to speak with TTS
+  iconUrl?: string;    // URL to icon image (backward compatibility)
+  category?: string;   // Category name
+  textColor?: string;  // Text color for styling
 }
 
 export interface ScheduleTimeSection {
