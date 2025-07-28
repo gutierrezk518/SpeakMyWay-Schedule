@@ -180,8 +180,18 @@ export function useOrganizedActivityData(language: string, userId: string | null
       console.log('Organizing activity data for language:', language);
 
       // Transform vocabulary cards to ScheduleActivity format, preserving sort order
+      // Cards with sort_order = 0 are unorganized and should appear after numbered cards
       const allCards: ScheduleActivity[] = vocabularyCards
-        .sort((a, b) => a.sort_order - b.sort_order) // Ensure proper sort order for all cards
+        .sort((a, b) => {
+          // If both have sort_order = 0, maintain original order
+          if (a.sort_order === 0 && b.sort_order === 0) return 0;
+          // If only a has sort_order = 0, put it after b
+          if (a.sort_order === 0) return 1;
+          // If only b has sort_order = 0, put it after a
+          if (b.sort_order === 0) return -1;
+          // Both have non-zero sort_order, sort normally
+          return a.sort_order - b.sort_order;
+        })
         .map(card => ({
           id: card.id.toString(),
           title: language === 'es' ? card.text_es || card.text_en : card.text_en,
@@ -199,8 +209,17 @@ export function useOrganizedActivityData(language: string, userId: string | null
       // Organize cards by category, preserving sort order within each category
       const organizedData: Record<string, ScheduleActivity[]> = {};
 
-      // First sort all cards by sort_order, then organize by category
-      const sortedCards = vocabularyCards.sort((a, b) => a.sort_order - b.sort_order);
+      // First sort all cards by sort_order (0s go after numbered cards), then organize by category
+      const sortedCards = vocabularyCards.sort((a, b) => {
+        // If both have sort_order = 0, maintain original order
+        if (a.sort_order === 0 && b.sort_order === 0) return 0;
+        // If only a has sort_order = 0, put it after b
+        if (a.sort_order === 0) return 1;
+        // If only b has sort_order = 0, put it after a
+        if (b.sort_order === 0) return -1;
+        // Both have non-zero sort_order, sort normally
+        return a.sort_order - b.sort_order;
+      });
       
       sortedCards.forEach(card => {
         const categoryName = card.categoryname_en;
