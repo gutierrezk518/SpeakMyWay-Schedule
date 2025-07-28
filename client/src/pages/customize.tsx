@@ -140,12 +140,7 @@ export default function Customize() {
     setTimeout(() => setIsTestingVoice(false), 3000);
   };
 
-  const handleTextSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplaySettings(prev => ({
-      ...prev,
-      textSize: parseFloat(e.target.value)
-    }));
-  };
+
 
   const handleHighContrastChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisplaySettings(prev => ({
@@ -364,25 +359,7 @@ export default function Customize() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Text Size</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Small</span>
-                  <input
-                    type="range"
-                    min="1"
-                    max="2"
-                    step="0.1"
-                    value={displaySettings.textSize}
-                    onChange={handleTextSizeChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Large</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {Math.round(displaySettings.textSize * 100)}%
-                </div>
-              </div>
+
             </div>
           </div>
 
