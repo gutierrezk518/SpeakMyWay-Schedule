@@ -110,6 +110,13 @@ SpeakMyWay is an Augmentative and Alternative Communication (AAC) web applicatio
 
 ## Changelog
 
+- July 28, 2025: Enhanced Spanish voice support for better pronunciation
+  - Added language-aware voice selection for Spanish mode
+  - Implemented proper male/female voice mapping for Spanish pronunciation
+  - Fixed voice selection logic to prioritize Spanish voices when language is set to Español
+  - Male voice uses main "Google español" (es-ES), female voice uses US Spanish variant (es-US)
+  - Voice preferences now automatically sync with app language changes
+
 - January 3, 2025: Enhanced session persistence and authentication flow
   - Fixed session logout issues on page refresh
   - Improved Supabase client initialization with proper auth persistence
