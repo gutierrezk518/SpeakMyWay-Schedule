@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, SetStateAction } from "react";
-import { speak } from "@/lib/tts";
+import { speak, setVoicePreferences } from "@/lib/tts";
 import { ScheduleActivity } from "@/data/scheduleData";
 import { toast } from "react-hot-toast";
 
@@ -76,6 +76,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setLanguage = (lang: string) => {
     setLanguageState(lang);
     localStorage.setItem('userLanguage', lang);
+    
+    // Update voice settings to match language
+    setVoiceSettings(prev => ({
+      ...prev,
+      language: lang === 'es' ? 'es-ES' : 'en-US'
+    }));
   };
   
   // Check for anonymous user
@@ -192,6 +198,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem('displaySettings', JSON.stringify(displaySettings));
   }, [displaySettings]);
+
+  // Watch for voice settings changes and update TTS
+  useEffect(() => {
+    setVoicePreferences({
+      voiceType: voiceSettings.voiceType,
+      rate: voiceSettings.rate,
+      volume: voiceSettings.volume,
+      language: voiceSettings.language
+    });
+  }, [voiceSettings]);
   const [messageWords, setMessageWords] = useState<{ id: string; word: string }[]>([]);
   
   // Undo/Redo state

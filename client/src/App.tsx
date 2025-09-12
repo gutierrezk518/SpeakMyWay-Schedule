@@ -8,16 +8,13 @@ import CommunicationBoard from "@/pages/communication-board";
 import QuickMode from "@/pages/quick-mode";
 import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
-import Admin from "@/pages/admin";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
-import VerifyEmailPage from "@/pages/verify-email";
 import AuthTestPage from "@/pages/auth-test";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
-// Using local auth provider instead of Supabase for now
-import { LocalAuthProvider } from "@/hooks/use-local-auth";
+import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Link } from "wouter";
 
@@ -29,9 +26,7 @@ function Router() {
       <ProtectedRoute path="/quick-mode" component={QuickMode} />
       <Route path="/schedule" component={Schedule} /> {/* Public route for anonymous users */}
       <ProtectedRoute path="/customize" component={Customize} />
-      <ProtectedRoute path="/admin" component={Admin} />
       <Route path="/auth" component={AuthPage} />
-      <Route path="/verify-email" component={VerifyEmailPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <ProtectedRoute path="/auth-test" component={AuthTestPage} />
       <Route component={NotFound} />
@@ -83,9 +78,9 @@ function AppContent() {
   ]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen max-h-screen bg-gray-100 overflow-hidden">
       <NavigationBar />
-      <main className="flex-grow overflow-y-auto pt-9 pb-4">
+      <main className="flex-1 overflow-hidden pt-9">
         <Router />
       </main>
     </div>
@@ -95,10 +90,10 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <LocalAuthProvider>
+      <AuthProvider>
         <AppContent />
         <Toaster />
-      </LocalAuthProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

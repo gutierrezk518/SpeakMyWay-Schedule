@@ -15,10 +15,10 @@ export const voiceTypes = {
   "en-US-child": { name: "Junior", lang: "en-US", gender: "child", description: "Child Voice" },
   
   // Spanish voices
-  "es-ES-female": { name: "Monica", lang: "es-ES", gender: "female", description: "Spanish Female" },
-  "es-ES-male": { name: "Jorge", lang: "es-ES", gender: "male", description: "Spanish Male" },
-  "es-MX-female": { name: "Paulina", lang: "es-MX", gender: "female", description: "Mexican Female" },
-  "es-MX-male": { name: "Juan", lang: "es-MX", gender: "male", description: "Mexican Male" },
+  "es-ES-female": { name: "Microsoft Sabina", lang: "es-ES", gender: "female", description: "Spanish Female" },
+  "es-ES-male": { name: "Microsoft Pablo", lang: "es-ES", gender: "male", description: "Spanish Male" },
+  "es-MX-female": { name: "Microsoft Paulina", lang: "es-MX", gender: "female", description: "Mexican Female" },
+  "es-MX-male": { name: "Microsoft Raul", lang: "es-MX", gender: "male", description: "Mexican Male" },
   
   // Simplified options for UI
   "female": { name: "Google UK English Female", lang: "en-GB", gender: "female", description: "Female Voice" },
@@ -60,7 +60,50 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   const voiceType = voicePreferences.voiceType;
   console.log("Selected voice type:", voiceType);
   
-  // Handle simple "male" and "female" options directly
+  // First check if we're in Spanish mode and prioritize Spanish voices
+  const currentLanguage = voicePreferences.language;
+  const isSpanish = currentLanguage.startsWith('es');
+  
+  if (isSpanish) {
+    // Spanish voice selection
+    const spanishVoices = voices.filter(v => v.lang.startsWith('es'));
+    
+    if (voiceType === "male" || voiceType === "en-US-male-warm") {
+      // Look for Spanish male voices
+      const spanishMaleVoices = spanishVoices.filter(v => {
+        const name = v.name.toLowerCase();
+        return name.includes('pablo') || name.includes('raul') || name.includes('diego') ||
+               name.includes('male') || name.includes('man') || name.includes('hombre');
+      });
+      
+      if (spanishMaleVoices.length > 0) {
+        console.log("Using Spanish male voice:", spanishMaleVoices[0].name);
+        return spanishMaleVoices[0];
+      }
+    }
+    
+    if (voiceType === "female" || voiceType === "default") {
+      // Look for Spanish female voices
+      const spanishFemaleVoices = spanishVoices.filter(v => {
+        const name = v.name.toLowerCase();
+        return name.includes('sabina') || name.includes('paulina') || name.includes('paloma') ||
+               name.includes('female') || name.includes('woman') || name.includes('mujer');
+      });
+      
+      if (spanishFemaleVoices.length > 0) {
+        console.log("Using Spanish female voice:", spanishFemaleVoices[0].name);
+        return spanishFemaleVoices[0];
+      }
+    }
+    
+    // Fallback to any Spanish voice if specific gender not found
+    if (spanishVoices.length > 0) {
+      console.log("Using fallback Spanish voice:", spanishVoices[0].name);
+      return spanishVoices[0];
+    }
+  }
+  
+  // Handle simple "male" and "female" options directly for English
   if (voiceType === "male" || voiceType === "en-US-male-warm") {
     // For the original warm male voice, we'll use the Microsoft David voice which is warm and friendly
     const warmMaleVoice = voices.find(v => v.name === "Microsoft David - English (United States)");
@@ -253,6 +296,13 @@ export function setVoicePreferences(preferences: {
   language?: string;
 }) {
   voicePreferences = { ...voicePreferences, ...preferences };
+  
+  // When language changes to Spanish, auto-switch to appropriate voice
+  if (preferences.language && preferences.language.startsWith('es')) {
+    voicePreferences.language = preferences.language.includes('MX') ? 'es-MX' : 'es-ES';
+  } else if (preferences.language && preferences.language.startsWith('en')) {
+    voicePreferences.language = 'en-US';
+  }
   
   // For debugging - log available voices
   if (isSpeechSupported && preferences.voiceType) {

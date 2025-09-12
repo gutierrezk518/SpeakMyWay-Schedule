@@ -70,17 +70,17 @@ export default function CommunicationBoard() {
   const visibleCards = cards.slice(startIndex, startIndex + cardsPerPage);
 
   return (
-    <section className="flex flex-col h-full">
+    <section className="flex flex-col h-full max-h-full overflow-hidden">
       {/* Message Bar Area */}
-      <div className="p-3 bg-white border-b border-gray-200 shadow-sm">
+      <div className="p-3 bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
         <div className="flex items-center mb-2">
-          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md mr-2">
+          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-xl mr-2">
             <i className="ri-delete-back-2-line text-xl"></i>
           </button>
-          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md mr-2">
+          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-xl mr-2">
             <i className="ri-keyboard-line text-xl"></i>
           </button>
-          <div className="flex-grow min-h-[60px] border border-gray-300 rounded-md p-2 bg-neutral-light flex flex-wrap items-center overflow-x-auto">
+          <div className="flex-grow min-h-[60px] border border-gray-300 rounded-2xl p-2 bg-neutral-light flex flex-wrap items-center overflow-x-auto">
             {messageWords.map((word) => (
               <MessageWord key={word.id} id={word.id} word={word.word} />
             ))}
@@ -97,13 +97,13 @@ export default function CommunicationBoard() {
           </div>
           <div className="flex space-x-2">
             <button 
-              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-600 active:bg-blue-700 flex items-center"
+              className="bg-primary text-white px-4 py-2 rounded-2xl hover:bg-blue-600 active:bg-blue-700 flex items-center"
               onClick={speakMessage}
             >
               <i className="ri-volume-up-line mr-1"></i> Speak
             </button>
             <button 
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 active:bg-gray-400"
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-2xl hover:bg-gray-300 active:bg-gray-400"
               onClick={clearMessageWords}
             >
               Clear
@@ -113,17 +113,17 @@ export default function CommunicationBoard() {
       </div>
       
       {/* Core Vocabulary Area */}
-      <div className="bg-gray-50 p-2 border-b border-gray-200">
+      <div className="bg-gray-50 p-2 border-b border-gray-200 flex-shrink-0">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-semibold text-gray-700">Core Words</h3>
           <div className="flex items-center">
             <button 
-              className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-sm font-semibold hover:bg-gray-300 mr-2"
+              className="flex items-center justify-center h-8 w-8 rounded-2xl bg-gray-200 text-sm font-semibold hover:bg-gray-300 mr-2"
               onClick={() => setShowPlural(!showPlural)}
             >
               (s)
             </button>
-            <button className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 hover:bg-gray-300">
+            <button className="flex items-center justify-center h-8 w-8 rounded-2xl bg-gray-200 hover:bg-gray-300">
               <i className="ri-lock-line"></i>
             </button>
           </div>
@@ -135,18 +135,18 @@ export default function CommunicationBoard() {
               key={word.text}
               icon={word.icon}
               text={showPlural && word.canBePlural ? `${word.text}s` : word.text}
-              color={word.color}
+              color={word.color || "gray"}
             />
           ))}
         </div>
       </div>
       
       {/* Category Navigation */}
-      <div className="p-2 bg-white border-b border-gray-200">
+      <div className="p-2 bg-white border-b border-gray-200 flex-shrink-0">
         <div className="category-nav flex space-x-2 overflow-x-auto scrollbar-hide">
           {visibleCategoriesStartIndex > 0 && (
             <button 
-              className="min-w-[50px] h-16 flex items-center justify-center bg-gray-200 rounded-md"
+              className="min-w-[50px] h-16 flex items-center justify-center bg-gray-200 rounded-2xl"
               onClick={handlePrevCategories}
             >
               <i className="ri-arrow-left-s-line text-xl"></i>
@@ -166,7 +166,7 @@ export default function CommunicationBoard() {
           
           {visibleCategoriesStartIndex + 6 < categories.length && (
             <button 
-              className="min-w-[50px] h-16 flex items-center justify-center bg-gray-200 rounded-md"
+              className="min-w-[50px] h-16 flex items-center justify-center bg-gray-200 rounded-2xl"
               onClick={handleNextCategories}
             >
               <i className="ri-arrow-right-s-line text-xl"></i>
@@ -176,7 +176,7 @@ export default function CommunicationBoard() {
       </div>
       
       {/* Subcategories and Cards */}
-      <div className="flex-grow overflow-y-auto p-2 bg-white">
+      <div className="flex-1 overflow-y-auto p-2 bg-white">
         {/* Subcategory Navigation */}
         <div className="mb-3 flex items-center">
           <h3 className="font-semibold text-gray-700 mr-4">
@@ -186,7 +186,7 @@ export default function CommunicationBoard() {
             {subcategories[selectedCategory]?.map((subcat) => (
               <button 
                 key={subcat}
-                className={`subcategory-btn px-3 py-1 bg-${categories.find(c => c.id === selectedCategory)?.color} text-white rounded-md flex items-center ${selectedSubcategory === subcat ? "" : "opacity-70"}`}
+                className={`subcategory-btn px-3 py-1 bg-${categories.find(c => c.id === selectedCategory)?.color} text-white rounded-xl flex items-center ${selectedSubcategory === subcat ? "" : "opacity-70"}`}
                 onClick={() => handleSubcategoryClick(subcat)}
               >
                 <i className={`${getSubcategoryIcon(subcat)} mr-1`}></i>

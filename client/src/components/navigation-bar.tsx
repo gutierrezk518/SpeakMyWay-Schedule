@@ -75,7 +75,7 @@ export default function NavigationBar() {
         <nav className="bg-primary text-white py-1 px-2 shadow-md flex justify-between items-center h-9">
           <div className="flex items-center space-x-1">
             <Link href="/">
-              <button className={`p-1 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+              <button className={`p-1 rounded-2xl hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                 <i className="ri-home-4-line text-sm"></i>
               </button>
             </Link>
@@ -83,7 +83,7 @@ export default function NavigationBar() {
           </div>
           <div className="flex items-center space-x-2">
             <Link href="/customize">
-              <button className={`p-1 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
+              <button className={`p-1 rounded-2xl hover:bg-blue-600 active:bg-blue-700 transition-colors ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}>
                 <i className="ri-settings-3-line text-sm"></i>
               </button>
             </Link>
@@ -92,7 +92,7 @@ export default function NavigationBar() {
             {userName && (
               <button 
                 onClick={() => setUserProfileOpen(true)}
-                className={`p-1 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
+                className={`p-1 rounded-2xl hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center ${location === '/schedule' && isFavoritesMode ? 'opacity-30 pointer-events-none' : ''}`}
               >
                 <i className="ri-user-line text-sm"></i>
                 <span className="hidden md:inline ml-1 text-xs font-medium">{userName.split(' ')[0]}</span>

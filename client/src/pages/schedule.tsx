@@ -8,9 +8,10 @@ import { speak } from "@/lib/tts";
 import { playTimerComplete } from "@/lib/sounds";
 import { useAppContext } from "@/contexts/app-context";
 import { useToast } from "@/hooks/use-toast";
-import { availableActivities, allCustomActivityCards, customActivityCards, updateAllActivitiesOrder } from "@/data/activityCardData";
 import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/data/scheduleData";
 import { useAuth } from "@/hooks/use-auth";
+import { useCategories } from "@/hooks/use-categories";
+import { useActivityCards } from "@/hooks/use-activity-cards";
 
 // Compact Timer Component
 const TimerComponent = () => {
@@ -241,6 +242,10 @@ export default function Schedule() {
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
   const [showSearchBar, setShowSearchBar] = useState(false); // Toggle search bar visibility
   
+  // Database hooks
+  const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
+  const { data: activityCards, isLoading: cardsLoading, error: cardsError } = useActivityCards(selectedCategory);
+  
   // Helper function to handle category selection and reset page number
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -265,18 +270,10 @@ export default function Schedule() {
   // Get the current time section's activities
   const currentSchedule = scheduleData.find((s: {id: string}) => s.id === selectedTimeSection)?.activities || [];
   
-  // Get the available activities for the selected category - using custom activities with images
-  const categoryActivities = selectedCategory === 'all'
-    ? allCustomActivityCards // Use our custom activities with images
-    : selectedCategory === 'favorites'
-      ? favoriteActivities // Show user's favorite activities
-      : selectedCategory === 'indoors-chores' 
-        ? [...(customActivityCards['media'] || []), ...(customActivityCards['arts'] || []), ...(customActivityCards['indoors'] || []), ...(customActivityCards['chores'] || [])]
-        : selectedCategory === 'outdoors-social'
-          ? [...(customActivityCards['outdoors'] || []), ...(customActivityCards['social'] || [])]
-          : selectedCategory === 'vacation'
-            ? [...(customActivityCards['vacation'] || [])]
-            : customActivityCards[selectedCategory] || availableActivities[selectedCategory] || [];
+  // Get the available activities for the selected category - using database
+  const categoryActivities = selectedCategory === 'favorites'
+    ? favoriteActivities // Show user's favorite activities
+    : activityCards || []; // Use database activities (already filtered by category in the hook)
             
   // Filter activities by search query if one exists
   const filteredActivities = searchQuery 
@@ -294,30 +291,33 @@ export default function Schedule() {
   const getItemsPerPage = () => {
     // Prevent scrolling by calculating exact number of items that fit on screen
     if (typeof window !== 'undefined') {
-      // Calculate the appropriate height available for cards section
-      // For different screen sizes and orientations
-      const isLandscape = window.innerWidth > window.innerHeight;
-      const scheduleSectionHeight = isLandscape 
-        ? window.innerHeight * 0.6  // In landscape, we have more vertical space available
-        : window.innerHeight * 0.45; // In portrait, we need to account for "My Schedule" taking up space
-
+      // Calculate available height more precisely
+      const navHeight = 36; // Navigation bar height
+      const timerHeight = showTimer ? 60 : 0; // Timer section height
+      const categoriesHeight = 60; // Categories tabs height
+      const searchHeight = showSearchBar ? 60 : 0; // Search bar height
+      const paginationHeight = 60; // Pagination controls height
+      const padding = 32; // Various padding and margins
+      
+      const availableHeight = window.innerHeight - navHeight - timerHeight - categoriesHeight - searchHeight - paginationHeight - padding;
+      
       // Account for different card sizes on different screens
-      const cardHeight = window.innerWidth >= 768 ? 95 : 80; // Smaller cards on phones
-      const availableRows = Math.floor(scheduleSectionHeight / cardHeight);
+      const cardHeight = window.innerWidth >= 768 ? 120 : 100; // Include spacing
+      const availableRows = Math.max(1, Math.floor(availableHeight / cardHeight));
       
-      // Calculate columns based on responsive grid classes we set
+      // Calculate columns based on responsive grid classes
       let columns = 4; // Default mobile columns
-      if (window.innerWidth >= 1536) columns = 7; // 2xl screens (matches 2xl:grid-cols-7)
-      if (window.innerWidth >= 1280 && window.innerWidth < 1536) columns = 7; // xl screens (matches xl:grid-cols-7)
-      if (window.innerWidth >= 1024 && window.innerWidth < 1280) columns = 6; // lg screens (matches lg:grid-cols-6)
-      if (window.innerWidth >= 768 && window.innerWidth < 1024) columns = 5; // md screens (matches md:grid-cols-5)
-      if (window.innerWidth >= 640 && window.innerWidth < 768) columns = 4; // sm screens (matches sm:grid-cols-4)
+      if (window.innerWidth >= 1536) columns = 7; // 2xl screens
+      if (window.innerWidth >= 1280 && window.innerWidth < 1536) columns = 7; // xl screens
+      if (window.innerWidth >= 1024 && window.innerWidth < 1280) columns = 6; // lg screens
+      if (window.innerWidth >= 768 && window.innerWidth < 1024) columns = 5; // md screens
+      if (window.innerWidth >= 640 && window.innerWidth < 768) columns = 4; // sm screens
       
-      // Calculate exact items that fit on screen without scrolling
+      // Calculate exact items that fit without scrolling
       const maxItems = availableRows * columns;
       
-      // Enforce minimum items per page for small screens where scrolling is expected
-      return Math.max(maxItems, window.innerWidth < 768 ? 20 : 24);
+      // Ensure minimum number of items for usability
+      return Math.max(maxItems, 12);
     }
     return 24; // Default fallback
   };
@@ -724,15 +724,15 @@ export default function Schedule() {
   }, [scheduleData, selectedTimeSection, addToScheduleHistory]);
 
   return (
-    <section className="h-full flex flex-col" style={{ height: '100vh', maxHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <section className="h-full max-h-full flex flex-col overflow-hidden">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <div className={`flex-grow ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`} style={{ flex: 1, overflow: 'hidden' }}>
+        <div className={`flex-1 ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`}>
           {/* Side buttons panel - non portrait mode */}
           {!isPortrait && (
             <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 space-y-4">
               {/* Undo button */}
               <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-md ${
                   canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleUndo}
@@ -744,7 +744,7 @@ export default function Schedule() {
               
               {/* Redo button */}
               <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center shadow-md ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-md ${
                   canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleRedo}
@@ -756,7 +756,7 @@ export default function Schedule() {
               
               {/* Play button - largest button */}
               <button 
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
                 onClick={playSchedule}
                 title="Play schedule"
               >
@@ -765,7 +765,7 @@ export default function Schedule() {
               
               {/* Timer toggle button */}
               <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
                 onClick={() => setShowTimer(!showTimer)}
                 title={showTimer ? "Hide timer" : "Show timer"}
               >
@@ -774,7 +774,7 @@ export default function Schedule() {
               
               {/* Save button */}
               <button 
-                className="w-11 h-11 sm:w-14 sm:h-14 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
+                className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
                 onClick={() => setShowSaveModal(true)}
                 title="Save schedule"
               >
@@ -784,13 +784,13 @@ export default function Schedule() {
           )}
           
           {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full h-auto max-h-[40vh]' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col h-full`} style={{ display: 'flex', flexDirection: 'column', flex: isPortrait ? '0 0 auto' : '1' }}>
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full flex-shrink-0' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col ${isPortrait ? 'max-h-[40vh]' : 'h-full'}`}>
             {/* Action buttons in portrait mode - now above schedule header */}
             {isPortrait && (
               <div className="flex bg-gray-100 dark:bg-gray-800 px-2 py-2 border-b border-gray-200 dark:border-gray-700 items-center justify-center space-x-4 mt-4">
                 {/* Undo button */}
                 <button 
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
                     canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleUndo}
@@ -802,7 +802,7 @@ export default function Schedule() {
                 
                 {/* Redo button */}
                 <button 
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
                     canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleRedo}
@@ -814,7 +814,7 @@ export default function Schedule() {
                 
                 {/* Play button */}
                 <button 
-                  className="w-12 h-12 rounded-lg bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
+                  className="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
                   onClick={playSchedule}
                   title="Play schedule"
                 >
@@ -834,7 +834,7 @@ export default function Schedule() {
                 
                 {/* Save button */}
                 <button 
-                  className="w-10 h-10 rounded-lg bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                  className="w-10 h-10 rounded-2xl bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
                   onClick={() => setShowSaveModal(true)}
                   title="Save schedule"
                 >
@@ -848,14 +848,14 @@ export default function Schedule() {
               
               <div className="flex space-x-1 ml-auto">
                 <button 
-                  className="p-1.5 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-700"
+                  className="p-1.5 rounded-2xl bg-blue-200 hover:bg-blue-300 text-blue-700"
                   onClick={toggleFullscreen}
                   aria-label="Fullscreen"
                 >
                   <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
                 <button 
-                  className="p-1.5 rounded-md bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
+                  className="p-1.5 rounded-2xl bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
                   onClick={clearActivities}
                   aria-label="Clear all activities"
                   title="Clear All Activities"
@@ -872,7 +872,7 @@ export default function Schedule() {
                 {scheduleData.map((section: ScheduleSection) => (
                   <button 
                     key={section.id}
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
                       selectedTimeSection === section.id 
                         ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -902,8 +902,8 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '140px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-md p-2 flex flex-nowrap items-center'
-                      : 'overflow-y-auto rounded-md p-2 flex flex-col items-center'
+                      ? 'overflow-x-auto rounded-2xl p-2 flex flex-nowrap items-center'
+                      : 'overflow-y-auto rounded-2xl p-2 flex flex-col items-center'
                     } ${
                       snapshot.isDraggingOver 
                         ? 'bg-blue-100 dark:bg-blue-900' 
@@ -973,11 +973,11 @@ export default function Schedule() {
           
           {/* Activity cards section - right side */}
           {!isFullscreen && (
-            <div className={`${isPortrait ? 'w-full flex-grow' : 'w-2/3'} flex flex-col h-full`}>
+            <div className={`${isPortrait ? 'w-full flex-1' : 'w-2/3'} flex flex-col ${isPortrait ? 'overflow-hidden' : 'h-full'}`}>
               {/* Timer - conditionally displayed */}
               {showTimer && (
                 <div className="px-3 py-1 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-purple-950 flex justify-center">
-                  <div className="flex items-center justify-between bg-purple-100 dark:bg-purple-900 rounded-md w-full px-3 py-1.5 max-w-md">
+                  <div className="flex items-center justify-between bg-purple-100 dark:bg-purple-900 rounded-2xl w-full px-3 py-1.5 max-w-md">
                     <div className="flex items-center">
                       <i className="ri-timer-line text-lg text-purple-700 dark:text-purple-400 mr-2"></i>
                       <span className="text-sm text-purple-800 dark:text-purple-300 font-medium">Timer:</span>
@@ -992,7 +992,7 @@ export default function Schedule() {
                 <div className="flex flex-wrap gap-1 justify-center">
                   {/* Search button */}
                   <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
                       showSearchBar
                       ? 'bg-cyan-500 text-white font-medium md:font-semibold shadow-sm' 
                       : 'bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-800'
@@ -1015,20 +1015,7 @@ export default function Schedule() {
                     {showSearchBar ? 'Close' : 'Search'}
                   </button>
                 
-                  {/* All category button */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'all' 
-                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    }`}
-                    onClick={() => handleCategoryChange('all')}
-                  >
-                    <i className="ri-apps-line mr-1"></i>
-                    All
-                  </button>
-                  
-                  {/* Make the favorites button a droppable target */}
+                  {/* Favorites button as droppable target */}
                   <Droppable droppableId="favorites-button" direction="horizontal" isDropDisabled={false}>
                     {(provided, snapshot) => (
                       <div
@@ -1037,7 +1024,7 @@ export default function Schedule() {
                         className={`${snapshot.isDraggingOver ? 'scale-110 transition-transform' : ''}`}
                       >
                         <button
-                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
                             selectedCategory === 'favorites' 
                             ? 'bg-yellow-500 text-white font-medium md:font-semibold shadow-sm' 
                             : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800'
@@ -1058,109 +1045,41 @@ export default function Schedule() {
                     )}
                   </Droppable>
                   
-                  {/* Dressing Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'dressing' 
-                      ? 'bg-rose-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-800'
-                    }`}
-                    onClick={() => handleCategoryChange('dressing')}
-                  >
-                    <i className="ri-shirt-line mr-1"></i>
-                    Dressing
-                  </button>
-                  
-                  {/* Holiday Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'holiday' 
-                      ? 'bg-orange-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                    }`}
-                    onClick={() => handleCategoryChange('holiday')}
-                  >
-                    <i className="ri-calendar-event-line mr-1"></i>
-                    Holiday
-                  </button>
-                  
-                  {/* Hygiene Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'hygiene' 
-                      ? 'bg-teal-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
-                    }`}
-                    onClick={() => handleCategoryChange('hygiene')}
-                  >
-                    <i className="ri-hand-sanitizer-line mr-1"></i>
-                    Hygiene
-                  </button>
-                  
-                  {/* Indoors & Chores Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'indoors-chores' 
-                      ? 'bg-blue-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                    }`}
-                    onClick={() => handleCategoryChange('indoors-chores')}
-                  >
-                    <i className="ri-home-line mr-1"></i>
-                    Indoors & Chores
-                  </button>
-                  
-                  {/* Meals Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'meals' 
-                      ? 'bg-green-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                    onClick={() => handleCategoryChange('meals')}
-                  >
-                    <i className="ri-restaurant-line mr-1"></i>
-                    Meals
-                  </button>
-                  
-                  {/* Outdoors & Social Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'outdoors-social' 
-                      ? 'bg-sky-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
-                    }`}
-                    onClick={() => handleCategoryChange('outdoors-social')}
-                  >
-                    <i className="ri-sun-line mr-1"></i>
-                    Outdoors & Social
-                  </button>
-                  
-                  {/* Places & Transportation Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'places' 
-                      ? 'bg-purple-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                    onClick={() => handleCategoryChange('places')}
-                  >
-                    <i className="ri-map-pin-line mr-1"></i>
-                    Places & Transport
-                  </button>
-                  
-                  {/* Vacation Category */}
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-md text-xs sm:text-sm ${
-                      selectedCategory === 'vacation' 
-                      ? 'bg-indigo-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
-                    }`}
-                    onClick={() => handleCategoryChange('vacation')}
-                  >
-                    <i className="ri-suitcase-line mr-1"></i>
-                    Vacation
-                  </button>
+                  {/* Dynamic category buttons from database */}
+                  {categoriesLoading ? (
+                    <div className="flex items-center text-gray-500">
+                      <i className="ri-loader-4-line animate-spin mr-2"></i>
+                      Loading categories...
+                    </div>
+                  ) : categoriesError ? (
+                    <div className="text-red-500 text-xs">
+                      Error loading categories
+                    </div>
+                  ) : (
+                    categories?.map((category) => {
+                      const categoryKey = category.categoryname_en; // Use original case
+                      const isSelected = selectedCategory === categoryKey;
+                      const categoryColor = category.color || 'gray-400';
+                      
+                      return (
+                        <button
+                          key={category.id}
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
+                            isSelected
+                              ? `bg-${categoryColor} text-white font-medium md:font-semibold shadow-sm`
+                              : `bg-${categoryColor.replace('-400', '-100')} text-${categoryColor.replace('-400', '-700')} hover:bg-${categoryColor.replace('-400', '-200')}`
+                          }`}
+                          onClick={() => handleCategoryChange(categoryKey)}
+                        >
+                          {category.categoryname_en === 'all' && <i className="ri-apps-line mr-1"></i>}
+                          {language === 'es' && category.name_es 
+                            ? category.name_es 
+                            : category.categoryname_en.charAt(0).toUpperCase() + category.categoryname_en.slice(1)
+                          }
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
               </div>
               
@@ -1200,16 +1119,27 @@ export default function Schedule() {
                 </div>
               )}
               
-              {/* Activity cards - main area with extra padding at bottom on larger screens */}
-              <div className="flex-grow overflow-auto bg-white dark:bg-gray-800 p-2 pb-2 md:pb-16">
-                {selectedCategory === 'favorites' ? (
+              {/* Activity cards - main area optimized to fit viewport */}
+              <div className="flex-1 overflow-hidden bg-white dark:bg-gray-800 p-2">
+                {cardsLoading ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                    <i className="ri-loader-4-line animate-spin text-4xl mb-4"></i>
+                    <p>Loading activity cards...</p>
+                  </div>
+                ) : cardsError ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-red-500">
+                    <i className="ri-error-warning-line text-4xl mb-4"></i>
+                    <p>Error loading activity cards</p>
+                    <p className="text-sm text-gray-500 mt-2">{cardsError.message}</p>
+                  </div>
+                ) : selectedCategory === 'favorites' ? (
                   // Special case for favorites - make it a droppable area
                   <Droppable droppableId="favorites" direction="horizontal">
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-md min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-2xl min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
@@ -1279,9 +1209,9 @@ export default function Schedule() {
               
               {/* Pagination controls - always visible for all screen sizes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="sticky bottom-0 mt-4 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-lg mx-auto">
+                <div className="flex-shrink-0 mt-2 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-2xl mx-auto">
                   <button
-                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
+                    className={`px-2 py-1 rounded-xl text-xs sm:text-sm ${
                       activitiesPage === 1 
                         ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
                         : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
@@ -1291,11 +1221,11 @@ export default function Schedule() {
                   >
                     <i className="ri-arrow-left-s-line"></i>
                   </button>
-                  <span className="px-2 py-1 bg-white dark:bg-gray-700 rounded-md text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-800 min-w-[60px] text-center dark:text-gray-200">
+                  <span className="px-2 py-1 bg-white dark:bg-gray-700 rounded-xl text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-800 min-w-[60px] text-center dark:text-gray-200">
                     {activitiesPage} of {totalPages}
                   </span>
                   <button
-                    className={`px-2 py-1 rounded-md text-xs sm:text-sm ${
+                    className={`px-2 py-1 rounded-xl text-xs sm:text-sm ${
                       activitiesPage === totalPages 
                         ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
                         : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
@@ -1315,7 +1245,7 @@ export default function Schedule() {
       {/* Save modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md dark:text-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md dark:text-gray-100">
             <h2 className="text-lg font-bold mb-4">Save Schedule</h2>
             <p className="mb-4">Choose a time period to save this schedule to:</p>
             
