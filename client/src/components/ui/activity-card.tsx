@@ -147,7 +147,7 @@ export default function ActivityCard({
             )}
           </div>
           <div className="w-full flex justify-center items-center">
-            <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded-xl font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded-lg font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
               {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
             </span>
           </div>
@@ -172,7 +172,7 @@ export default function ActivityCard({
           </div>
           
           {/* Text container - more accessible */}
-          <div className="w-full bg-white dark:bg-gray-800 bg-opacity-80 rounded-b-2xl py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
+          <div className="w-full bg-white dark:bg-gray-800 bg-opacity-80 rounded-b-xl py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
             <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block dark:text-gray-100">
               {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
             </span>
@@ -183,7 +183,7 @@ export default function ActivityCard({
   );
   
   // Common class names for card
-  const cardClassNames = `rounded-2xl ${
+  const cardClassNames = `rounded-xl ${
     // For cards in schedule section:
     isInSchedule 
       ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 

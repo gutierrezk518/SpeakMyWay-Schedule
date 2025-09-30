@@ -732,7 +732,7 @@ export default function Schedule() {
             <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 space-y-4">
               {/* Undo button */}
               <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-md ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
                   canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleUndo}
@@ -744,7 +744,7 @@ export default function Schedule() {
               
               {/* Redo button */}
               <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-md ${
+                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
                   canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                 }`}
                 onClick={handleRedo}
@@ -756,7 +756,7 @@ export default function Schedule() {
               
               {/* Play button - largest button */}
               <button 
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
                 onClick={playSchedule}
                 title="Play schedule"
               >
@@ -790,7 +790,7 @@ export default function Schedule() {
               <div className="flex bg-gray-100 dark:bg-gray-800 px-2 py-2 border-b border-gray-200 dark:border-gray-700 items-center justify-center space-x-4 mt-4">
                 {/* Undo button */}
                 <button 
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${
                     canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleUndo}
@@ -802,7 +802,7 @@ export default function Schedule() {
                 
                 {/* Redo button */}
                 <button 
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${
                     canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleRedo}
@@ -814,7 +814,7 @@ export default function Schedule() {
                 
                 {/* Play button */}
                 <button 
-                  className="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
+                  className="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
                   onClick={playSchedule}
                   title="Play schedule"
                 >
@@ -834,7 +834,7 @@ export default function Schedule() {
                 
                 {/* Save button */}
                 <button 
-                  className="w-10 h-10 rounded-2xl bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                  className="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
                   onClick={() => setShowSaveModal(true)}
                   title="Save schedule"
                 >
@@ -848,14 +848,14 @@ export default function Schedule() {
               
               <div className="flex space-x-1 ml-auto">
                 <button 
-                  className="p-1.5 rounded-2xl bg-blue-200 hover:bg-blue-300 text-blue-700"
+                  className="p-1.5 rounded-xl bg-blue-200 hover:bg-blue-300 text-blue-700"
                   onClick={toggleFullscreen}
                   aria-label="Fullscreen"
                 >
                   <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
                 <button 
-                  className="p-1.5 rounded-2xl bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
+                  className="p-1.5 rounded-xl bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
                   onClick={clearActivities}
                   aria-label="Clear all activities"
                   title="Clear All Activities"
@@ -902,8 +902,8 @@ export default function Schedule() {
                       maxHeight: isPortrait ? '140px' : '100%'
                     }}
                     className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-2xl p-2 flex flex-nowrap items-center'
-                      : 'overflow-y-auto rounded-2xl p-2 flex flex-col items-center'
+                      ? 'overflow-x-auto rounded-xl p-2 flex flex-nowrap items-center'
+                      : 'overflow-y-auto rounded-xl p-2 flex flex-col items-center'
                     } ${
                       snapshot.isDraggingOver 
                         ? 'bg-blue-100 dark:bg-blue-900' 
@@ -977,7 +977,7 @@ export default function Schedule() {
               {/* Timer - conditionally displayed */}
               {showTimer && (
                 <div className="px-3 py-1 border-b border-gray-200 dark:border-gray-700 bg-purple-50 dark:bg-purple-950 flex justify-center">
-                  <div className="flex items-center justify-between bg-purple-100 dark:bg-purple-900 rounded-2xl w-full px-3 py-1.5 max-w-md">
+                  <div className="flex items-center justify-between bg-purple-100 dark:bg-purple-900 rounded-xl w-full px-3 py-1.5 max-w-md">
                     <div className="flex items-center">
                       <i className="ri-timer-line text-lg text-purple-700 dark:text-purple-400 mr-2"></i>
                       <span className="text-sm text-purple-800 dark:text-purple-300 font-medium">Timer:</span>
@@ -1139,7 +1139,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-2xl min-h-[200px] ${
+                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-xl min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
@@ -1209,7 +1209,7 @@ export default function Schedule() {
               
               {/* Pagination controls - always visible for all screen sizes */}
               {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="flex-shrink-0 mt-2 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-2xl mx-auto">
+                <div className="flex-shrink-0 mt-2 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-xl mx-auto">
                   <button
                     className={`px-2 py-1 rounded-xl text-xs sm:text-sm ${
                       activitiesPage === 1 
@@ -1245,7 +1245,7 @@ export default function Schedule() {
       {/* Save modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md dark:text-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md dark:text-gray-100">
             <h2 className="text-lg font-bold mb-4">Save Schedule</h2>
             <p className="mb-4">Choose a time period to save this schedule to:</p>
             
