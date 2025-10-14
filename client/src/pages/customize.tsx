@@ -228,24 +228,27 @@ export default function Customize() {
             <div className="space-y-4">
               <div>
                 <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Voice Type</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 ${(voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default") ? 'bg-green-100 dark:bg-green-900 border-green-500 dark:border-green-600 dark:text-green-300' : 'dark:text-gray-300'}`}>
-                    <input
-                      type="radio"
-                      name="voiceType"
-                      value="female"
-                      className="absolute opacity-0"
-                      checked={voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default"}
-                      onChange={() => {
-                        handleVoiceTypeChange({ target: { value: "female" } } as React.ChangeEvent<HTMLSelectElement>);
-                      }}
-                    />
-                    <div className="flex flex-col items-center">
-                      <i className="ri-user-voice-line text-3xl text-green-500 dark:text-green-400 mb-2"></i>
-                      <span className="font-medium">Female Voice</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">(Default)</span>
-                    </div>
-                  </label>
+                <div className={`grid ${language === 'es' ? 'grid-cols-1' : 'grid-cols-2'} gap-2`}>
+                  {/* Only show female voice for English */}
+                  {language !== 'es' && (
+                    <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 ${(voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default") ? 'bg-green-100 dark:bg-green-900 border-green-500 dark:border-green-600 dark:text-green-300' : 'dark:text-gray-300'}`}>
+                      <input
+                        type="radio"
+                        name="voiceType"
+                        value="female"
+                        className="absolute opacity-0"
+                        checked={voiceSettings.voiceType === "female" || voiceSettings.voiceType === "default"}
+                        onChange={() => {
+                          handleVoiceTypeChange({ target: { value: "female" } } as React.ChangeEvent<HTMLSelectElement>);
+                        }}
+                      />
+                      <div className="flex flex-col items-center">
+                        <i className="ri-user-voice-line text-3xl text-green-500 dark:text-green-400 mb-2"></i>
+                        <span className="font-medium">Female Voice</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">(Default)</span>
+                      </div>
+                    </label>
+                  )}
 
                   <label className={`relative flex items-center justify-center p-4 border dark:border-gray-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 ${voiceSettings.voiceType === "male" || voiceSettings.voiceType === "en-US-male-warm" ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 dark:border-blue-600 dark:text-blue-300' : 'dark:text-gray-300'}`}>
                     <input
@@ -261,6 +264,9 @@ export default function Customize() {
                     <div className="flex flex-col items-center">
                       <i className="ri-user-voice-line text-3xl text-blue-500 dark:text-blue-400 mb-2"></i>
                       <span className="font-medium">Male Voice</span>
+                      {language === 'es' && (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">(Only available)</span>
+                      )}
                     </div>
                   </label>
                 </div>
@@ -293,45 +299,6 @@ export default function Customize() {
                 </p>
               </div>
 
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Rate</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Slow</span>
-                  <input 
-                    type="range" 
-                    min="0.5" 
-                    max="2" 
-                    step="0.1" 
-                    value={voiceSettings.rate}
-                    onChange={handleRateChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Fast</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {voiceSettings.rate}x
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2">Speaking Volume</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Quiet</span>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="1" 
-                    step="0.1" 
-                    value={voiceSettings.volume}
-                    onChange={handleVolumeChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Loud</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {Math.round(voiceSettings.volume * 100)}%
-                </div>
-              </div>
             </div>
           </div>
 
@@ -377,25 +344,6 @@ export default function Customize() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Text Size</label>
-                <div className="flex items-center">
-                  <span className="mr-2 dark:text-gray-300">Small</span>
-                  <input
-                    type="range"
-                    min="1"
-                    max="2"
-                    step="0.1"
-                    value={displaySettings.textSize}
-                    onChange={handleTextSizeChange}
-                    className="flex-grow"
-                  />
-                  <span className="ml-2 dark:text-gray-300">Large</span>
-                </div>
-                <div className="text-center text-sm mt-1 text-gray-500 dark:text-gray-400">
-                  {Math.round(displaySettings.textSize * 100)}%
-                </div>
-              </div>
             </div>
           </div>
 

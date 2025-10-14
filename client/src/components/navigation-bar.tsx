@@ -3,7 +3,7 @@ import { useAppContext } from "@/contexts/app-context";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/use-auth";
 
 const pageTitles: Record<string, string> = {
   "/": "SpeakMyWay",
@@ -17,17 +17,13 @@ const pageTitles: Record<string, string> = {
 
 export default function NavigationBar() {
   const [location] = useLocation();
-  const { 
-    language, 
-    setLanguage, 
-    isFavoritesMode, 
-    userName,
-    userEmail,
-    userBirthday,
-    userConsentGiven,
-    userMarketingConsent,
-    userDataRetentionConsent
+  const {
+    language,
+    setLanguage,
+    isFavoritesMode,
+    userName
   } = useAppContext();
+  const { logout } = useAuth();
   
   const [userProfileOpen, setUserProfileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -109,65 +105,22 @@ export default function NavigationBar() {
             <DialogTitle className="text-xl">User Profile</DialogTitle>
           </DialogHeader>
           
-          <div className="py-4 space-y-4">
+          <div className="py-4">
             <div>
-              <h3 className="font-medium text-lg">Your Information</h3>
-              <div className="mt-2 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400">Name:</span>
-                  <span className="font-medium">{userName}</span>
-                </div>
-                
-                {userEmail && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Email:</span>
-                    <span className="font-medium">{userEmail}</span>
-                  </div>
-                )}
-                
-                {userBirthday && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Birthday:</span>
-                    <span className="font-medium">{new Date(userBirthday).toLocaleDateString()}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div>
-              <h3 className="font-medium text-lg">Privacy Settings</h3>
-              <div className="mt-2 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400">Data consent given:</span>
-                  <span className="font-medium">{userConsentGiven ? 'Yes' : 'No'}</span>
-                </div>
-                
-                <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400">Marketing emails:</span>
-                  <span className="font-medium">{userMarketingConsent ? 'Subscribed' : 'Not subscribed'}</span>
-                </div>
-                
-                <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400">Analytics consent:</span>
-                  <span className="font-medium">{userDataRetentionConsent ? 'Granted' : 'Not granted'}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="pt-2">
-              <Link href="/privacy-policy" onClick={() => setUserProfileOpen(false)}>
-                <Button variant="outline" className="w-full">
-                  View Privacy Policy
-                </Button>
-              </Link>
+              <span className="text-gray-500 dark:text-gray-400">Name: </span>
+              <span className="font-medium">{userName}</span>
             </div>
           </div>
           
-          <DialogFooter>
-            <Button onClick={() => setUserProfileOpen(false)}>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setUserProfileOpen(false)}>
               Close
+            </Button>
+            <Button variant="destructive" onClick={() => {
+              logout();
+              setUserProfileOpen(false);
+            }}>
+              Log Out
             </Button>
           </DialogFooter>
         </DialogContent>

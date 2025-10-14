@@ -11,6 +11,7 @@ import Customize from "@/pages/customize";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
 import AuthTestPage from "@/pages/auth-test";
+import ResetPasswordPage from "@/pages/reset-password";
 import NavigationBar from "@/components/navigation-bar";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/schedule" component={Schedule} /> {/* Public route for anonymous users */}
       <ProtectedRoute path="/customize" component={Customize} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <ProtectedRoute path="/auth-test" component={AuthTestPage} />
       <Route component={NotFound} />

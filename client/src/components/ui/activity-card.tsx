@@ -182,24 +182,27 @@ export default function ActivityCard({
     </>
   );
   
-  // Common class names for card
+  // Common class names for card with dynamic color mapping
+  const getBgColorClass = (bgColor: string) => {
+    // Ensure we have a valid color, fallback to gray-100 if not
+    if (!bgColor || bgColor.trim() === '') {
+      return 'bg-gray-100';
+    }
+    
+    // Return dynamic class name
+    return `bg-${bgColor}`;
+  };
+
   const cardClassNames = `rounded-xl ${
     // For cards in schedule section:
-    isInSchedule 
-      ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20' 
+    isInSchedule
+      ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20'
       // For cards in activity selection:
-      // Use smaller size on phones, larger on tablets & computers
-      : 'w-[56px] h-[56px] xs:w-[64px] xs:h-[64px] sm:w-[80px] sm:h-[80px] md:w-24 md:h-24'
+      // Use auto width to fit grid, with max sizes to prevent overflow
+      : 'w-full h-auto aspect-square max-w-[85px] xs:max-w-[90px] sm:max-w-[95px] md:max-w-[110px] lg:max-w-[120px]'
     } flex flex-col items-center justify-between cursor-pointer
     shadow-md hover:shadow-lg
-    ${activity.bgColor === 'purple-300' ? 'bg-purple-300' : 
-      activity.bgColor === 'green-400' ? 'bg-green-400' : 
-      activity.bgColor === 'blue-300' ? 'bg-blue-300' : 
-      activity.bgColor === 'blue-400' ? 'bg-blue-400' : 
-      activity.bgColor === 'orange-300' ? 'bg-orange-300' : 
-      activity.bgColor === 'purple-200' ? 'bg-purple-200' : 
-      activity.bgColor === 'orange-100' ? 'bg-orange-100' : 
-      activity.bgColor === 'orange-200' ? 'bg-orange-200' : 'bg-gray-100'} 
+    ${getBgColorClass(activity.bgColor)}
     text-gray-800 dark:text-gray-100`;
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes

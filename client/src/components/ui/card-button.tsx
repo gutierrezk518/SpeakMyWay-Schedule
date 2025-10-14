@@ -31,7 +31,7 @@ export default function CardButton({
     if (border) {
       return `bg-white border-2 border-${color}`;
     }
-    return `bg-${color} text-white`;
+    return `bg-${color} text-black`;
   };
 
   const getSizeClass = () => {
@@ -46,8 +46,8 @@ export default function CardButton({
       className={`${getBackgroundClass()} ${getSizeClass()} p-2 rounded-md flex flex-col items-center justify-center text-center`}
       onClick={handleClick}
     >
-      <i className={`${icon} ${isCategory ? "text-2xl" : "text-xl"} ${border ? `text-${color}` : ""} mb-1`}></i>
-      <span className={`text-sm ${isCategory ? "" : "line-clamp-1"}`}>{text}</span>
+      <i className={`${icon} ${isCategory ? "text-2xl" : "text-xl"} ${border ? `text-${color}` : "text-black"} mb-1`}></i>
+      <span className={`text-sm ${isCategory ? "" : "line-clamp-1"} ${border ? `text-${color}` : "text-black"}`}>{text}</span>
     </button>
   );
 }

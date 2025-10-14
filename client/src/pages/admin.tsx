@@ -66,30 +66,50 @@ export default function Admin() {
   // User metrics
   const usersQuery = useQuery({
     queryKey: ['/api/admin/users'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/users");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
   
   const userCountQuery = useQuery({
     queryKey: ['/api/admin/users/count'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/users/count");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
   
   const newUsersQuery = useQuery({
     queryKey: ['/api/admin/users/new'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/users/new");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
   
   const activeUsersQuery = useQuery({
     queryKey: ['/api/admin/users/active'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/users/active");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
   
   const mostActiveUsersQuery = useQuery({
     queryKey: ['/api/admin/users/most-active'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/admin/users/most-active");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
@@ -97,6 +117,10 @@ export default function Admin() {
   // User login history
   const userLoginHistoryQuery = useQuery({
     queryKey: ['/api/admin/users', selectedUser?.id, 'login-history'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/admin/users/${selectedUser.id}/login-history`);
+      return await response.json();
+    },
     enabled: !!selectedUser?.id && userLoginHistoryDialogOpen,
     retry: 1,
     refetchOnWindowFocus: false
@@ -232,6 +256,10 @@ export default function Admin() {
   // Fetch categories
   const categoriesQuery = useQuery({
     queryKey: ['/api/categories'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/categories");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
@@ -239,6 +267,10 @@ export default function Admin() {
   // Fetch subcategories
   const subcategoriesQuery = useQuery({
     queryKey: ['/api/subcategories'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/subcategories");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
@@ -246,6 +278,10 @@ export default function Admin() {
   // Fetch core words
   const coreWordsQuery = useQuery({
     queryKey: ['/api/corewords'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/corewords");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });
@@ -253,6 +289,10 @@ export default function Admin() {
   // Fetch activity cards
   const cardsQuery = useQuery({
     queryKey: ['/api/cards'],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/cards");
+      return await response.json();
+    },
     retry: 1,
     refetchOnWindowFocus: false
   });

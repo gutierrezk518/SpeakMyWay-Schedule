@@ -3,6 +3,39 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: ["class", "[data-theme='dark']"],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  safelist: [
+    // Background colors for activity cards - neurodivergent-friendly palette
+    'bg-green-200',     // Soft sage green
+    'bg-blue-200',      // Muted sky blue  
+    'bg-purple-200',    // Gentle lavender
+    'bg-stone-200',     // Warm beige
+    'bg-orange-200',    // Soft peach
+    'bg-emerald-200',   // Light mint
+    'bg-rose-200',      // Pale rose
+    'bg-gray-200',      // Neutral gray
+    'bg-violet-200',    // Soft violet
+    'bg-slate-200',     // Cool gray-blue
+    // Legacy colors for backward compatibility
+    'bg-purple-300',
+    'bg-green-400', 
+    'bg-blue-300',
+    'bg-blue-400',
+    'bg-orange-300',
+    'bg-orange-100',
+    'bg-gray-100',
+    // Additional common colors that might be used
+    'bg-red-200',
+    'bg-yellow-200',
+    'bg-indigo-200',
+    'bg-pink-200',
+    'bg-teal-200',
+    'bg-cyan-200',
+    'bg-lime-200',
+    'bg-amber-200',
+    // Text colors for better contrast
+    'text-black',
+    'text-white',
+  ],
   theme: {
     extend: {
       borderRadius: {

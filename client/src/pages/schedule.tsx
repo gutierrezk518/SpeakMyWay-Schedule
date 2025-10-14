@@ -896,21 +896,21 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    style={{ 
-                      height: isPortrait ? '140px' : '100%',
-                      minHeight: isPortrait ? '140px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '140px' : '100%'
+                    style={{
+                      height: isPortrait ? '160px' : '100%',
+                      minHeight: isPortrait ? '160px' : 'calc(100% - 16px)',
+                      maxHeight: isPortrait ? '160px' : '100%'
                     }}
-                    className={`${isPortrait 
-                      ? 'overflow-x-auto rounded-xl p-2 flex flex-nowrap items-center'
+                    className={`${isPortrait
+                      ? 'overflow-x-auto overflow-y-visible rounded-xl p-2 flex flex-nowrap items-start pt-4'
                       : 'overflow-y-auto rounded-xl p-2 flex flex-col items-center'
                     } ${
-                      snapshot.isDraggingOver 
-                        ? 'bg-blue-100 dark:bg-blue-900' 
+                      snapshot.isDraggingOver
+                        ? 'bg-blue-100 dark:bg-blue-900'
                         : 'bg-white dark:bg-gray-800'
                     } border ${
-                      snapshot.isDraggingOver 
-                        ? 'border-blue-300 dark:border-blue-700' 
+                      snapshot.isDraggingOver
+                        ? 'border-blue-300 dark:border-blue-700'
                         : 'border-blue-200 dark:border-gray-700'
                     } w-full h-full`}
                   >
@@ -920,24 +920,24 @@ export default function Schedule() {
                         <p className="text-[8px] font-medium">Drag activities here</p>
                       </div>
                     ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-8 xs:space-x-12 sm:space-x-24 md:space-x-32' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-4 xs:space-x-6 sm:space-x-8' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                          <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center' : 'w-14 h-14 mx-auto'}`}>
-                            <ActivityCard 
-                              activity={activity} 
+                          <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
+                            <ActivityCard
+                              activity={activity}
                               index={index}
                               showRemoveButton={true}
                               categoryId={selectedCategory}
                               isDraggable={true}
                             />
-                            
+
                             {/* Only show remove buttons when not dragging */}
                             {!isDragging && (
                               isPortrait ? (
                                 // Portrait mode: Show remove button below card
-                                <div className="mt-1 w-full text-center">
-                                  <button 
-                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300"
+                                <div className="mt-1 w-full text-center flex-shrink-0">
+                                  <button
+                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300 whitespace-nowrap"
                                     onClick={() => removeActivity(index)}
                                     aria-label="Remove activity"
                                   >
@@ -992,10 +992,10 @@ export default function Schedule() {
                 <div className="flex flex-wrap gap-1 justify-center">
                   {/* Search button */}
                   <button
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm transition-all duration-200 ${
                       showSearchBar
-                      ? 'bg-cyan-500 text-white font-medium md:font-semibold shadow-sm' 
-                      : 'bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-800'
+                      ? 'bg-cyan-500 text-black font-bold md:font-extrabold shadow-lg border-2 border-cyan-700 scale-105'
+                      : 'bg-cyan-100 dark:bg-cyan-900 text-black hover:bg-cyan-200 dark:hover:bg-cyan-800 border-2 border-transparent'
                     }`}
                     onClick={() => {
                       const newState = !showSearchBar;
@@ -1024,11 +1024,11 @@ export default function Schedule() {
                         className={`${snapshot.isDraggingOver ? 'scale-110 transition-transform' : ''}`}
                       >
                         <button
-                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
-                            selectedCategory === 'favorites' 
-                            ? 'bg-yellow-500 text-white font-medium md:font-semibold shadow-sm' 
-                            : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800'
-                          } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''} 
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm transition-all duration-200 ${
+                            selectedCategory === 'favorites'
+                            ? 'bg-yellow-500 text-black font-bold md:font-extrabold shadow-lg border-2 border-yellow-700 scale-105'
+                            : 'bg-yellow-100 dark:bg-yellow-900 text-black hover:bg-yellow-200 dark:hover:bg-yellow-800 border-2 border-transparent'
+                          } ${draggedItem ? 'ring-2 ring-yellow-500 ring-offset-2 animate-pulse' : ''}
                           ${snapshot.isDraggingOver ? 'bg-yellow-400 shadow-lg' : ''} relative`}
                           onClick={() => handleCategoryChange('favorites')}
                         >
@@ -1064,10 +1064,10 @@ export default function Schedule() {
                       return (
                         <button
                           key={category.id}
-                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm ${
+                          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm transition-all duration-200 ${
                             isSelected
-                              ? `bg-${categoryColor} text-white font-medium md:font-semibold shadow-sm`
-                              : `bg-${categoryColor.replace('-400', '-100')} text-${categoryColor.replace('-400', '-700')} hover:bg-${categoryColor.replace('-400', '-200')}`
+                              ? `bg-${categoryColor} text-black font-bold md:font-extrabold shadow-lg border-2 border-gray-800 scale-105`
+                              : `bg-${categoryColor.replace('-400', '-100')} text-black hover:bg-${categoryColor.replace('-400', '-200')} border-2 border-transparent`
                           }`}
                           onClick={() => handleCategoryChange(categoryKey)}
                         >
@@ -1120,7 +1120,7 @@ export default function Schedule() {
               )}
               
               {/* Activity cards - main area optimized to fit viewport */}
-              <div className="flex-1 overflow-hidden bg-white dark:bg-gray-800 p-2">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-800 p-2">
                 {cardsLoading ? (
                   <div className="flex flex-col items-center justify-center h-64 text-gray-500">
                     <i className="ri-loader-4-line animate-spin text-4xl mb-4"></i>
@@ -1139,7 +1139,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-1 sm:gap-3 md:gap-4 lg:gap-5 p-0.5 sm:p-1 md:p-2 rounded-xl min-h-[200px] ${
+                        className={`grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-3 xs:gap-3 sm:gap-3 md:gap-4 lg:gap-5 p-1 sm:p-1 md:p-2 rounded-xl min-h-[200px] ${
                           snapshot.isDraggingOver ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-white dark:bg-gray-800'
                         } border ${
                           snapshot.isDraggingOver ? 'border-yellow-300 dark:border-yellow-700' : 'border-gray-200 dark:border-gray-700'
@@ -1186,7 +1186,7 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-7 gap-1 sm:gap-3 md:gap-4 lg:gap-10 p-0.5 sm:p-1 md:p-2 ${
+                        className={`grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 xs:gap-3 sm:gap-3 md:gap-4 lg:gap-5 p-1 sm:p-1 md:p-2 ${
                           snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900' : 'bg-white dark:bg-gray-800'
                         }`}
                       >

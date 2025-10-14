@@ -1,47 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-// For development purposes, use a fallback URL and key to avoid errors
-// These will be replaced with the actual values from the server when available
-const fallbackUrl = 'https://placeholder.supabase.co';
-const fallbackKey = 'placeholder_key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create client with fallback values initially and additional options
-export const supabase = createClient(fallbackUrl, fallbackKey, {
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase environment variables. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.'
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true
   }
 });
-
-// Load actual configuration from server
-(async function loadSupabaseConfig() {
-  try {
-    const response = await fetch('/api/supabase-config');
-    if (!response.ok) {
-      throw new Error('Failed to fetch Supabase configuration');
-    }
-
-    const config = await response.json();
-    
-    if (config.supabaseUrl && config.supabaseKey) {
-      // Create a new client with proper configuration
-      const newClient = createClient(config.supabaseUrl, config.supabaseKey, {
-        auth: {
-          autoRefreshToken: true,
-          persistSession: true,
-          detectSessionInUrl: true
-        }
-      });
-      
-      // Replace the existing client with the new one
-      Object.assign(supabase, newClient);
-      
-      console.log('Supabase client initialized successfully with server config');
-    } else {
-      console.error('Invalid Supabase configuration received from server');
-    }
-  } catch (error) {
-    console.error('Error initializing Supabase:', error);
-  }
-})();

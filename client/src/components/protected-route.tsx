@@ -1,4 +1,4 @@
-import { useLocalAuth } from "@/hooks/use-local-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 
@@ -8,7 +8,7 @@ type ProtectedRouteProps = {
 };
 
 export function ProtectedRoute({ path, component: Component }: ProtectedRouteProps) {
-  const { user, isLoading } = useLocalAuth();
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (

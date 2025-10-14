@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(npm run dev:client:*)",
+      "Bash(start cmd /k \"npm run dev\")",
+      "Bash(npm run dev:*)",
+      "Bash(npm install)",
+      "Bash(node:*)",
+      "Bash(del test-supabase.js)",
+      "Bash(taskkill:*)",
+      "Bash(copy .env client.env)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(start npm run dev:client)",
+      "Bash(npm run check:*)",
+      "Bash(git add:*)",
+      "Bash(npm run build:*)",
+      "Read(//c/Users/gutie/OneDrive - Temple University/Pictures/Screenshots/**)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
+    ],
+    "deny": []
+  }
+}

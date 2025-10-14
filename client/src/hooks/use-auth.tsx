@@ -14,9 +14,12 @@ type AuthContextType = {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<AuthResponse>;
   signUp: (email: string, password: string, userData?: object) => Promise<AuthResponse>;
+  signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: AuthError | null }>;
+  resendVerificationEmail: (email: string) => Promise<{ error: AuthError | null }>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,24 +68,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, userData?: object) => {
     setIsLoading(true);
-    const response = await supabase.auth.signUp({ 
-      email, 
+    const response = await supabase.auth.signUp({
+      email,
       password,
       options: {
         data: userData
       }
     });
-    
+
     if (response.error) {
       toast({
         title: "Registration failed",
         description: response.error.message,
         variant: "destructive",
       });
-    } 
-    
+    }
+
     setIsLoading(false);
     return response;
+  };
+
+  const signInWithGoogle = async () => {
+    setIsLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}`,
+      }
+    });
+
+    if (error) {
+      toast({
+        title: "Google sign-in failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   const logout = async () => {
@@ -104,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    
+
     if (!error) {
       toast({
         title: "Password reset email sent",
@@ -117,7 +140,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     }
-    
+
+    return { error };
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (!error) {
+      toast({
+        title: "Password updated successfully",
+        description: "You can now sign in with your new password",
+      });
+    } else {
+      toast({
+        title: "Password update failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+
+    return { error };
+  };
+
+  const resendVerificationEmail = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+    });
+
+    if (!error) {
+      toast({
+        title: "Verification email sent",
+        description: "Check your inbox for the verification link",
+      });
+    } else {
+      toast({
+        title: "Failed to resend email",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+
     return { error };
   };
 
@@ -127,9 +193,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     signIn,
     signUp,
+    signInWithGoogle,
     logout,
     setUser,
     resetPassword,
+    updatePassword,
+    resendVerificationEmail,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
