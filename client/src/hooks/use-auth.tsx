@@ -19,6 +19,7 @@ type AuthContextType = {
   setUser: (user: User | null) => void;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: AuthError | null }>;
+  updateUserMetadata: (metadata: object) => Promise<{ error: AuthError | null }>;
   resendVerificationEmail: (email: string) => Promise<{ error: AuthError | null }>;
 };
 
@@ -72,7 +73,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        data: userData
+        data: userData,
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
@@ -165,6 +167,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
+  const updateUserMetadata = async (metadata: object) => {
+    const { error } = await supabase.auth.updateUser({
+      data: metadata
+    });
+
+    if (error) {
+      toast({
+        title: "Failed to update profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+
+    return { error };
+  };
+
   const resendVerificationEmail = async (email: string) => {
     const { error } = await supabase.auth.resend({
       type: 'signup',
@@ -198,6 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser,
     resetPassword,
     updatePassword,
+    updateUserMetadata,
     resendVerificationEmail,
   };
 

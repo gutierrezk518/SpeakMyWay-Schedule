@@ -10,9 +10,11 @@ import Schedule from "@/pages/schedule";
 import Customize from "@/pages/customize";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import AuthPage from "@/pages/auth-page";
+import AuthCallbackPage from "@/pages/auth-callback";
 import AuthTestPage from "@/pages/auth-test";
 import ResetPasswordPage from "@/pages/reset-password";
 import NavigationBar from "@/components/navigation-bar";
+import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { AuthProvider } from "@/hooks/use-auth";
@@ -28,6 +30,7 @@ function Router() {
       <Route path="/schedule" component={Schedule} /> {/* Public route for anonymous users */}
       <ProtectedRoute path="/customize" component={Customize} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/auth/callback" component={AuthCallbackPage} />
       <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <ProtectedRoute path="/auth-test" component={AuthTestPage} />
@@ -85,6 +88,7 @@ function AppContent() {
       <main className="flex-1 overflow-hidden pt-9">
         <Router />
       </main>
+      <OnboardingDialog />
     </div>
   );
 }
