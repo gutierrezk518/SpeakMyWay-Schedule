@@ -67,8 +67,15 @@ export default function AuthPage() {
   const passwordStrength = calculatePasswordStrength(registerPassword);
 
   // If user is already logged in, redirect to home page
+  useEffect(() => {
+    if (user && !isLoading) {
+      window.location.href = "/";
+    }
+  }, [user, isLoading]);
+
+  // Show nothing while redirecting
   if (user) {
-    return <Redirect to="/" />;
+    return null;
   }
 
   // Initialize login form

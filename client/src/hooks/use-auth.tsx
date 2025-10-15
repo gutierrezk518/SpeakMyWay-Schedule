@@ -53,8 +53,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
-    const response = await supabase.auth.signInWithPassword({ email, password });
-    
+    const response = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: {
+        // Don't redirect after login - let the app handle it
+        emailRedirectTo: undefined
+      }
+    });
+
     if (response.error) {
       toast({
         title: "Login failed",
@@ -62,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     }
-    
+
     setIsLoading(false);
     return response;
   };
