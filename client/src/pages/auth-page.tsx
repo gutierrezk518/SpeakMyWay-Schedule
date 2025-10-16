@@ -106,7 +106,12 @@ export default function AuthPage() {
 
   // Submit handler for login
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await signIn(values.email, values.password);
+    const response = await signIn(values.email, values.password);
+
+    // If login successful, redirect to home page
+    if (response.data?.session) {
+      window.location.href = "/";
+    }
   };
 
   // Submit handler for registration
