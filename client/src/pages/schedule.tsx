@@ -12,6 +12,7 @@ import { ScheduleActivity, ScheduleTimeSection, initialScheduleData } from "@/da
 import { useAuth } from "@/hooks/use-auth";
 import { useCategories } from "@/hooks/use-categories";
 import { useActivityCards } from "@/hooks/use-activity-cards";
+import { getBgClass, getBgLightClass, getBgHoverClass } from "@/lib/utils";
 
 // Compact Timer Component
 const TimerComponent = () => {
@@ -78,7 +79,8 @@ const TimerComponent = () => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center mr-3">
-        <select 
+        <select
+          aria-label="Timer minutes"
           value={minutes}
           onChange={(e) => !isActive && setMinutes(parseInt(e.target.value))}
           disabled={isActive}
@@ -89,7 +91,8 @@ const TimerComponent = () => {
           ))}
         </select>
         <span className="text-xs px-1 text-purple-800">:</span>
-        <select 
+        <select
+          aria-label="Timer seconds"
           value={seconds}
           onChange={(e) => !isActive && setSeconds(parseInt(e.target.value))}
           disabled={isActive}
@@ -245,23 +248,69 @@ export default function Schedule() {
   // Database hooks
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   const { data: activityCards, isLoading: cardsLoading, error: cardsError } = useActivityCards(selectedCategory);
-  
+  // Fetch ALL cards to build a translation lookup for schedule items loaded from localStorage
+  const { data: allCards } = useActivityCards();
+
+  // Enrich schedule items that are missing titleEs/speechTextEs (e.g. loaded from localStorage)
+  useEffect(() => {
+    if (!allCards || allCards.length === 0) return;
+
+    // Build lookup maps for matching schedule items to database cards
+    const byId = new Map<string, { titleEs?: string; speechTextEs?: string }>();
+    const byTitle = new Map<string, { titleEs?: string; speechTextEs?: string }>();
+    for (const card of allCards) {
+      const entry = { titleEs: card.titleEs, speechTextEs: card.speechTextEs };
+      byId.set(card.id, entry);
+      // Also index by English title (lowercased) for cards from initialScheduleData
+      if (card.title) {
+        byTitle.set(card.title.toLowerCase(), entry);
+      }
+    }
+
+    let updated = false;
+    const newSchedule = scheduleData.map((section: ScheduleSection) => ({
+      ...section,
+      activities: section.activities.map((activity: ScheduleActivity) => {
+        if (activity.titleEs) return activity; // Already has translations
+
+        // Try to match by stripping the UUID suffix (e.g. "42-abc12345" -> "42")
+        const baseId = activity.id.replace(/-[a-f0-9]{8}$/, '');
+        const translations = byId.get(baseId)
+          // Fallback: match by English title (for initialScheduleData cards like "Wake Up")
+          || byTitle.get(activity.title.toLowerCase())
+          // Fallback: check if activity title contains a DB card title (e.g. "Eat Breakfast" contains "Breakfast")
+          || Array.from(byTitle.entries()).find(([dbTitle]) =>
+            activity.title.toLowerCase().includes(dbTitle) || dbTitle.includes(activity.title.toLowerCase())
+          )?.[1];
+        if (translations?.titleEs) {
+          updated = true;
+          return { ...activity, titleEs: translations.titleEs, speechTextEs: translations.speechTextEs };
+        }
+        return activity;
+      })
+    }));
+
+    if (updated) {
+      setScheduleData(newSchedule);
+    }
+  }, [allCards]);
+
   // Helper function to handle category selection and reset page number
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setActivitiesPage(1); // Reset to page 1 when changing categories
   };
-  
+
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
-  
+
   // Set the current page in the app context
   useEffect(() => {
     setCurrentPage("/schedule");
   }, [setCurrentPage]);
-  
+
   // Save schedule to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('userSchedule', JSON.stringify(scheduleData));
@@ -276,12 +325,14 @@ export default function Schedule() {
     : activityCards || []; // Use database activities (already filtered by category in the hook)
             
   // Filter activities by search query if one exists
-  const filteredActivities = searchQuery 
+  const filteredActivities = searchQuery
     ? categoryActivities.filter(activity => {
         const searchLower = searchQuery.toLowerCase();
         return (
-          activity.title.toLowerCase().includes(searchLower) || 
-          (activity.speechText && activity.speechText.toLowerCase().includes(searchLower))
+          activity.title.toLowerCase().includes(searchLower) ||
+          (activity.titleEs && activity.titleEs.toLowerCase().includes(searchLower)) ||
+          (activity.speechText && activity.speechText.toLowerCase().includes(searchLower)) ||
+          (activity.speechTextEs && activity.speechTextEs.toLowerCase().includes(searchLower))
         );
       })
     : categoryActivities;
@@ -409,7 +460,6 @@ export default function Schedule() {
         } else {
           speak(newActivity.speechText || newActivity.title);
         }
-        console.log("Added activity to schedule:", newActivity.title, "Speech:", language === 'es' ? newActivity.speechTextEs : newActivity.speechText);
       } catch (error) {
         console.error("Error adding activity to schedule:", error);
       }
@@ -534,8 +584,8 @@ export default function Schedule() {
   
   // Save the current routine
   const saveRoutine = () => {
-    alert("Routine saved!");
     localStorage.setItem('userSchedule', JSON.stringify(scheduleData));
+    toast({ title: "Routine saved!", description: "Your schedule has been saved." });
   };
   
   // Save to a specific time section
@@ -553,7 +603,7 @@ export default function Schedule() {
       
       // Show confirmation message
       const sectionName = targetSection.name.toLowerCase();
-      alert(`Schedule saved to ${sectionName}!`);
+      toast({ title: "Schedule saved!", description: `Saved to ${sectionName}.` });
     }
   };
   
@@ -654,7 +704,6 @@ export default function Schedule() {
   // Event handler for clearing search when any card is clicked
   useEffect(() => {
     const handleClearSearch = () => {
-      console.log("Clearing search from card click event");
       setSearchQuery('');
     };
     
@@ -711,7 +760,6 @@ export default function Schedule() {
       } else {
         speak(newActivity.speechText || newActivity.title);
       }
-      console.log("Added activity to schedule via click:", newActivity.title);
     };
     
     // Listen for the custom event
@@ -1066,8 +1114,8 @@ export default function Schedule() {
                           key={category.id}
                           className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm transition-all duration-200 ${
                             isSelected
-                              ? `bg-${categoryColor} text-black font-bold md:font-extrabold shadow-lg border-2 border-gray-800 scale-105`
-                              : `bg-${categoryColor.replace('-400', '-100')} text-black hover:bg-${categoryColor.replace('-400', '-200')} border-2 border-transparent`
+                              ? `${getBgClass(categoryColor)} text-black font-bold md:font-extrabold shadow-lg border-2 border-gray-800 scale-105`
+                              : `${getBgLightClass(categoryColor)} text-black ${getBgHoverClass(categoryColor)} border-2 border-transparent`
                           }`}
                           onClick={() => handleCategoryChange(categoryKey)}
                         >
@@ -1088,8 +1136,9 @@ export default function Schedule() {
                 <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-950">
                   <div className="flex items-center justify-center">
                     <div className="relative w-full max-w-md">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
+                        aria-label="Search for activities"
                         className="w-full px-3 py-2 pl-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
                         placeholder="Search for activities..."
                         value={searchQuery}

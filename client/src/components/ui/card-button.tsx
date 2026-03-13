@@ -1,4 +1,5 @@
 import { useAppContext } from "@/contexts/app-context";
+import { getBgClass } from "@/lib/utils";
 
 interface CardButtonProps {
   icon: string;
@@ -29,9 +30,9 @@ export default function CardButton({
 
   const getBackgroundClass = () => {
     if (border) {
-      return `bg-white border-2 border-${color}`;
+      return `bg-white border-2 border-gray-300`;
     }
-    return `bg-${color} text-black`;
+    return `${getBgClass(color)} text-black`;
   };
 
   const getSizeClass = () => {
@@ -46,8 +47,8 @@ export default function CardButton({
       className={`${getBackgroundClass()} ${getSizeClass()} p-2 rounded-md flex flex-col items-center justify-center text-center`}
       onClick={handleClick}
     >
-      <i className={`${icon} ${isCategory ? "text-2xl" : "text-xl"} ${border ? `text-${color}` : "text-black"} mb-1`}></i>
-      <span className={`text-sm ${isCategory ? "" : "line-clamp-1"} ${border ? `text-${color}` : "text-black"}`}>{text}</span>
+      <i className={`${icon} ${isCategory ? "text-2xl" : "text-xl"} ${border ? "text-gray-600" : "text-black"} mb-1`}></i>
+      <span className={`text-sm ${isCategory ? "" : "line-clamp-1"} ${border ? "text-gray-600" : "text-black"}`}>{text}</span>
     </button>
   );
 }

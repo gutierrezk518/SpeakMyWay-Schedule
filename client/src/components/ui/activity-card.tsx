@@ -1,8 +1,8 @@
 import { ScheduleActivity } from "@/data/scheduleData";
 import { Draggable } from "react-beautiful-dnd";
-import { speak } from "@/lib/tts";
+import { getBgClass } from "@/lib/utils";
 import { useAppContext } from "@/contexts/app-context";
-import { useEffect } from "react";
+
 
 interface ActivityCardProps {
   activity: ScheduleActivity;
@@ -21,93 +21,22 @@ export default function ActivityCard({
   onRemove,
   categoryId
 }: ActivityCardProps): JSX.Element {
-  // Get favorites functionality and language from context
-  const { 
-    isFavorite, 
-    toggleFavorite,
-    addToFavorites,
-    language
-  } = useAppContext();
-  
-  // Determine if this activity is a favorite
-  const isActivityFavorite = isFavorite(activity.id);
-  
+  const { language } = useAppContext();
+
   // Determine if card is in the schedule section (checking removeButton)
   const isInSchedule = showRemoveButton;
-  
+
   // Determine if this card is in the Favorites category based on category ID
   const isInFavorites = categoryId === 'favorites';
-  
-  // Only click functionality, no long press as per user request
-  
-  // Apply Spanish translations when needed
-  const applySpanishTranslations = () => {
-    if (language === "es" && !activity.titleEs) {
-      // Create Spanish translations if none exist
-      // These would typically come from the database
-      const translations: Record<string, { title: string, speech?: string }> = {
-        "Breakfast": { title: "Desayuno", speech: "Desayuno" },
-        "Lunch": { title: "Almuerzo", speech: "Almuerzo" },
-        "Dinner": { title: "Cena", speech: "Cena" },
-        "Snack": { title: "Merienda", speech: "Merienda" },
-        "Water": { title: "Agua", speech: "Agua" },
-        "Juice": { title: "Jugo", speech: "Jugo" },
-        "Milk": { title: "Leche", speech: "Leche" },
-        "Toilet": { title: "Baño", speech: "Ir al baño" },
-        "Brush Teeth": { title: "Cepillar dientes", speech: "Cepillar los dientes" },
-        "Bath": { title: "Baño", speech: "Tomar un baño" },
-        "Wake Up": { title: "Despertar", speech: "Despertar" },
-        "Go to Sleep": { title: "Dormir", speech: "Ir a dormir" },
-        "Play Outside": { title: "Jugar afuera", speech: "Jugar afuera" },
-        "Color": { title: "Colorear", speech: "Colorear" },
-        "Book": { title: "Libro", speech: "Leer un libro" },
-        "Play": { title: "Jugar", speech: "Jugar" },
-        "Outdoor Play": { title: "Juego al aire libre", speech: "Jugar al aire libre" },
-        "YouTube": { title: "YouTube", speech: "YouTube" },
-        "TV": { title: "Televisión", speech: "Ver televisión" },
-        "Movie": { title: "Película", speech: "Ver una película" },
-        "Tablet": { title: "Tableta", speech: "Usar la tableta" },
-        "Phone": { title: "Teléfono", speech: "Usar el teléfono" },
-        "Cook": { title: "Cocinar", speech: "Cocinar" },
-        "Shower": { title: "Ducha", speech: "Tomar una ducha" },
-        "Bathroom": { title: "Baño", speech: "Ir al baño" },
-        "Get Dressed": { title: "Vestirse", speech: "Vestirse" },
-        "Shoes": { title: "Zapatos", speech: "Ponerse los zapatos" },
-        "School": { title: "Escuela", speech: "Ir a la escuela" },
-        "Home": { title: "Casa", speech: "Ir a casa" },
-        "Park": { title: "Parque", speech: "Ir al parque" },
-        "Swimming": { title: "Nadar", speech: "Ir a nadar" },
-        "Doctor": { title: "Doctor", speech: "Ir al doctor" },
-        "Grocery Store": { title: "Supermercado", speech: "Ir al supermercado" },
-        "Library": { title: "Biblioteca", speech: "Ir a la biblioteca" },
-        "Car": { title: "Coche", speech: "Ir en coche" },
-        "Bus": { title: "Autobús", speech: "Ir en autobús" },
-        "Walk": { title: "Caminar", speech: "Caminar" },
-        "Bike": { title: "Bicicleta", speech: "Montar en bicicleta" }
-      };
-      
-      if (translations[activity.title]) {
-        activity.titleEs = translations[activity.title].title;
-        activity.speechTextEs = translations[activity.title].speech;
-      }
-    }
-  };
-  
-  // Apply translations immediately when the component renders
-  useEffect(() => {
-    applySpanishTranslations();
-  }, [language, activity.title]);
+
+  // Display title based on current language — supports live language switching
+  const displayTitle = language === 'es' && activity.titleEs ? activity.titleEs : activity.title;
   
   // Handle card click to add to schedule
   const handleCardClick = () => {
-    // Apply Spanish translations again just in case
-    applySpanishTranslations();
-    
     // Determine the source area based on where the card is
-    const sourceArea = isInSchedule ? "schedule" : 
+    const sourceArea = isInSchedule ? "schedule" :
                       isInFavorites ? "favorites" : "activity-cards";
-    
-    console.log("Card clicked:", activity.title, "Source area:", sourceArea, "isInSchedule:", isInSchedule);
                       
     // First, dispatch a custom event specifically to clear search
     const clearSearchEvent = new CustomEvent('clearSearchOnCardClick', {});
@@ -137,7 +66,7 @@ export default function ActivityCard({
               <div className="w-full h-full p-1 flex items-center justify-center">
                 <img 
                   src={activity.imageSrc} 
-                  alt={activity.title}
+                  alt={`${displayTitle} activity card`}
                   className="max-w-full max-h-full object-contain"
                   style={{ maxHeight: "80%" }}
                 />
@@ -148,7 +77,7 @@ export default function ActivityCard({
           </div>
           <div className="w-full flex justify-center items-center">
             <span className="text-[9px] xs:text-[10px] sm:text-xs text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 bg-opacity-75 px-0.5 sm:px-1 py-0.5 rounded-lg font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-              {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
+              {displayTitle}
             </span>
           </div>
         </div>
@@ -161,7 +90,7 @@ export default function ActivityCard({
               <div className="w-full h-full p-1.5 flex items-center justify-center">
                 <img 
                   src={activity.imageSrc} 
-                  alt={activity.title}
+                  alt={`${displayTitle} activity card`}
                   className="max-w-full max-h-full object-contain"
                   style={{ maxHeight: "85%" }}
                 />
@@ -174,7 +103,7 @@ export default function ActivityCard({
           {/* Text container - more accessible */}
           <div className="w-full bg-white dark:bg-gray-800 bg-opacity-80 rounded-b-xl py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
             <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block dark:text-gray-100">
-              {language === "es" && activity.titleEs ? activity.titleEs : activity.title}
+              {displayTitle}
             </span>
           </div>
         </>
@@ -182,16 +111,8 @@ export default function ActivityCard({
     </>
   );
   
-  // Common class names for card with dynamic color mapping
-  const getBgColorClass = (bgColor: string) => {
-    // Ensure we have a valid color, fallback to gray-100 if not
-    if (!bgColor || bgColor.trim() === '') {
-      return 'bg-gray-100';
-    }
-    
-    // Return dynamic class name
-    return `bg-${bgColor}`;
-  };
+  // Common class names for card with static color mapping
+  const getBgColorClass = (bgColor: string) => getBgClass(bgColor);
 
   const cardClassNames = `rounded-xl ${
     // For cards in schedule section:
@@ -215,8 +136,11 @@ export default function ActivityCard({
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            role="button"
+            aria-label={`${displayTitle} activity, draggable`}
             onClick={handleCardClick}
-            className={`${cardClassNames} ${snapshot.isDragging ? 'shadow-xl transform scale-105' : ''}`}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
+            className={`${cardClassNames} focus:outline-2 focus:outline-blue-500 ${snapshot.isDragging ? 'shadow-xl transform scale-105' : ''}`}
             style={{
               ...provided.draggableProps.style,
               opacity: snapshot.isDragging ? 0.9 : 1,
@@ -231,8 +155,12 @@ export default function ActivityCard({
   } else {
     // For non-draggable elements (regular activity cards)
     return (
-      <div 
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Add ${displayTitle} to schedule`}
         onClick={handleCardClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
         className={cardClassNames}
       >
         {cardContent(false)}

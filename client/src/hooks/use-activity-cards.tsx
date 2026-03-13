@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { useAppContext } from '@/contexts/app-context';
 
 export interface ActivityCard {
   id: string;
   title: string;
+  titleEs?: string;
   speechText: string;
+  speechTextEs?: string;
   categoryname_en: string;
   icon: string;
   imageSrc: string;
@@ -27,10 +28,8 @@ export interface DatabaseCard {
 }
 
 export function useActivityCards(selectedCategory?: string) {
-  const { language } = useAppContext();
-
   return useQuery({
-    queryKey: ['activity-cards', selectedCategory, language],
+    queryKey: ['activity-cards', selectedCategory],
     queryFn: async (): Promise<ActivityCard[]> => {
       // First, get the categories to map colors
       const { data: categories, error: categoriesError } = await supabase
@@ -69,8 +68,10 @@ export function useActivityCards(selectedCategory?: string) {
       // Transform database format to component format
       return (data || []).map((card: any): ActivityCard => ({
         id: card.id.toString(),
-        title: language === 'es' && card.text_es ? card.text_es : card.text_en,
-        speechText: language === 'es' && card.spoken_word_es ? card.spoken_word_es : card.spoken_word_en,
+        title: card.text_en,
+        titleEs: card.text_es || undefined,
+        speechText: card.spoken_word_en,
+        speechTextEs: card.spoken_word_es || undefined,
         categoryname_en: card.categoryname_en,
         icon: card.icon,
         imageSrc: card.icon_url,
@@ -85,10 +86,8 @@ export function useActivityCards(selectedCategory?: string) {
 
 // Hook to get cards organized by category (for the old grouped structure)
 export function useActivityCardsByCategory() {
-  const { language } = useAppContext();
-
   return useQuery({
-    queryKey: ['activity-cards-by-category', language],
+    queryKey: ['activity-cards-by-category'],
     queryFn: async (): Promise<Record<string, ActivityCard[]>> => {
       const { data, error } = await supabase
         .from('schedule_vocabulary_cards')
@@ -114,8 +113,10 @@ export function useActivityCardsByCategory() {
 
         cardsByCategory[categoryName].push({
           id: card.id.toString(),
-          title: language === 'es' && card.text_es ? card.text_es : card.text_en,
-          speechText: language === 'es' && card.spoken_word_es ? card.spoken_word_es : card.spoken_word_en,
+          title: card.text_en,
+          titleEs: card.text_es || undefined,
+          speechText: card.spoken_word_en,
+          speechTextEs: card.spoken_word_es || undefined,
           categoryname_en: card.categoryname_en,
           icon: card.icon,
           imageSrc: card.icon_url,

@@ -43,9 +43,12 @@ export function OnboardingDialog() {
 
   useEffect(() => {
     // Check if user is logged in and doesn't have a name set
+    // Only run this check once on mount to avoid resetting user edits
     if (user) {
       const hasMetadataName = user.user_metadata?.display_name;
-      const hasLocalStorageName = localStorage.getItem('userName');
+      // Use key existence check — getItem returns null only if the key doesn't exist,
+      // whereas an empty string means the user intentionally cleared it
+      const hasLocalStorageName = localStorage.getItem('userName') !== null;
 
       // Show dialog if user has no name in either location
       if (!hasMetadataName && !hasLocalStorageName) {
@@ -55,7 +58,8 @@ export function OnboardingDialog() {
         setUserName(hasMetadataName);
       }
     }
-  }, [user, setUserName]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const onSubmit = async (values: z.infer<typeof nameSchema>) => {
     setIsSubmitting(true);

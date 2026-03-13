@@ -19,7 +19,7 @@ import { useEffect } from "react";
 import { useAppContext } from "@/contexts/app-context";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
-import { Link } from "wouter";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 function Router() {
   return (
@@ -51,41 +51,51 @@ function AppContent() {
     setUserDataRetentionConsent
   } = useAppContext();
 
+  // One-time migration: copy legacy "speakMyWay*" keys into the canonical keys
+  // used by app-context, then remove the legacy keys so this never re-runs.
   useEffect(() => {
-    // Load any existing user data from localStorage if available
-    const storedName = localStorage.getItem("speakMyWayUser");
-    const storedBirthday = localStorage.getItem("speakMyWayBirthday");
-    const storedEmail = localStorage.getItem("speakMyWayEmail");
-    const storedConsentGiven = localStorage.getItem("speakMyWayConsentGiven");
-    const storedConsentDate = localStorage.getItem("speakMyWayConsentDate");
-    const storedMarketingConsent = localStorage.getItem("speakMyWayMarketingConsent");
-    const storedDataRetentionConsent = localStorage.getItem("speakMyWayDataRetentionConsent");
-    
-    if (storedName) {
-      setUserName(storedName);
-      if (storedBirthday) setUserBirthday(storedBirthday);
-      if (storedEmail) setUserEmail(storedEmail);
-      
-      // Set consent data in context
+    const sanitize = (val: string | null, maxLen = 256): string | null => {
+      if (!val) return null;
+      return val.trim().slice(0, maxLen);
+    };
+
+    const legacyName = sanitize(localStorage.getItem("speakMyWayUser"), 100);
+    if (legacyName) {
+      // Only migrate if the canonical key is empty (don't overwrite newer data)
+      if (!localStorage.getItem("userName")) {
+        setUserName(legacyName);
+      }
+
+      const storedBirthday = sanitize(localStorage.getItem("speakMyWayBirthday"), 20);
+      const storedEmail = sanitize(localStorage.getItem("speakMyWayEmail"), 320);
+      const storedConsentGiven = sanitize(localStorage.getItem("speakMyWayConsentGiven"), 10);
+      const storedConsentDate = sanitize(localStorage.getItem("speakMyWayConsentDate"), 30);
+      const storedMarketingConsent = sanitize(localStorage.getItem("speakMyWayMarketingConsent"), 10);
+      const storedDataRetentionConsent = sanitize(localStorage.getItem("speakMyWayDataRetentionConsent"), 10);
+
+      if (storedBirthday && !localStorage.getItem("userBirthday")) setUserBirthday(storedBirthday);
+      if (storedEmail && !localStorage.getItem("userEmail")) setUserEmail(storedEmail);
       if (storedConsentGiven) setUserConsentGiven(storedConsentGiven === "true");
       if (storedConsentDate) setUserConsentDate(storedConsentDate);
       if (storedMarketingConsent) setUserMarketingConsent(storedMarketingConsent === "true");
       if (storedDataRetentionConsent) setUserDataRetentionConsent(storedDataRetentionConsent === "true");
+
+      // Remove legacy keys so migration doesn't repeat
+      localStorage.removeItem("speakMyWayUser");
+      localStorage.removeItem("speakMyWayBirthday");
+      localStorage.removeItem("speakMyWayEmail");
+      localStorage.removeItem("speakMyWayConsentGiven");
+      localStorage.removeItem("speakMyWayConsentDate");
+      localStorage.removeItem("speakMyWayMarketingConsent");
+      localStorage.removeItem("speakMyWayDataRetentionConsent");
     }
-  }, [
-    setUserName, 
-    setUserBirthday, 
-    setUserEmail, 
-    setUserConsentGiven, 
-    setUserConsentDate, 
-    setUserMarketingConsent, 
-    setUserDataRetentionConsent
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col h-screen max-h-screen bg-gray-100 overflow-hidden">
       <NavigationBar />
-      <main className="flex-1 overflow-hidden pt-9">
+      <main className="flex-1 overflow-hidden pt-9" aria-label="Main content">
         <Router />
       </main>
       <OnboardingDialog />
@@ -95,12 +105,14 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppContent />
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AppContent />
+          <Toaster />
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -13,6 +13,7 @@ import { useAppContext } from "@/contexts/app-context";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format, formatDistance, subDays, eachDayOfInterval } from "date-fns";
+import { getBgClass } from "@/lib/utils";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
 import { 
   ArrowUpDown, 
@@ -1663,7 +1664,7 @@ export default function Admin() {
                 <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                   {cardsQuery.data?.map((card: any) => (
                     <Card key={card.id}>
-                      <CardHeader className={`pb-2 bg-${card.bgColor} rounded-t-lg`}>
+                      <CardHeader className={`pb-2 ${getBgClass(card.bgColor)} rounded-t-lg`}>
                         <CardTitle className="text-lg">{card.text}</CardTitle>
                         <CardDescription>{card.textEs}</CardDescription>
                       </CardHeader>

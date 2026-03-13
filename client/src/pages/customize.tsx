@@ -28,9 +28,7 @@ export default function Customize() {
   }, [setCurrentPage, voiceSettings]);
 
   const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setUserName(name);
-    localStorage.setItem("speakMyWayUser", name);
+    setUserName(e.target.value);
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

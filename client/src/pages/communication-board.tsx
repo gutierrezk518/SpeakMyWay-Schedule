@@ -5,6 +5,7 @@ import PredictionWord from "@/components/ui/prediction-word";
 import CardButton from "@/components/ui/card-button";
 import { categories, coreWords, subcategories, getCardsBySubcategory } from "@/data/vocabulary";
 import { predictNextWords } from "@/lib/tts";
+import { getBgClass } from "@/lib/utils";
 
 export default function CommunicationBoard() {
   const {
@@ -186,7 +187,7 @@ export default function CommunicationBoard() {
             {subcategories[selectedCategory]?.map((subcat) => (
               <button 
                 key={subcat}
-                className={`subcategory-btn px-3 py-1 bg-${categories.find(c => c.id === selectedCategory)?.color} text-black rounded-lg flex items-center ${selectedSubcategory === subcat ? "" : "opacity-70"}`}
+                className={`subcategory-btn px-3 py-1 ${getBgClass(categories.find(c => c.id === selectedCategory)?.color)} text-black rounded-lg flex items-center ${selectedSubcategory === subcat ? "" : "opacity-70"}`}
                 onClick={() => handleSubcategoryClick(subcat)}
               >
                 <i className={`${getSubcategoryIcon(subcat)} mr-1`}></i>

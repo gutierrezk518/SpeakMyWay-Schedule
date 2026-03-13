@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -56,6 +56,7 @@ const forgotPasswordSchema = z.object({
 
 export default function AuthPage() {
   const { user, signIn, signUp, signInWithGoogle, resetPassword, resendVerificationEmail, isLoading } = useAuth();
+  const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -69,9 +70,9 @@ export default function AuthPage() {
   // If user is already logged in, redirect to home page
   useEffect(() => {
     if (user && !isLoading) {
-      window.location.href = "/";
+      navigate("/");
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, navigate]);
 
   // Show nothing while redirecting
   if (user) {
@@ -110,7 +111,7 @@ export default function AuthPage() {
 
     // If login successful, redirect to home page
     if (response.data?.session) {
-      window.location.href = "/";
+      navigate("/");
     }
   };
 
@@ -173,7 +174,7 @@ export default function AuthPage() {
             onClick={() => signInWithGoogle()}
             disabled={isLoading}
           >
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -253,6 +254,7 @@ export default function AuthPage() {
                               type="button"
                               onClick={() => setShowLoginPassword(!showLoginPassword)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                              aria-label={showLoginPassword ? "Hide password" : "Show password"}
                             >
                               {showLoginPassword ? (
                                 <EyeOff className="h-4 w-4" />
@@ -323,6 +325,7 @@ export default function AuthPage() {
                                 type="button"
                                 onClick={() => setShowRegisterPassword(!showRegisterPassword)}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showRegisterPassword ? "Hide password" : "Show password"}
                               >
                                 {showRegisterPassword ? (
                                   <EyeOff className="h-4 w-4" />
@@ -478,6 +481,7 @@ export default function AuthPage() {
               className="w-full"
               onClick={handleResendVerification}
               disabled={resendCooldown > 0 || isLoading}
+              aria-live="polite"
             >
               {resendCooldown > 0 ? (
                 `Resend in ${resendCooldown}s`
