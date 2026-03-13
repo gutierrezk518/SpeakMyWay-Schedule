@@ -14,6 +14,18 @@ import { useCategories } from "@/hooks/use-categories";
 import { useActivityCards } from "@/hooks/use-activity-cards";
 import { getBgClass, getBgLightClass, getBgHoverClass } from "@/lib/utils";
 
+// Tooltip wrapper for icon buttons - shows label on hover/focus
+const Tooltip = ({ label, children, position = 'right' }: { label: string; children: React.ReactNode; position?: 'right' | 'bottom' }) => (
+  <div className="relative group/tooltip">
+    {children}
+    <span className={`pointer-events-none absolute z-50 whitespace-nowrap rounded-lg bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium px-2.5 py-1.5 opacity-0 group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100 transition-opacity duration-200 shadow-lg ${
+      position === 'right' ? 'left-full ml-2 top-1/2 -translate-y-1/2' : 'top-full mt-2 left-1/2 -translate-x-1/2'
+    }`}>
+      {label}
+    </span>
+  </div>
+);
+
 // Compact Timer Component
 const TimerComponent = () => {
   const [minutes, setMinutes] = useState(5);
@@ -237,13 +249,16 @@ export default function Schedule() {
   const [selectedTimeSection, setSelectedTimeSection] = useState("morning");
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [activitiesPage, setActivitiesPage] = useState(1);
   const [draggedItem, setDraggedItem] = useState<ScheduleActivity | null>(null);
   const [isDragging, setIsDragging] = useState(false); // Track when drag is in progress
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showTimer, setShowTimer] = useState(false); // New state for timer visibility
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
   const [showSearchBar, setShowSearchBar] = useState(false); // Toggle search bar visibility
+  const [completingActivities, setCompletingActivities] = useState<Set<string>>(new Set()); // Track cards being checked off
+  const [newlyAddedActivity, setNewlyAddedActivity] = useState<string | null>(null); // Track pulse animation for newly added cards
+  const [useLargeCards, setUseLargeCards] = useState(false); // Toggle for fewer, larger activity cards
+  const [isListening, setIsListening] = useState(false); // Voice search active state
   
   // Database hooks
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
@@ -298,7 +313,6 @@ export default function Schedule() {
   // Helper function to handle category selection and reset page number
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    setActivitiesPage(1); // Reset to page 1 when changing categories
   };
 
   // Handle fullscreen toggle
@@ -337,61 +351,7 @@ export default function Schedule() {
       })
     : categoryActivities;
   
-  // Dynamic grid layout based on screen size
-  // Calculate items per page based on viewport size to prevent scrolling
-  const getItemsPerPage = () => {
-    // Prevent scrolling by calculating exact number of items that fit on screen
-    if (typeof window !== 'undefined') {
-      // Calculate available height more precisely
-      const navHeight = 36; // Navigation bar height
-      const timerHeight = showTimer ? 60 : 0; // Timer section height
-      const categoriesHeight = 60; // Categories tabs height
-      const searchHeight = showSearchBar ? 60 : 0; // Search bar height
-      const paginationHeight = 60; // Pagination controls height
-      const padding = 32; // Various padding and margins
-      
-      const availableHeight = window.innerHeight - navHeight - timerHeight - categoriesHeight - searchHeight - paginationHeight - padding;
-      
-      // Account for different card sizes on different screens
-      const cardHeight = window.innerWidth >= 768 ? 120 : 100; // Include spacing
-      const availableRows = Math.max(1, Math.floor(availableHeight / cardHeight));
-      
-      // Calculate columns based on responsive grid classes
-      let columns = 4; // Default mobile columns
-      if (window.innerWidth >= 1536) columns = 7; // 2xl screens
-      if (window.innerWidth >= 1280 && window.innerWidth < 1536) columns = 7; // xl screens
-      if (window.innerWidth >= 1024 && window.innerWidth < 1280) columns = 6; // lg screens
-      if (window.innerWidth >= 768 && window.innerWidth < 1024) columns = 5; // md screens
-      if (window.innerWidth >= 640 && window.innerWidth < 768) columns = 4; // sm screens
-      
-      // Calculate exact items that fit without scrolling
-      const maxItems = availableRows * columns;
-      
-      // Ensure minimum number of items for usability
-      return Math.max(maxItems, 12);
-    }
-    return 24; // Default fallback
-  };
-  
-  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
-  
-  // Effect to adjust items per page based on window width
-  useEffect(() => {
-    const handleResize = () => {
-      setItemsPerPage(getItemsPerPage());
-    };
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
-  const startIndex = (activitiesPage - 1) * itemsPerPage;
-  const visibleActivities = filteredActivities.slice(startIndex, startIndex + itemsPerPage);
+  // All filtered activities are shown - user scrolls to see more
   
   // Handle drag end event
   const onDragEnd = useCallback((result: DropResult) => {
@@ -436,7 +396,7 @@ export default function Schedule() {
     // If adding from activity cards to schedule
     if (source.droppableId === "activity-cards" && destination.droppableId === "schedule") {
       try {
-        const activityToAdd = visibleActivities[source.index];
+        const activityToAdd = filteredActivities[source.index];
         if (!activityToAdd) return;
         
         const newSchedule = [...scheduleData];
@@ -453,7 +413,11 @@ export default function Schedule() {
         section.activities = [...section.activities];
         section.activities.splice(destination.index, 0, newActivity);
         setScheduleData(newSchedule);
-        
+
+        // Trigger pulse animation on newly added card
+        setNewlyAddedActivity(newActivity.id);
+        setTimeout(() => setNewlyAddedActivity(null), 600);
+
         // Speak the activity's full speech text when it's added to the schedule
         if (language === 'es' && newActivity.speechTextEs) {
           speak(newActivity.speechTextEs);
@@ -469,7 +433,7 @@ export default function Schedule() {
     if (source.droppableId === "activity-cards" && 
         (destination.droppableId === "favorites" || destination.droppableId === "favorites-button")) {
       try {
-        const activityToAdd = visibleActivities[source.index];
+        const activityToAdd = filteredActivities[source.index];
         if (!activityToAdd) return;
         
         // Add to favorites - this will avoid duplicates by checking isFavorite
@@ -502,7 +466,7 @@ export default function Schedule() {
         console.error("Error removing from favorites:", error);
       }
     }
-  }, [scheduleData, selectedTimeSection, visibleActivities, addToScheduleHistory, selectedCategory, activitiesPage, itemsPerPage, favoriteActivities, addToFavorites, removeFromFavorites]);
+  }, [scheduleData, selectedTimeSection, filteredActivities, addToScheduleHistory, selectedCategory, favoriteActivities, addToFavorites, removeFromFavorites]);
   
   // Handle drag start to track the item being dragged
   const onDragStart = useCallback((start: any) => {
@@ -510,7 +474,7 @@ export default function Schedule() {
     setIsDragging(true); // Set dragging state to true
     
     if (source.droppableId === "activity-cards") {
-      const draggedActivity = visibleActivities[source.index];
+      const draggedActivity = filteredActivities[source.index];
       setDraggedItem(draggedActivity);
     } else if (source.droppableId === "schedule") {
       const draggedActivity = currentSchedule[source.index];
@@ -519,7 +483,7 @@ export default function Schedule() {
       const draggedActivity = favoriteActivities[source.index];
       setDraggedItem(draggedActivity);
     }
-  }, [visibleActivities, currentSchedule, favoriteActivities]);
+  }, [filteredActivities, currentSchedule, favoriteActivities]);
   
   // Remove an activity from the schedule
   const removeActivity = (index: number) => {
@@ -536,7 +500,20 @@ export default function Schedule() {
     section.activities.splice(index, 1);
     setScheduleData(newSchedule);
   };
-  
+
+  // Complete an activity with check animation then remove
+  const completeActivity = (activityId: string, index: number) => {
+    setCompletingActivities(prev => new Set(prev).add(activityId));
+    setTimeout(() => {
+      removeActivity(index);
+      setCompletingActivities(prev => {
+        const next = new Set(prev);
+        next.delete(activityId);
+        return next;
+      });
+    }, 500);
+  };
+
   // Clear all activities
   const clearActivities = () => {
     // Add current state to history for undo
@@ -701,6 +678,44 @@ export default function Schedule() {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
   
+  // Voice search using Web Speech Recognition API
+  const startVoiceSearch = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast({ title: language === 'es' ? 'No disponible' : 'Not available', description: language === 'es' ? 'Tu navegador no soporta búsqueda por voz' : 'Your browser does not support voice search', variant: 'destructive' });
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language === 'es' ? 'es-ES' : 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    setIsListening(true);
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setSearchQuery(transcript);
+      setIsListening(false);
+      if (selectedCategory !== 'all') {
+        handleCategoryChange('all');
+      }
+      if (!showSearchBar) {
+        setShowSearchBar(true);
+      }
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
   // Event handler for clearing search when any card is clicked
   useEffect(() => {
     const handleClearSearch = () => {
@@ -753,7 +768,11 @@ export default function Schedule() {
       
       section.activities = [...section.activities, newActivity]; // Add to the end
       setScheduleData(newSchedule);
-      
+
+      // Trigger pulse animation on newly added card
+      setNewlyAddedActivity(newActivity.id);
+      setTimeout(() => setNewlyAddedActivity(null), 600);
+
       // Speak the activity's full speech text when it's added to the schedule
       if (language === "es" && (newActivity.speechTextEs || newActivity.titleEs)) {
         speak(newActivity.speechTextEs || newActivity.titleEs || newActivity.speechText || newActivity.title);
@@ -761,7 +780,7 @@ export default function Schedule() {
         speak(newActivity.speechText || newActivity.title);
       }
     };
-    
+
     // Listen for the custom event
     document.addEventListener('addCardToSchedule', handleAddCardToSchedule as EventListener);
     
@@ -775,141 +794,147 @@ export default function Schedule() {
     <section className="h-full max-h-full flex flex-col overflow-hidden">
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className={`flex-1 ${isPortrait ? 'flex flex-col' : 'flex'} overflow-hidden`}>
-          {/* Side buttons panel - non portrait mode */}
+          {/* Side buttons panel - non portrait mode with tooltips */}
           {!isPortrait && (
             <div className="w-16 sm:w-20 flex flex-col items-center py-4 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 space-y-4">
-              {/* Undo button */}
-              <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
-                  canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
-                onClick={handleUndo}
-                disabled={!canUndo}
-                title="Undo"
-              >
-                <i className="ri-arrow-go-back-line text-base sm:text-xl"></i>
-              </button>
-              
-              {/* Redo button */}
-              <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
-                  canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
-                }`}
-                onClick={handleRedo}
-                disabled={!canRedo}
-                title="Redo"
-              >
-                <i className="ri-arrow-go-forward-line text-base sm:text-xl"></i>
-              </button>
-              
-              {/* Play button - largest button */}
-              <button 
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
-                onClick={playSchedule}
-                title="Play schedule"
-              >
-                <i className="ri-play-line text-xl sm:text-2xl"></i>
-              </button>
-              
-              {/* Timer toggle button */}
-              <button 
-                className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
-                onClick={() => setShowTimer(!showTimer)}
-                title={showTimer ? "Hide timer" : "Show timer"}
-              >
-                <i className="ri-timer-line text-base sm:text-xl"></i>
-              </button>
-              
-              {/* Save button */}
-              <button 
-                className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
-                onClick={() => setShowSaveModal(true)}
-                title="Save schedule"
-              >
-                <i className="ri-save-line text-base sm:text-xl"></i>
-              </button>
-            </div>
-          )}
-          
-          {/* Schedule section */}
-          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full flex-shrink-0' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200'} flex flex-col ${isPortrait ? 'max-h-[40vh]' : 'h-full'}`}>
-            {/* Action buttons in portrait mode - now above schedule header */}
-            {isPortrait && (
-              <div className="flex bg-gray-100 dark:bg-gray-800 px-2 py-2 border-b border-gray-200 dark:border-gray-700 items-center justify-center space-x-4 mt-4">
-                {/* Undo button */}
-                <button 
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${
+              <Tooltip label={language === 'es' ? 'Deshacer' : 'Undo'}>
+                <button
+                  className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
                     canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleUndo}
                   disabled={!canUndo}
-                  title="Undo"
+                  aria-label={language === 'es' ? 'Deshacer' : 'Undo'}
                 >
-                  <i className="ri-arrow-go-back-line text-base"></i>
+                  <i className="ri-arrow-go-back-line text-base sm:text-xl"></i>
                 </button>
-                
-                {/* Redo button */}
-                <button 
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${
+              </Tooltip>
+
+              <Tooltip label={language === 'es' ? 'Rehacer' : 'Redo'}>
+                <button
+                  className={`w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-md ${
                     canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
                   }`}
                   onClick={handleRedo}
                   disabled={!canRedo}
-                  title="Redo"
+                  aria-label={language === 'es' ? 'Rehacer' : 'Redo'}
                 >
-                  <i className="ri-arrow-go-forward-line text-base"></i>
+                  <i className="ri-arrow-go-forward-line text-base sm:text-xl"></i>
                 </button>
-                
-                {/* Play button */}
-                <button 
-                  className="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
+              </Tooltip>
+
+              <Tooltip label={language === 'es' ? 'Reproducir horario' : 'Play schedule'}>
+                <button
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-lg hover:bg-purple-600"
                   onClick={playSchedule}
-                  title="Play schedule"
+                  aria-label={language === 'es' ? 'Reproducir horario' : 'Play schedule'}
                 >
-                  <i className="ri-play-line text-xl"></i>
+                  <i className="ri-play-line text-xl sm:text-2xl"></i>
                 </button>
-                
-                {/* Timer toggle button */}
-                <button 
-                  className={`w-10 h-10 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+              </Tooltip>
+
+              <Tooltip label={showTimer ? (language === 'es' ? 'Ocultar temporizador' : 'Hide timer') : (language === 'es' ? 'Mostrar temporizador' : 'Show timer')}>
+                <button
+                  className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-md hover:bg-purple-500`}
                   onClick={() => setShowTimer(!showTimer)}
-                  title={showTimer ? "Hide timer" : "Show timer"}
+                  aria-label={showTimer ? (language === 'es' ? 'Ocultar temporizador' : 'Hide timer') : (language === 'es' ? 'Mostrar temporizador' : 'Show timer')}
                 >
-                  <i className="ri-timer-line text-base"></i>
+                  <i className="ri-timer-line text-base sm:text-xl"></i>
                 </button>
-                
-                {/* Favorites button removed from portrait mode as requested */}
-                
-                {/* Save button */}
-                <button 
-                  className="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+              </Tooltip>
+
+              <Tooltip label={language === 'es' ? 'Guardar horario' : 'Save schedule'}>
+                <button
+                  className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-green-500 text-white flex items-center justify-center shadow-md hover:bg-green-600"
                   onClick={() => setShowSaveModal(true)}
-                  title="Save schedule"
+                  aria-label={language === 'es' ? 'Guardar horario' : 'Save schedule'}
                 >
-                  <i className="ri-save-line text-base"></i>
+                  <i className="ri-save-line text-base sm:text-xl"></i>
                 </button>
+              </Tooltip>
+            </div>
+          )}
+          
+          {/* Schedule section */}
+          <div className={`${isFullscreen ? 'w-full' : isPortrait ? 'w-full flex-shrink-0' : 'w-full sm:w-2/5 md:w-1/3 border-r border-gray-200 dark:border-gray-700'} flex flex-col ${isPortrait ? '' : 'h-full'}`}>
+            {/* Action buttons in portrait mode with tooltips */}
+            {isPortrait && (
+              <div className="flex bg-gray-100 dark:bg-gray-800 px-2 py-2 border-b border-gray-200 dark:border-gray-700 items-center justify-center space-x-4 mt-4">
+                <Tooltip label={language === 'es' ? 'Deshacer' : 'Undo'} position="bottom">
+                  <button
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${
+                      canUndo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                    }`}
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    aria-label={language === 'es' ? 'Deshacer' : 'Undo'}
+                  >
+                    <i className="ri-arrow-go-back-line text-base"></i>
+                  </button>
+                </Tooltip>
+
+                <Tooltip label={language === 'es' ? 'Rehacer' : 'Redo'} position="bottom">
+                  <button
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${
+                      canRedo ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-300 text-gray-500'
+                    }`}
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    aria-label={language === 'es' ? 'Rehacer' : 'Redo'}
+                  >
+                    <i className="ri-arrow-go-forward-line text-base"></i>
+                  </button>
+                </Tooltip>
+
+                <Tooltip label={language === 'es' ? 'Reproducir' : 'Play'} position="bottom">
+                  <button
+                    className="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md hover:bg-purple-600"
+                    onClick={playSchedule}
+                    aria-label={language === 'es' ? 'Reproducir horario' : 'Play schedule'}
+                  >
+                    <i className="ri-play-line text-xl"></i>
+                  </button>
+                </Tooltip>
+
+                <Tooltip label={showTimer ? (language === 'es' ? 'Ocultar' : 'Timer') : (language === 'es' ? 'Temporizador' : 'Timer')} position="bottom">
+                  <button
+                    className={`w-11 h-11 rounded-lg ${showTimer ? 'bg-purple-400' : 'bg-gray-400'} text-white flex items-center justify-center shadow-sm hover:bg-purple-500`}
+                    onClick={() => setShowTimer(!showTimer)}
+                    aria-label={showTimer ? (language === 'es' ? 'Ocultar temporizador' : 'Hide timer') : (language === 'es' ? 'Mostrar temporizador' : 'Show timer')}
+                  >
+                    <i className="ri-timer-line text-base"></i>
+                  </button>
+                </Tooltip>
+
+                <Tooltip label={language === 'es' ? 'Guardar' : 'Save'} position="bottom">
+                  <button
+                    className="w-11 h-11 rounded-xl bg-green-500 text-white flex items-center justify-center shadow-sm hover:bg-green-600"
+                    onClick={() => setShowSaveModal(true)}
+                    aria-label={language === 'es' ? 'Guardar horario' : 'Save schedule'}
+                  >
+                    <i className="ri-save-line text-base"></i>
+                  </button>
+                </Tooltip>
               </div>
             )}
             
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <div className="font-bold mr-auto">My Schedule</div>
-              
-              <div className="flex space-x-1 ml-auto">
-                <button 
-                  className="p-1.5 rounded-xl bg-blue-200 hover:bg-blue-300 text-blue-700"
+            <div className="px-3 py-2 sm:px-4 sm:py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300"
                   onClick={toggleFullscreen}
                   aria-label="Fullscreen"
                 >
                   <i className={`${isFullscreen ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line'}`}></i>
                 </button>
-                <button 
-                  className="p-1.5 rounded-xl bg-red-100 hover:bg-red-200 text-red-500 flex items-center"
+                <button
+                  className="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-500 flex items-center"
                   onClick={clearActivities}
                   aria-label="Clear all activities"
                   title="Clear All Activities"
                 >
                   <i className="ri-delete-bin-line mr-1"></i>
-                  <span className="text-[9px] font-medium">Clear All</span>
+                  <span className="text-[9px] font-medium">Clear</span>
                 </button>
               </div>
             </div>
@@ -935,8 +960,20 @@ export default function Schedule() {
             </div>
             
             {/* Droppable schedule area */}
-            <div className={`flex-grow p-1 bg-blue-50 dark:bg-blue-950 ${isPortrait ? 'block' : 'flex flex-col'} overflow-hidden h-full`}>
-              <Droppable 
+            <div className={`flex-grow p-2 sm:p-3 bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden h-full`}>
+              {/* Section header */}
+              {(() => {
+                const currentSection = scheduleData.find((s: ScheduleSection) => s.id === selectedTimeSection);
+                if (!currentSection) return null;
+                return (
+                  <div className="mb-2 sm:mb-3">
+                    <h2 className="text-sm sm:text-base font-semibold text-green-700 dark:text-green-400">
+                      {language === 'es' ? 'Mi Horario' : 'My Schedule'}
+                    </h2>
+                  </div>
+                );
+              })()}
+              <Droppable
                 droppableId="schedule"
                 direction={isPortrait ? "horizontal" : "vertical"}
               >
@@ -944,68 +981,80 @@ export default function Schedule() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    style={{
-                      height: isPortrait ? '160px' : '100%',
-                      minHeight: isPortrait ? '160px' : 'calc(100% - 16px)',
-                      maxHeight: isPortrait ? '160px' : '100%'
-                    }}
-                    className={`${isPortrait
-                      ? 'overflow-x-auto overflow-y-visible rounded-xl p-2 flex flex-nowrap items-start pt-4'
-                      : 'overflow-y-auto rounded-xl p-2 flex flex-col items-center'
-                    } ${
+                    className={`flex-1 ${isPortrait ? 'overflow-x-auto overflow-y-hidden' : 'overflow-y-auto'} rounded-2xl ${
                       snapshot.isDraggingOver
-                        ? 'bg-blue-100 dark:bg-blue-900'
-                        : 'bg-white dark:bg-gray-800'
-                    } border ${
-                      snapshot.isDraggingOver
-                        ? 'border-blue-300 dark:border-blue-700'
-                        : 'border-blue-200 dark:border-gray-700'
-                    } w-full h-full`}
+                        ? 'bg-blue-50 dark:bg-blue-900/30'
+                        : 'bg-transparent'
+                    } w-full`}
                   >
                     {currentSchedule.length === 0 ? (
-                      <div className="text-center p-1 text-gray-500 dark:text-gray-400 h-full flex flex-col justify-center w-full">
-                        <div className="text-lg mb-0.5">👋</div>
-                        <p className="text-[8px] font-medium">Drag activities here</p>
+                      <div className="text-center py-8 text-gray-400 dark:text-gray-500 flex flex-col items-center justify-center h-full">
+                        <i className="ri-calendar-todo-line text-4xl mb-2"></i>
+                        <p className="text-sm font-medium">Add activities to your schedule</p>
+                        <p className="text-xs mt-1">Tap or drag cards here</p>
                       </div>
-                    ) : (
-                      <div className={isPortrait ? 'flex overflow-x-auto pb-2 w-full space-x-4 xs:space-x-6 sm:space-x-8' : 'grid grid-cols-1 gap-10 px-4 ml-8'}>
+                    ) : isPortrait ? (
+                      /* Portrait mode: horizontal scrolling row of square card tiles */
+                      <div className="flex flex-row flex-nowrap space-x-4 pb-2 px-1 items-start">
                         {currentSchedule.map((activity: ScheduleActivity, index: number) => (
-                          <div key={activity.id} className={`relative ${isPortrait ? 'flex flex-col items-center flex-shrink-0' : 'w-14 h-14 mx-auto'}`}>
+                          <div key={activity.id} className={`flex flex-col items-center flex-shrink-0 w-[90px] transition-all duration-500 ${newlyAddedActivity === activity.id ? 'animate-pulse ring-2 ring-blue-400 ring-offset-2 rounded-2xl' : ''}`}>
                             <ActivityCard
                               activity={activity}
                               index={index}
-                              showRemoveButton={true}
+                              showRemoveButton={false}
                               categoryId={selectedCategory}
                               isDraggable={true}
+                              displayMode="card"
                             />
-
-                            {/* Only show remove buttons when not dragging */}
+                            {/* Checkbox below card in portrait */}
                             {!isDragging && (
-                              isPortrait ? (
-                                // Portrait mode: Show remove button below card
-                                <div className="mt-1 w-full text-center flex-shrink-0">
-                                  <button
-                                    className="px-2 py-0.5 bg-red-100 text-red-500 hover:bg-red-200 rounded text-xs shadow-sm border border-red-300 whitespace-nowrap"
-                                    onClick={() => removeActivity(index)}
-                                    aria-label="Remove activity"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              ) : (
-                                // Landscape mode: Show circle with checkmark to the left of the card
-                                <div className="absolute top-0 -left-12 h-full flex items-center">
-                                  <button 
-                                    className="p-0 bg-orange-200 text-red-600 hover:bg-orange-300 rounded-full text-xs shadow-md z-40 border border-gray-300 w-8 h-8 flex items-center justify-center"
-                                    onClick={() => removeActivity(index)}
-                                    aria-label="Mark as completed"
-                                  >
-                                    <i className="ri-check-line text-lg font-bold"></i>
-                                  </button>
-                                </div>
-                              )
+                              <button
+                                className={`mt-1.5 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                  completingActivities.has(activity.id)
+                                    ? 'bg-green-500 scale-110'
+                                    : 'border-2 border-gray-300 dark:border-gray-500 hover:border-gray-400 dark:hover:border-gray-400 bg-white dark:bg-gray-700'
+                                }`}
+                                onClick={(e) => { e.stopPropagation(); completeActivity(activity.id, index); }}
+                                aria-label="Complete activity"
+                              >
+                                {completingActivities.has(activity.id) && (
+                                  <i className="ri-check-line text-white text-base animate-bounce"></i>
+                                )}
+                              </button>
                             )}
                           </div>
+                        ))}
+                      </div>
+                    ) : (
+                      /* Landscape/desktop mode: vertical list rows */
+                      <div className="flex flex-col space-y-2 sm:space-y-3">
+                        {currentSchedule.map((activity: ScheduleActivity, index: number) => (
+                            <div key={activity.id} className={`relative group transition-all duration-500 ${newlyAddedActivity === activity.id ? 'animate-pulse ring-2 ring-blue-400 ring-offset-2 rounded-2xl' : ''}`}>
+                              <ActivityCard
+                                activity={activity}
+                                index={index}
+                                showRemoveButton={true}
+                                categoryId={selectedCategory}
+                                isDraggable={true}
+                                displayMode="list"
+                              />
+                              {/* Complete checkbox - WCAG 44px minimum touch target */}
+                              {!isDragging && (
+                                <button
+                                  className={`absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
+                                    completingActivities.has(activity.id)
+                                      ? 'bg-green-500 scale-110'
+                                      : 'border-2 border-gray-300 dark:border-gray-500 hover:border-gray-400 dark:hover:border-gray-400 bg-white dark:bg-gray-700'
+                                  }`}
+                                  onClick={(e) => { e.stopPropagation(); completeActivity(activity.id, index); }}
+                                  aria-label="Complete activity"
+                                >
+                                  {completingActivities.has(activity.id) && (
+                                    <i className="ri-check-line text-white text-base animate-bounce"></i>
+                                  )}
+                                </button>
+                              )}
+                            </div>
                         ))}
                       </div>
                     )}
@@ -1062,7 +1111,21 @@ export default function Schedule() {
                     <i className={`${showSearchBar ? 'ri-close-line' : 'ri-search-line'} mr-1`}></i>
                     {showSearchBar ? 'Close' : 'Search'}
                   </button>
-                
+
+                  {/* Large cards toggle */}
+                  <button
+                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded-xl text-xs sm:text-sm transition-all duration-200 ${
+                      useLargeCards
+                      ? 'bg-indigo-500 text-white font-bold shadow-lg border-2 border-indigo-700 scale-105'
+                      : 'bg-indigo-100 dark:bg-indigo-900 text-black dark:text-gray-200 hover:bg-indigo-200 dark:hover:bg-indigo-800 border-2 border-transparent'
+                    }`}
+                    onClick={() => setUseLargeCards(!useLargeCards)}
+                    aria-label={useLargeCards ? "Show smaller cards" : "Show larger cards"}
+                  >
+                    <i className={`${useLargeCards ? 'ri-grid-line' : 'ri-layout-grid-line'} mr-1`}></i>
+                    {useLargeCards ? (language === 'es' ? 'Pequeño' : 'Small') : (language === 'es' ? 'Grande' : 'Large')}
+                  </button>
+
                   {/* Favorites button as droppable target */}
                   <Droppable droppableId="favorites-button" direction="horizontal" isDropDisabled={false}>
                     {(provided, snapshot) => (
@@ -1155,8 +1218,8 @@ export default function Schedule() {
                         <i className="ri-search-line text-gray-400 dark:text-gray-500"></i>
                       </div>
                       {searchQuery && (
-                        <button 
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                        <button
+                          className="absolute inset-y-0 right-12 pr-1 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                           onClick={() => setSearchQuery('')}
                           title="Clear search"
                         >
@@ -1164,6 +1227,18 @@ export default function Schedule() {
                         </button>
                       )}
                     </div>
+                    {/* Voice search button */}
+                    <button
+                      className={`ml-2 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 ${
+                        isListening
+                          ? 'bg-red-500 text-white animate-pulse shadow-lg'
+                          : 'bg-blue-500 text-white hover:bg-blue-600 shadow-md'
+                      }`}
+                      onClick={startVoiceSearch}
+                      aria-label={language === 'es' ? 'Búsqueda por voz' : 'Voice search'}
+                    >
+                      <i className={`${isListening ? 'ri-mic-fill' : 'ri-mic-line'} text-lg`}></i>
+                    </button>
                   </div>
                 </div>
               )}
@@ -1235,11 +1310,15 @@ export default function Schedule() {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 xs:gap-3 sm:gap-3 md:gap-4 lg:gap-5 p-1 sm:p-1 md:p-2 ${
+                        className={`grid ${
+                          useLargeCards
+                            ? 'grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 md:gap-6 lg:gap-7 p-2 sm:p-3 md:p-4'
+                            : 'grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 xs:gap-3 sm:gap-3 md:gap-4 lg:gap-5 p-1 sm:p-1 md:p-2'
+                        } ${
                           snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900' : 'bg-white dark:bg-gray-800'
                         }`}
                       >
-                        {visibleActivities.map((activity: ScheduleActivity, index: number) => (
+                        {filteredActivities.map((activity: ScheduleActivity, index: number) => (
                           <div key={activity.id} className="relative">
                             <ActivityCard
                               activity={activity}
@@ -1256,36 +1335,6 @@ export default function Schedule() {
                 )}
               </div>
               
-              {/* Pagination controls - always visible for all screen sizes */}
-              {totalPages > 1 && selectedCategory !== 'favorites' && (
-                <div className="flex-shrink-0 mt-2 mb-1 p-1 border border-gray-200 dark:border-gray-700 flex justify-center space-x-2 bg-white dark:bg-gray-800 shadow-md w-full max-w-full rounded-xl mx-auto">
-                  <button
-                    className={`px-2 py-1 rounded-xl text-xs sm:text-sm ${
-                      activitiesPage === 1 
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
-                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
-                    }`}
-                    onClick={() => activitiesPage > 1 && setActivitiesPage(activitiesPage - 1)}
-                    disabled={activitiesPage === 1}
-                  >
-                    <i className="ri-arrow-left-s-line"></i>
-                  </button>
-                  <span className="px-2 py-1 bg-white dark:bg-gray-700 rounded-xl text-xs sm:text-sm font-medium border border-blue-200 dark:border-blue-800 min-w-[60px] text-center dark:text-gray-200">
-                    {activitiesPage} of {totalPages}
-                  </span>
-                  <button
-                    className={`px-2 py-1 rounded-xl text-xs sm:text-sm ${
-                      activitiesPage === totalPages 
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed' 
-                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800'
-                    }`}
-                    onClick={() => activitiesPage < totalPages && setActivitiesPage(activitiesPage + 1)}
-                    disabled={activitiesPage === totalPages}
-                  >
-                    <i className="ri-arrow-right-s-line"></i>
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>

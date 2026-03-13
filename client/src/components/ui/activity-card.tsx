@@ -11,15 +11,19 @@ interface ActivityCardProps {
   showRemoveButton?: boolean;
   onRemove?: () => void;
   categoryId?: string;
+  displayMode?: 'card' | 'list';
+  isCompleted?: boolean;
 }
 
-export default function ActivityCard({ 
-  activity, 
-  index, 
-  isDraggable = true, 
+export default function ActivityCard({
+  activity,
+  index,
+  isDraggable = true,
   showRemoveButton = false,
   onRemove,
-  categoryId
+  categoryId,
+  displayMode = 'card',
+  isCompleted = false
 }: ActivityCardProps): JSX.Element {
   const { language } = useAppContext();
 
@@ -58,14 +62,42 @@ export default function ActivityCard({
   // Create a common card UI based on where it's used
   const cardContent = (isDragging = false) => (
     <>
-      {isInSchedule ? (
-        // Compact horizontal layout for schedule cards
+      {displayMode === 'list' ? (
+        // List row layout for schedule (matching reference design)
+        <div className="flex items-center w-full px-3 py-2 sm:px-4 sm:py-3">
+          {/* Icon/Image thumbnail */}
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex-shrink-0 flex items-center justify-center ${getBgColorClass(activity.bgColor)}`}>
+            {activity.imageSrc ? (
+              <img
+                src={activity.imageSrc}
+                alt={`${displayTitle} activity card`}
+                className="w-7 h-7 sm:w-9 sm:h-9 object-contain"
+              />
+            ) : (
+              <i className={`${activity.icon} text-lg sm:text-xl text-gray-800 dark:text-gray-100`}></i>
+            )}
+          </div>
+          {/* Title and time */}
+          <div className="ml-3 flex-grow min-w-0">
+            <div className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">
+              {displayTitle}
+            </div>
+          </div>
+          {/* Completed checkmark */}
+          {isCompleted && (
+            <div className="flex-shrink-0 ml-2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-green-500 flex items-center justify-center">
+              <i className="ri-check-line text-white text-sm sm:text-base"></i>
+            </div>
+          )}
+        </div>
+      ) : isInSchedule ? (
+        // Compact square layout for schedule cards (legacy/fallback)
         <div className="flex flex-col items-center justify-between w-full h-full">
           <div className="flex-grow flex items-center justify-center w-full h-3/4">
             {activity.imageSrc ? (
               <div className="w-full h-full p-1 flex items-center justify-center">
-                <img 
-                  src={activity.imageSrc} 
+                <img
+                  src={activity.imageSrc}
                   alt={`${displayTitle} activity card`}
                   className="max-w-full max-h-full object-contain"
                   style={{ maxHeight: "80%" }}
@@ -88,8 +120,8 @@ export default function ActivityCard({
           <div className="flex-grow flex items-center justify-center w-full h-3/4">
             {activity.imageSrc ? (
               <div className="w-full h-full p-1.5 flex items-center justify-center">
-                <img 
-                  src={activity.imageSrc} 
+                <img
+                  src={activity.imageSrc}
                   alt={`${displayTitle} activity card`}
                   className="max-w-full max-h-full object-contain"
                   style={{ maxHeight: "85%" }}
@@ -99,7 +131,7 @@ export default function ActivityCard({
               <i className={`${activity.icon} text-lg sm:text-2xl text-gray-800 dark:text-gray-100`}></i>
             )}
           </div>
-          
+
           {/* Text container - more accessible */}
           <div className="w-full bg-white dark:bg-gray-800 bg-opacity-80 rounded-b-xl py-0.5 sm:py-1 px-0.5 sm:px-1 text-center">
             <span className="font-medium text-[10px] xs:text-[11px] sm:text-xs leading-tight max-w-full overflow-hidden text-ellipsis whitespace-nowrap block dark:text-gray-100">
@@ -114,17 +146,16 @@ export default function ActivityCard({
   // Common class names for card with static color mapping
   const getBgColorClass = (bgColor: string) => getBgClass(bgColor);
 
-  const cardClassNames = `rounded-xl ${
-    // For cards in schedule section:
-    isInSchedule
-      ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20'
-      // For cards in activity selection:
-      // Use auto width to fit grid, with max sizes to prevent overflow
-      : 'w-full h-auto aspect-square max-w-[85px] xs:max-w-[90px] sm:max-w-[95px] md:max-w-[110px] lg:max-w-[120px]'
-    } flex flex-col items-center justify-between cursor-pointer
-    shadow-md hover:shadow-lg
-    ${getBgColorClass(activity.bgColor)}
-    text-gray-800 dark:text-gray-100`;
+  const cardClassNames = displayMode === 'list'
+    ? `rounded-2xl w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm hover:shadow-md transition-shadow text-gray-800 dark:text-gray-100`
+    : `rounded-xl ${
+      isInSchedule
+        ? 'w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20'
+        : 'w-full h-auto aspect-square max-w-[85px] xs:max-w-[90px] sm:max-w-[95px] md:max-w-[110px] lg:max-w-[120px]'
+      } flex flex-col items-center justify-between cursor-pointer
+      shadow-md hover:shadow-lg
+      ${getBgColorClass(activity.bgColor)}
+      text-gray-800 dark:text-gray-100`;
   
   // Neurodivergent-friendly design - high contrast, clear visual distinction, increased sizes
   if (isDraggable) {
